@@ -609,6 +609,11 @@ func awsRestjson1_serializeOpDocumentCreateCustomLineItemInput(v *CreateCustomLi
 		}
 	}
 
+	if len(v.ComputationRule) > 0 {
+		ok := object.Key("ComputationRule")
+		ok.String(string(v.ComputationRule))
+	}
+
 	if v.Description != nil {
 		ok := object.Key("Description")
 		ok.String(*v.Description)
@@ -617,6 +622,13 @@ func awsRestjson1_serializeOpDocumentCreateCustomLineItemInput(v *CreateCustomLi
 	if v.Name != nil {
 		ok := object.Key("Name")
 		ok.String(*v.Name)
+	}
+
+	if v.PresentationDetails != nil {
+		ok := object.Key("PresentationDetails")
+		if err := awsRestjson1_serializeDocumentPresentationObject(v.PresentationDetails, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.Tags != nil {
@@ -3170,6 +3182,11 @@ func awsRestjson1_serializeDocumentAccountGrouping(v *types.AccountGrouping, val
 		}
 	}
 
+	if v.ResponsibilityTransferArn != nil {
+		ok := object.Key("ResponsibilityTransferArn")
+		ok.String(*v.ResponsibilityTransferArn)
+	}
+
 	return nil
 }
 
@@ -3195,6 +3212,17 @@ func awsRestjson1_serializeDocumentAccountIdList(v []string, value smithyjson.Va
 	return nil
 }
 
+func awsRestjson1_serializeDocumentAttributeValueList(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocumentBillingGroupArnList(v []string, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -3207,6 +3235,17 @@ func awsRestjson1_serializeDocumentBillingGroupArnList(v []string, value smithyj
 }
 
 func awsRestjson1_serializeDocumentBillingGroupStatusList(v []types.BillingGroupStatus, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(string(v[i]))
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentBillingGroupTypeList(v []types.BillingGroupType, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
 
@@ -3454,6 +3493,13 @@ func awsRestjson1_serializeDocumentLineItemFilter(v *types.LineItemFilter, value
 		ok.String(string(v.Attribute))
 	}
 
+	if v.AttributeValues != nil {
+		ok := object.Key("AttributeValues")
+		if err := awsRestjson1_serializeDocumentAttributeValueList(v.AttributeValues, ok); err != nil {
+			return err
+		}
+	}
+
 	if len(v.MatchOption) > 0 {
 		ok := object.Key("MatchOption")
 		ok.String(string(v.MatchOption))
@@ -3547,9 +3593,37 @@ func awsRestjson1_serializeDocumentListBillingGroupsFilter(v *types.ListBillingG
 		ok.Boolean(*v.AutoAssociate)
 	}
 
+	if v.BillingGroupTypes != nil {
+		ok := object.Key("BillingGroupTypes")
+		if err := awsRestjson1_serializeDocumentBillingGroupTypeList(v.BillingGroupTypes, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.Names != nil {
+		ok := object.Key("Names")
+		if err := awsRestjson1_serializeDocumentStringSearches(v.Names, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.PricingPlan != nil {
 		ok := object.Key("PricingPlan")
 		ok.String(*v.PricingPlan)
+	}
+
+	if v.PrimaryAccountIds != nil {
+		ok := object.Key("PrimaryAccountIds")
+		if err := awsRestjson1_serializeDocumentPrimaryAccountIdList(v.PrimaryAccountIds, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ResponsibilityTransferArns != nil {
+		ok := object.Key("ResponsibilityTransferArns")
+		if err := awsRestjson1_serializeDocumentResponsibilityTransferArnsList(v.ResponsibilityTransferArns, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.Statuses != nil {
@@ -3668,6 +3742,18 @@ func awsRestjson1_serializeDocumentListResourcesAssociatedToCustomLineItemFilter
 	return nil
 }
 
+func awsRestjson1_serializeDocumentPresentationObject(v *types.PresentationObject, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Service != nil {
+		ok := object.Key("Service")
+		ok.String(*v.Service)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentPricingPlanArns(v []string, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -3712,6 +3798,58 @@ func awsRestjson1_serializeDocumentPricingRuleArnsNonEmptyInput(v []string, valu
 	return nil
 }
 
+func awsRestjson1_serializeDocumentPrimaryAccountIdList(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentResponsibilityTransferArnsList(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentStringSearch(v *types.StringSearch, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.SearchOption) > 0 {
+		ok := object.Key("SearchOption")
+		ok.String(string(v.SearchOption))
+	}
+
+	if v.SearchValue != nil {
+		ok := object.Key("SearchValue")
+		ok.String(*v.SearchValue)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentStringSearches(v []types.StringSearch, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentStringSearch(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocumentTagMap(v map[string]string, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -3730,6 +3868,11 @@ func awsRestjson1_serializeDocumentUpdateBillingGroupAccountGrouping(v *types.Up
 	if v.AutoAssociate != nil {
 		ok := object.Key("AutoAssociate")
 		ok.Boolean(*v.AutoAssociate)
+	}
+
+	if v.ResponsibilityTransferArn != nil {
+		ok := object.Key("ResponsibilityTransferArn")
+		ok.String(*v.ResponsibilityTransferArn)
 	}
 
 	return nil

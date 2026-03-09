@@ -38,16 +38,16 @@ type DisableControlInput struct {
 	// to find the controlIdentifier , see [the overview page].
 	//
 	// [the overview page]: https://docs.aws.amazon.com/controltower/latest/APIReference/Welcome.html
-	//
-	// This member is required.
 	ControlIdentifier *string
+
+	// The ARN of the enabled control to be disabled, which uniquely identifies the
+	// control instance on the target organizational unit.
+	EnabledControlIdentifier *string
 
 	// The ARN of the organizational unit. For information on how to find the
 	// targetIdentifier , see [the overview page].
 	//
 	// [the overview page]: https://docs.aws.amazon.com/controltower/latest/APIReference/Welcome.html
-	//
-	// This member is required.
 	TargetIdentifier *string
 
 	noSmithyDocumentSerde
@@ -134,9 +134,6 @@ func (c *Client) addOperationDisableControlMiddlewares(stack *middleware.Stack, 
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
-	if err = addOpDisableControlValidationMiddleware(stack); err != nil {
-		return err
-	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opDisableControl(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -155,16 +152,13 @@ func (c *Client) addOperationDisableControlMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -66,6 +66,10 @@ type CreateMicrosoftADInput struct {
 	// Enterprise is the default.
 	Edition types.DirectoryEdition
 
+	//  The network type for your domain. The default value is IPv4 or IPv6 based on
+	// the provided subnet capabilities.
+	NetworkType types.NetworkType
+
 	// The NetBIOS name for your domain, such as CORP . If you don't specify a NetBIOS
 	// name, it will default to the first part of your directory DNS. For example, CORP
 	// for the directory DNS corp.example.com .
@@ -177,16 +181,13 @@ func (c *Client) addOperationCreateMicrosoftADMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

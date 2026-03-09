@@ -3,6 +3,7 @@
 package types
 
 import (
+	"github.com/aws/aws-sdk-go-v2/service/glue/document"
 	smithydocument "github.com/aws/smithy-go/document"
 	"time"
 )
@@ -381,6 +382,11 @@ type AuthenticationConfiguration struct {
 	// A structure containing the authentication configuration.
 	AuthenticationType AuthenticationType
 
+	// The Amazon Resource Name (ARN) of the KMS key used to encrypt sensitive
+	// authentication information. This key is used to protect credentials and other
+	// sensitive data stored within the authentication configuration.
+	KmsKeyArn *string
+
 	// The properties for OAuth2 authentication.
 	OAuth2Properties *OAuth2Properties
 
@@ -435,6 +441,23 @@ type AuthorizationCodeProperties struct {
 	noSmithyDocumentSerde
 }
 
+// Specifies configuration options for automatic data quality evaluation in Glue
+// jobs. This structure enables automated data quality checks and monitoring during
+// ETL operations, helping to ensure data integrity and reliability without manual
+// intervention.
+type AutoDataQuality struct {
+
+	// The evaluation context for the automatic data quality checks. This defines the
+	// scope and parameters for the data quality evaluation.
+	EvaluationContext *string
+
+	// Specifies whether automatic data quality evaluation is enabled. When set to true
+	// , data quality checks are performed automatically.
+	IsEnabled bool
+
+	noSmithyDocumentSerde
+}
+
 // A list of errors that can occur when registering partition indexes for an
 // existing table.
 //
@@ -474,6 +497,19 @@ type BasicAuthenticationCredentials struct {
 
 	// The username to connect to the data source.
 	Username *string
+
+	noSmithyDocumentSerde
+}
+
+// Basic authentication configuration that defines the username and password
+// properties for HTTP Basic authentication.
+type BasicAuthenticationProperties struct {
+
+	// The password property name to use for Basic authentication credentials.
+	Password *ConnectorProperty
+
+	// The username property name to use for Basic authentication credentials.
+	Username *ConnectorProperty
 
 	noSmithyDocumentSerde
 }
@@ -931,6 +967,34 @@ type CatalogHudiSource struct {
 	noSmithyDocumentSerde
 }
 
+// Specifies an Apache Iceberg data source that is registered in the Glue Data
+// Catalog.
+type CatalogIcebergSource struct {
+
+	// The name of the database to read from.
+	//
+	// This member is required.
+	Database *string
+
+	// The name of the Iceberg data source.
+	//
+	// This member is required.
+	Name *string
+
+	// The name of the table in the database to read from.
+	//
+	// This member is required.
+	Table *string
+
+	// Specifies additional connection options for the Iceberg data source.
+	AdditionalIcebergOptions map[string]string
+
+	// Specifies the data schema for the Iceberg source.
+	OutputSchemas []GlueSchema
+
+	noSmithyDocumentSerde
+}
+
 // A structure containing migration status information.
 type CatalogImportStatus struct {
 
@@ -1064,6 +1128,11 @@ type CatalogProperties struct {
 	// lake access for your catalog resource in the Glue Data Catalog.
 	DataLakeAccessProperties *DataLakeAccessProperties
 
+	// A structure that specifies Iceberg table optimization properties for the
+	// catalog. This includes configuration for compaction, retention, and orphan file
+	// deletion operations that can be applied to Iceberg tables in this catalog.
+	IcebergOptimizationProperties *IcebergOptimizationProperties
+
 	noSmithyDocumentSerde
 }
 
@@ -1078,6 +1147,11 @@ type CatalogPropertiesOutput struct {
 	// A DataLakeAccessProperties object with input properties to configure data lake
 	// access for your catalog resource in the Glue Data Catalog.
 	DataLakeAccessProperties *DataLakeAccessPropertiesOutput
+
+	// An IcebergOptimizationPropertiesOutput object that specifies Iceberg table
+	// optimization settings for the catalog, including configurations for compaction,
+	// retention, and orphan file deletion operations.
+	IcebergOptimizationProperties *IcebergOptimizationPropertiesOutput
 
 	noSmithyDocumentSerde
 }
@@ -1112,6 +1186,13 @@ type CatalogSource struct {
 	//
 	// This member is required.
 	Table *string
+
+	// Specifies the data schema for the catalog source.
+	OutputSchemas []GlueSchema
+
+	//  Partitions satisfying this predicate are deleted. Files within the retention
+	// period in these partitions are not deleted.
+	PartitionPredicate *string
 
 	noSmithyDocumentSerde
 }
@@ -1170,6 +1251,37 @@ type Classifier struct {
 	noSmithyDocumentSerde
 }
 
+// OAuth2 client credentials configuration that defines the properties needed for
+// the Client Credentials grant type flow.
+type ClientCredentialsProperties struct {
+
+	// The OAuth2 client identifier provided by the authorization server.
+	ClientId *ConnectorProperty
+
+	// The OAuth2 client secret provided by the authorization server.
+	ClientSecret *ConnectorProperty
+
+	// The content type to use for token requests, such as
+	// application/x-www-form-urlencoded or application/json.
+	ContentType ContentType
+
+	// The HTTP method to use when making token requests, typically POST.
+	RequestMethod HTTPMethod
+
+	// The OAuth2 scope that defines the level of access requested for the client
+	// credentials flow.
+	Scope *ConnectorProperty
+
+	// The token endpoint URL where the client will request access tokens using client
+	// credentials.
+	TokenUrl *ConnectorProperty
+
+	// Additional parameters to include in token URL requests as key-value pairs.
+	TokenUrlParameters []ConnectorProperty
+
+	noSmithyDocumentSerde
+}
+
 // Specifies how Amazon CloudWatch data should be encrypted.
 type CloudWatchEncryption struct {
 
@@ -1209,6 +1321,10 @@ type CodeGenConfigurationNode struct {
 
 	// Specifies a Hudi data source that is registered in the Glue Data Catalog.
 	CatalogHudiSource *CatalogHudiSource
+
+	// Specifies an Apache Iceberg data source that is registered in the Glue Data
+	// Catalog.
+	CatalogIcebergSource *CatalogIcebergSource
 
 	// Specifies an Apache Kafka data store in the Data Catalog.
 	CatalogKafkaSource *CatalogKafkaSource
@@ -1258,6 +1374,10 @@ type CodeGenConfigurationNode struct {
 
 	// Specifies a DynamoDBC Catalog data store in the Glue Data Catalog.
 	DynamoDBCatalogSource *DynamoDBCatalogSource
+
+	// Specifies a DynamoDB ELT connector source for extracting data from DynamoDB
+	// tables.
+	DynamoDBELTConnectorSource *DynamoDBELTConnectorSource
 
 	// Specifies your data quality evaluation criteria.
 	EvaluateDataQuality *EvaluateDataQuality
@@ -1341,6 +1461,10 @@ type CodeGenConfigurationNode struct {
 	// Specifies a transform that renames a single data property key.
 	RenameField *RenameField
 
+	// Specifies a route node that directs data to different output paths based on
+	// defined filtering conditions.
+	Route *Route
+
 	// Specifies a Delta Lake data source that is registered in the Glue Data Catalog.
 	// The data source must be stored in Amazon S3.
 	S3CatalogDeltaSource *S3CatalogDeltaSource
@@ -1348,6 +1472,10 @@ type CodeGenConfigurationNode struct {
 	// Specifies a Hudi data source that is registered in the Glue Data Catalog. The
 	// data source must be stored in Amazon S3.
 	S3CatalogHudiSource *S3CatalogHudiSource
+
+	// Specifies an Apache Iceberg data source that is registered in the Glue Data
+	// Catalog. The Iceberg data source must be stored in Amazon S3.
+	S3CatalogIcebergSource *S3CatalogIcebergSource
 
 	// Specifies an Amazon S3 data store in the Glue Data Catalog.
 	S3CatalogSource *S3CatalogSource
@@ -1371,6 +1499,9 @@ type CodeGenConfigurationNode struct {
 	// Specifies a data target that writes to Amazon S3.
 	S3DirectTarget *S3DirectTarget
 
+	// Defines configuration parameters for reading Excel files from Amazon S3.
+	S3ExcelSource *S3ExcelSource
+
 	// Specifies a data target that writes to Amazon S3 in Apache Parquet columnar
 	// storage.
 	S3GlueParquetTarget *S3GlueParquetTarget
@@ -1383,6 +1514,18 @@ type CodeGenConfigurationNode struct {
 
 	// Specifies a Hudi data source stored in Amazon S3.
 	S3HudiSource *S3HudiSource
+
+	// Defines configuration parameters for writing data to Amazon S3 using
+	// HyperDirect optimization.
+	S3HyperDirectTarget *S3HyperDirectTarget
+
+	// Specifies an Apache Iceberg catalog target that writes data to Amazon S3 and
+	// registers the table in the Glue Data Catalog.
+	S3IcebergCatalogTarget *S3IcebergCatalogTarget
+
+	// Defines configuration parameters for writing data to Amazon S3 as an Apache
+	// Iceberg table.
+	S3IcebergDirectTarget *S3IcebergDirectTarget
 
 	// Specifies a JSON data store stored in Amazon S3.
 	S3JsonSource *S3JsonSource
@@ -1732,6 +1875,17 @@ type ColumnStatisticsTaskSettings struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration for a compaction optimizer. This configuration defines how
+// data files in your table will be compacted to improve query performance and
+// reduce storage costs.
+type CompactionConfiguration struct {
+
+	// The configuration for an Iceberg compaction optimizer.
+	IcebergConfiguration *IcebergCompactionConfiguration
+
+	noSmithyDocumentSerde
+}
+
 // A structure that contains compaction metrics for the optimizer run.
 type CompactionMetrics struct {
 
@@ -1927,9 +2081,9 @@ type Connection struct {
 	//
 	//   - JDBC_CONNECTION_URL - The URL for connecting to a JDBC data source.
 	//
-	//   - JDBC_ENFORCE_SSL - A Boolean string (true, false) specifying whether Secure
-	//   Sockets Layer (SSL) with hostname matching is enforced for the JDBC connection
-	//   on the client. The default is false.
+	//   - JDBC_ENFORCE_SSL - A case-insensitive Boolean string (true, false)
+	//   specifying whether Secure Sockets Layer (SSL) with hostname matching is enforced
+	//   for the JDBC connection on the client. The default is false.
 	//
 	//   - CUSTOM_JDBC_CERT - An Amazon S3 location specifying the customer's root
 	//   certificate. Glue uses this root certificate to validate the customer’s
@@ -2182,51 +2336,6 @@ type ConnectionInput struct {
 	//   - CUSTOM - Uses configuration settings contained in a custom connector to read
 	//   from and write to data stores that are not natively supported by Glue.
 	//
-	// Additionally, a ConnectionType for the following SaaS connectors is supported:
-	//
-	//   - FACEBOOKADS - Designates a connection to Facebook Ads.
-	//
-	//   - GOOGLEADS - Designates a connection to Google Ads.
-	//
-	//   - GOOGLESHEETS - Designates a connection to Google Sheets.
-	//
-	//   - GOOGLEANALYTICS4 - Designates a connection to Google Analytics 4.
-	//
-	//   - HUBSPOT - Designates a connection to HubSpot.
-	//
-	//   - INSTAGRAMADS - Designates a connection to Instagram Ads.
-	//
-	//   - INTERCOM - Designates a connection to Intercom.
-	//
-	//   - JIRACLOUD - Designates a connection to Jira Cloud.
-	//
-	//   - MARKETO - Designates a connection to Adobe Marketo Engage.
-	//
-	//   - NETSUITEERP - Designates a connection to Oracle NetSuite.
-	//
-	//   - SALESFORCE - Designates a connection to Salesforce using OAuth
-	//   authentication.
-	//
-	//   - SALESFORCEMARKETINGCLOUD - Designates a connection to Salesforce Marketing
-	//   Cloud.
-	//
-	//   - SALESFORCEPARDOT - Designates a connection to Salesforce Marketing Cloud
-	//   Account Engagement (MCAE).
-	//
-	//   - SAPODATA - Designates a connection to SAP OData.
-	//
-	//   - SERVICENOW - Designates a connection to ServiceNow.
-	//
-	//   - SLACK - Designates a connection to Slack.
-	//
-	//   - SNAPCHATADS - Designates a connection to Snapchat Ads.
-	//
-	//   - STRIPE - Designates a connection to Stripe.
-	//
-	//   - ZENDESK - Designates a connection to Zendesk.
-	//
-	//   - ZOHOCRM - Designates a connection to Zoho CRM.
-	//
 	// For more information on the connection parameters needed for a particular
 	// connector, see the documentation for the connector in [Adding an Glue connection]in the Glue User Guide.
 	//
@@ -2317,6 +2426,22 @@ type ConnectionPasswordEncryption struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration that defines the base URL and additional request parameters
+// needed during connection creation.
+type ConnectionPropertiesConfiguration struct {
+
+	// Key-value pairs of additional request parameters that may be needed during
+	// connection creation, such as API versions or service-specific configuration
+	// options.
+	AdditionalRequestParameters []ConnectorProperty
+
+	// The base instance URL for the endpoint that this connection type will connect
+	// to.
+	Url *ConnectorProperty
+
+	noSmithyDocumentSerde
+}
+
 // Specifies the connections used by a job.
 type ConnectionsList struct {
 
@@ -2334,11 +2459,126 @@ type ConnectionTypeBrief struct {
 	// environments), and data operations of the connector.
 	Capabilities *Capabilities
 
+	// A list of categories that this connection type belongs to. Categories help
+	// users filter and find appropriate connection types based on their use cases.
+	Categories []string
+
 	// The name of the connection type.
 	ConnectionType ConnectionType
 
+	// A list of variants available for this connection type. Different variants may
+	// provide specialized configurations for specific use cases or implementations of
+	// the same general connection type.
+	ConnectionTypeVariants []ConnectionTypeVariant
+
 	// A description of the connection type.
 	Description *string
+
+	// The human-readable name for the connection type that is displayed in the Glue
+	// console.
+	DisplayName *string
+
+	// The URL of the logo associated with a connection type.
+	LogoUrl *string
+
+	// The name of the vendor or provider that created or maintains this connection
+	// type.
+	Vendor *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents a variant of a connection type in Glue. Connection type variants
+// provide specific configurations and behaviors for different implementations of
+// the same general connection type.
+type ConnectionTypeVariant struct {
+
+	// The unique identifier for the connection type variant. This name is used
+	// internally to identify the specific variant of a connection type.
+	ConnectionTypeVariantName *string
+
+	// A detailed description of the connection type variant, including its purpose,
+	// use cases, and any specific configuration requirements.
+	Description *string
+
+	// The human-readable name for the connection type variant that is displayed in
+	// the Glue console.
+	DisplayName *string
+
+	// The URL of the logo associated with a connection type variant.
+	LogoUrl *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration that defines the supported authentication types and required
+// properties for the connection type.
+type ConnectorAuthenticationConfiguration struct {
+
+	// A list of authentication types supported by this connection type, such as
+	// Basic, OAuth2, or Custom authentication methods.
+	//
+	// This member is required.
+	AuthenticationTypes []AuthenticationType
+
+	// Basic authentication configuration that defines the username and password
+	// properties for HTTP Basic authentication.
+	BasicAuthenticationProperties *BasicAuthenticationProperties
+
+	// Custom authentication configuration that allows for flexible authentication
+	// mechanisms beyond standard Basic and OAuth2 flows.
+	CustomAuthenticationProperties *CustomAuthenticationProperties
+
+	// OAuth2 configuration container that defines the authentication properties and
+	// flow-specific configurations for OAuth2-based connections.
+	OAuth2Properties *ConnectorOAuth2Properties
+
+	noSmithyDocumentSerde
+}
+
+// OAuth2 authorization code configuration that defines the properties needed for
+// the Authorization Code grant type flow.
+type ConnectorAuthorizationCodeProperties struct {
+
+	// The authorization code received from the authorization server after user
+	// consent.
+	AuthorizationCode *ConnectorProperty
+
+	// The authorization endpoint URL where users will be redirected to grant
+	// authorization.
+	AuthorizationCodeUrl *ConnectorProperty
+
+	// The OAuth2 client identifier provided by the authorization server.
+	ClientId *ConnectorProperty
+
+	// The OAuth2 client secret provided by the authorization server.
+	ClientSecret *ConnectorProperty
+
+	// The content type to use for token exchange requests, such as
+	// application/x-www-form-urlencoded or application/json.
+	ContentType ContentType
+
+	// The OAuth2 prompt parameter that controls the authorization server's behavior
+	// during user authentication.
+	Prompt *ConnectorProperty
+
+	// The redirect URI that must match the URI registered with the authorization
+	// server.
+	RedirectUri *ConnectorProperty
+
+	// The HTTP method to use when making token exchange requests, typically POST.
+	RequestMethod HTTPMethod
+
+	// The OAuth2 scope that defines the level of access requested for the
+	// authorization code flow.
+	Scope *ConnectorProperty
+
+	// The token endpoint URL where the authorization code will be exchanged for an
+	// access token.
+	TokenUrl *ConnectorProperty
+
+	// Additional parameters to include in token URL requests as key-value pairs.
+	TokenUrlParameters []ConnectorProperty
 
 	noSmithyDocumentSerde
 }
@@ -2425,6 +2665,66 @@ type ConnectorDataTarget struct {
 
 	// The nodes that are inputs to the data target.
 	Inputs []string
+
+	noSmithyDocumentSerde
+}
+
+// OAuth2 configuration container that defines the authentication properties and
+// flow-specific configurations for OAuth2-based connections.
+type ConnectorOAuth2Properties struct {
+
+	// The OAuth2 grant type to use for authentication, such as CLIENT_CREDENTIALS,
+	// JWT_BEARER, or AUTHORIZATION_CODE.
+	//
+	// This member is required.
+	OAuth2GrantType ConnectorOAuth2GrantType
+
+	// Configuration properties specific to the OAuth2 Authorization Code grant type
+	// flow.
+	AuthorizationCodeProperties *ConnectorAuthorizationCodeProperties
+
+	// Configuration properties specific to the OAuth2 Client Credentials grant type
+	// flow.
+	ClientCredentialsProperties *ClientCredentialsProperties
+
+	// Configuration properties specific to the OAuth2 JWT Bearer grant type flow.
+	JWTBearerProperties *JWTBearerProperties
+
+	noSmithyDocumentSerde
+}
+
+// Defines a property configuration for connection types, default values, and
+// where the property should be used in requests.
+type ConnectorProperty struct {
+
+	// The name of the property.
+	//
+	// This member is required.
+	Name *string
+
+	// The data type of this property
+	//
+	// This member is required.
+	PropertyType PropertyType
+
+	// Indicates whether the property is required.
+	//
+	// This member is required.
+	Required *bool
+
+	// A list of AllowedValue objects representing the values allowed for the property.
+	AllowedValues []string
+
+	// The default value for the property.
+	DefaultValue *string
+
+	// A key name to use when sending this property in API requests, if different from
+	// the display name.
+	KeyOverride *string
+
+	// Specifies where this property should be included in REST requests, such as in
+	// headers, query parameters, or request body.
+	PropertyLocation PropertyLocation
 
 	noSmithyDocumentSerde
 }
@@ -2741,6 +3041,36 @@ type CreateGrokClassifierRequest struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration parameters required to create a new Iceberg table in the Glue
+// Data Catalog, including table properties and metadata specifications.
+type CreateIcebergTableInput struct {
+
+	// The S3 location where the Iceberg table data will be stored.
+	//
+	// This member is required.
+	Location *string
+
+	// The schema definition that specifies the structure, field types, and metadata
+	// for the Iceberg table.
+	//
+	// This member is required.
+	Schema *IcebergSchema
+
+	// The partitioning specification that defines how the Iceberg table data will be
+	// organized and partitioned for optimal query performance.
+	PartitionSpec *IcebergPartitionSpec
+
+	// Key-value pairs of additional table properties and configuration settings for
+	// the Iceberg table.
+	Properties map[string]string
+
+	// The sort order specification that defines how data should be ordered within
+	// each partition to optimize query performance.
+	WriteOrder *IcebergSortOrder
+
+	noSmithyDocumentSerde
+}
+
 // Specifies a JSON classifier for CreateClassifier to create.
 type CreateJsonClassifierRequest struct {
 
@@ -2830,6 +3160,36 @@ type CsvClassifier struct {
 
 	// The version of this classifier.
 	Version int64
+
+	noSmithyDocumentSerde
+}
+
+// Cursor-based pagination configuration that defines how to handle pagination
+// using cursor tokens or next page identifiers.
+type CursorConfiguration struct {
+
+	// The parameter name or JSON path that contains the cursor or token for
+	// retrieving the next page of results.
+	//
+	// This member is required.
+	NextPage *ExtractedParameter
+
+	// The parameter name used to specify the maximum number of results to return per
+	// page.
+	LimitParameter *ExtractedParameter
+
+	noSmithyDocumentSerde
+}
+
+// Custom authentication configuration that allows for flexible authentication
+// mechanisms beyond standard Basic and OAuth2 flows.
+type CustomAuthenticationProperties struct {
+
+	// A map of custom authentication parameters that define the specific
+	// authentication mechanism and required properties.
+	//
+	// This member is required.
+	AuthenticationParameters []ConnectorProperty
 
 	noSmithyDocumentSerde
 }
@@ -3080,6 +3440,31 @@ type DatapointInclusionAnnotation struct {
 	noSmithyDocumentSerde
 }
 
+// A summary of metrics showing the total counts of processed rows and rules,
+// including their pass/fail statistics based on row-level results.
+type DataQualityAggregatedMetrics struct {
+
+	// The total number of rows that failed one or more data quality rules.
+	TotalRowsFailed *float64
+
+	// The total number of rows that passed all applicable data quality rules.
+	TotalRowsPassed *float64
+
+	// The total number of rows that were processed during the data quality evaluation.
+	TotalRowsProcessed *float64
+
+	// The total number of data quality rules that failed their evaluation criteria.
+	TotalRulesFailed *float64
+
+	// The total number of data quality rules that passed their evaluation criteria.
+	TotalRulesPassed *float64
+
+	// The total number of data quality rules that were evaluated.
+	TotalRulesProcessed *float64
+
+	noSmithyDocumentSerde
+}
+
 // Describes the result of the evaluation of a data quality analyzer.
 type DataQualityAnalyzerResult struct {
 
@@ -3130,6 +3515,42 @@ type DataQualityEvaluationRunAdditionalRunOptions struct {
 	noSmithyDocumentSerde
 }
 
+// The database and table in the Glue Data Catalog that is used for input or
+// output data for Data Quality Operations.
+type DataQualityGlueTable struct {
+
+	// A database name in the Glue Data Catalog.
+	//
+	// This member is required.
+	DatabaseName *string
+
+	// A table name in the Glue Data Catalog.
+	//
+	// This member is required.
+	TableName *string
+
+	// Additional options for the table. Currently there are two keys supported:
+	//
+	//   - pushDownPredicate : to filter on partitions without having to list and read
+	//   all the files in your dataset.
+	//
+	//   - catalogPartitionPredicate : to use server-side partition pruning using
+	//   partition indexes in the Glue Data Catalog.
+	AdditionalOptions map[string]string
+
+	// A unique identifier for the Glue Data Catalog.
+	CatalogId *string
+
+	// The name of the connection to the Glue Data Catalog.
+	ConnectionName *string
+
+	// SQL Query of SparkSQL format that can be used to pre-process the data for the
+	// table in Glue Data Catalog, before running the Data Quality Operation.
+	PreProcessingQuery *string
+
+	noSmithyDocumentSerde
+}
+
 // Describes the data quality metric value according to the analysis of historical
 // data.
 type DataQualityMetricValues struct {
@@ -3167,6 +3588,11 @@ type DataQualityObservation struct {
 
 // Describes a data quality result.
 type DataQualityResult struct {
+
+	//  A summary of DataQualityAggregatedMetrics objects showing the total counts of
+	// processed rows and rules, including their pass/fail statistics based on
+	// row-level results.
+	AggregatedMetrics *DataQualityAggregatedMetrics
 
 	// A list of DataQualityAnalyzerResult objects representing the results for each
 	// analyzer.
@@ -3311,11 +3737,18 @@ type DataQualityRuleResult struct {
 	// An evaluation message.
 	EvaluationMessage *string
 
+	// A map containing labels assigned to the data quality rule.
+	Labels map[string]string
+
 	// The name of the data quality rule.
 	Name *string
 
 	// A pass or fail status for the rule.
 	Result DataQualityRuleResultStatus
+
+	// A map containing metrics associated with the evaluation of the rule based on
+	// row-level results.
+	RuleMetrics map[string]float64
 
 	noSmithyDocumentSerde
 }
@@ -3432,9 +3865,10 @@ type DataQualityTargetTable struct {
 // A data source (an Glue table) for which you want data quality results.
 type DataSource struct {
 
+	// An Glue table for Data Quality Operations.
+	DataQualityGlueTable *DataQualityGlueTable
+
 	// An Glue table.
-	//
-	// This member is required.
 	GlueTable *GlueTable
 
 	noSmithyDocumentSerde
@@ -3474,6 +3908,65 @@ type DateColumnStatisticsData struct {
 
 	// The lowest value in the column.
 	MinimumValue *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Specifies additional options for DynamoDB ELT catalog operations.
+type DDBELTCatalogAdditionalOptions struct {
+
+	// Specifies the DynamoDB export configuration for the ELT operation.
+	DynamodbExport *string
+
+	// Specifies whether to unnest DynamoDB JSON format. When set to true , nested JSON
+	// structures in DynamoDB items are flattened.
+	DynamodbUnnestDDBJson bool
+
+	noSmithyDocumentSerde
+}
+
+// Specifies connection options for DynamoDB ELT (Extract, Load, Transform)
+// operations. This structure contains configuration parameters for connecting to
+// and extracting data from DynamoDB tables using the ELT connector.
+type DDBELTConnectionOptions struct {
+
+	// The Amazon Resource Name (ARN) of the DynamoDB table to extract data from. This
+	// parameter specifies the source table for the ELT operation.
+	//
+	// This member is required.
+	DynamodbTableArn *string
+
+	// Specifies the export type for DynamoDB data extraction. This parameter
+	// determines how data is exported from the DynamoDB table during the ELT process.
+	DynamodbExport DdbExportType
+
+	// The name of the Amazon S3 bucket used for intermediate storage during the
+	// DynamoDB ELT process. This bucket is used to temporarily store exported DynamoDB
+	// data before it is processed by the ELT job.
+	DynamodbS3Bucket *string
+
+	// The Amazon Web Services account ID of the owner of the S3 bucket specified in
+	// DynamodbS3Bucket . This parameter is required when the S3 bucket is owned by a
+	// different Amazon Web Services account than the one running the ELT job, enabling
+	// cross-account access to the intermediate storage bucket.
+	DynamodbS3BucketOwner *string
+
+	// The S3 object key prefix for files stored in the intermediate S3 bucket during
+	// the DynamoDB ELT process. This prefix helps organize and identify the temporary
+	// files created during data extraction.
+	DynamodbS3Prefix *string
+
+	// The Amazon Resource Name (ARN) of the Amazon Web Services Security Token
+	// Service (STS) role to assume for accessing DynamoDB and S3 resources during the
+	// ELT operation. This role must have the necessary permissions to read from the
+	// DynamoDB table and write to the intermediate S3 bucket.
+	DynamodbStsRoleArn *string
+
+	// A boolean value that specifies whether to unnest DynamoDB JSON format during
+	// data extraction. When set to true , the connector will flatten nested JSON
+	// structures from DynamoDB items. When set to false , the original DynamoDB JSON
+	// structure is preserved.
+	DynamodbUnnestDDBJson bool
 
 	noSmithyDocumentSerde
 }
@@ -3734,6 +4227,9 @@ type DirectJDBCSource struct {
 	// This member is required.
 	Table *string
 
+	// Specifies the data schema for the direct JDBC source.
+	OutputSchemas []GlueSchema
+
 	// The temp directory of the JDBC Redshift source.
 	RedshiftTmpDir *string
 
@@ -3986,6 +4482,32 @@ type DynamoDBCatalogSource struct {
 	// This member is required.
 	Table *string
 
+	// Specifies additional connection options for the DynamoDB data source.
+	AdditionalOptions *DDBELTCatalogAdditionalOptions
+
+	// Specifies whether Point-in-Time Recovery (PITR) is enabled for the DynamoDB
+	// table. When set to true , allows reading from a specific point in time. The
+	// default value is false .
+	PitrEnabled *bool
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a DynamoDB ELT connector source for extracting data from DynamoDB
+// tables.
+type DynamoDBELTConnectorSource struct {
+
+	// The name of the DynamoDB ELT connector source.
+	//
+	// This member is required.
+	Name *string
+
+	// The connection options for the DynamoDB ELT connector source.
+	ConnectionOptions *DDBELTConnectionOptions
+
+	// Specifies the data schema for the DynamoDB ELT connector source.
+	OutputSchemas []GlueSchema
+
 	noSmithyDocumentSerde
 }
 
@@ -4089,6 +4611,21 @@ type Entity struct {
 
 	// Label used for the entity.
 	Label *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration that defines how to interact with a specific data entity through
+// the REST API, including its access patterns and schema definition.
+type EntityConfiguration struct {
+
+	// The schema definition for this entity, including field names, types, and other
+	// metadata that describes the structure of the data.
+	Schema map[string]FieldDefinition
+
+	// The source configuration that defines how to make requests to access this
+	// entity's data through the REST API.
+	SourceConfiguration *SourceConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -4254,12 +4791,37 @@ type ExportLabelsTaskRunProperties struct {
 	noSmithyDocumentSerde
 }
 
+// Parameter extraction configuration that defines how to extract and map values
+// from API responses to request parameters.
+type ExtractedParameter struct {
+
+	// The default value to use if the parameter cannot be extracted from the response.
+	DefaultValue *string
+
+	// The parameter key name that will be used in subsequent requests.
+	Key *string
+
+	// Specifies where this extracted parameter should be placed in subsequent
+	// requests, such as in headers, query parameters, or request body.
+	PropertyLocation PropertyLocation
+
+	// The JSON path or extraction mapping that defines how to extract the parameter
+	// value from API responses.
+	Value *ResponseExtractionMapping
+
+	noSmithyDocumentSerde
+}
+
 // A catalog that points to an entity outside the Glue Data Catalog.
 type FederatedCatalog struct {
 
 	// The name of the connection to an external data source, for example a
 	// Redshift-federated catalog.
 	ConnectionName *string
+
+	// The type of connection used to access the federated catalog, specifying the
+	// protocol or method for connection to the external data source.
+	ConnectionType *string
 
 	// A unique identifier for the federated catalog.
 	Identifier *string
@@ -4273,6 +4835,10 @@ type FederatedDatabase struct {
 	// The name of the connection to the external metastore.
 	ConnectionName *string
 
+	// The type of connection used to access the federated database, such as JDBC,
+	// ODBC, or other supported connection protocols.
+	ConnectionType *string
+
 	// A unique identifier for the federated database.
 	Identifier *string
 
@@ -4284,6 +4850,10 @@ type FederatedTable struct {
 
 	// The name of the connection to the external metastore.
 	ConnectionName *string
+
+	// The type of connection used to access the federated table, specifying the
+	// protocol or method for connecting to the external data source.
+	ConnectionType *string
 
 	// A unique identifier for the federated database.
 	DatabaseIdentifier *string
@@ -4356,6 +4926,23 @@ type Field struct {
 
 	// A list of supported values for the field.
 	SupportedValues []string
+
+	noSmithyDocumentSerde
+}
+
+// Defines a field in an entity schema for REST connector data sources, specifying
+// the field name and data type.
+type FieldDefinition struct {
+
+	// The data type of the field.
+	//
+	// This member is required.
+	FieldDataType FieldDataType
+
+	// The name of the field in the entity schema.
+	//
+	// This member is required.
+	Name *string
 
 	noSmithyDocumentSerde
 }
@@ -4621,6 +5208,9 @@ type GlueStudioSchemaColumn struct {
 	// This member is required.
 	Name *string
 
+	// The data type of the column as defined in Glue Studio.
+	GlueStudioType *string
+
 	// The hive type for this column in the Glue Studio schema.
 	Type *string
 
@@ -4759,6 +5349,29 @@ type GrokClassifier struct {
 	noSmithyDocumentSerde
 }
 
+// Specifies a group of filters with a logical operator that determines how the
+// filters are combined to evaluate routing conditions.
+type GroupFilters struct {
+
+	// A list of filter expressions that define the conditions for this group.
+	//
+	// This member is required.
+	Filters []FilterExpression
+
+	// The name of the filter group.
+	//
+	// This member is required.
+	GroupName *string
+
+	// The logical operator used to combine the filters in this group. Determines
+	// whether all filters must match (AND) or any filter can match (OR).
+	//
+	// This member is required.
+	LogicalOperator FilterLogicalOperator
+
+	noSmithyDocumentSerde
+}
+
 // Specifies an Apache Hudi data source.
 type HudiTarget struct {
 
@@ -4788,6 +5401,49 @@ type HudiTarget struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration for an Iceberg compaction optimizer. This configuration
+// defines parameters for optimizing the layout of data files in Iceberg tables.
+type IcebergCompactionConfiguration struct {
+
+	// The minimum number of deletes that must be present in a data file to make it
+	// eligible for compaction. This parameter helps optimize compaction by focusing on
+	// files that contain a significant number of delete operations, which can improve
+	// query performance by removing deleted records. If an input is not provided, the
+	// default value 1 will be used.
+	DeleteFileThreshold *int32
+
+	// The minimum number of data files that must be present in a partition before
+	// compaction will actually compact files. This parameter helps control when
+	// compaction is triggered, preventing unnecessary compaction operations on
+	// partitions with few files. If an input is not provided, the default value 100
+	// will be used.
+	MinInputFiles *int32
+
+	// The strategy to use for compaction. Valid values are:
+	//
+	//   - binpack : Combines small files into larger files, typically targeting sizes
+	//   over 100MB, while applying any pending deletes. This is the recommended
+	//   compaction strategy for most use cases.
+	//
+	//   - sort : Organizes data based on specified columns which are sorted
+	//   hierarchically during compaction, improving query performance for filtered
+	//   operations. This strategy is recommended when your queries frequently filter on
+	//   specific columns. To use this strategy, you must first define a sort order in
+	//   your Iceberg table properties using the sort_order table property.
+	//
+	//   - z-order : Optimizes data organization by blending multiple attributes into a
+	//   single scalar value that can be used for sorting, allowing efficient querying
+	//   across multiple dimensions. This strategy is recommended when you need to query
+	//   data across multiple dimensions simultaneously. To use this strategy, you must
+	//   first define a sort order in your Iceberg table properties using the
+	//   sort_order table property.
+	//
+	// If an input is not provided, the default value 'binpack' will be used.
+	Strategy CompactionStrategy
+
+	noSmithyDocumentSerde
+}
+
 // Compaction metrics for Iceberg for the optimizer run.
 type IcebergCompactionMetrics struct {
 
@@ -4809,6 +5465,38 @@ type IcebergCompactionMetrics struct {
 	noSmithyDocumentSerde
 }
 
+// Encryption key structure used for Iceberg table encryption. Contains the key
+// ID, encrypted key metadata, optional reference to the encrypting key, and
+// additional properties for the table's encryption scheme.
+type IcebergEncryptedKey struct {
+
+	// Encrypted key and metadata, base64 encoded. The format of encrypted key
+	// metadata is determined by the table's encryption scheme and can be a wrapped
+	// format specific to the table's KMS provider.
+	//
+	// This member is required.
+	EncryptedKeyMetadata *string
+
+	// Unique identifier of the encryption key used for Iceberg table encryption. This
+	// ID is used to reference the key in table metadata and track which key was used
+	// to encrypt specific data.
+	//
+	// This member is required.
+	KeyId *string
+
+	// Optional ID of the key used to encrypt or wrap the key metadata in Iceberg
+	// table encryption. This field references another encryption key that was used to
+	// encrypt the current key's metadata.
+	EncryptedById *string
+
+	// A string to string map of additional metadata used by the table's encryption
+	// scheme. These properties provide additional context and configuration for the
+	// encryption key implementation.
+	Properties map[string]string
+
+	noSmithyDocumentSerde
+}
+
 // A structure that defines an Apache Iceberg metadata table to create in the
 // catalog.
 type IcebergInput struct {
@@ -4818,8 +5506,68 @@ type IcebergInput struct {
 	// This member is required.
 	MetadataOperation MetadataOperation
 
+	// The configuration parameters required to create a new Iceberg table in the Glue
+	// Data Catalog, including table properties and metadata specifications.
+	CreateIcebergTableInput *CreateIcebergTableInput
+
 	// The table version for the Iceberg table. Defaults to 2.
 	Version *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that specifies Iceberg table optimization properties for the
+// catalog, including configurations for compaction, retention, and orphan file
+// deletion operations.
+type IcebergOptimizationProperties struct {
+
+	// A map of key-value pairs that specify configuration parameters for Iceberg
+	// table compaction operations, which optimize the layout of data files to improve
+	// query performance.
+	Compaction map[string]string
+
+	// A map of key-value pairs that specify configuration parameters for Iceberg
+	// orphan file deletion operations, which identify and remove files that are no
+	// longer referenced by the table metadata.
+	OrphanFileDeletion map[string]string
+
+	// A map of key-value pairs that specify configuration parameters for Iceberg
+	// table retention operations, which manage the lifecycle of table snapshots to
+	// control storage costs.
+	Retention map[string]string
+
+	// The Amazon Resource Name (ARN) of the IAM role that will be assumed to perform
+	// Iceberg table optimization operations.
+	RoleArn *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that contains the output properties of Iceberg table optimization
+// configuration for your catalog resource in the Glue Data Catalog.
+type IcebergOptimizationPropertiesOutput struct {
+
+	// A map of key-value pairs that specify configuration parameters for Iceberg
+	// table compaction operations, which optimize the layout of data files to improve
+	// query performance.
+	Compaction map[string]string
+
+	// The timestamp when the Iceberg optimization properties were last updated.
+	LastUpdatedTime *time.Time
+
+	// A map of key-value pairs that specify configuration parameters for Iceberg
+	// orphan file deletion operations, which identify and remove files that are no
+	// longer referenced by the table metadata.
+	OrphanFileDeletion map[string]string
+
+	// A map of key-value pairs that specify configuration parameters for Iceberg
+	// table retention operations, which manage the lifecycle of table snapshots to
+	// control storage costs.
+	Retention map[string]string
+
+	// The Amazon Resource Name (ARN) of the IAM role that is used to perform Iceberg
+	// table optimization operations.
+	RoleArn *string
 
 	noSmithyDocumentSerde
 }
@@ -4835,6 +5583,12 @@ type IcebergOrphanFileDeletionConfiguration struct {
 	// The number of days that orphan files should be retained before file deletion.
 	// If an input is not provided, the default value 3 will be used.
 	OrphanFileRetentionPeriodInDays *int32
+
+	// The interval in hours between orphan file deletion job runs. This parameter
+	// controls how frequently the orphan file deletion optimizer will run to clean up
+	// orphan files. The value must be between 3 and 168 hours (7 days). If an input is
+	// not provided, the default value 24 will be used.
+	RunRateInHours *int32
 
 	noSmithyDocumentSerde
 }
@@ -4857,6 +5611,53 @@ type IcebergOrphanFileDeletionMetrics struct {
 	noSmithyDocumentSerde
 }
 
+// Defines a single partition field within an Iceberg partition specification,
+// including the source field, transformation function, partition name, and unique
+// identifier.
+type IcebergPartitionField struct {
+
+	// The name of the partition field as it will appear in the partitioned table
+	// structure.
+	//
+	// This member is required.
+	Name *string
+
+	// The identifier of the source field from the table schema that this partition
+	// field is based on.
+	//
+	// This member is required.
+	SourceId int32
+
+	// The transformation function applied to the source field to create the
+	// partition, such as identity, bucket, truncate, year, month, day, or hour.
+	//
+	// This member is required.
+	Transform *string
+
+	// The unique identifier assigned to this partition field within the Iceberg
+	// table's partition specification.
+	FieldId int32
+
+	noSmithyDocumentSerde
+}
+
+// Defines the partitioning specification for an Iceberg table, determining how
+// table data will be organized and partitioned for optimal query performance.
+type IcebergPartitionSpec struct {
+
+	// The list of partition fields that define how the table data should be
+	// partitioned, including source fields and their transformations.
+	//
+	// This member is required.
+	Fields []IcebergPartitionField
+
+	// The unique identifier for this partition specification within the Iceberg
+	// table's metadata history.
+	SpecId int32
+
+	noSmithyDocumentSerde
+}
+
 // The configuration for an Iceberg snapshot retention optimizer.
 type IcebergRetentionConfiguration struct {
 
@@ -4868,6 +5669,12 @@ type IcebergRetentionConfiguration struct {
 	// input is not provided, the corresponding Iceberg table configuration field will
 	// be used or if not present, the default value 1 will be used.
 	NumberOfSnapshotsToRetain *int32
+
+	// The interval in hours between retention job runs. This parameter controls how
+	// frequently the retention optimizer will run to clean up expired snapshots. The
+	// value must be between 3 and 168 hours (7 days). If an input is not provided, the
+	// default value 24 will be used.
+	RunRateInHours *int32
 
 	// The number of days to retain the Iceberg snapshots. If an input is not
 	// provided, the corresponding Iceberg table configuration field will be used or if
@@ -4897,6 +5704,170 @@ type IcebergRetentionMetrics struct {
 
 	// The number of manifest lists deleted by the retention job run.
 	NumberOfManifestListsDeleted int64
+
+	noSmithyDocumentSerde
+}
+
+// Defines the schema structure for an Iceberg table, including field definitions,
+// data types, and schema metadata.
+type IcebergSchema struct {
+
+	// The list of field definitions that make up the table schema, including field
+	// names, types, and metadata.
+	//
+	// This member is required.
+	Fields []IcebergStructField
+
+	// The list of field identifiers that uniquely identify records in the table, used
+	// for row-level operations and deduplication.
+	IdentifierFieldIds []int32
+
+	// The unique identifier for this schema version within the Iceberg table's schema
+	// evolution history.
+	SchemaId int32
+
+	// The root type of the schema structure, typically "struct" for Iceberg table
+	// schemas.
+	Type IcebergStructTypeEnum
+
+	noSmithyDocumentSerde
+}
+
+// Defines a single field within an Iceberg sort order specification, including
+// the source field, transformation, sort direction, and null value ordering.
+type IcebergSortField struct {
+
+	// The sort direction for this field, either ascending or descending.
+	//
+	// This member is required.
+	Direction IcebergSortDirection
+
+	// The ordering behavior for null values in this field, specifying whether nulls
+	// should appear first or last in the sort order.
+	//
+	// This member is required.
+	NullOrder IcebergNullOrder
+
+	// The identifier of the source field from the table schema that this sort field
+	// is based on.
+	//
+	// This member is required.
+	SourceId int32
+
+	// The transformation function applied to the source field before sorting, such as
+	// identity, bucket, or truncate.
+	//
+	// This member is required.
+	Transform *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the sort order specification for an Iceberg table, determining how data
+// should be ordered within partitions to optimize query performance.
+type IcebergSortOrder struct {
+
+	// The list of fields and their sort directions that define the ordering criteria
+	// for the Iceberg table data.
+	//
+	// This member is required.
+	Fields []IcebergSortField
+
+	// The unique identifier for this sort order specification within the Iceberg
+	// table's metadata.
+	//
+	// This member is required.
+	OrderId int32
+
+	noSmithyDocumentSerde
+}
+
+// Defines a single field within an Iceberg table schema, including its
+// identifier, name, data type, nullability, and documentation.
+type IcebergStructField struct {
+
+	// The unique identifier assigned to this field within the Iceberg table schema,
+	// used for schema evolution and field tracking.
+	//
+	// This member is required.
+	Id int32
+
+	// The name of the field as it appears in the table schema and query operations.
+	//
+	// This member is required.
+	Name *string
+
+	// Indicates whether this field is required (non-nullable) or optional (nullable)
+	// in the table schema.
+	//
+	// This member is required.
+	Required bool
+
+	// The data type definition for this field, specifying the structure and format of
+	// the data it contains.
+	//
+	// This member is required.
+	Type document.Interface
+
+	// Optional documentation or description text that provides additional context
+	// about the purpose and usage of this field.
+	Doc *string
+
+	// Default value used to populate the field's value for all records that were
+	// written before the field was added to the schema. This enables backward
+	// compatibility when adding new fields to existing Iceberg tables.
+	InitialDefault document.Interface
+
+	// Default value used to populate the field's value for any records written after
+	// the field was added to the schema, if the writer does not supply the field's
+	// value. This can be changed through schema evolution.
+	WriteDefault document.Interface
+
+	noSmithyDocumentSerde
+}
+
+// Defines a complete set of updates to be applied to an Iceberg table, including
+// schema changes, partitioning modifications, sort order adjustments, location
+// updates, and property changes.
+type IcebergTableUpdate struct {
+
+	// The updated S3 location where the Iceberg table data will be stored.
+	//
+	// This member is required.
+	Location *string
+
+	// The updated schema definition for the Iceberg table, specifying any changes to
+	// field structure, data types, or schema metadata.
+	//
+	// This member is required.
+	Schema *IcebergSchema
+
+	// The type of update action to be performed on the Iceberg table. Defines the
+	// specific operation such as adding schema, setting current schema, adding
+	// partition spec, or managing encryption keys.
+	Action IcebergUpdateAction
+
+	// Encryption key information associated with an Iceberg table update operation.
+	// Used when adding or removing encryption keys from the table metadata during
+	// table evolution.
+	EncryptionKey *IcebergEncryptedKey
+
+	// Identifier of the encryption key involved in an Iceberg table update operation.
+	// References the specific key being added to or removed from the table's
+	// encryption configuration.
+	KeyId *string
+
+	// The updated partitioning specification that defines how the table data should
+	// be reorganized and partitioned.
+	PartitionSpec *IcebergPartitionSpec
+
+	// Updated key-value pairs of table properties and configuration settings for the
+	// Iceberg table.
+	Properties map[string]string
+
+	// The updated sort order specification that defines how data should be ordered
+	// within partitions for optimal query performance.
+	SortOrder *IcebergSortOrder
 
 	noSmithyDocumentSerde
 }
@@ -4984,6 +5955,9 @@ type InboundIntegration struct {
 	// A list of errors associated with the integration.
 	Errors []IntegrationError
 
+	// Properties associated with the integration.
+	IntegrationConfig *IntegrationConfig
+
 	noSmithyDocumentSerde
 }
 
@@ -5048,11 +6022,38 @@ type Integration struct {
 	// A list of errors associated with the integration.
 	Errors []IntegrationError
 
+	// Properties associated with the integration.
+	IntegrationConfig *IntegrationConfig
+
 	// The ARN of a KMS key used for encrypting the channel.
 	KmsKeyId *string
 
 	// Metadata assigned to the resource consisting of a list of key-value pairs.
 	Tags []Tag
+
+	noSmithyDocumentSerde
+}
+
+// Properties associated with the integration.
+type IntegrationConfig struct {
+
+	// Enables continuous synchronization for on-demand data extractions from SaaS
+	// applications to Amazon Web Services data services like Amazon Redshift and
+	// Amazon S3.
+	ContinuousSync *bool
+
+	// Specifies the frequency at which CDC (Change Data Capture) pulls or incremental
+	// loads should occur. This parameter provides flexibility to align the refresh
+	// rate with your specific data update patterns, system load considerations, and
+	// performance optimization goals. Time increment can be set from 15 minutes to
+	// 8640 minutes (six days).
+	RefreshInterval *string
+
+	//  A collection of key-value pairs that specify additional properties for the
+	// integration source. These properties provide configuration options that can be
+	// used to customize the behavior of the ODB source during data integration
+	// operations.
+	SourceProperties map[string]string
 
 	noSmithyDocumentSerde
 }
@@ -5084,11 +6085,84 @@ type IntegrationFilter struct {
 // A structure that describes how data is partitioned on the target.
 type IntegrationPartition struct {
 
-	// The field name used to partition data on the target.
+	// Specifies the timestamp format of the source data. Valid values are:
+	//
+	//   - epoch_sec - Unix epoch timestamp in seconds
+	//
+	//   - epoch_milli - Unix epoch timestamp in milliseconds
+	//
+	//   - iso - ISO 8601 formatted timestamp
+	//
+	// Only specify ConversionSpec when using timestamp-based partition functions
+	// (year, month, day, or hour). Glue Zero-ETL uses this parameter to correctly
+	// transform source data into timestamp format before partitioning.
+	//
+	// Do not use high-cardinality columns with the identity partition function.
+	// High-cardinality columns include:
+	//
+	//   - Primary keys
+	//
+	//   - Timestamp fields (such as LastModifiedTimestamp , CreatedDate )
+	//
+	//   - System-generated timestamps
+	//
+	// Using high-cardinality columns with identity partitioning creates many small
+	// partitions, which can significantly degrade ingestion performance.
+	ConversionSpec *string
+
+	// The field name used to partition data on the target. Avoid using columns that
+	// have unique values for each row (for example, `LastModifiedTimestamp`,
+	// `SystemModTimeStamp`) as the partition column. These columns are not suitable
+	// for partitioning because they create a large number of small partitions, which
+	// can lead to performance issues.
 	FieldName *string
 
-	// Specifies a function used to partition data on the target.
+	// Specifies the function used to partition data on the target. The accepted
+	// values for this parameter are:
+	//
+	//   - identity - Uses source values directly without transformation
+	//
+	//   - year - Extracts the year from timestamp values (e.g., 2023)
+	//
+	//   - month - Extracts the month from timestamp values (e.g., 2023-01)
+	//
+	//   - day - Extracts the day from timestamp values (e.g., 2023-01-15)
+	//
+	//   - hour - Extracts the hour from timestamp values (e.g., 2023-01-15-14)
 	FunctionSpec *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure representing an integration resource property.
+type IntegrationResourceProperty struct {
+
+	// The connection ARN of the source, or the database ARN of the target.
+	//
+	// This member is required.
+	ResourceArn *string
+
+	// The resource ARN created through this create API. The format is something like
+	// arn:aws:glue:::integrationresourceproperty/*
+	ResourcePropertyArn *string
+
+	// The resource properties associated with the integration source.
+	SourceProcessingProperties *SourceProcessingProperties
+
+	// The resource properties associated with the integration target.
+	TargetProcessingProperties *TargetProcessingProperties
+
+	noSmithyDocumentSerde
+}
+
+// A filter for integration resource properties.
+type IntegrationResourcePropertyFilter struct {
+
+	// The name of the filter. Supported filter keys are SourceArn and TargetArn .
+	Name *string
+
+	// A list of filter values.
+	Values []string
 
 	noSmithyDocumentSerde
 }
@@ -5441,44 +6515,34 @@ type Job struct {
 	// restarted during the maintenance window after 7 days.
 	Timeout *int32
 
-	// The type of predefined worker that is allocated when a job runs. Accepts a
-	// value of G.1X, G.2X, G.4X, G.8X or G.025X for Spark jobs. Accepts the value Z.2X
-	// for Ray jobs.
+	// The type of predefined worker that is allocated when a job runs.
 	//
-	//   - For the G.1X worker type, each worker maps to 1 DPU (4 vCPUs, 16 GB of
-	//   memory) with 94GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for workloads such as data transforms, joins, and queries, to offers
-	//   a scalable and cost effective way to run most jobs.
+	// Glue provides multiple worker types to accommodate different workload
+	// requirements:
 	//
-	//   - For the G.2X worker type, each worker maps to 2 DPU (8 vCPUs, 32 GB of
-	//   memory) with 138GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for workloads such as data transforms, joins, and queries, to offers
-	//   a scalable and cost effective way to run most jobs.
+	// G Worker Types (General-purpose compute workers):
 	//
-	//   - For the G.4X worker type, each worker maps to 4 DPU (16 vCPUs, 64 GB of
-	//   memory) with 256GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for jobs whose workloads contain your most demanding transforms,
-	//   aggregations, joins, and queries. This worker type is available only for Glue
-	//   version 3.0 or later Spark ETL jobs in the following Amazon Web Services
-	//   Regions: US East (Ohio), US East (N. Virginia), US West (Oregon), Asia Pacific
-	//   (Singapore), Asia Pacific (Sydney), Asia Pacific (Tokyo), Canada (Central),
-	//   Europe (Frankfurt), Europe (Ireland), and Europe (Stockholm).
+	//   - G.1X: 1 DPU (4 vCPUs, 16 GB memory, 94GB disk)
 	//
-	//   - For the G.8X worker type, each worker maps to 8 DPU (32 vCPUs, 128 GB of
-	//   memory) with 512GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for jobs whose workloads contain your most demanding transforms,
-	//   aggregations, joins, and queries. This worker type is available only for Glue
-	//   version 3.0 or later Spark ETL jobs, in the same Amazon Web Services Regions as
-	//   supported for the G.4X worker type.
+	//   - G.2X: 2 DPU (8 vCPUs, 32 GB memory, 138GB disk)
 	//
-	//   - For the G.025X worker type, each worker maps to 0.25 DPU (2 vCPUs, 4 GB of
-	//   memory) with 84GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for low volume streaming jobs. This worker type is only available
-	//   for Glue version 3.0 or later streaming jobs.
+	//   - G.4X: 4 DPU (16 vCPUs, 64 GB memory, 256GB disk)
 	//
-	//   - For the Z.2X worker type, each worker maps to 2 M-DPU (8vCPUs, 64 GB of
-	//   memory) with 128 GB disk, and provides up to 8 Ray workers based on the
-	//   autoscaler.
+	//   - G.8X: 8 DPU (32 vCPUs, 128 GB memory, 512GB disk)
+	//
+	//   - G.12X: 12 DPU (48 vCPUs, 192 GB memory, 768GB disk)
+	//
+	//   - G.16X: 16 DPU (64 vCPUs, 256 GB memory, 1024GB disk)
+	//
+	// R Worker Types (Memory-optimized workers):
+	//
+	//   - R.1X: 1 M-DPU (4 vCPUs, 32 GB memory)
+	//
+	//   - R.2X: 2 M-DPU (8 vCPUs, 64 GB memory)
+	//
+	//   - R.4X: 4 M-DPU (16 vCPUs, 128 GB memory)
+	//
+	//   - R.8X: 8 M-DPU (32 vCPUs, 256 GB memory)
 	WorkerType WorkerType
 
 	noSmithyDocumentSerde
@@ -5628,6 +6692,11 @@ type JobRun struct {
 	// allowed to set ExecutionClass to FLEX . The flexible execution class is
 	// available for Spark jobs.
 	ExecutionClass ExecutionClass
+
+	// This inline session policy to the StartJobRun API allows you to dynamically
+	// restrict the permissions of the specified execution role for the scope of the
+	// job, without requiring the creation of additional IAM roles.
+	ExecutionRoleSessionPolicy *string
 
 	// The amount of time (in seconds) that the job run consumed resources.
 	ExecutionTime int32
@@ -6001,42 +7070,9 @@ type JobUpdate struct {
 
 	// The type of predefined worker that is allocated when a job runs. Accepts a
 	// value of G.1X, G.2X, G.4X, G.8X or G.025X for Spark jobs. Accepts the value Z.2X
-	// for Ray jobs.
+	// for Ray jobs. For more information, see [Defining job properties for Spark jobs]
 	//
-	//   - For the G.1X worker type, each worker maps to 1 DPU (4 vCPUs, 16 GB of
-	//   memory) with 94GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for workloads such as data transforms, joins, and queries, to offers
-	//   a scalable and cost effective way to run most jobs.
-	//
-	//   - For the G.2X worker type, each worker maps to 2 DPU (8 vCPUs, 32 GB of
-	//   memory) with 138GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for workloads such as data transforms, joins, and queries, to offers
-	//   a scalable and cost effective way to run most jobs.
-	//
-	//   - For the G.4X worker type, each worker maps to 4 DPU (16 vCPUs, 64 GB of
-	//   memory) with 256GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for jobs whose workloads contain your most demanding transforms,
-	//   aggregations, joins, and queries. This worker type is available only for Glue
-	//   version 3.0 or later Spark ETL jobs in the following Amazon Web Services
-	//   Regions: US East (Ohio), US East (N. Virginia), US West (Oregon), Asia Pacific
-	//   (Singapore), Asia Pacific (Sydney), Asia Pacific (Tokyo), Canada (Central),
-	//   Europe (Frankfurt), Europe (Ireland), and Europe (Stockholm).
-	//
-	//   - For the G.8X worker type, each worker maps to 8 DPU (32 vCPUs, 128 GB of
-	//   memory) with 512GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for jobs whose workloads contain your most demanding transforms,
-	//   aggregations, joins, and queries. This worker type is available only for Glue
-	//   version 3.0 or later Spark ETL jobs, in the same Amazon Web Services Regions as
-	//   supported for the G.4X worker type.
-	//
-	//   - For the G.025X worker type, each worker maps to 0.25 DPU (2 vCPUs, 4 GB of
-	//   memory) with 84GB disk, and provides 1 executor per worker. We recommend this
-	//   worker type for low volume streaming jobs. This worker type is only available
-	//   for Glue version 3.0 or later streaming jobs.
-	//
-	//   - For the Z.2X worker type, each worker maps to 2 M-DPU (8vCPUs, 64 GB of
-	//   memory) with 128 GB disk, and provides up to 8 Ray workers based on the
-	//   autoscaler.
+	// [Defining job properties for Spark jobs]: https://docs.aws.amazon.com/glue/latest/dg/add-job.html#create-job
 	WorkerType WorkerType
 
 	noSmithyDocumentSerde
@@ -6110,6 +7146,30 @@ type JsonClassifier struct {
 
 	// The version of this classifier.
 	Version int64
+
+	noSmithyDocumentSerde
+}
+
+// JWT bearer token configuration that defines the properties needed for the JWT
+// Bearer grant type flow.
+type JWTBearerProperties struct {
+
+	// The content type to use for JWT bearer token requests, such as
+	// application/x-www-form-urlencoded or application/json.
+	ContentType ContentType
+
+	// The JWT token to be used in the bearer token grant flow for authentication.
+	JwtToken *ConnectorProperty
+
+	// The HTTP method to use when making JWT bearer token requests, typically POST.
+	RequestMethod HTTPMethod
+
+	// The token endpoint URL where the JWT bearer token will be exchanged for an
+	// access token.
+	TokenUrl *ConnectorProperty
+
+	// Additional parameters to include in token URL requests as key-value pairs.
+	TokenUrlParameters []ConnectorProperty
 
 	noSmithyDocumentSerde
 }
@@ -6263,6 +7323,11 @@ type KinesisStreamingSourceOptions struct {
 
 	// The URL of the Kinesis endpoint.
 	EndpointUrl *string
+
+	// The Amazon Resource Name (ARN) of the Kinesis Data Streams enhanced fan-out
+	// consumer. When specified, enables enhanced fan-out for dedicated throughput and
+	// lower latency data consumption.
+	FanoutConsumerARN *string
 
 	// The minimum time delay between two consecutive getRecords operations, specified
 	// in ms. The default value is 1000 . This option is only configurable for Glue
@@ -6517,6 +7582,59 @@ type MappingEntry struct {
 
 	// The target type.
 	TargetType *string
+
+	noSmithyDocumentSerde
+}
+
+// The object that shows the details of the materialized view refresh task run.
+type MaterializedViewRefreshTaskRun struct {
+
+	// The ID of the Data Catalog where the table resides. If none is supplied, the
+	// account ID is used by default.
+	CatalogId *string
+
+	// The time that this task was created.
+	CreationTime *time.Time
+
+	// The Amazon Web Services account ID.
+	CustomerId *string
+
+	// The calculated DPU usage in seconds for all autoscaled workers.
+	DPUSeconds float64
+
+	// The database where the table resides.
+	DatabaseName *string
+
+	// The end time of the task.
+	EndTime *time.Time
+
+	// The error message for the job.
+	ErrorMessage *string
+
+	// The last point in time when this task was modified.
+	LastUpdated *time.Time
+
+	// The identifier of the materialized view refresh task run.
+	MaterializedViewRefreshTaskRunId *string
+
+	// The number of bytes the refresh task run has scanned to refresh the
+	// materialized view.
+	ProcessedBytes *int64
+
+	// The type of the refresh task run. Either FULL or INCREMENTAL.
+	RefreshType MaterializedViewRefreshType
+
+	// The IAM role that the service assumes to generate statistics.
+	Role *string
+
+	// The start time of the task.
+	StartTime *time.Time
+
+	// The status of the task run.
+	Status MaterializedViewRefreshState
+
+	// The name of the table for which statistics is generated.
+	TableName *string
 
 	noSmithyDocumentSerde
 }
@@ -7014,6 +8132,25 @@ type OAuth2PropertiesInput struct {
 	noSmithyDocumentSerde
 }
 
+// Offset-based pagination configuration that defines how to handle pagination
+// using numeric offsets and limits.
+type OffsetConfiguration struct {
+
+	// The parameter name used to specify the maximum number of results to return per
+	// page.
+	//
+	// This member is required.
+	LimitParameter *ExtractedParameter
+
+	// The parameter name used to specify the starting position or offset for
+	// retrieving results.
+	//
+	// This member is required.
+	OffsetParameter *ExtractedParameter
+
+	noSmithyDocumentSerde
+}
+
 // A structure representing an open format table.
 type OpenTableFormatInput struct {
 
@@ -7132,6 +8269,21 @@ type OtherMetadataValueListItem struct {
 	// The metadata key’s corresponding value for the other metadata belonging to the
 	// same metadata key.
 	MetadataValue *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration that defines how to handle paginated responses from REST APIs,
+// supporting different pagination strategies used by various services.
+type PaginationConfiguration struct {
+
+	// Configuration for cursor-based pagination, where the API provides a cursor or
+	// token to retrieve the next page of results.
+	CursorConfiguration *CursorConfiguration
+
+	// Configuration for offset-based pagination, where the API uses numeric offsets
+	// and limits to control which results are returned.
+	OffsetConfiguration *OffsetConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -7317,12 +8469,40 @@ type PIIDetection struct {
 	// This member is required.
 	PiiType PiiType
 
+	// Additional parameters for configuring PII detection behavior and sensitivity
+	// settings.
+	DetectionParameters *string
+
+	// The sensitivity level for PII detection. Higher sensitivity levels detect more
+	// potential PII but may result in more false positives.
+	DetectionSensitivity *string
+
 	// Indicates the value that will replace the detected entity.
 	MaskValue *string
+
+	// A regular expression pattern used to identify additional PII content beyond the
+	// standard detection algorithms.
+	MatchPattern *string
+
+	// The number of characters to exclude from redaction on the left side of detected
+	// PII content. This allows preserving context around the sensitive data.
+	NumLeftCharsToExclude *int32
+
+	// The number of characters to exclude from redaction on the right side of
+	// detected PII content. This allows preserving context around the sensitive data.
+	NumRightCharsToExclude *int32
 
 	// Indicates the output column name that will contain any entity type detected in
 	// that row.
 	OutputColumnName *string
+
+	// The character used to replace detected PII content when redaction is enabled.
+	// The default redaction character is * .
+	RedactChar *string
+
+	// Specifies whether to redact the detected PII text. When set to true , PII
+	// content is replaced with redaction characters.
+	RedactText *string
 
 	// Indicates the fraction of the data to sample when scanning for PII entities.
 	SampleFraction *float64
@@ -7463,6 +8643,14 @@ type Property struct {
 
 	// The default value for the property.
 	DefaultValue *string
+
+	// A key name to use when sending this property in API requests, if different from
+	// the display name.
+	KeyOverride *string
+
+	// Specifies where this property should be included in REST requests, such as in
+	// headers, query parameters, or request body.
+	PropertyLocation PropertyLocation
 
 	noSmithyDocumentSerde
 }
@@ -7758,6 +8946,57 @@ type ResourceUri struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration that defines how to parse JSON responses from REST API calls,
+// including paths to result data and error information.
+type ResponseConfiguration struct {
+
+	// The JSON path expression that identifies where the actual result data is
+	// located within the API response.
+	//
+	// This member is required.
+	ResultPath *string
+
+	// The JSON path expression that identifies where error information is located
+	// within API responses when requests fail.
+	ErrorPath *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration that defines how to extract values from HTTP response content or
+// headers for use in subsequent requests or parameter mapping.
+type ResponseExtractionMapping struct {
+
+	// A JSON path expression that specifies how to extract a value from the response
+	// body content.
+	ContentPath *string
+
+	// The name of an HTTP response header from which to extract the value.
+	HeaderKey *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration that defines HTTP request and response handling, validation
+// endpoints, and entity configurations for REST API interactions.
+type RestConfiguration struct {
+
+	// A map of entity configurations that define how to interact with different data
+	// entities available through the REST API, including their schemas and access
+	// patterns.
+	EntityConfigurations map[string]EntityConfiguration
+
+	// Global configuration settings that apply to all REST API requests for this
+	// connection type, including common request methods, paths, and parameters.
+	GlobalSourceConfiguration *SourceConfiguration
+
+	// Configuration for the endpoint used to validate connection credentials and test
+	// connectivity during connection creation.
+	ValidationEndpointConfiguration *SourceConfiguration
+
+	noSmithyDocumentSerde
+}
+
 // The configuration for a snapshot retention optimizer.
 type RetentionConfiguration struct {
 
@@ -7772,6 +9011,29 @@ type RetentionMetrics struct {
 
 	// A structure containing the Iceberg retention metrics for the optimizer run.
 	IcebergMetrics *IcebergRetentionMetrics
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a route node that directs data to different output paths based on
+// defined filtering conditions.
+type Route struct {
+
+	// A list of group filters that define the routing conditions and criteria for
+	// directing data to different output paths.
+	//
+	// This member is required.
+	GroupFiltersList []GroupFilters
+
+	// The input connection for the route node.
+	//
+	// This member is required.
+	Inputs []string
+
+	// The name of the route node.
+	//
+	// This member is required.
+	Name *string
 
 	noSmithyDocumentSerde
 }
@@ -7865,6 +9127,34 @@ type S3CatalogHudiSource struct {
 	noSmithyDocumentSerde
 }
 
+// Specifies an Apache Iceberg data source that is registered in the Glue Data
+// Catalog. The Iceberg data source must be stored in Amazon S3.
+type S3CatalogIcebergSource struct {
+
+	// The name of the database to read from.
+	//
+	// This member is required.
+	Database *string
+
+	// The name of the Iceberg data source.
+	//
+	// This member is required.
+	Name *string
+
+	// The name of the table in the database to read from.
+	//
+	// This member is required.
+	Table *string
+
+	// Specifies additional connection options for the Iceberg data source.
+	AdditionalIcebergOptions map[string]string
+
+	// Specifies the data schema for the Iceberg source.
+	OutputSchemas []GlueSchema
+
+	noSmithyDocumentSerde
+}
+
 // Specifies an Amazon S3 data store in the Glue Data Catalog.
 type S3CatalogSource struct {
 
@@ -7915,6 +9205,11 @@ type S3CatalogTarget struct {
 	//
 	// This member is required.
 	Table *string
+
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// catalog target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
 
 	// Specifies native partitioning using a sequence of keys.
 	PartitionKeys [][]string
@@ -8050,6 +9345,14 @@ type S3DeltaCatalogTarget struct {
 	// Specifies additional connection options for the connector.
 	AdditionalOptions map[string]string
 
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// Delta catalog target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
+
+	// Specifies the data schema for the S3 Delta catalog target.
+	OutputSchemas []GlueSchema
+
 	// Specifies native partitioning using a sequence of keys.
 	PartitionKeys [][]string
 
@@ -8090,6 +9393,15 @@ type S3DeltaDirectTarget struct {
 
 	// Specifies additional connection options for the connector.
 	AdditionalOptions map[string]string
+
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// Delta direct target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
+
+	// Specifies the number of target partitions for distributing Delta Lake dataset
+	// files across Amazon S3.
+	NumberTargetPartitions *string
 
 	// Specifies native partitioning using a sequence of keys.
 	PartitionKeys [][]string
@@ -8167,9 +9479,21 @@ type S3DirectTarget struct {
 	// This member is required.
 	Path *string
 
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// direct target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
+
 	// Specifies how the data is compressed. This is generally not necessary if the
 	// data has a standard file extension. Possible values are "gzip" and "bzip" ).
 	Compression *string
+
+	// Specifies the number of target partitions when writing data directly to Amazon
+	// S3.
+	NumberTargetPartitions *string
+
+	// Specifies the data schema for the S3 direct target.
+	OutputSchemas []GlueSchema
 
 	// Specifies native partitioning using a sequence of keys.
 	PartitionKeys [][]string
@@ -8193,6 +9517,55 @@ type S3Encryption struct {
 	noSmithyDocumentSerde
 }
 
+// Specifies an S3 Excel data source.
+type S3ExcelSource struct {
+
+	// The name of the S3 Excel data source.
+	//
+	// This member is required.
+	Name *string
+
+	// The S3 paths where the Excel files are located.
+	//
+	// This member is required.
+	Paths []string
+
+	// Additional configuration options for S3 direct source processing.
+	AdditionalOptions *S3DirectSourceAdditionalOptions
+
+	// The compression format used for the Excel files.
+	CompressionType ParquetCompressionType
+
+	// Patterns to exclude specific files or paths from processing.
+	Exclusions []string
+
+	// Specifies how files should be grouped for processing.
+	GroupFiles *string
+
+	// Defines the size of file groups for batch processing.
+	GroupSize *string
+
+	// The maximum number of processing bands to use.
+	MaxBand *int32
+
+	// The maximum number of files to process in each band.
+	MaxFilesInBand *int32
+
+	// The number of rows to process from each Excel file.
+	NumberRows *int64
+
+	// The Glue schemas to apply to the processed data.
+	OutputSchemas []GlueSchema
+
+	// Indicates whether to recursively process subdirectories.
+	Recurse *bool
+
+	// The number of rows to skip at the end of each Excel file.
+	SkipFooter *int32
+
+	noSmithyDocumentSerde
+}
+
 // Specifies a data target that writes to Amazon S3 in Apache Parquet columnar
 // storage.
 type S3GlueParquetTarget struct {
@@ -8212,9 +9585,18 @@ type S3GlueParquetTarget struct {
 	// This member is required.
 	Path *string
 
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// Glue Parquet target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
+
 	// Specifies how the data is compressed. This is generally not necessary if the
 	// data has a standard file extension. Possible values are "gzip" and "bzip" ).
 	Compression ParquetCompressionType
+
+	// Specifies the number of target partitions for Parquet files when writing to
+	// Amazon S3 using Glue.
+	NumberTargetPartitions *string
 
 	// Specifies native partitioning using a sequence of keys.
 	PartitionKeys [][]string
@@ -8252,6 +9634,14 @@ type S3HudiCatalogTarget struct {
 	//
 	// This member is required.
 	Table *string
+
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// Hudi catalog target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
+
+	// Specifies the data schema for the S3 Hudi catalog target.
+	OutputSchemas []GlueSchema
 
 	// Specifies native partitioning using a sequence of keys.
 	PartitionKeys [][]string
@@ -8296,6 +9686,15 @@ type S3HudiDirectTarget struct {
 	// This member is required.
 	Path *string
 
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// Hudi direct target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
+
+	// Specifies the number of target partitions for distributing Hudi dataset files
+	// across Amazon S3.
+	NumberTargetPartitions *string
+
 	// Specifies native partitioning using a sequence of keys.
 	PartitionKeys [][]string
 
@@ -8326,6 +9725,144 @@ type S3HudiSource struct {
 
 	// Specifies the data schema for the Hudi source.
 	OutputSchemas []GlueSchema
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a HyperDirect data target that writes to Amazon S3.
+type S3HyperDirectTarget struct {
+
+	// Specifies the input source for the HyperDirect target.
+	//
+	// This member is required.
+	Inputs []string
+
+	// The unique identifier for the HyperDirect target node.
+	//
+	// This member is required.
+	Name *string
+
+	// The S3 location where the output data will be written.
+	//
+	// This member is required.
+	Path *string
+
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// Hyper direct target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
+
+	// The compression type to apply to the output data.
+	Compression HyperTargetCompressionType
+
+	// Specifies the data output format for the HyperDirect target.
+	Format TargetFormat
+
+	// Specifies the data schema for the S3 Hyper direct target.
+	OutputSchemas []GlueSchema
+
+	// Defines the partitioning strategy for the output data.
+	PartitionKeys [][]string
+
+	// Defines how schema changes are handled during write operations.
+	SchemaChangePolicy *DirectSchemaChangePolicy
+
+	noSmithyDocumentSerde
+}
+
+// Specifies an Apache Iceberg catalog target that writes data to Amazon S3 and
+// registers the table in the Glue Data Catalog.
+type S3IcebergCatalogTarget struct {
+
+	// The name of the database to write to.
+	//
+	// This member is required.
+	Database *string
+
+	// The input connection for the Iceberg catalog target.
+	//
+	// This member is required.
+	Inputs []string
+
+	// The name of the Iceberg catalog target.
+	//
+	// This member is required.
+	Name *string
+
+	// The name of the table to write to in the catalog.
+	//
+	// This member is required.
+	Table *string
+
+	// Specifies additional connection options for the Iceberg catalog target.
+	AdditionalOptions map[string]string
+
+	// Specifies whether to automatically enable data quality evaluation for the S3
+	// Iceberg catalog target. When set to true , data quality checks are performed
+	// automatically during the write operation.
+	AutoDataQuality *AutoDataQuality
+
+	// A list of partition keys for the Iceberg table.
+	PartitionKeys [][]string
+
+	// The policy for handling schema changes in the catalog target.
+	SchemaChangePolicy *CatalogSchemaChangePolicy
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a target that writes to an Iceberg data source in Amazon S3.
+type S3IcebergDirectTarget struct {
+
+	// Specifies the compression codec used for Iceberg table files in S3.
+	//
+	// This member is required.
+	Compression IcebergTargetCompressionType
+
+	// Specifies the file format used for storing Iceberg table data (e.g., Parquet,
+	// ORC).
+	//
+	// This member is required.
+	Format TargetFormat
+
+	// Defines the single input source that provides data to this Iceberg target.
+	//
+	// This member is required.
+	Inputs []string
+
+	// Specifies the unique identifier for the Iceberg target node in your data
+	// pipeline.
+	//
+	// This member is required.
+	Name *string
+
+	// Defines the S3 location where the Iceberg table data will be stored.
+	//
+	// This member is required.
+	Path *string
+
+	// Provides additional configuration options for customizing the Iceberg table
+	// behavior.
+	AdditionalOptions map[string]string
+
+	// Specifies configuration options for automatic data quality evaluation in Glue
+	// jobs. This structure enables automated data quality checks and monitoring during
+	// ETL operations, helping to ensure data integrity and reliability without manual
+	// intervention.
+	AutoDataQuality *AutoDataQuality
+
+	// Sets the number of target partitions for distributing Iceberg table files
+	// across S3.
+	NumberTargetPartitions *string
+
+	// Specifies the data schema for the S3 Iceberg direct target.
+	OutputSchemas []GlueSchema
+
+	// Specifies the columns used to partition the Iceberg table data in S3.
+	PartitionKeys [][]string
+
+	// Defines how schema changes are handled when writing data to the Iceberg table.
+	SchemaChangePolicy *DirectSchemaChangePolicy
 
 	noSmithyDocumentSerde
 }
@@ -8972,6 +10509,32 @@ type SortCriterion struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration that defines how to make requests to endpoints, including request
+// methods, paths, parameters, and response handling.
+type SourceConfiguration struct {
+
+	// Configuration for handling paginated responses from the REST API, supporting
+	// both cursor-based and offset-based pagination strategies.
+	PaginationConfiguration *PaginationConfiguration
+
+	// The HTTP method to use for requests to this endpoint, such as GET, POST.
+	RequestMethod HTTPMethod
+
+	// Configuration for request parameters that should be included in API calls, such
+	// as query parameters, headers, or body content.
+	RequestParameters []ConnectorProperty
+
+	// The URL path for the REST endpoint, which may include parameter placeholders
+	// that will be replaced with actual values during requests.
+	RequestPath *string
+
+	// Configuration that defines how to parse and extract data from API responses,
+	// including success and error handling.
+	ResponseConfiguration *ResponseConfiguration
+
+	noSmithyDocumentSerde
+}
+
 // The details for a source control configuration for a job, allowing
 // synchronization of job artifacts to or from a remote repository.
 type SourceControlDetails struct {
@@ -9016,16 +10579,18 @@ type SourceProcessingProperties struct {
 // Properties used by the source leg to process data from the source.
 type SourceTableConfig struct {
 
-	// A list of fields used for column-level filtering.
+	// A list of fields used for column-level filtering. Currently unsupported.
 	Fields []string
 
-	// A condition clause used for row-level filtering.
+	// A condition clause used for row-level filtering. Currently unsupported.
 	FilterPredicate *string
 
-	// Unique identifier of a record.
+	// Provide the primary key set for this table. Currently supported specifically
+	// for SAP EntityOf entities upon request. Contact Amazon Web Services Support to
+	// make this feature available.
 	PrimaryKey []string
 
-	// Incremental pull timestamp-based field.
+	// Incremental pull timestamp-based field. Currently unsupported.
 	RecordUpdateField *string
 
 	noSmithyDocumentSerde
@@ -9515,6 +11080,9 @@ type Table struct {
 	// Catalog.
 	FederatedTable *FederatedTable
 
+	// Indicates a table is a MaterializedView .
+	IsMaterializedView *bool
+
 	// Specifies whether the view supports the SQL dialects of one or more different
 	// query engines and can therefore be read by those engines.
 	IsMultiDialectView *bool
@@ -9548,8 +11116,7 @@ type Table struct {
 	// The retention time for this table.
 	Retention int32
 
-	// A structure containing information about the state of an asynchronous change to
-	// a table.
+	// Indicates the the state of an asynchronous change to a table.
 	Status *TableStatus
 
 	// A storage descriptor containing information about the physical storage of this
@@ -9699,6 +11266,11 @@ type TableOptimizer struct {
 	// updating a table optimizer.
 	Configuration *TableOptimizerConfiguration
 
+	//  Specifies the source of the optimizer configuration. This indicates how the
+	// table optimizer was configured and which entity or service initiated the
+	// configuration.
+	ConfigurationSource ConfigurationSource
+
 	// A TableOptimizerRun object representing the last run of the table optimizer.
 	LastRun *TableOptimizerRun
 
@@ -9718,6 +11290,11 @@ type TableOptimizer struct {
 // Contains details on the configuration of a table optimizer. You pass this
 // configuration when creating or updating a table optimizer.
 type TableOptimizerConfiguration struct {
+
+	// The configuration for a compaction optimizer. This configuration defines how
+	// data files in your table will be compacted to improve query performance and
+	// reduce storage costs.
+	CompactionConfiguration *CompactionConfiguration
 
 	// Whether table optimization is enabled.
 	Enabled *bool
@@ -9747,6 +11324,28 @@ type TableOptimizerRun struct {
 
 	// A CompactionMetrics object containing metrics for the optimizer run.
 	CompactionMetrics *CompactionMetrics
+
+	// The strategy used for the compaction run. Indicates which algorithm was applied
+	// to determine how files were selected and combined during the compaction process.
+	// Valid values are:
+	//
+	//   - binpack : Combines small files into larger files, typically targeting sizes
+	//   over 100MB, while applying any pending deletes. This is the recommended
+	//   compaction strategy for most use cases.
+	//
+	//   - sort : Organizes data based on specified columns which are sorted
+	//   hierarchically during compaction, improving query performance for filtered
+	//   operations. This strategy is recommended when your queries frequently filter on
+	//   specific columns. To use this strategy, you must first define a sort order in
+	//   your Iceberg table properties using the sort_order table property.
+	//
+	//   - z-order : Optimizes data organization by blending multiple attributes into a
+	//   single scalar value that can be used for sorting, allowing efficient querying
+	//   across multiple dimensions. This strategy is recommended when you need to query
+	//   data across multiple dimensions simultaneously. To use this strategy, you must
+	//   first define a sort order in your Iceberg table properties using the
+	//   sort_order table property.
+	CompactionStrategy CompactionStrategy
 
 	// Represents the epoch timestamp at which the compaction job ended.
 	EndTimestamp *time.Time
@@ -10404,6 +12003,35 @@ type UpdateGrokClassifierRequest struct {
 	noSmithyDocumentSerde
 }
 
+// Input parameters specific to updating Apache Iceberg tables in Glue Data
+// Catalog, containing the update operations to be applied to an existing Iceberg
+// table.
+type UpdateIcebergInput struct {
+
+	// The specific update operations to be applied to the Iceberg table, containing a
+	// list of updates that define the new state of the table including schema,
+	// partitions, and properties.
+	//
+	// This member is required.
+	UpdateIcebergTableInput *UpdateIcebergTableInput
+
+	noSmithyDocumentSerde
+}
+
+// Contains the update operations to be applied to an existing Iceberg table
+// inGlue Data Catalog, defining the new state of the table metadata.
+type UpdateIcebergTableInput struct {
+
+	// The list of table update operations that specify the changes to be made to the
+	// Iceberg table, including schema modifications, partition specifications, and
+	// table properties.
+	//
+	// This member is required.
+	Updates []IcebergTableUpdate
+
+	noSmithyDocumentSerde
+}
+
 // Specifies a JSON classifier to be updated.
 type UpdateJsonClassifierRequest struct {
 
@@ -10417,6 +12045,19 @@ type UpdateJsonClassifierRequest struct {
 	//
 	// [Writing JsonPath Custom Classifiers]: https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html#custom-classifier-json
 	JsonPath *string
+
+	noSmithyDocumentSerde
+}
+
+// Input parameters for updating open table format tables in GlueData Catalog,
+// serving as a wrapper for format-specific update operations such as Apache
+// Iceberg.
+type UpdateOpenTableFormatInput struct {
+
+	// Apache Iceberg-specific update parameters that define the table modifications
+	// to be applied, including schema changes, partition specifications, and table
+	// properties.
+	UpdateIcebergInput *UpdateIcebergInput
 
 	noSmithyDocumentSerde
 }
@@ -10492,6 +12133,9 @@ type UserDefinedFunction struct {
 	// The name of the function.
 	FunctionName *string
 
+	// The type of the function.
+	FunctionType FunctionType
+
 	// The owner of the function.
 	OwnerName *string
 
@@ -10512,6 +12156,9 @@ type UserDefinedFunctionInput struct {
 
 	// The name of the function.
 	FunctionName *string
+
+	// The type of the function.
+	FunctionType FunctionType
 
 	// The owner of the function.
 	OwnerName *string
@@ -10537,11 +12184,28 @@ type ViewDefinition struct {
 	// engine's documentation to understand the guarantees provided, if any.
 	IsProtected *bool
 
+	// Sets the method used for the most recent refresh.
+	LastRefreshType LastRefreshType
+
+	// Auto refresh interval in seconds for the materialized view. If not specified,
+	// the view will not automatically refresh.
+	RefreshSeconds *int64
+
 	// A list of representations.
 	Representations []ViewRepresentation
 
+	// List of the Apache Iceberg table versions referenced by the materialized view.
+	SubObjectVersionIds []int64
+
 	// A list of table Amazon Resource Names (ARNs).
 	SubObjects []string
+
+	// The ID value that identifies this view's version. For materialized views, the
+	// version ID is the Apache Iceberg table's snapshot ID.
+	ViewVersionId int64
+
+	// The version ID of the Apache Iceberg table.
+	ViewVersionToken *string
 
 	noSmithyDocumentSerde
 }
@@ -10558,12 +12222,30 @@ type ViewDefinitionInput struct {
 	// engine's documentation to understand the guarantees provided, if any.
 	IsProtected *bool
 
+	// The type of the materialized view's last refresh. Valid values: Full ,
+	// Incremental .
+	LastRefreshType LastRefreshType
+
+	// Auto refresh interval in seconds for the materialized view. If not specified,
+	// the view will not automatically refresh.
+	RefreshSeconds *int64
+
 	// A list of structures that contains the dialect of the view, and the query that
 	// defines the view.
 	Representations []ViewRepresentationInput
 
+	// List of the Apache Iceberg table versions referenced by the materialized view.
+	SubObjectVersionIds []int64
+
 	// A list of base table ARNs that make up the view.
 	SubObjects []string
+
+	// The ID value that identifies this view's version. For materialized views, the
+	// version ID is the Apache Iceberg table's snapshot ID.
+	ViewVersionId int64
+
+	// The version ID of the Apache Iceberg table.
+	ViewVersionToken *string
 
 	noSmithyDocumentSerde
 }

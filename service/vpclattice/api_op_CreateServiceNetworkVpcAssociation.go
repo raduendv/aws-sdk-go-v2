@@ -62,6 +62,12 @@ type CreateServiceNetworkVpcAssociationInput struct {
 	// actions. If the parameters aren't identical, the retry fails.
 	ClientToken *string
 
+	//  DNS options for the service network VPC association.
+	DnsOptions *types.DnsOptions
+
+	//  Indicates if private DNS is enabled for the VPC association.
+	PrivateDnsEnabled *bool
+
 	// The IDs of the security groups. Security groups aren't added by default. You
 	// can add a security group to apply network level controls to control which
 	// resources in a VPC are allowed to access the service network and its services.
@@ -84,8 +90,14 @@ type CreateServiceNetworkVpcAssociationOutput struct {
 	// The account that created the association.
 	CreatedBy *string
 
+	//  The DNS configuration options.
+	DnsOptions *types.DnsOptions
+
 	// The ID of the association.
 	Id *string
+
+	//  Indicates if private DNS is enabled for the VPC association.
+	PrivateDnsEnabled *bool
 
 	// The IDs of the security groups.
 	SecurityGroupIds []string
@@ -190,16 +202,13 @@ func (c *Client) addOperationCreateServiceNetworkVpcAssociationMiddlewares(stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

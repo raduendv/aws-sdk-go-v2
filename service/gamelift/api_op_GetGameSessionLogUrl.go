@@ -10,10 +10,12 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2
+//
 // Retrieves the location of stored game session logs for a specified game session
-// on Amazon GameLift managed fleets. When a game session is terminated, Amazon
-// GameLift automatically stores the logs in Amazon S3 and retains them for 14
-// days. Use this URL to download the logs.
+// on Amazon GameLift Servers managed fleets. When a game session is terminated,
+// Amazon GameLift Servers automatically stores the logs in Amazon S3 and retains
+// them for 14 days. Use this URL to download the logs.
 //
 // See the [Amazon Web Services Service Limits] page for maximum log file sizes. Log files that exceed this limit are
 // not saved.
@@ -149,16 +151,13 @@ func (c *Client) addOperationGetGameSessionLogUrlMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

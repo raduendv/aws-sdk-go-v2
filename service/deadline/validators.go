@@ -3101,6 +3101,21 @@ func validateFleetConfiguration(v types.FleetConfiguration) error {
 	}
 }
 
+func validateHostConfiguration(v *types.HostConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "HostConfiguration"}
+	if v.ScriptBody == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ScriptBody"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateJobAttachmentDetailsIdentifiers(v *types.JobAttachmentDetailsIdentifiers) error {
 	if v == nil {
 		return nil
@@ -3381,6 +3396,11 @@ func validateSearchFilterExpression(v types.SearchFilterExpression) error {
 			invalidParams.AddNested("[stringFilter]", err.(smithy.InvalidParamsError))
 		}
 
+	case *types.SearchFilterExpressionMemberStringListFilter:
+		if err := validateStringListFilterExpression(&uv.Value); err != nil {
+			invalidParams.AddNested("[stringListFilter]", err.(smithy.InvalidParamsError))
+		}
+
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3608,6 +3628,27 @@ func validateStringFilterExpression(v *types.StringFilterExpression) error {
 	}
 	if v.Value == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Value"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateStringListFilterExpression(v *types.StringListFilterExpression) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StringListFilterExpression"}
+	if v.Name == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Name"))
+	}
+	if len(v.Operator) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Operator"))
+	}
+	if v.Values == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Values"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4110,6 +4151,11 @@ func validateOpCreateFleetInput(v *CreateFleetInput) error {
 	} else if v.Configuration != nil {
 		if err := validateFleetConfiguration(v.Configuration); err != nil {
 			invalidParams.AddNested("Configuration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.HostConfiguration != nil {
+		if err := validateHostConfiguration(v.HostConfiguration); err != nil {
+			invalidParams.AddNested("HostConfiguration", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -5777,6 +5823,11 @@ func validateOpUpdateFleetInput(v *UpdateFleetInput) error {
 	if v.Configuration != nil {
 		if err := validateFleetConfiguration(v.Configuration); err != nil {
 			invalidParams.AddNested("Configuration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.HostConfiguration != nil {
+		if err := validateHostConfiguration(v.HostConfiguration); err != nil {
+			invalidParams.AddNested("HostConfiguration", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

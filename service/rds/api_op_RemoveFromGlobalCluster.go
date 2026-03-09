@@ -35,9 +35,13 @@ type RemoveFromGlobalClusterInput struct {
 
 	// The Amazon Resource Name (ARN) identifying the cluster that was detached from
 	// the Aurora global database cluster.
+	//
+	// This member is required.
 	DbClusterIdentifier *string
 
 	// The cluster identifier to detach from the Aurora global database cluster.
+	//
+	// This member is required.
 	GlobalClusterIdentifier *string
 
 	noSmithyDocumentSerde
@@ -121,6 +125,9 @@ func (c *Client) addOperationRemoveFromGlobalClusterMiddlewares(stack *middlewar
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
+	if err = addOpRemoveFromGlobalClusterValidationMiddleware(stack); err != nil {
+		return err
+	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opRemoveFromGlobalCluster(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -139,16 +146,13 @@ func (c *Client) addOperationRemoveFromGlobalClusterMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

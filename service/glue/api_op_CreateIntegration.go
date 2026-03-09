@@ -57,6 +57,9 @@ type CreateIntegrationInput struct {
 	// A description of the integration.
 	Description *string
 
+	// The configuration settings.
+	IntegrationConfig *types.IntegrationConfig
+
 	// The ARN of a KMS key used for encrypting the channel.
 	KmsKeyId *string
 
@@ -126,6 +129,9 @@ type CreateIntegrationOutput struct {
 
 	// A list of errors associated with the integration creation.
 	Errors []types.IntegrationError
+
+	// The configuration settings.
+	IntegrationConfig *types.IntegrationConfig
 
 	// The ARN of a KMS key used for encrypting the channel.
 	KmsKeyId *string
@@ -227,16 +233,13 @@ func (c *Client) addOperationCreateIntegrationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

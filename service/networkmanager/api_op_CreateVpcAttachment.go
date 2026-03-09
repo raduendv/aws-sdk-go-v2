@@ -50,6 +50,10 @@ type CreateVpcAttachmentInput struct {
 	// Options for the VPC attachment.
 	Options *types.VpcOptions
 
+	// The routing policy label to apply to the VPC attachment for traffic routing
+	// decisions.
+	RoutingPolicyLabel *string
+
 	// The key-value tags associated with the request.
 	Tags []types.Tag
 
@@ -158,16 +162,13 @@ func (c *Client) addOperationCreateVpcAttachmentMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

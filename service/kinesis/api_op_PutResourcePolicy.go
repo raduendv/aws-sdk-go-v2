@@ -58,12 +58,16 @@ type PutResourcePolicyInput struct {
 	// This member is required.
 	ResourceARN *string
 
+	// Not Implemented. Reserved for future use.
+	StreamId *string
+
 	noSmithyDocumentSerde
 }
 
 func (in *PutResourcePolicyInput) bindEndpointParams(p *EndpointParameters) {
 
 	p.ResourceARN = in.ResourceARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("control")
 }
 
@@ -162,16 +166,13 @@ func (c *Client) addOperationPutResourcePolicyMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

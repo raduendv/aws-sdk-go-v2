@@ -410,6 +410,26 @@ func (m *validateOpDescribeStackDriftDetectionStatus) HandleInitialize(ctx conte
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpDescribeStackEvents struct {
+}
+
+func (*validateOpDescribeStackEvents) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDescribeStackEvents) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DescribeStackEventsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDescribeStackEventsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDescribeStackInstance struct {
 }
 
@@ -725,26 +745,6 @@ func (m *validateOpListChangeSets) HandleInitialize(ctx context.Context, in midd
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListChangeSetsInput(input); err != nil {
-		return out, metadata, err
-	}
-	return next.HandleInitialize(ctx, in)
-}
-
-type validateOpListHookResults struct {
-}
-
-func (*validateOpListHookResults) ID() string {
-	return "OperationInputValidation"
-}
-
-func (m *validateOpListHookResults) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
-	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
-) {
-	input, ok := in.Parameters.(*ListHookResultsInput)
-	if !ok {
-		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
-	}
-	if err := validateOpListHookResultsInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1270,6 +1270,10 @@ func addOpDescribeStackDriftDetectionStatusValidationMiddleware(stack *middlewar
 	return stack.Initialize.Add(&validateOpDescribeStackDriftDetectionStatus{}, middleware.After)
 }
 
+func addOpDescribeStackEventsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDescribeStackEvents{}, middleware.After)
+}
+
 func addOpDescribeStackInstanceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDescribeStackInstance{}, middleware.After)
 }
@@ -1332,10 +1336,6 @@ func addOpImportStacksToStackSetValidationMiddleware(stack *middleware.Stack) er
 
 func addOpListChangeSetsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListChangeSets{}, middleware.After)
-}
-
-func addOpListHookResultsValidationMiddleware(stack *middleware.Stack) error {
-	return stack.Initialize.Add(&validateOpListHookResults{}, middleware.After)
 }
 
 func addOpListImportsValidationMiddleware(stack *middleware.Stack) error {
@@ -2054,6 +2054,21 @@ func validateOpDescribeStackDriftDetectionStatusInput(v *DescribeStackDriftDetec
 	}
 }
 
+func validateOpDescribeStackEventsInput(v *DescribeStackEventsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DescribeStackEventsInput"}
+	if v.StackName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("StackName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpDescribeStackInstanceInput(v *DescribeStackInstanceInput) error {
 	if v == nil {
 		return nil
@@ -2301,24 +2316,6 @@ func validateOpListChangeSetsInput(v *ListChangeSetsInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ListChangeSetsInput"}
 	if v.StackName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("StackName"))
-	}
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	} else {
-		return nil
-	}
-}
-
-func validateOpListHookResultsInput(v *ListHookResultsInput) error {
-	if v == nil {
-		return nil
-	}
-	invalidParams := smithy.InvalidParamsError{Context: "ListHookResultsInput"}
-	if len(v.TargetType) == 0 {
-		invalidParams.Add(smithy.NewErrParamRequired("TargetType"))
-	}
-	if v.TargetId == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("TargetId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

@@ -65,6 +65,11 @@ type PutIntegrationInput struct {
 	// to make Customer Profiles requests on your behalf.
 	RoleArn *string
 
+	// Specifies whether the integration applies to profile level data (associated
+	// with profiles) or domain level data (not associated with any specific profile).
+	// The default value is PROFILE.
+	Scope types.Scope
+
 	// The tags used to organize, track, or control access for this resource.
 	Tags map[string]string
 
@@ -119,6 +124,11 @@ type PutIntegrationOutput struct {
 	// The Amazon Resource Name (ARN) of the IAM role. The Integration uses this role
 	// to make Customer Profiles requests on your behalf.
 	RoleArn *string
+
+	// Specifies whether the integration applies to profile level data (associated
+	// with profiles) or domain level data (not associated with any specific profile).
+	// The default value is PROFILE.
+	Scope types.Scope
 
 	// The tags used to organize, track, or control access for this resource.
 	Tags map[string]string
@@ -220,16 +230,13 @@ func (c *Client) addOperationPutIntegrationMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

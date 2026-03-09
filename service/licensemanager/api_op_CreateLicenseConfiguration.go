@@ -59,6 +59,9 @@ type CreateLicenseConfigurationInput struct {
 	// limit blocks the launch of new instances.
 	LicenseCountHardLimit *bool
 
+	// License configuration expiry.
+	LicenseExpiry *int64
+
 	// License rules. The syntax is #name=value (for example,
 	// #allowedTenancy=EC2-DedicatedHost). The available rules vary by dimension, as
 	// follows.
@@ -66,8 +69,7 @@ type CreateLicenseConfigurationInput struct {
 	//   - Cores dimension: allowedTenancy | licenseAffinityToHost | maximumCores |
 	//   minimumCores
 	//
-	//   - Instances dimension: allowedTenancy | maximumCores | minimumCores |
-	//   maximumSockets | minimumSockets | maximumVcpus | minimumVcpus
+	//   - Instances dimension: allowedTenancy | maximumVcpus | minimumVcpus
 	//
 	//   - Sockets dimension: allowedTenancy | licenseAffinityToHost | maximumSockets |
 	//   minimumSockets
@@ -189,16 +191,13 @@ func (c *Client) addOperationCreateLicenseConfigurationMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -37,9 +37,13 @@ type DescribeClusterNodeInput struct {
 	ClusterName *string
 
 	// The ID of the SageMaker HyperPod cluster node.
-	//
-	// This member is required.
 	NodeId *string
+
+	// The logical identifier of the node to describe. You can specify either
+	// NodeLogicalId or InstanceId , but not both. NodeLogicalId can be used to
+	// describe nodes that are still being provisioned and don't yet have an InstanceId
+	// assigned.
+	NodeLogicalId *string
 
 	noSmithyDocumentSerde
 }
@@ -145,16 +149,13 @@ func (c *Client) addOperationDescribeClusterNodeMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

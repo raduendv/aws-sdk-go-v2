@@ -11,8 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Returns a paginated list of objectives from the Amazon Web Services Control
-// Catalog.
+// Returns a paginated list of objectives from the Control Catalog.
 //
 // You can apply an optional filter to see the objectives that belong to a
 // specific domain. If you don’t provide a filter, the operation returns all
@@ -43,7 +42,7 @@ type ListObjectivesInput struct {
 	// An optional filter that narrows the results to a specific domain.
 	//
 	// This filter allows you to specify one domain ARN at a time. Passing multiple
-	// ARNs in the ObjectiveFilter isn’t currently supported.
+	// ARNs in the ObjectiveFilter isn’t supported.
 	ObjectiveFilter *types.ObjectiveFilter
 
 	noSmithyDocumentSerde
@@ -150,16 +149,13 @@ func (c *Client) addOperationListObjectivesMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

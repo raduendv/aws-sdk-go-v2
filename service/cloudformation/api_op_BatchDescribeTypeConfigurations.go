@@ -12,7 +12,7 @@ import (
 )
 
 // Returns configuration data for the specified CloudFormation extensions, from
-// the CloudFormation registry for the account and Region.
+// the CloudFormation registry in your current account and Region.
 //
 // For more information, see [Edit configuration data for extensions in your account] in the CloudFormation User Guide.
 //
@@ -150,16 +150,13 @@ func (c *Client) addOperationBatchDescribeTypeConfigurationsMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

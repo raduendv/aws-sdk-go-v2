@@ -55,7 +55,8 @@ type CreateChannelInput struct {
 	// This member is required.
 	Name *string
 
-	// The ID of the channel in the request.
+	// An ID for the channel being created. If you do not specify an ID, a UUID will
+	// be created for the channel.
 	ChannelId *string
 
 	// The attributes required to configure and create an elastic channel. An elastic
@@ -193,16 +194,13 @@ func (c *Client) addOperationCreateChannelMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

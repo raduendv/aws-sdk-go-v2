@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Grants permission to update an existing case comment.
+// Updates an existing case comment.
 func (c *Client) UpdateCaseComment(ctx context.Context, params *UpdateCaseCommentInput, optFns ...func(*Options)) (*UpdateCaseCommentOutput, error) {
 	if params == nil {
 		params = &UpdateCaseCommentInput{}
@@ -152,16 +152,13 @@ func (c *Client) addOperationUpdateCaseCommentMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

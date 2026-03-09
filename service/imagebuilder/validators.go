@@ -410,6 +410,26 @@ func (m *validateOpDeleteWorkflow) HandleInitialize(ctx context.Context, in midd
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpDistributeImage struct {
+}
+
+func (*validateOpDistributeImage) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDistributeImage) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DistributeImageInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDistributeImageInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetComponent struct {
 }
 
@@ -810,46 +830,6 @@ func (m *validateOpImportVmImage) HandleInitialize(ctx context.Context, in middl
 	return next.HandleInitialize(ctx, in)
 }
 
-type validateOpListComponentBuildVersions struct {
-}
-
-func (*validateOpListComponentBuildVersions) ID() string {
-	return "OperationInputValidation"
-}
-
-func (m *validateOpListComponentBuildVersions) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
-	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
-) {
-	input, ok := in.Parameters.(*ListComponentBuildVersionsInput)
-	if !ok {
-		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
-	}
-	if err := validateOpListComponentBuildVersionsInput(input); err != nil {
-		return out, metadata, err
-	}
-	return next.HandleInitialize(ctx, in)
-}
-
-type validateOpListImageBuildVersions struct {
-}
-
-func (*validateOpListImageBuildVersions) ID() string {
-	return "OperationInputValidation"
-}
-
-func (m *validateOpListImageBuildVersions) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
-	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
-) {
-	input, ok := in.Parameters.(*ListImageBuildVersionsInput)
-	if !ok {
-		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
-	}
-	if err := validateOpListImageBuildVersionsInput(input); err != nil {
-		return out, metadata, err
-	}
-	return next.HandleInitialize(ctx, in)
-}
-
 type validateOpListImagePackages struct {
 }
 
@@ -945,26 +925,6 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListTagsForResourceInput(input); err != nil {
-		return out, metadata, err
-	}
-	return next.HandleInitialize(ctx, in)
-}
-
-type validateOpListWorkflowBuildVersions struct {
-}
-
-func (*validateOpListWorkflowBuildVersions) ID() string {
-	return "OperationInputValidation"
-}
-
-func (m *validateOpListWorkflowBuildVersions) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
-	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
-) {
-	input, ok := in.Parameters.(*ListWorkflowBuildVersionsInput)
-	if !ok {
-		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
-	}
-	if err := validateOpListWorkflowBuildVersionsInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1085,6 +1045,26 @@ func (m *validateOpPutImageRecipePolicy) HandleInitialize(ctx context.Context, i
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpPutImageRecipePolicyInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpRetryImage struct {
+}
+
+func (*validateOpRetryImage) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpRetryImage) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*RetryImageInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpRetryImageInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1350,6 +1330,10 @@ func addOpDeleteWorkflowValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteWorkflow{}, middleware.After)
 }
 
+func addOpDistributeImageValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDistributeImage{}, middleware.After)
+}
+
 func addOpGetComponentValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetComponent{}, middleware.After)
 }
@@ -1430,14 +1414,6 @@ func addOpImportVmImageValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpImportVmImage{}, middleware.After)
 }
 
-func addOpListComponentBuildVersionsValidationMiddleware(stack *middleware.Stack) error {
-	return stack.Initialize.Add(&validateOpListComponentBuildVersions{}, middleware.After)
-}
-
-func addOpListImageBuildVersionsValidationMiddleware(stack *middleware.Stack) error {
-	return stack.Initialize.Add(&validateOpListImageBuildVersions{}, middleware.After)
-}
-
 func addOpListImagePackagesValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListImagePackages{}, middleware.After)
 }
@@ -1456,10 +1432,6 @@ func addOpListLifecycleExecutionsValidationMiddleware(stack *middleware.Stack) e
 
 func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
-}
-
-func addOpListWorkflowBuildVersionsValidationMiddleware(stack *middleware.Stack) error {
-	return stack.Initialize.Add(&validateOpListWorkflowBuildVersions{}, middleware.After)
 }
 
 func addOpListWorkflowExecutionsValidationMiddleware(stack *middleware.Stack) error {
@@ -1484,6 +1456,10 @@ func addOpPutImagePolicyValidationMiddleware(stack *middleware.Stack) error {
 
 func addOpPutImageRecipePolicyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpPutImageRecipePolicy{}, middleware.After)
+}
+
+func addOpRetryImageValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpRetryImage{}, middleware.After)
 }
 
 func addOpSendWorkflowStepActionValidationMiddleware(stack *middleware.Stack) error {
@@ -1520,6 +1496,21 @@ func addOpUpdateInfrastructureConfigurationValidationMiddleware(stack *middlewar
 
 func addOpUpdateLifecyclePolicyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateLifecyclePolicy{}, middleware.After)
+}
+
+func validateAutoDisablePolicy(v *types.AutoDisablePolicy) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AutoDisablePolicy"}
+	if v.FailureCount == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("FailureCount"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
 }
 
 func validateComponentConfiguration(v *types.ComponentConfiguration) error {
@@ -1954,6 +1945,23 @@ func validateS3ExportConfiguration(v *types.S3ExportConfiguration) error {
 	}
 }
 
+func validateSchedule(v *types.Schedule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "Schedule"}
+	if v.AutoDisablePolicy != nil {
+		if err := validateAutoDisablePolicy(v.AutoDisablePolicy); err != nil {
+			invalidParams.AddNested("AutoDisablePolicy", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateSsmParameterConfiguration(v *types.SsmParameterConfiguration) error {
 	if v == nil {
 		return nil
@@ -2150,9 +2158,7 @@ func validateOpCreateContainerRecipeInput(v *CreateContainerRecipeInput) error {
 	if v.SemanticVersion == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("SemanticVersion"))
 	}
-	if v.Components == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("Components"))
-	} else if v.Components != nil {
+	if v.Components != nil {
 		if err := validateComponentConfigurationList(v.Components); err != nil {
 			invalidParams.AddNested("Components", err.(smithy.InvalidParamsError))
 		}
@@ -2236,6 +2242,11 @@ func validateOpCreateImagePipelineInput(v *CreateImagePipelineInput) error {
 	if v.InfrastructureConfigurationArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("InfrastructureConfigurationArn"))
 	}
+	if v.Schedule != nil {
+		if err := validateSchedule(v.Schedule); err != nil {
+			invalidParams.AddNested("Schedule", err.(smithy.InvalidParamsError))
+		}
+	}
 	if v.ClientToken == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ClientToken"))
 	}
@@ -2262,9 +2273,7 @@ func validateOpCreateImageRecipeInput(v *CreateImageRecipeInput) error {
 	if v.SemanticVersion == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("SemanticVersion"))
 	}
-	if v.Components == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("Components"))
-	} else if v.Components != nil {
+	if v.Components != nil {
 		if err := validateComponentConfigurationList(v.Components); err != nil {
 			invalidParams.AddNested("Components", err.(smithy.InvalidParamsError))
 		}
@@ -2492,6 +2501,30 @@ func validateOpDeleteWorkflowInput(v *DeleteWorkflowInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DeleteWorkflowInput"}
 	if v.WorkflowBuildVersionArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("WorkflowBuildVersionArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDistributeImageInput(v *DistributeImageInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DistributeImageInput"}
+	if v.SourceImage == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SourceImage"))
+	}
+	if v.DistributionConfigurationArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DistributionConfigurationArn"))
+	}
+	if v.ExecutionRole == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ExecutionRole"))
+	}
+	if v.ClientToken == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClientToken"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2848,36 +2881,6 @@ func validateOpImportVmImageInput(v *ImportVmImageInput) error {
 	}
 }
 
-func validateOpListComponentBuildVersionsInput(v *ListComponentBuildVersionsInput) error {
-	if v == nil {
-		return nil
-	}
-	invalidParams := smithy.InvalidParamsError{Context: "ListComponentBuildVersionsInput"}
-	if v.ComponentVersionArn == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("ComponentVersionArn"))
-	}
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	} else {
-		return nil
-	}
-}
-
-func validateOpListImageBuildVersionsInput(v *ListImageBuildVersionsInput) error {
-	if v == nil {
-		return nil
-	}
-	invalidParams := smithy.InvalidParamsError{Context: "ListImageBuildVersionsInput"}
-	if v.ImageVersionArn == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("ImageVersionArn"))
-	}
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	} else {
-		return nil
-	}
-}
-
 func validateOpListImagePackagesInput(v *ListImagePackagesInput) error {
 	if v == nil {
 		return nil
@@ -2945,21 +2948,6 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ListTagsForResourceInput"}
 	if v.ResourceArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
-	}
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	} else {
-		return nil
-	}
-}
-
-func validateOpListWorkflowBuildVersionsInput(v *ListWorkflowBuildVersionsInput) error {
-	if v == nil {
-		return nil
-	}
-	invalidParams := smithy.InvalidParamsError{Context: "ListWorkflowBuildVersionsInput"}
-	if v.WorkflowVersionArn == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("WorkflowVersionArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3062,6 +3050,24 @@ func validateOpPutImageRecipePolicyInput(v *PutImageRecipePolicyInput) error {
 	}
 	if v.Policy == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Policy"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpRetryImageInput(v *RetryImageInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RetryImageInput"}
+	if v.ImageBuildVersionArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ImageBuildVersionArn"))
+	}
+	if v.ClientToken == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClientToken"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3209,6 +3215,11 @@ func validateOpUpdateImagePipelineInput(v *UpdateImagePipelineInput) error {
 	}
 	if v.InfrastructureConfigurationArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("InfrastructureConfigurationArn"))
+	}
+	if v.Schedule != nil {
+		if err := validateSchedule(v.Schedule); err != nil {
+			invalidParams.AddNested("Schedule", err.(smithy.InvalidParamsError))
+		}
 	}
 	if v.ClientToken == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ClientToken"))

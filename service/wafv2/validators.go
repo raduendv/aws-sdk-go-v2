@@ -1341,6 +1341,26 @@ func validateAndStatement(v *types.AndStatement) error {
 	}
 }
 
+func validateAsnMatchStatement(v *types.AsnMatchStatement) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AsnMatchStatement"}
+	if v.AsnList == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AsnList"))
+	}
+	if v.ForwardedIPConfig != nil {
+		if err := validateForwardedIPConfig(v.ForwardedIPConfig); err != nil {
+			invalidParams.AddNested("ForwardedIPConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateAssociationConfig(v *types.AssociationConfig) error {
 	if v == nil {
 		return nil
@@ -1379,6 +1399,25 @@ func validateAWSManagedRulesACFPRuleSet(v *types.AWSManagedRulesACFPRuleSet) err
 	if v.ResponseInspection != nil {
 		if err := validateResponseInspection(v.ResponseInspection); err != nil {
 			invalidParams.AddNested("ResponseInspection", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateAWSManagedRulesAntiDDoSRuleSet(v *types.AWSManagedRulesAntiDDoSRuleSet) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AWSManagedRulesAntiDDoSRuleSet"}
+	if v.ClientSideActionConfig == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClientSideActionConfig"))
+	} else if v.ClientSideActionConfig != nil {
+		if err := validateClientSideActionConfig(v.ClientSideActionConfig); err != nil {
+			invalidParams.AddNested("ClientSideActionConfig", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -1536,6 +1575,40 @@ func validateChallengeConfig(v *types.ChallengeConfig) error {
 	if v.ImmunityTimeProperty != nil {
 		if err := validateImmunityTimeProperty(v.ImmunityTimeProperty); err != nil {
 			invalidParams.AddNested("ImmunityTimeProperty", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateClientSideAction(v *types.ClientSideAction) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ClientSideAction"}
+	if len(v.UsageOfAction) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("UsageOfAction"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateClientSideActionConfig(v *types.ClientSideActionConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ClientSideActionConfig"}
+	if v.Challenge == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Challenge"))
+	} else if v.Challenge != nil {
+		if err := validateClientSideAction(v.Challenge); err != nil {
+			invalidParams.AddNested("Challenge", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -2288,6 +2361,11 @@ func validateManagedRuleGroupConfig(v *types.ManagedRuleGroupConfig) error {
 			invalidParams.AddNested("AWSManagedRulesACFPRuleSet", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.AWSManagedRulesAntiDDoSRuleSet != nil {
+		if err := validateAWSManagedRulesAntiDDoSRuleSet(v.AWSManagedRulesAntiDDoSRuleSet); err != nil {
+			invalidParams.AddNested("AWSManagedRulesAntiDDoSRuleSet", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -2361,6 +2439,21 @@ func validateNotStatement(v *types.NotStatement) error {
 		if err := validateStatement(v.Statement); err != nil {
 			invalidParams.AddNested("Statement", err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOnSourceDDoSProtectionConfig(v *types.OnSourceDDoSProtectionConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "OnSourceDDoSProtectionConfig"}
+	if len(v.ALBLowReputationMode) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ALBLowReputationMode"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3327,6 +3420,11 @@ func validateStatement(v *types.Statement) error {
 			invalidParams.AddNested("RegexMatchStatement", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.AsnMatchStatement != nil {
+		if err := validateAsnMatchStatement(v.AsnMatchStatement); err != nil {
+			invalidParams.AddNested("AsnMatchStatement", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -3706,6 +3804,11 @@ func validateOpCreateWebACLInput(v *CreateWebACLInput) error {
 	if v.AssociationConfig != nil {
 		if err := validateAssociationConfig(v.AssociationConfig); err != nil {
 			invalidParams.AddNested("AssociationConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.OnSourceDDoSProtectionConfig != nil {
+		if err := validateOnSourceDDoSProtectionConfig(v.OnSourceDDoSProtectionConfig); err != nil {
+			invalidParams.AddNested("OnSourceDDoSProtectionConfig", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -4634,6 +4737,11 @@ func validateOpUpdateWebACLInput(v *UpdateWebACLInput) error {
 	if v.AssociationConfig != nil {
 		if err := validateAssociationConfig(v.AssociationConfig); err != nil {
 			invalidParams.AddNested("AssociationConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.OnSourceDDoSProtectionConfig != nil {
+		if err := validateOnSourceDDoSProtectionConfig(v.OnSourceDDoSProtectionConfig); err != nil {
+			invalidParams.AddNested("OnSourceDDoSProtectionConfig", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

@@ -19,16 +19,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpBatchDeleteBuilds struct {
 }
@@ -9451,6 +9442,105 @@ func awsAwsjson11_deserializeDocumentDebugSession(v **types.DebugSession, value 
 	return nil
 }
 
+func awsAwsjson11_deserializeDocumentDockerServer(v **types.DockerServer, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.DockerServer
+	if *v == nil {
+		sv = &types.DockerServer{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "computeType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ComputeType to be of type string, got %T instead", value)
+				}
+				sv.ComputeType = types.ComputeType(jtv)
+			}
+
+		case "securityGroupIds":
+			if err := awsAwsjson11_deserializeDocumentSecurityGroupIds(&sv.SecurityGroupIds, value); err != nil {
+				return err
+			}
+
+		case "status":
+			if err := awsAwsjson11_deserializeDocumentDockerServerStatus(&sv.Status, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentDockerServerStatus(v **types.DockerServerStatus, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.DockerServerStatus
+	if *v == nil {
+		sv = &types.DockerServerStatus{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "message":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.Message = ptr.String(jtv)
+			}
+
+		case "status":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.Status = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson11_deserializeDocumentEnvironmentImage(v **types.EnvironmentImage, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -11626,6 +11716,11 @@ func awsAwsjson11_deserializeDocumentProjectEnvironment(v **types.ProjectEnviron
 				sv.ComputeType = types.ComputeType(jtv)
 			}
 
+		case "dockerServer":
+			if err := awsAwsjson11_deserializeDocumentDockerServer(&sv.DockerServer, value); err != nil {
+				return err
+			}
+
 		case "environmentVariables":
 			if err := awsAwsjson11_deserializeDocumentEnvironmentVariables(&sv.EnvironmentVariables, value); err != nil {
 				return err
@@ -12170,6 +12265,87 @@ func awsAwsjson11_deserializeDocumentProxyConfiguration(v **types.ProxyConfigura
 		case "orderedProxyRules":
 			if err := awsAwsjson11_deserializeDocumentFleetProxyRules(&sv.OrderedProxyRules, value); err != nil {
 				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentPullRequestBuildApproverRoles(v *[]types.PullRequestBuildApproverRole, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.PullRequestBuildApproverRole
+	if *v == nil {
+		cv = []types.PullRequestBuildApproverRole{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.PullRequestBuildApproverRole
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected PullRequestBuildApproverRole to be of type string, got %T instead", value)
+			}
+			col = types.PullRequestBuildApproverRole(jtv)
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentPullRequestBuildPolicy(v **types.PullRequestBuildPolicy, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.PullRequestBuildPolicy
+	if *v == nil {
+		sv = &types.PullRequestBuildPolicy{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "approverRoles":
+			if err := awsAwsjson11_deserializeDocumentPullRequestBuildApproverRoles(&sv.ApproverRoles, value); err != nil {
+				return err
+			}
+
+		case "requiresCommentApproval":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PullRequestBuildCommentApproval to be of type string, got %T instead", value)
+				}
+				sv.RequiresCommentApproval = types.PullRequestBuildCommentApproval(jtv)
 			}
 
 		default:
@@ -14641,6 +14817,11 @@ func awsAwsjson11_deserializeDocumentWebhook(v **types.Webhook, value interface{
 					return fmt.Errorf("expected NonEmptyString to be of type string, got %T instead", value)
 				}
 				sv.PayloadUrl = ptr.String(jtv)
+			}
+
+		case "pullRequestBuildPolicy":
+			if err := awsAwsjson11_deserializeDocumentPullRequestBuildPolicy(&sv.PullRequestBuildPolicy, value); err != nil {
+				return err
 			}
 
 		case "scopeConfiguration":

@@ -66,7 +66,12 @@ type GetDeviceDiscoveryOutput struct {
 	// This member is required.
 	Status types.DeviceDiscoveryStatus
 
+	// The identifier of the account association used for the device discovery.
+	AccountAssociationId *string
+
 	// The ID tracking the current discovery process for one connector association.
+	//
+	// Deprecated: ConnectorAssociationId has been deprecated
 	ConnectorAssociationId *string
 
 	// The id of the end-user's IoT hub.
@@ -76,6 +81,8 @@ type GetDeviceDiscoveryOutput struct {
 	FinishedAt *time.Time
 
 	// A set of key/value pairs that are used to manage the device discovery request.
+	//
+	// Deprecated: Tags have been deprecated from this api
 	Tags map[string]string
 
 	// Metadata pertaining to the operation's result.
@@ -172,16 +179,13 @@ func (c *Client) addOperationGetDeviceDiscoveryMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

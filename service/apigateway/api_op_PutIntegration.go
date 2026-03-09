@@ -85,6 +85,9 @@ type PutIntegrationInput struct {
 	// The HTTP method for the integration.
 	IntegrationHttpMethod *string
 
+	//  The ALB or NLB listener to send the request to.
+	IntegrationTarget *string
+
 	// Specifies the pass-through behavior for incoming requests based on the
 	// Content-Type header in the request, and the available mapping templates
 	// specified as the requestTemplates property on the Integration resource. There
@@ -105,8 +108,12 @@ type PutIntegrationInput struct {
 	// type value is the key in this map, and the template (as a String) is the value.
 	RequestTemplates map[string]string
 
+	//  The response transfer mode of the integration.
+	ResponseTransferMode types.ResponseTransferMode
+
 	// Custom timeout between 50 and 29,000 milliseconds. The default value is 29,000
-	// milliseconds or 29 seconds.
+	// milliseconds or 29 seconds. You can increase the default value to longer than 29
+	// seconds for Regional or private APIs only.
 	TimeoutInMillis *int32
 
 	// Specifies the TLS configuration for an integration.
@@ -186,6 +193,9 @@ type PutIntegrationOutput struct {
 	// Specifies the integration's responses.
 	IntegrationResponses map[string]types.IntegrationResponse
 
+	//  The ALB or NLB listener to send the request to.
+	IntegrationTarget *string
+
 	// Specifies how the method request body of an unmapped content type will be
 	// passed through the integration request to the back end without transformation. A
 	// content type is unmapped if no mapping template is defined in the integration or
@@ -219,8 +229,12 @@ type PutIntegrationOutput struct {
 	// type value is the key in this map, and the template (as a String) is the value.
 	RequestTemplates map[string]string
 
+	//  The response transfer mode of the integration.
+	ResponseTransferMode types.ResponseTransferMode
+
 	// Custom timeout between 50 and 29,000 milliseconds. The default value is 29,000
-	// milliseconds or 29 seconds.
+	// milliseconds or 29 seconds. You can increase the default value to longer than 29
+	// seconds for Regional or private APIs only.
 	TimeoutInMillis int32
 
 	// Specifies the TLS configuration for an integration.
@@ -355,16 +369,13 @@ func (c *Client) addOperationPutIntegrationMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

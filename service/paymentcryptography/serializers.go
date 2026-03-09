@@ -16,6 +16,67 @@ import (
 	"path"
 )
 
+type awsAwsjson10_serializeOpAddKeyReplicationRegions struct {
+}
+
+func (*awsAwsjson10_serializeOpAddKeyReplicationRegions) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson10_serializeOpAddKeyReplicationRegions) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*AddKeyReplicationRegionsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.0")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("PaymentCryptographyControlPlane.AddKeyReplicationRegions")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson10_serializeOpDocumentAddKeyReplicationRegionsInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
 type awsAwsjson10_serializeOpCreateAlias struct {
 }
 
@@ -260,6 +321,128 @@ func (m *awsAwsjson10_serializeOpDeleteKey) HandleSerialize(ctx context.Context,
 	return next.HandleSerialize(ctx, in)
 }
 
+type awsAwsjson10_serializeOpDisableDefaultKeyReplicationRegions struct {
+}
+
+func (*awsAwsjson10_serializeOpDisableDefaultKeyReplicationRegions) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson10_serializeOpDisableDefaultKeyReplicationRegions) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*DisableDefaultKeyReplicationRegionsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.0")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("PaymentCryptographyControlPlane.DisableDefaultKeyReplicationRegions")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson10_serializeOpDocumentDisableDefaultKeyReplicationRegionsInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
+type awsAwsjson10_serializeOpEnableDefaultKeyReplicationRegions struct {
+}
+
+func (*awsAwsjson10_serializeOpEnableDefaultKeyReplicationRegions) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson10_serializeOpEnableDefaultKeyReplicationRegions) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*EnableDefaultKeyReplicationRegionsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.0")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("PaymentCryptographyControlPlane.EnableDefaultKeyReplicationRegions")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson10_serializeOpDocumentEnableDefaultKeyReplicationRegionsInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
 type awsAwsjson10_serializeOpExportKey struct {
 }
 
@@ -365,6 +548,128 @@ func (m *awsAwsjson10_serializeOpGetAlias) HandleSerialize(ctx context.Context, 
 
 	jsonEncoder := smithyjson.NewEncoder()
 	if err := awsAwsjson10_serializeOpDocumentGetAliasInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
+type awsAwsjson10_serializeOpGetCertificateSigningRequest struct {
+}
+
+func (*awsAwsjson10_serializeOpGetCertificateSigningRequest) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson10_serializeOpGetCertificateSigningRequest) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*GetCertificateSigningRequestInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.0")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("PaymentCryptographyControlPlane.GetCertificateSigningRequest")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson10_serializeOpDocumentGetCertificateSigningRequestInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
+type awsAwsjson10_serializeOpGetDefaultKeyReplicationRegions struct {
+}
+
+func (*awsAwsjson10_serializeOpGetDefaultKeyReplicationRegions) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson10_serializeOpGetDefaultKeyReplicationRegions) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*GetDefaultKeyReplicationRegionsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.0")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("PaymentCryptographyControlPlane.GetDefaultKeyReplicationRegions")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson10_serializeOpDocumentGetDefaultKeyReplicationRegionsInput(input, jsonEncoder.Value); err != nil {
 		return out, metadata, &smithy.SerializationError{Err: err}
 	}
 
@@ -870,6 +1175,67 @@ func (m *awsAwsjson10_serializeOpListTagsForResource) HandleSerialize(ctx contex
 	return next.HandleSerialize(ctx, in)
 }
 
+type awsAwsjson10_serializeOpRemoveKeyReplicationRegions struct {
+}
+
+func (*awsAwsjson10_serializeOpRemoveKeyReplicationRegions) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson10_serializeOpRemoveKeyReplicationRegions) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*RemoveKeyReplicationRegionsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.0")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("PaymentCryptographyControlPlane.RemoveKeyReplicationRegions")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson10_serializeOpDocumentRemoveKeyReplicationRegionsInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
 type awsAwsjson10_serializeOpRestoreKey struct {
 }
 
@@ -1235,6 +1601,48 @@ func (m *awsAwsjson10_serializeOpUpdateAlias) HandleSerialize(ctx context.Contex
 	span.End()
 	return next.HandleSerialize(ctx, in)
 }
+func awsAwsjson10_serializeDocumentCertificateSubjectType(v *types.CertificateSubjectType, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.City != nil {
+		ok := object.Key("City")
+		ok.String(*v.City)
+	}
+
+	if v.CommonName != nil {
+		ok := object.Key("CommonName")
+		ok.String(*v.CommonName)
+	}
+
+	if v.Country != nil {
+		ok := object.Key("Country")
+		ok.String(*v.Country)
+	}
+
+	if v.EmailAddress != nil {
+		ok := object.Key("EmailAddress")
+		ok.String(*v.EmailAddress)
+	}
+
+	if v.Organization != nil {
+		ok := object.Key("Organization")
+		ok.String(*v.Organization)
+	}
+
+	if v.OrganizationUnit != nil {
+		ok := object.Key("OrganizationUnit")
+		ok.String(*v.OrganizationUnit)
+	}
+
+	if v.StateOrProvince != nil {
+		ok := object.Key("StateOrProvince")
+		ok.String(*v.StateOrProvince)
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentDiffieHellmanDerivationData(v types.DiffieHellmanDerivationData, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1248,6 +1656,23 @@ func awsAwsjson10_serializeDocumentDiffieHellmanDerivationData(v types.DiffieHel
 		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
 
 	}
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentExportAs2805KeyCryptogram(v *types.ExportAs2805KeyCryptogram, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.As2805KeyVariant) > 0 {
+		ok := object.Key("As2805KeyVariant")
+		ok.String(string(v.As2805KeyVariant))
+	}
+
+	if v.WrappingKeyIdentifier != nil {
+		ok := object.Key("WrappingKeyIdentifier")
+		ok.String(*v.WrappingKeyIdentifier)
+	}
+
 	return nil
 }
 
@@ -1360,6 +1785,12 @@ func awsAwsjson10_serializeDocumentExportKeyMaterial(v types.ExportKeyMaterial, 
 	defer object.Close()
 
 	switch uv := v.(type) {
+	case *types.ExportKeyMaterialMemberAs2805KeyCryptogram:
+		av := object.Key("As2805KeyCryptogram")
+		if err := awsAwsjson10_serializeDocumentExportAs2805KeyCryptogram(&uv.Value, av); err != nil {
+			return err
+		}
+
 	case *types.ExportKeyMaterialMemberDiffieHellmanTr31KeyBlock:
 		av := object.Key("DiffieHellmanTr31KeyBlock")
 		if err := awsAwsjson10_serializeDocumentExportDiffieHellmanTr31KeyBlock(&uv.Value, av); err != nil {
@@ -1441,9 +1872,58 @@ func awsAwsjson10_serializeDocumentExportTr34KeyBlock(v *types.ExportTr34KeyBloc
 		ok.String(*v.RandomNonce)
 	}
 
+	if v.SigningKeyCertificate != nil {
+		ok := object.Key("SigningKeyCertificate")
+		ok.String(*v.SigningKeyCertificate)
+	}
+
+	if v.SigningKeyIdentifier != nil {
+		ok := object.Key("SigningKeyIdentifier")
+		ok.String(*v.SigningKeyIdentifier)
+	}
+
 	if v.WrappingKeyCertificate != nil {
 		ok := object.Key("WrappingKeyCertificate")
 		ok.String(*v.WrappingKeyCertificate)
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentImportAs2805KeyCryptogram(v *types.ImportAs2805KeyCryptogram, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.As2805KeyVariant) > 0 {
+		ok := object.Key("As2805KeyVariant")
+		ok.String(string(v.As2805KeyVariant))
+	}
+
+	if v.Exportable != nil {
+		ok := object.Key("Exportable")
+		ok.Boolean(*v.Exportable)
+	}
+
+	if len(v.KeyAlgorithm) > 0 {
+		ok := object.Key("KeyAlgorithm")
+		ok.String(string(v.KeyAlgorithm))
+	}
+
+	if v.KeyModesOfUse != nil {
+		ok := object.Key("KeyModesOfUse")
+		if err := awsAwsjson10_serializeDocumentKeyModesOfUse(v.KeyModesOfUse, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.WrappedKeyCryptogram != nil {
+		ok := object.Key("WrappedKeyCryptogram")
+		ok.String(*v.WrappedKeyCryptogram)
+	}
+
+	if v.WrappingKeyIdentifier != nil {
+		ok := object.Key("WrappingKeyIdentifier")
+		ok.String(*v.WrappingKeyIdentifier)
 	}
 
 	return nil
@@ -1537,6 +2017,12 @@ func awsAwsjson10_serializeDocumentImportKeyMaterial(v types.ImportKeyMaterial, 
 	defer object.Close()
 
 	switch uv := v.(type) {
+	case *types.ImportKeyMaterialMemberAs2805KeyCryptogram:
+		av := object.Key("As2805KeyCryptogram")
+		if err := awsAwsjson10_serializeDocumentImportAs2805KeyCryptogram(&uv.Value, av); err != nil {
+			return err
+		}
+
 	case *types.ImportKeyMaterialMemberDiffieHellmanTr31KeyBlock:
 		av := object.Key("DiffieHellmanTr31KeyBlock")
 		if err := awsAwsjson10_serializeDocumentImportDiffieHellmanTr31KeyBlock(&uv.Value, av); err != nil {
@@ -1629,6 +2115,16 @@ func awsAwsjson10_serializeDocumentImportTr34KeyBlock(v *types.ImportTr34KeyBloc
 	if v.WrappedKeyBlock != nil {
 		ok := object.Key("WrappedKeyBlock")
 		ok.String(*v.WrappedKeyBlock)
+	}
+
+	if v.WrappingKeyCertificate != nil {
+		ok := object.Key("WrappingKeyCertificate")
+		ok.String(*v.WrappingKeyCertificate)
+	}
+
+	if v.WrappingKeyIdentifier != nil {
+		ok := object.Key("WrappingKeyIdentifier")
+		ok.String(*v.WrappingKeyIdentifier)
 	}
 
 	return nil
@@ -1757,6 +2253,17 @@ func awsAwsjson10_serializeDocumentOptionalBlocks(v map[string]string, value smi
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentRegions(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentRootCertificatePublicKey(v *types.RootCertificatePublicKey, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1841,6 +2348,25 @@ func awsAwsjson10_serializeDocumentTrustedCertificatePublicKey(v *types.TrustedC
 	return nil
 }
 
+func awsAwsjson10_serializeOpDocumentAddKeyReplicationRegionsInput(v *AddKeyReplicationRegionsInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.KeyIdentifier != nil {
+		ok := object.Key("KeyIdentifier")
+		ok.String(*v.KeyIdentifier)
+	}
+
+	if v.ReplicationRegions != nil {
+		ok := object.Key("ReplicationRegions")
+		if err := awsAwsjson10_serializeDocumentRegions(v.ReplicationRegions, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeOpDocumentCreateAliasInput(v *CreateAliasInput, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1889,6 +2415,13 @@ func awsAwsjson10_serializeOpDocumentCreateKeyInput(v *CreateKeyInput, value smi
 		ok.String(string(v.KeyCheckValueAlgorithm))
 	}
 
+	if v.ReplicationRegions != nil {
+		ok := object.Key("ReplicationRegions")
+		if err := awsAwsjson10_serializeDocumentRegions(v.ReplicationRegions, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Tags != nil {
 		ok := object.Key("Tags")
 		if err := awsAwsjson10_serializeDocumentTags(v.Tags, ok); err != nil {
@@ -1928,6 +2461,34 @@ func awsAwsjson10_serializeOpDocumentDeleteKeyInput(v *DeleteKeyInput, value smi
 	return nil
 }
 
+func awsAwsjson10_serializeOpDocumentDisableDefaultKeyReplicationRegionsInput(v *DisableDefaultKeyReplicationRegionsInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ReplicationRegions != nil {
+		ok := object.Key("ReplicationRegions")
+		if err := awsAwsjson10_serializeDocumentRegions(v.ReplicationRegions, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeOpDocumentEnableDefaultKeyReplicationRegionsInput(v *EnableDefaultKeyReplicationRegionsInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ReplicationRegions != nil {
+		ok := object.Key("ReplicationRegions")
+		if err := awsAwsjson10_serializeDocumentRegions(v.ReplicationRegions, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeOpDocumentExportKeyInput(v *ExportKeyInput, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1962,6 +2523,37 @@ func awsAwsjson10_serializeOpDocumentGetAliasInput(v *GetAliasInput, value smith
 		ok := object.Key("AliasName")
 		ok.String(*v.AliasName)
 	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeOpDocumentGetCertificateSigningRequestInput(v *GetCertificateSigningRequestInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.CertificateSubject != nil {
+		ok := object.Key("CertificateSubject")
+		if err := awsAwsjson10_serializeDocumentCertificateSubjectType(v.CertificateSubject, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.KeyIdentifier != nil {
+		ok := object.Key("KeyIdentifier")
+		ok.String(*v.KeyIdentifier)
+	}
+
+	if len(v.SigningAlgorithm) > 0 {
+		ok := object.Key("SigningAlgorithm")
+		ok.String(string(v.SigningAlgorithm))
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeOpDocumentGetDefaultKeyReplicationRegionsInput(v *GetDefaultKeyReplicationRegionsInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
 
 	return nil
 }
@@ -2045,6 +2637,13 @@ func awsAwsjson10_serializeOpDocumentImportKeyInput(v *ImportKeyInput, value smi
 		}
 	}
 
+	if v.ReplicationRegions != nil {
+		ok := object.Key("ReplicationRegions")
+		if err := awsAwsjson10_serializeDocumentRegions(v.ReplicationRegions, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Tags != nil {
 		ok := object.Key("Tags")
 		if err := awsAwsjson10_serializeDocumentTags(v.Tags, ok); err != nil {
@@ -2116,6 +2715,25 @@ func awsAwsjson10_serializeOpDocumentListTagsForResourceInput(v *ListTagsForReso
 	if v.ResourceArn != nil {
 		ok := object.Key("ResourceArn")
 		ok.String(*v.ResourceArn)
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeOpDocumentRemoveKeyReplicationRegionsInput(v *RemoveKeyReplicationRegionsInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.KeyIdentifier != nil {
+		ok := object.Key("KeyIdentifier")
+		ok.String(*v.KeyIdentifier)
+	}
+
+	if v.ReplicationRegions != nil {
+		ok := object.Key("ReplicationRegions")
+		if err := awsAwsjson10_serializeDocumentRegions(v.ReplicationRegions, ok); err != nil {
+			return err
+		}
 	}
 
 	return nil

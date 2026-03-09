@@ -53,7 +53,8 @@ type DescribeStackResourceDriftsInput struct {
 	// set of results.
 	MaxResults *int32
 
-	// A string that identifies the next page of stack resource drift results.
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	// The resource drift status values to use as filters for the resource drift
@@ -69,6 +70,8 @@ type DescribeStackResourceDriftsInput struct {
 	//   configuration.
 	//
 	//   - NOT_CHECKED : CloudFormation doesn't currently return this value.
+	//
+	//   - UNKNOWN : CloudFormation could not run drift detection for the resource.
 	StackResourceDriftStatusFilters []types.StackResourceDriftStatus
 
 	noSmithyDocumentSerde
@@ -191,16 +194,13 @@ func (c *Client) addOperationDescribeStackResourceDriftsMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

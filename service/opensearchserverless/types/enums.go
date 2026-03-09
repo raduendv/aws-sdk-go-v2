@@ -162,6 +162,8 @@ const (
 	SecurityConfigTypeSaml SecurityConfigType = "saml"
 	// iam identity center
 	SecurityConfigTypeIamidentitycenter SecurityConfigType = "iamidentitycenter"
+	// iam federation
+	SecurityConfigTypeIamfederation SecurityConfigType = "iamfederation"
 )
 
 // Values returns all known values for SecurityConfigType. Note that this can be
@@ -172,6 +174,7 @@ func (SecurityConfigType) Values() []SecurityConfigType {
 	return []SecurityConfigType{
 		"saml",
 		"iamidentitycenter",
+		"iamfederation",
 	}
 }
 
@@ -193,6 +196,31 @@ func (SecurityPolicyType) Values() []SecurityPolicyType {
 	return []SecurityPolicyType{
 		"encryption",
 		"network",
+	}
+}
+
+type ServerlessVectorAccelerationStatus string
+
+// Enum values for ServerlessVectorAccelerationStatus
+const (
+	// Serverless vector acceleration is enabled by default
+	ServerlessVectorAccelerationStatusEnabled ServerlessVectorAccelerationStatus = "ENABLED"
+	// Serverless vector acceleration is disabled
+	ServerlessVectorAccelerationStatusDisabled ServerlessVectorAccelerationStatus = "DISABLED"
+	// Serverless vector acceleration is allowed but not enabled by default
+	ServerlessVectorAccelerationStatusAllowed ServerlessVectorAccelerationStatus = "ALLOWED"
+)
+
+// Values returns all known values for ServerlessVectorAccelerationStatus. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ServerlessVectorAccelerationStatus) Values() []ServerlessVectorAccelerationStatus {
+	return []ServerlessVectorAccelerationStatus{
+		"ENABLED",
+		"DISABLED",
+		"ALLOWED",
 	}
 }
 

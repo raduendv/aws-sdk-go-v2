@@ -73,10 +73,9 @@ type UpdateCampaignOutput struct {
 	//   - CREATING - Amazon Web Services IoT FleetWise is processing your request to
 	//   create the campaign.
 	//
-	//   - WAITING_FOR_APPROVAL - After a campaign is created, it enters the
-	//   WAITING_FOR_APPROVAL state. To allow Amazon Web Services IoT FleetWise to
-	//   deploy the campaign to the target vehicle or fleet, use the API operation to
-	//   approve the campaign.
+	//   - WAITING_FOR_APPROVAL - After you create a campaign, it enters this state.
+	//   Use the API operation to approve the campaign for deployment to the target
+	//   vehicle or fleet.
 	//
 	//   - RUNNING - The campaign is active.
 	//
@@ -178,16 +177,13 @@ func (c *Client) addOperationUpdateCampaignMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

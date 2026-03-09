@@ -18,16 +18,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpCreateConnector struct {
 }
@@ -1445,6 +1436,15 @@ func awsRestjson1_deserializeOpDocumentDescribeConnectorOutput(v **DescribeConne
 		case "logDelivery":
 			if err := awsRestjson1_deserializeDocumentLogDeliveryDescription(&sv.LogDelivery, value); err != nil {
 				return err
+			}
+
+		case "networkType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected NetworkType to be of type string, got %T instead", value)
+				}
+				sv.NetworkType = types.NetworkType(jtv)
 			}
 
 		case "plugins":
@@ -4068,6 +4068,19 @@ func awsRestjson1_deserializeDocumentAutoScalingDescription(v **types.AutoScalin
 
 	for key, value := range shape {
 		switch key {
+		case "maxAutoscalingTaskCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.MaxAutoscalingTaskCount = int32(i64)
+			}
+
 		case "maxWorkerCount":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -4577,6 +4590,15 @@ func awsRestjson1_deserializeDocumentConnectorSummary(v **types.ConnectorSummary
 		case "logDelivery":
 			if err := awsRestjson1_deserializeDocumentLogDeliveryDescription(&sv.LogDelivery, value); err != nil {
 				return err
+			}
+
+		case "networkType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected NetworkType to be of type string, got %T instead", value)
+				}
+				sv.NetworkType = types.NetworkType(jtv)
 			}
 
 		case "plugins":

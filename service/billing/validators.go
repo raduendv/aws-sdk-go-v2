@@ -10,6 +10,26 @@ import (
 	"github.com/aws/smithy-go/middleware"
 )
 
+type validateOpAssociateSourceViews struct {
+}
+
+func (*validateOpAssociateSourceViews) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpAssociateSourceViews) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*AssociateSourceViewsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpAssociateSourceViewsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateBillingView struct {
 }
 
@@ -45,6 +65,26 @@ func (m *validateOpDeleteBillingView) HandleInitialize(ctx context.Context, in m
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDeleteBillingViewInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDisassociateSourceViews struct {
+}
+
+func (*validateOpDisassociateSourceViews) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDisassociateSourceViews) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DisassociateSourceViewsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDisassociateSourceViewsInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -210,12 +250,20 @@ func (m *validateOpUpdateBillingView) HandleInitialize(ctx context.Context, in m
 	return next.HandleInitialize(ctx, in)
 }
 
+func addOpAssociateSourceViewsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpAssociateSourceViews{}, middleware.After)
+}
+
 func addOpCreateBillingViewValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateBillingView{}, middleware.After)
 }
 
 func addOpDeleteBillingViewValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteBillingView{}, middleware.After)
+}
+
+func addOpDisassociateSourceViewsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDisassociateSourceViews{}, middleware.After)
 }
 
 func addOpGetBillingViewValidationMiddleware(stack *middleware.Stack) error {
@@ -268,6 +316,24 @@ func validateActiveTimeRange(v *types.ActiveTimeRange) error {
 	}
 }
 
+func validateCostCategoryValues(v *types.CostCategoryValues) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CostCategoryValues"}
+	if v.Key == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Key"))
+	}
+	if v.Values == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Values"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateDimensionValues(v *types.DimensionValues) error {
 	if v == nil {
 		return nil
@@ -299,6 +365,11 @@ func validateExpression(v *types.Expression) error {
 	if v.Tags != nil {
 		if err := validateTagValues(v.Tags); err != nil {
 			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.CostCategories != nil {
+		if err := validateCostCategoryValues(v.CostCategories); err != nil {
+			invalidParams.AddNested("CostCategories", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -340,6 +411,41 @@ func validateResourceTagList(v []types.ResourceTag) error {
 	}
 }
 
+func validateStringSearch(v *types.StringSearch) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StringSearch"}
+	if len(v.SearchOption) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("SearchOption"))
+	}
+	if v.SearchValue == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SearchValue"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateStringSearches(v []types.StringSearch) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StringSearches"}
+	for i := range v {
+		if err := validateStringSearch(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateTagValues(v *types.TagValues) error {
 	if v == nil {
 		return nil
@@ -350,6 +456,24 @@ func validateTagValues(v *types.TagValues) error {
 	}
 	if v.Values == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Values"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpAssociateSourceViewsInput(v *AssociateSourceViewsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AssociateSourceViewsInput"}
+	if v.Arn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Arn"))
+	}
+	if v.SourceViews == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SourceViews"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -401,6 +525,24 @@ func validateOpDeleteBillingViewInput(v *DeleteBillingViewInput) error {
 	}
 }
 
+func validateOpDisassociateSourceViewsInput(v *DisassociateSourceViewsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DisassociateSourceViewsInput"}
+	if v.Arn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Arn"))
+	}
+	if v.SourceViews == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SourceViews"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetBillingViewInput(v *GetBillingViewInput) error {
 	if v == nil {
 		return nil
@@ -439,6 +581,11 @@ func validateOpListBillingViewsInput(v *ListBillingViewsInput) error {
 	if v.ActiveTimeRange != nil {
 		if err := validateActiveTimeRange(v.ActiveTimeRange); err != nil {
 			invalidParams.AddNested("ActiveTimeRange", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Names != nil {
+		if err := validateStringSearches(v.Names); err != nil {
+			invalidParams.AddNested("Names", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

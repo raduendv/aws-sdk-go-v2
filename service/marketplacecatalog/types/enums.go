@@ -77,10 +77,11 @@ type ContainerProductSortBy string
 
 // Enum values for ContainerProductSortBy
 const (
-	ContainerProductSortByEntityId         ContainerProductSortBy = "EntityId"
-	ContainerProductSortByLastModifiedDate ContainerProductSortBy = "LastModifiedDate"
-	ContainerProductSortByProductTitle     ContainerProductSortBy = "ProductTitle"
-	ContainerProductSortByVisibility       ContainerProductSortBy = "Visibility"
+	ContainerProductSortByEntityId              ContainerProductSortBy = "EntityId"
+	ContainerProductSortByLastModifiedDate      ContainerProductSortBy = "LastModifiedDate"
+	ContainerProductSortByProductTitle          ContainerProductSortBy = "ProductTitle"
+	ContainerProductSortByVisibility            ContainerProductSortBy = "Visibility"
+	ContainerProductSortByCompatibleAWSServices ContainerProductSortBy = "CompatibleAWSServices"
 )
 
 // Values returns all known values for ContainerProductSortBy. Note that this can
@@ -93,6 +94,7 @@ func (ContainerProductSortBy) Values() []ContainerProductSortBy {
 		"LastModifiedDate",
 		"ProductTitle",
 		"Visibility",
+		"CompatibleAWSServices",
 	}
 }
 
@@ -206,6 +208,100 @@ func (Intent) Values() []Intent {
 	}
 }
 
+type MachineLearningProductSortBy string
+
+// Enum values for MachineLearningProductSortBy
+const (
+	MachineLearningProductSortByEntityId         MachineLearningProductSortBy = "EntityId"
+	MachineLearningProductSortByLastModifiedDate MachineLearningProductSortBy = "LastModifiedDate"
+	MachineLearningProductSortByProductTitle     MachineLearningProductSortBy = "ProductTitle"
+	MachineLearningProductSortByVisibility       MachineLearningProductSortBy = "Visibility"
+)
+
+// Values returns all known values for MachineLearningProductSortBy. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MachineLearningProductSortBy) Values() []MachineLearningProductSortBy {
+	return []MachineLearningProductSortBy{
+		"EntityId",
+		"LastModifiedDate",
+		"ProductTitle",
+		"Visibility",
+	}
+}
+
+type MachineLearningProductVisibilityString string
+
+// Enum values for MachineLearningProductVisibilityString
+const (
+	MachineLearningProductVisibilityStringLimited    MachineLearningProductVisibilityString = "Limited"
+	MachineLearningProductVisibilityStringPublic     MachineLearningProductVisibilityString = "Public"
+	MachineLearningProductVisibilityStringRestricted MachineLearningProductVisibilityString = "Restricted"
+	MachineLearningProductVisibilityStringDraft      MachineLearningProductVisibilityString = "Draft"
+)
+
+// Values returns all known values for MachineLearningProductVisibilityString.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MachineLearningProductVisibilityString) Values() []MachineLearningProductVisibilityString {
+	return []MachineLearningProductVisibilityString{
+		"Limited",
+		"Public",
+		"Restricted",
+		"Draft",
+	}
+}
+
+type OfferSetSortBy string
+
+// Enum values for OfferSetSortBy
+const (
+	OfferSetSortByName             OfferSetSortBy = "Name"
+	OfferSetSortByState            OfferSetSortBy = "State"
+	OfferSetSortByReleaseDate      OfferSetSortBy = "ReleaseDate"
+	OfferSetSortBySolutionId       OfferSetSortBy = "SolutionId"
+	OfferSetSortByEntityId         OfferSetSortBy = "EntityId"
+	OfferSetSortByLastModifiedDate OfferSetSortBy = "LastModifiedDate"
+)
+
+// Values returns all known values for OfferSetSortBy. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OfferSetSortBy) Values() []OfferSetSortBy {
+	return []OfferSetSortBy{
+		"Name",
+		"State",
+		"ReleaseDate",
+		"SolutionId",
+		"EntityId",
+		"LastModifiedDate",
+	}
+}
+
+type OfferSetStateString string
+
+// Enum values for OfferSetStateString
+const (
+	OfferSetStateStringDraft    OfferSetStateString = "Draft"
+	OfferSetStateStringReleased OfferSetStateString = "Released"
+)
+
+// Values returns all known values for OfferSetStateString. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OfferSetStateString) Values() []OfferSetStateString {
+	return []OfferSetStateString{
+		"Draft",
+		"Released",
+	}
+}
+
 type OfferSortBy string
 
 // Enum values for OfferSortBy
@@ -220,6 +316,7 @@ const (
 	OfferSortByState                 OfferSortBy = "State"
 	OfferSortByTargeting             OfferSortBy = "Targeting"
 	OfferSortByLastModifiedDate      OfferSortBy = "LastModifiedDate"
+	OfferSortByOfferSetId            OfferSortBy = "OfferSetId"
 )
 
 // Values returns all known values for OfferSortBy. Note that this can be expanded
@@ -238,6 +335,7 @@ func (OfferSortBy) Values() []OfferSortBy {
 		"State",
 		"Targeting",
 		"LastModifiedDate",
+		"OfferSetId",
 	}
 }
 
@@ -369,10 +467,11 @@ type SaaSProductSortBy string
 
 // Enum values for SaaSProductSortBy
 const (
-	SaaSProductSortByEntityId         SaaSProductSortBy = "EntityId"
-	SaaSProductSortByProductTitle     SaaSProductSortBy = "ProductTitle"
-	SaaSProductSortByVisibility       SaaSProductSortBy = "Visibility"
-	SaaSProductSortByLastModifiedDate SaaSProductSortBy = "LastModifiedDate"
+	SaaSProductSortByEntityId            SaaSProductSortBy = "EntityId"
+	SaaSProductSortByProductTitle        SaaSProductSortBy = "ProductTitle"
+	SaaSProductSortByVisibility          SaaSProductSortBy = "Visibility"
+	SaaSProductSortByLastModifiedDate    SaaSProductSortBy = "LastModifiedDate"
+	SaaSProductSortByDeliveryOptionTypes SaaSProductSortBy = "DeliveryOptionTypes"
 )
 
 // Values returns all known values for SaaSProductSortBy. Note that this can be
@@ -385,6 +484,7 @@ func (SaaSProductSortBy) Values() []SaaSProductSortBy {
 		"ProductTitle",
 		"Visibility",
 		"LastModifiedDate",
+		"DeliveryOptionTypes",
 	}
 }
 

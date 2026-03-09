@@ -49,7 +49,7 @@ import (
 //	(Oregon) us-west-2, or Europe (Ireland) eu-west-1 Regions as a target for a
 //	rule.
 //
-//	- Firehose delivery stream (Kinesis Data Firehose)
+//	- Firehose delivery stream (Firehose)
 //
 //	- Inspector assessment template (Amazon Inspector)
 //
@@ -280,16 +280,13 @@ func (c *Client) addOperationPutTargetsMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

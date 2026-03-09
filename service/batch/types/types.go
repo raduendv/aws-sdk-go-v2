@@ -29,6 +29,10 @@ type ArrayPropertiesDetail struct {
 	// This parameter is returned for parent array jobs.
 	StatusSummary map[string]int32
 
+	// The Unix timestamp (in milliseconds) for when the statusSummary was last
+	// updated.
+	StatusSummaryLastUpdatedAt *int64
+
 	noSmithyDocumentSerde
 }
 
@@ -41,6 +45,14 @@ type ArrayPropertiesSummary struct {
 
 	// The size of the array job. This parameter is returned for parent array jobs.
 	Size *int32
+
+	// A summary of the number of array job children in each available job status.
+	// This parameter is returned for parent array jobs.
+	StatusSummary map[string]int32
+
+	// The Unix timestamp (in milliseconds) for when the statusSummary was last
+	// updated.
+	StatusSummaryLastUpdatedAt *int64
 
 	noSmithyDocumentSerde
 }
@@ -139,6 +151,29 @@ type AttemptTaskContainerDetails struct {
 	// A short (255 max characters) string that's easy to understand and provides
 	// additional details for a running or stopped container.
 	Reason *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the capacity limit for a service environment. This structure specifies
+// the maximum amount of resources that can be used by service jobs in the
+// environment.
+type CapacityLimit struct {
+
+	// The unit of measure for the capacity limit. This defines how the maxCapacity
+	// value should be interpreted. For SAGEMAKER_TRAINING jobs, use NUM_INSTANCES .
+	CapacityUnit *string
+
+	// The maximum capacity available for the service environment. This value
+	// represents the maximum amount of resources that can be allocated to service
+	// jobs.
+	//
+	// For example, maxCapacity=50 , capacityUnit=NUM_INSTANCES . This indicates that
+	// the maximum number of instances that can be run on this service environment is
+	// 50. You could then run 5 SageMaker Training jobs that each use 10 instances.
+	// However, if you submit another job that requires 10 instances, it will wait in
+	// the queue.
+	MaxCapacity *int32
 
 	noSmithyDocumentSerde
 }
@@ -315,6 +350,8 @@ type ComputeResource struct {
 	// the spotIamFleetRole parameter. For more information, see [Amazon EC2 spot fleet role] in the Batch User
 	// Guide.
 	//
+	// Multi-node parallel jobs aren't supported on Spot Instances.
+	//
 	// [Amazon EC2 spot fleet role]: https://docs.aws.amazon.com/batch/latest/userguide/spot_fleet_IAM_role.html
 	// [Compute environments]: https://docs.aws.amazon.com/batch/latest/userguide/compute_environments.html
 	//
@@ -437,9 +474,44 @@ type ComputeResource struct {
 
 	// The instances types that can be launched. You can specify instance families to
 	// launch any instance type within those families (for example, c5 or p3 ), or you
-	// can specify specific sizes within a family (such as c5.8xlarge ). You can also
-	// choose optimal to select instance types (from the C4, M4, and R4 instance
-	// families) that match the demand of your job queues.
+	// can specify specific sizes within a family (such as c5.8xlarge ).
+	//
+	// Batch can select the instance type for you if you choose one of the following:
+	//
+	//   - optimal to select instance types (from the c4 , m4 , r4 , c5 , m5 , and r5
+	//   instance families) that match the demand of your job queues.
+	//
+	//   - default_x86_64 to choose x86 based instance types (from the m6i , c6i , r6i
+	//   , and c7i instance families) that matches the resource demands of the job
+	//   queue.
+	//
+	//   - default_arm64 to choose ARM based instance types (from the m6g , c6g , r6g ,
+	//   and c7g instance families) that matches the resource demands of the job queue.
+	//
+	// Starting on 11/01/2025 the behavior of optimal is going to be changed to match
+	// default_x86_64 . During the change your instance families could be updated to a
+	// newer generation. You do not need to perform any actions for the upgrade to
+	// happen. For more information about change, see [Optimal instance type configuration to receive automatic instance family updates].
+	//
+	// Instance family availability varies by Amazon Web Services Region. For example,
+	// some Amazon Web Services Regions may not have any fourth generation instance
+	// families but have fifth and sixth generation instance families.
+	//
+	// When using default_x86_64 or default_arm64 instance bundles, Batch selects
+	// instance families based on a balance of cost-effectiveness and performance.
+	// While newer generation instances often provide better price-performance, Batch
+	// may choose an earlier generation instance family if it provides the optimal
+	// combination of availability, cost, and performance for your workload. For
+	// example, in an Amazon Web Services Region where both c6i and c7i instances are
+	// available, Batch might select c6i instances if they offer better
+	// cost-effectiveness for your specific job requirements. For more information on
+	// Batch instance types and Amazon Web Services Region availability, see [Instance type compute table]in the
+	// Batch User Guide.
+	//
+	// Batch periodically updates your instances in default bundles to newer, more
+	// cost-effective options. Updates happen automatically without requiring any
+	// action from you. Your workloads continue running during updates with no
+	// interruption
 	//
 	// This parameter isn't applicable to jobs that are running on Fargate resources.
 	// Don't specify it.
@@ -448,9 +520,8 @@ type ComputeResource struct {
 	// the compute environment must share the same architecture. For example, you can't
 	// mix x86 and ARM instances in the same compute environment.
 	//
-	// Currently, optimal uses instance types from the C4, M4, and R4 instance
-	// families. In Regions that don't have instance types from those instance
-	// families, instance types from the C5, M5, and R5 instance families are used.
+	// [Instance type compute table]: https://docs.aws.amazon.com/batch/latest/userguide/instance-type-compute-table.html
+	// [Optimal instance type configuration to receive automatic instance family updates]: https://docs.aws.amazon.com/batch/latest/userguide/optimal-default-instance-troubleshooting.html
 	InstanceTypes []string
 
 	// The launch template to use for your compute resources. Any other compute
@@ -686,13 +757,44 @@ type ComputeResourceUpdate struct {
 
 	// The instances types that can be launched. You can specify instance families to
 	// launch any instance type within those families (for example, c5 or p3 ), or you
-	// can specify specific sizes within a family (such as c5.8xlarge ). You can also
-	// choose optimal to select instance types (from the C4, M4, and R4 instance
-	// families) that match the demand of your job queues.
+	// can specify specific sizes within a family (such as c5.8xlarge ).
 	//
-	// When updating a compute environment, changing this setting requires an
-	// infrastructure update of the compute environment. For more information, see [Updating compute environments]in
-	// the Batch User Guide.
+	// Batch can select the instance type for you if you choose one of the following:
+	//
+	//   - optimal to select instance types (from the c4 , m4 , r4 , c5 , m5 , and r5
+	//   instance families) that match the demand of your job queues.
+	//
+	//   - default_x86_64 to choose x86 based instance types (from the m6i , c6i , r6i
+	//   , and c7i instance families) that matches the resource demands of the job
+	//   queue.
+	//
+	//   - default_arm64 to choose x86 based instance types (from the m6g , c6g , r6g ,
+	//   and c7g instance families) that matches the resource demands of the job queue.
+	//
+	// Starting on 11/01/2025 the behavior of optimal is going to be changed to match
+	// default_x86_64 . During the change your instance families could be updated to a
+	// newer generation. You do not need to perform any actions for the upgrade to
+	// happen. For more information about change, see [Optimal instance type configuration to receive automatic instance family updates].
+	//
+	// Instance family availability varies by Amazon Web Services Region. For example,
+	// some Amazon Web Services Regions may not have any fourth generation instance
+	// families but have fifth and sixth generation instance families.
+	//
+	// When using default_x86_64 or default_arm64 instance bundles, Batch selects
+	// instance families based on a balance of cost-effectiveness and performance.
+	// While newer generation instances often provide better price-performance, Batch
+	// may choose an earlier generation instance family if it provides the optimal
+	// combination of availability, cost, and performance for your workload. For
+	// example, in an Amazon Web Services Region where both c6i and c7i instances are
+	// available, Batch might select c6i instances if they offer better
+	// cost-effectiveness for your specific job requirements. For more information on
+	// Batch instance types and Amazon Web Services Region availability, see [Instance type compute table]in the
+	// Batch User Guide.
+	//
+	// Batch periodically updates your instances in default bundles to newer, more
+	// cost-effective options. Updates happen automatically without requiring any
+	// action from you. Your workloads continue running during updates with no
+	// interruption
 	//
 	// This parameter isn't applicable to jobs that are running on Fargate resources.
 	// Don't specify it.
@@ -701,11 +803,8 @@ type ComputeResourceUpdate struct {
 	// the compute environment must share the same architecture. For example, you can't
 	// mix x86 and ARM instances in the same compute environment.
 	//
-	// Currently, optimal uses instance types from the C4, M4, and R4 instance
-	// families. In Regions that don't have instance types from those instance
-	// families, instance types from the C5, M5, and R5 instance families are used.
-	//
-	// [Updating compute environments]: https://docs.aws.amazon.com/batch/latest/userguide/updating-compute-environments.html
+	// [Instance type compute table]: https://docs.aws.amazon.com/batch/latest/userguide/instance-type-compute-table.html
+	// [Optimal instance type configuration to receive automatic instance family updates]: https://docs.aws.amazon.com/batch/latest/userguide/optimal-default-instance-troubleshooting.html
 	InstanceTypes []string
 
 	// The updated launch template to use for your compute resources. You must specify
@@ -1453,6 +1552,13 @@ type Ec2Configuration struct {
 	// nor a imageIdOverride parameter is specified, then the latest Amazon ECS
 	// optimized AMI for that image type that's supported by Batch is used.
 	//
+	// Amazon Web Services will end support for Amazon ECS optimized AL2-optimized and
+	// AL2-accelerated AMIs. Starting in January 2026, Batch will change the default
+	// AMI for new Amazon ECS compute environments from Amazon Linux 2 to Amazon Linux
+	// 2023. We recommend migrating Batch Amazon ECS compute environments to Amazon
+	// Linux 2023 to maintain optimal performance and security. For more information on
+	// upgrading from AL2 to AL2023, see [How to migrate from ECS AL2 to ECS AL2023]in the Batch User Guide.
+	//
 	// ECS_AL2 [Amazon Linux 2]: Default for all non-GPU instance families.
 	//
 	// ECS_AL2_NVIDIA [Amazon Linux 2 (GPU)]: Default for all GPU instance families (for example P4 and G4 )
@@ -1462,27 +1568,48 @@ type Ec2Configuration struct {
 	//
 	// Amazon Linux 2023 does not support A1 instances.
 	//
-	// ECS_AL1 [Amazon Linux]. Amazon Linux has reached the end-of-life of standard support. For
-	// more information, see [Amazon Linux AMI].
+	// ECS_AL2023_NVIDIA [Amazon Linux 2023 (GPU)]: For all GPU instance families and can be used for all non
+	// Amazon Web Services Graviton-based instance types.
 	//
-	// EKS If the imageIdOverride parameter isn't specified, then a recent [Amazon EKS-optimized Amazon Linux AMI] ( EKS_AL2 )
-	// is used. If a new image type is specified in an update, but neither an imageId
+	// ECS_AL2023_NVIDIA doesn't support p3 and g3 instance types.
+	//
+	// EKS If the imageIdOverride parameter isn't specified, then a recent [Amazon EKS-optimized Amazon Linux 2023 AMI] ( EKS_AL2023
+	// ) is used. If a new image type is specified in an update, but neither an imageId
 	// nor a imageIdOverride parameter is specified, then the latest Amazon EKS
 	// optimized AMI for that image type that Batch supports is used.
 	//
-	// EKS_AL2 [Amazon Linux 2]: Default for all non-GPU instance families.
+	// Amazon Linux 2023 AMIs are the default on Batch for Amazon EKS.
 	//
-	// EKS_AL2_NVIDIA [Amazon Linux 2 (accelerated)]: Default for all GPU instance families (for example, P4 and G4 )
-	// and can be used for all non Amazon Web Services Graviton-based instance types.
+	// Amazon Web Services will end support for Amazon EKS AL2-optimized and
+	// AL2-accelerated AMIs, starting 11/26/25. You can continue using Batch-provided
+	// Amazon EKS optimized Amazon Linux 2 AMIs on your Amazon EKS compute environments
+	// beyond the 11/26/25 end-of-support date, these compute environments will no
+	// longer receive any new software updates, security patches, or bug fixes from
+	// Amazon Web Services. For more information on upgrading from AL2 to AL2023, see [How to upgrade from EKS AL2 to EKS AL2023]
+	// in the Batch User Guide.
 	//
-	// [Amazon Linux AMI]: http://aws.amazon.com/amazon-linux-ami/
-	// [Amazon Linux 2023]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
-	// [Amazon EKS-optimized Amazon Linux AMI]: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+	// EKS_AL2 [Amazon Linux 2]: Used for non-GPU instance families.
+	//
+	// EKS_AL2_NVIDIA [Amazon Linux 2 (accelerated)]: Used for GPU instance families (for example, P4 and G4 ) and
+	// can be used for all non Amazon Web Services Graviton-based instance types.
+	//
+	// EKS_AL2023 [Amazon Linux 2023]: Default for non-GPU instance families.
+	//
+	// Amazon Linux 2023 does not support A1 instances.
+	//
+	// EKS_AL2023_NVIDIA [Amazon Linux 2023 (accelerated)]: Default for GPU instance families and can be used for all
+	// non Amazon Web Services Graviton-based instance types.
+	//
+	// [Amazon Linux 2023]: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+	// [How to upgrade from EKS AL2 to EKS AL2023]: https://docs.aws.amazon.com/batch/latest/userguide/eks-migration-2023.html
 	// [Amazon Linux 2 (GPU)]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html#gpuami
+	// [Amazon Linux 2023 (GPU)]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html#gpuami
+	// [Amazon Linux 2023 (accelerated)]: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
 	// [Amazon Linux 2 (accelerated)]: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
 	// [Amazon ECS-optimized Amazon Linux 2 AMI]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html#al2ami
 	// [Amazon Linux 2]: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
-	// [Amazon Linux]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html#alami
+	// [How to migrate from ECS AL2 to ECS AL2023]: https://docs.aws.amazon.com/batch/latest/userguide/ecs-migration-2023.html
+	// [Amazon EKS-optimized Amazon Linux 2023 AMI]: https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
 	//
 	// This member is required.
 	ImageType *string
@@ -1566,14 +1693,20 @@ type EcsTaskDetails struct {
 	// [Batch execution IAM role]: https://docs.aws.amazon.com/batch/latest/userguide/execution-IAM-role.html
 	ExecutionRoleArn *string
 
-	// The IPC resource namespace to use for the containers in the task.
+	// The IPC resource namespace to use for the containers in the task. The valid
+	// values are host , task , or none . For more information see ipcMode in [EcsTaskProperties].
+	//
+	// [EcsTaskProperties]: https://docs.aws.amazon.com/batch/latest/APIReference/API_EcsTaskProperties.html
 	IpcMode *string
 
 	// The network configuration for jobs that are running on Fargate resources. Jobs
 	// that are running on Amazon EC2 resources must not specify this parameter.
 	NetworkConfiguration *NetworkConfiguration
 
-	// The process namespace to use for the containers in the task.
+	// The process namespace to use for the containers in the task. The valid values
+	// are host , or task . For more information see pidMode in [EcsTaskProperties].
+	//
+	// [EcsTaskProperties]: https://docs.aws.amazon.com/batch/latest/APIReference/API_EcsTaskProperties.html
 	PidMode *string
 
 	// The Fargate platform version where the jobs are running.
@@ -2653,6 +2786,34 @@ type EvaluateOnExit struct {
 	noSmithyDocumentSerde
 }
 
+// The capacity usage for a fairshare scheduling job queue.
+type FairshareCapacityUsage struct {
+
+	// The unit of measure for the capacity usage. For compute jobs, this is VCPU for
+	// Amazon EC2 and cpu for Amazon EKS. For service jobs, this is NUM_INSTANCES .
+	CapacityUnit *string
+
+	// The quantity of capacity being used, measured in the units specified by
+	// capacityUnit .
+	Quantity *float64
+
+	noSmithyDocumentSerde
+}
+
+// The capacity utilization for a specific share in a fairshare scheduling job
+// queue, including the share identifier and its current usage.
+type FairshareCapacityUtilization struct {
+
+	// The capacity usage information for this share, including the unit of measure
+	// and quantity being used. This is VCPU for Amazon EC2 and cpu for Amazon EKS.
+	CapacityUsage []FairshareCapacityUsage
+
+	// The share identifier for the fairshare scheduling job queue.
+	ShareIdentifier *string
+
+	noSmithyDocumentSerde
+}
+
 // The fair-share scheduling policy details.
 type FairsharePolicy struct {
 
@@ -2688,6 +2849,21 @@ type FairsharePolicy struct {
 	// identifiers for the fair-share policy. Share identifiers that aren't included
 	// have a default weight of 1.0 .
 	ShareDistribution []ShareAttributes
+
+	noSmithyDocumentSerde
+}
+
+// The fairshare utilization for a job queue, including the number of active
+// shares and top capacity utilization.
+type FairshareUtilizationDetail struct {
+
+	// The total number of active shares in the fairshare scheduling job queue that
+	// are currently utilizing capacity.
+	ActiveShareCount *int64
+
+	// A list of the top 20 shares with the highest capacity utilization, ordered by
+	// usage amount.
+	TopCapacityUtilization []FairshareCapacityUtilization
 
 	noSmithyDocumentSerde
 }
@@ -2795,6 +2971,21 @@ type ImagePullSecret struct {
 	//
 	// This member is required.
 	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// The capacity usage for a job, including the unit of measure and quantity of
+// resources being used.
+type JobCapacityUsageSummary struct {
+
+	// The unit of measure for the capacity usage. This is VCPU for Amazon EC2 and cpu
+	// for Amazon EKS.
+	CapacityUnit *string
+
+	// The quantity of capacity being used by the job, measured in the units specified
+	// by capacityUnit .
+	Quantity *float64
 
 	noSmithyDocumentSerde
 }
@@ -3114,6 +3305,11 @@ type JobQueueDetail struct {
 	// This member is required.
 	State JQState
 
+	// The type of job queue. For service jobs that run on SageMaker Training, this
+	// value is SAGEMAKER_TRAINING . For regular container jobs, this value is EKS ,
+	// ECS , or ECS_FARGATE depending on the compute environment.
+	JobQueueType JobQueueType
+
 	// The set of actions that Batch perform on jobs that remain at the head of the
 	// job queue in the specified state longer than specified times. Batch will perform
 	// each action after maxTimeSeconds has passed.
@@ -3123,6 +3319,11 @@ type JobQueueDetail struct {
 	// aws:Partition:batch:Region:Account:scheduling-policy/Name . For example,
 	// aws:aws:batch:us-west-2:123456789012:scheduling-policy/MySchedulingPolicy .
 	SchedulingPolicyArn *string
+
+	// The order of the service environment associated with the job queue. Job queues
+	// with a higher priority are evaluated first when associated with the same service
+	// environment.
+	ServiceEnvironmentOrder []ServiceEnvironmentOrder
 
 	// The status of the job queue (for example, CREATING or VALID ).
 	Status JQStatus
@@ -3188,6 +3389,10 @@ type JobSummary struct {
 	// The array properties of the job, if it's an array job.
 	ArrayProperties *ArrayPropertiesSummary
 
+	// The configured capacity usage information for this job, including the unit of
+	// measure and quantity of resources.
+	CapacityUsage []JobCapacityUsageSummary
+
 	// An object that represents the details of the container that's associated with
 	// the job.
 	Container *ContainerSummary
@@ -3210,6 +3415,16 @@ type JobSummary struct {
 	//
 	// This isn't applicable to jobs that are running on Fargate resources.
 	NodeProperties *NodePropertiesSummary
+
+	// The Unix timestamp (in milliseconds) for when the job was scheduled for
+	// execution. For more information on job statues, see [Service job status]in the Batch User Guide.
+	//
+	// [Service job status]: https://docs.aws.amazon.com/batch/latest/userguide/service-job-status.html
+	ScheduledAt *int64
+
+	// The share identifier for the fairshare scheduling queue that this job is
+	// associated with.
+	ShareIdentifier *string
 
 	// The Unix timestamp for when the job was started. More specifically, it's when
 	// the job transitioned from the STARTING state to the RUNNING state.
@@ -3274,6 +3489,17 @@ type KeyValuesPair struct {
 	noSmithyDocumentSerde
 }
 
+// Information about the latest attempt of a service job. A Service job can
+// transition from SCHEDULED back to RUNNABLE state when they encounter capacity
+// constraints.
+type LatestServiceJobAttempt struct {
+
+	// The service resource identifier associated with the service job attempt.
+	ServiceResourceId *ServiceResourceId
+
+	noSmithyDocumentSerde
+}
+
 // An object that represents a launch template that's associated with a compute
 // resource. You must specify either the launch template ID or launch template name
 // in the request, but not both.
@@ -3304,6 +3530,12 @@ type LaunchTemplateSpecification struct {
 	//
 	// [UpdateComputeEnvironment.overrides]: https://docs.aws.amazon.com/batch/latest/APIReference/API_UpdateComputeEnvironment.html
 	Overrides []LaunchTemplateSpecificationOverride
+
+	// The EKS node initialization process to use. You only need to specify this value
+	// if you are using a custom AMI. The default value is EKS_BOOTSTRAP_SH . If
+	// imageType is a custom AMI based on EKS_AL2023 or EKS_AL2023_NVIDIA then you must
+	// choose EKS_NODEADM .
+	UserdataType UserdataType
 
 	// The version number of the launch template, $Default , or $Latest .
 	//
@@ -3370,7 +3602,8 @@ type LaunchTemplateSpecificationOverride struct {
 	//
 	//   - Must be a valid Amazon EC2 instance type or family.
 	//
-	//   - optimal isn't allowed.
+	//   - The following Batch InstanceTypes are not allowed: optimal , default_x86_64
+	//   , and default_arm64 .
 	//
 	//   - targetInstanceTypes can target only instance types and families that are
 	//   included within the [ComputeResource.instanceTypes]ComputeResource.instanceTypes set. targetInstanceTypes
@@ -3386,6 +3619,12 @@ type LaunchTemplateSpecificationOverride struct {
 	//
 	// [ComputeResource.instanceTypes]: https://docs.aws.amazon.com/batch/latest/APIReference/API_ComputeResource.html#Batch-Type-ComputeResource-instanceTypes
 	TargetInstanceTypes []string
+
+	// The EKS node initialization process to use. You only need to specify this value
+	// if you are using a custom AMI. The default value is EKS_BOOTSTRAP_SH . If
+	// imageType is a custom AMI based on EKS_AL2023 or EKS_AL2023_NVIDIA then you must
+	// choose EKS_NODEADM .
+	UserdataType UserdataType
 
 	// The version number of the launch template, $Default , or $Latest .
 	//
@@ -3563,7 +3802,7 @@ type ListJobsByConsumableResourceSummary struct {
 	// The Amazon Resource Name (ARN) of the job definition.
 	JobDefinitionArn *string
 
-	// The fair-share scheduling policy identifier for the job.
+	// The fair-share scheduling identifier for the job.
 	ShareIdentifier *string
 
 	// The Unix timestamp for when the job was started. More specifically, it's when
@@ -3584,8 +3823,8 @@ type LogConfiguration struct {
 	// this parameter are log drivers that the Amazon ECS container agent can
 	// communicate with by default.
 	//
-	// The supported log drivers are awslogs , fluentd , gelf , json-file , journald ,
-	// logentries , syslog , and splunk .
+	// The supported log drivers are awsfirelens , awslogs , fluentd , gelf , json-file
+	// , journald , logentries , syslog , and splunk .
 	//
 	// Jobs that are running on Fargate resources are restricted to the awslogs and
 	// splunk log drivers.
@@ -3873,6 +4112,40 @@ type NodeRangeProperty struct {
 	noSmithyDocumentSerde
 }
 
+// The configured capacity usage for a job queue snapshot, including the unit of
+// measure and quantity of resources being used.
+type QueueSnapshotCapacityUsage struct {
+
+	// The unit of measure for the capacity usage. For compute jobs, this is VCPU for
+	// Amazon EC2 and cpu for Amazon EKS. For service jobs, this is NUM_INSTANCES .
+	CapacityUnit *string
+
+	// The quantity of capacity being used in the queue snapshot, measured in the
+	// units specified by capacityUnit .
+	Quantity *float64
+
+	noSmithyDocumentSerde
+}
+
+// The job queue utilization at a specific point in time, including total capacity
+// usage and fairshare utilization breakdown.
+type QueueSnapshotUtilizationDetail struct {
+
+	// The utilization information for a fairshare scheduling job queues, including
+	// active share count and top capacity utilization by share.
+	FairshareUtilization *FairshareUtilizationDetail
+
+	// The Unix timestamp (in milliseconds) for when the queue utilization information
+	// was last updated.
+	LastUpdatedAt *int64
+
+	// The total capacity usage for the entire job queue, for both first-in, first-out
+	// (FIFO) and fairshare scheduling job queue.
+	TotalCapacityUsage []QueueSnapshotCapacityUsage
+
+	noSmithyDocumentSerde
+}
+
 // The repository credentials for private registry authentication.
 type RepositoryCredentials struct {
 
@@ -4019,16 +4292,15 @@ type RetryStrategy struct {
 // on Fargate.
 type RuntimePlatform struct {
 
-	//  The vCPU architecture. The default value is X86_64 . Valid values are X86_64
+	// The vCPU architecture. The default value is X86_64 . Valid values are X86_64
 	// and ARM64 .
 	//
 	// This parameter must be set to X86_64 for Windows containers.
 	//
-	// Fargate Spot is not supported for ARM64 and Windows-based containers on
-	// Fargate. A job queue will be blocked if a Fargate ARM64 or Windows job is
-	// submitted to a job queue with only Fargate Spot compute environments. However,
-	// you can attach both FARGATE and FARGATE_SPOT compute environments to the same
-	// job queue.
+	// Fargate Spot is not supported on Windows-based containers on Fargate. A job
+	// queue will be blocked if a Windows job is submitted to a job queue with only
+	// Fargate Spot compute environments. However, you can attach both FARGATE and
+	// FARGATE_SPOT compute environments to the same job queue.
 	CpuArchitecture *string
 
 	// The operating system for the compute environment. Valid values are: LINUX
@@ -4046,11 +4318,10 @@ type RuntimePlatform struct {
 	// is skipped and the next compute environment is checked until a Windows-based
 	// compute environment is found.
 	//
-	// Fargate Spot is not supported for ARM64 and Windows-based containers on
-	// Fargate. A job queue will be blocked if a Fargate ARM64 or Windows job is
-	// submitted to a job queue with only Fargate Spot compute environments. However,
-	// you can attach both FARGATE and FARGATE_SPOT compute environments to the same
-	// job queue.
+	// Fargate Spot is not supported on Windows-based containers on Fargate. A job
+	// queue will be blocked if a Windows job is submitted to a job queue with only
+	// Fargate Spot compute environments. However, you can attach both FARGATE and
+	// FARGATE_SPOT compute environments to the same job queue.
 	OperatingSystemFamily *string
 
 	noSmithyDocumentSerde
@@ -4129,6 +4400,234 @@ type Secret struct {
 	noSmithyDocumentSerde
 }
 
+// Detailed information about a service environment, including its configuration,
+// state, and capacity limits.
+type ServiceEnvironmentDetail struct {
+
+	// The capacity limits for the service environment. This defines the maximum
+	// resources that can be used by service jobs in this environment.
+	//
+	// This member is required.
+	CapacityLimits []CapacityLimit
+
+	// The Amazon Resource Name (ARN) of the service environment.
+	//
+	// This member is required.
+	ServiceEnvironmentArn *string
+
+	// The name of the service environment.
+	//
+	// This member is required.
+	ServiceEnvironmentName *string
+
+	// The type of service environment. For SageMaker Training jobs, this value is
+	// SAGEMAKER_TRAINING .
+	//
+	// This member is required.
+	ServiceEnvironmentType ServiceEnvironmentType
+
+	// The state of the service environment. Valid values are ENABLED and DISABLED .
+	State ServiceEnvironmentState
+
+	// The current status of the service environment.
+	Status ServiceEnvironmentStatus
+
+	// The tags associated with the service environment. Each tag consists of a key
+	// and an optional value. For more information, see [Tagging your Batch resources].
+	//
+	// [Tagging your Batch resources]: https://docs.aws.amazon.com/batch/latest/userguide/using-tags.html
+	Tags map[string]string
+
+	noSmithyDocumentSerde
+}
+
+// Specifies the order of a service environment for a job queue. This determines
+// the priority order when multiple service environments are associated with the
+// same job queue.
+type ServiceEnvironmentOrder struct {
+
+	// The order of the service environment. Job queues with a higher priority are
+	// evaluated first when associated with the same service environment.
+	//
+	// This member is required.
+	Order *int32
+
+	// The name or ARN of the service environment.
+	//
+	// This member is required.
+	ServiceEnvironment *string
+
+	noSmithyDocumentSerde
+}
+
+// Detailed information about an attempt to run a service job.
+type ServiceJobAttemptDetail struct {
+
+	// The service resource identifier associated with the service job attempt.
+	ServiceResourceId *ServiceResourceId
+
+	// The Unix timestamp (in milliseconds) for when the service job attempt was
+	// started.
+	StartedAt *int64
+
+	// A string that provides additional details for the current status of the service
+	// job attempt.
+	StatusReason *string
+
+	// The Unix timestamp (in milliseconds) for when the service job attempt stopped
+	// running.
+	StoppedAt *int64
+
+	noSmithyDocumentSerde
+}
+
+// The capacity usage for a service job, including the unit of measure and
+// quantity of resources being consumed.
+type ServiceJobCapacityUsageDetail struct {
+
+	// The unit of measure for the service job capacity usage. For service jobs, this
+	// is NUM_INSTANCES .
+	CapacityUnit *string
+
+	// The quantity of capacity being used by the service job, measured in the units
+	// specified by capacityUnit .
+	Quantity *float64
+
+	noSmithyDocumentSerde
+}
+
+// The capacity usage for a service job, including the unit of measure and
+// quantity of resources being used.
+type ServiceJobCapacityUsageSummary struct {
+
+	// The unit of measure for the service job capacity usage. For service jobs, this
+	// is NUM_INSTANCES .
+	CapacityUnit *string
+
+	// The quantity of capacity being used by the service job, measured in the units
+	// specified by capacityUnit .
+	Quantity *float64
+
+	noSmithyDocumentSerde
+}
+
+// Specifies conditions for when to exit or retry a service job based on the exit
+// status or status reason.
+type ServiceJobEvaluateOnExit struct {
+
+	// The action to take if the service job exits with the specified condition. Valid
+	// values are RETRY and EXIT .
+	Action ServiceJobRetryAction
+
+	// Contains a glob pattern to match against the StatusReason returned for a job.
+	// The pattern can contain up to 512 characters and can contain all printable
+	// characters. It can optionally end with an asterisk (*) so that only the start of
+	// the string needs to be an exact match.
+	OnStatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// The retry strategy for service jobs. This defines how many times to retry a
+// failed service job and under what conditions. For more information, see [Service job retry strategies]in the
+// Batch User Guide.
+//
+// [Service job retry strategies]: https://docs.aws.amazon.com/batch/latest/userguide/service-job-retries.html
+type ServiceJobRetryStrategy struct {
+
+	// The number of times to move a service job to RUNNABLE status. You can specify
+	// between 1 and 10 attempts.
+	//
+	// This member is required.
+	Attempts *int32
+
+	// Array of ServiceJobEvaluateOnExit objects that specify conditions under which
+	// the service job should be retried or failed.
+	EvaluateOnExit []ServiceJobEvaluateOnExit
+
+	noSmithyDocumentSerde
+}
+
+// Summary information about a service job.
+type ServiceJobSummary struct {
+
+	// The job ID for the service job.
+	//
+	// This member is required.
+	JobId *string
+
+	// The name of the service job.
+	//
+	// This member is required.
+	JobName *string
+
+	// The type of service job. For SageMaker Training jobs, this value is
+	// SAGEMAKER_TRAINING .
+	//
+	// This member is required.
+	ServiceJobType ServiceJobType
+
+	// The capacity usage information for this service job, including the unit of
+	// measure and quantity of resources being used.
+	CapacityUsage []ServiceJobCapacityUsageSummary
+
+	// The Unix timestamp (in milliseconds) for when the service job was created.
+	CreatedAt *int64
+
+	// The Amazon Resource Name (ARN) of the service job.
+	JobArn *string
+
+	// Information about the latest attempt for the service job.
+	LatestAttempt *LatestServiceJobAttempt
+
+	// The Unix timestamp (in milliseconds) for when the service job was scheduled for
+	// execution.
+	ScheduledAt *int64
+
+	// The share identifier for the job.
+	ShareIdentifier *string
+
+	// The Unix timestamp (in milliseconds) for when the service job was started.
+	StartedAt *int64
+
+	// The current status of the service job.
+	Status ServiceJobStatus
+
+	// A short string to provide more details on the current status of the service job.
+	StatusReason *string
+
+	// The Unix timestamp (in milliseconds) for when the service job stopped running.
+	StoppedAt *int64
+
+	noSmithyDocumentSerde
+}
+
+// The timeout configuration for service jobs.
+type ServiceJobTimeout struct {
+
+	// The maximum duration in seconds that a service job attempt can run. After this
+	// time is reached, Batch terminates the service job attempt.
+	AttemptDurationSeconds *int32
+
+	noSmithyDocumentSerde
+}
+
+// The Batch unique identifier.
+type ServiceResourceId struct {
+
+	// The name of the resource identifier.
+	//
+	// This member is required.
+	Name ServiceResourceIdName
+
+	// The value of the resource identifier.
+	//
+	// This member is required.
+	Value *string
+
+	noSmithyDocumentSerde
+}
+
 // Specifies the weights for the share identifiers for the fair-share policy.
 // Share identifiers that aren't included have a default weight of 1.0 .
 type ShareAttributes struct {
@@ -4138,7 +4637,7 @@ type ShareAttributes struct {
 	// identifiers that start with that prefix. The list of share identifiers in a
 	// fair-share policy can't overlap. For example, you can't have one that specifies
 	// a shareIdentifier of UserA* and another that specifies a shareIdentifier of
-	// UserA-1 .
+	// UserA1 .
 	//
 	// There can be no more than 500 share identifiers active in a job queue.
 	//
@@ -4726,7 +5225,7 @@ type UpdatePolicy struct {
 	// infrastructure is updated. The default value is 30.
 	JobExecutionTimeoutMinutes *int64
 
-	// Specifies whether jobs are automatically terminated when the computer
+	// Specifies whether jobs are automatically terminated when the compute
 	// environment infrastructure is updated. The default value is false .
 	TerminateJobsOnUpdate *bool
 

@@ -1,3 +1,207 @@
+# v1.115.0 (2026-02-10.2)
+
+* **Feature**: This release adds backup configuration for RDS and Aurora restores, letting customers set backup retention period and preferred backup window during restore. It also enables viewing backup settings when describing snapshots or automated backups for instances and clusters.
+
+# v1.114.0 (2026-01-14)
+
+* **Feature**: no feature changes. model migrated to Smithy
+
+# v1.113.2 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.113.1 (2025-12-09)
+
+* No change notes available for this release.
+
+# v1.113.0 (2025-12-08)
+
+* **Feature**: Adding support for tagging RDS Instance/Cluster Automated Backups
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.112.0 (2025-12-02)
+
+* **Feature**: RDS Oracle and SQL Server: Add support for adding, modifying, and removing additional storage volumes, offering up to 256TiB storage; RDS SQL Server: Support Developer Edition via custom engine versions for development and testing purposes; M7i/R7i instances with Optimize CPU for cost savings.
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.111.1 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.111.0 (2025-11-21)
+
+* **Feature**: Add support for Upgrade Rollout Order
+
+# v1.110.0 (2025-11-20)
+
+* **Feature**: Add support for VPC Encryption Controls.
+
+# v1.109.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.109.0 (2025-11-13)
+
+* **Feature**: Updated endpoint and service metadata
+
+# v1.108.9 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.108.8 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.108.7 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.108.6 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.108.5 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.108.4 (2025-10-22)
+
+* No change notes available for this release.
+
+# v1.108.3 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.108.2 (2025-10-10)
+
+* **Documentation**: Updated the text in the Important section of the ModifyDBClusterParameterGroup page.
+
+# v1.108.1 (2025-10-06)
+
+* **Documentation**: Documentation updates to the CreateDBClusterMessage$PubliclyAccessible and CreateDBInstanceMessage$PubliclyAccessible properties.
+
+# v1.108.0 (2025-09-30)
+
+* **Feature**: Enhanced RDS error handling: Added DBProxyEndpointNotFoundFault, DBShardGroupNotFoundFault, KMSKeyNotAccessibleFault for snapshots/restores/backups, NetworkTypeNotSupported, StorageTypeNotSupportedFault for restores, and granular state validation faults. Changed DBInstanceNotReadyFault to HTTP 400.
+
+# v1.107.2 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.107.1 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.107.0 (2025-09-11)
+
+* **Feature**: Adds support for end-to-end IAM authentication in RDS Proxy for MySQL, MariaDB, and PostgreSQL engines.
+
+# v1.106.2 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.106.1 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.106.0 (2025-09-04)
+
+* **Feature**: Added new EndpointNetworkType and TargetConnectionNetworkType fields in Proxy APIs to support IPv6
+
+# v1.105.0 (2025-09-03)
+
+* **Feature**: This release adds support for MasterUserAuthenticationType parameter on CreateDBInstance, ModifyDBInstance, CreateDBCluster, and ModifyDBCluster operations.
+
+# v1.104.1 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.104.0 (2025-08-28)
+
+* **Feature**: Added RDS HTTP Endpoint feature support flag to DescribeOrderableDBInstanceOptions API
+
+# v1.103.4 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.103.3 (2025-08-22)
+
+* **Documentation**: Updates Amazon RDS documentation for Db2 read-only replicas.
+
+# v1.103.2 (2025-08-21)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.103.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.103.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.102.0 (2025-08-05)
+
+* **Feature**: Adds a new Aurora Serverless v2 attribute to the DBCluster resource to expose the platform version. Also updates the attribute to be part of both the engine version and platform version descriptions.
+
+# v1.101.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.100.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.100.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.99.2 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.99.1 (2025-07-01)
+
+* **Documentation**: Amazon RDS Custom for Oracle now supports multi-AZ database instances.
+
+# v1.99.0 (2025-06-27)
+
+* **Feature**: StartDBCluster and StopDBCluster can now throw InvalidDBShardGroupStateFault.
+
+# v1.98.0 (2025-06-24)
+
+* **Feature**: Adding support for RDS on Dedicated Local Zones, including local backup target, snapshot availability zone and snapshot target
+
+# v1.97.3 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.97.2 (2025-06-11)
+
+* **Documentation**: Updates Amazon RDS documentation for Amazon RDS for Db2 cross-Region replicas in standby mode.
+
+# v1.97.1 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.97.0 (2025-06-06)
+
+* **Feature**: Include Global Cluster Identifier in DBCluster if the DBCluster is a Global Cluster Member.
+
+# v1.96.0 (2025-05-20)
+
+* **Feature**: This release introduces the new DescribeDBMajorEngineVersions API for describing the properties of specific major versions of database engines.
+
 # v1.95.0 (2025-04-24)
 
 * **Feature**: This Amazon RDS release adds support for managed master user passwords for Oracle CDBs.

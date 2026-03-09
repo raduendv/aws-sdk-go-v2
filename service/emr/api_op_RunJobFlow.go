@@ -129,6 +129,9 @@ type RunJobFlowInput struct {
 	// 6.15.0 and later.
 	EbsRootVolumeThroughput *int32
 
+	// Reserved.
+	ExtendedSupport *bool
+
 	// Also called instance profile and Amazon EC2 role. An IAM role for an Amazon EMR
 	// cluster. The Amazon EC2 instances of the cluster assume this role. The default
 	// role is EMR_EC2_DefaultRole . In order to use the default role, you must have
@@ -153,6 +156,9 @@ type RunJobFlowInput struct {
 
 	//  The specified managed scaling policy for an Amazon EMR cluster.
 	ManagedScalingPolicy *types.ManagedScalingPolicy
+
+	// Contains CloudWatch log configuration metadata and settings.
+	MonitoringConfiguration *types.MonitoringConfiguration
 
 	// For Amazon EMR releases 3.x and 2.x. For Amazon EMR releases 4.x and later, use
 	// Applications.
@@ -378,16 +384,13 @@ func (c *Client) addOperationRunJobFlowMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

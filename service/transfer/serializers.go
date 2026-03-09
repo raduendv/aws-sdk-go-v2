@@ -4358,9 +4358,46 @@ func awsAwsjson11_serializeDocumentAddressAllocationIds(v []string, value smithy
 	return nil
 }
 
+func awsAwsjson11_serializeDocumentAs2AsyncMdnConnectorConfig(v *types.As2AsyncMdnConnectorConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ServerIds != nil {
+		ok := object.Key("ServerIds")
+		if err := awsAwsjson11_serializeDocumentAs2AsyncMdnServerIds(v.ServerIds, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.Url != nil {
+		ok := object.Key("Url")
+		ok.String(*v.Url)
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentAs2AsyncMdnServerIds(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
 func awsAwsjson11_serializeDocumentAs2ConnectorConfig(v *types.As2ConnectorConfig, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.AsyncMdnConfig != nil {
+		ok := object.Key("AsyncMdnConfig")
+		if err := awsAwsjson11_serializeDocumentAs2AsyncMdnConnectorConfig(v.AsyncMdnConfig, ok); err != nil {
+			return err
+		}
+	}
 
 	if v.BasicAuthSecretId != nil {
 		ok := object.Key("BasicAuthSecretId")
@@ -4437,6 +4474,41 @@ func awsAwsjson11_serializeDocumentCertificateIds(v []string, value smithyjson.V
 	return nil
 }
 
+func awsAwsjson11_serializeDocumentConnectorEgressConfig(v types.ConnectorEgressConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	switch uv := v.(type) {
+	case *types.ConnectorEgressConfigMemberVpcLattice:
+		av := object.Key("VpcLattice")
+		if err := awsAwsjson11_serializeDocumentConnectorVpcLatticeEgressConfig(&uv.Value, av); err != nil {
+			return err
+		}
+
+	default:
+		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
+
+	}
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentConnectorVpcLatticeEgressConfig(v *types.ConnectorVpcLatticeEgressConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.PortNumber != nil {
+		ok := object.Key("PortNumber")
+		ok.Integer(*v.PortNumber)
+	}
+
+	if v.ResourceConfigurationArn != nil {
+		ok := object.Key("ResourceConfigurationArn")
+		ok.String(*v.ResourceConfigurationArn)
+	}
+
+	return nil
+}
+
 func awsAwsjson11_serializeDocumentCopyStepDetails(v *types.CopyStepDetails, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -4495,6 +4567,36 @@ func awsAwsjson11_serializeDocumentCustomDirectoriesType(v *types.CustomDirector
 		ok.String(*v.TemporaryFilesDirectory)
 	}
 
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentCustomHttpHeader(v *types.CustomHttpHeader, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Key != nil {
+		ok := object.Key("Key")
+		ok.String(*v.Key)
+	}
+
+	if v.Value != nil {
+		ok := object.Key("Value")
+		ok.String(*v.Value)
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentCustomHttpHeaders(v []types.CustomHttpHeader, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsAwsjson11_serializeDocumentCustomHttpHeader(&v[i], av); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -5040,6 +5142,59 @@ func awsAwsjson11_serializeDocumentTagStepDetails(v *types.TagStepDetails, value
 	return nil
 }
 
+func awsAwsjson11_serializeDocumentUpdateConnectorEgressConfig(v types.UpdateConnectorEgressConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	switch uv := v.(type) {
+	case *types.UpdateConnectorEgressConfigMemberVpcLattice:
+		av := object.Key("VpcLattice")
+		if err := awsAwsjson11_serializeDocumentUpdateConnectorVpcLatticeEgressConfig(&uv.Value, av); err != nil {
+			return err
+		}
+
+	default:
+		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
+
+	}
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentUpdateConnectorVpcLatticeEgressConfig(v *types.UpdateConnectorVpcLatticeEgressConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.PortNumber != nil {
+		ok := object.Key("PortNumber")
+		ok.Integer(*v.PortNumber)
+	}
+
+	if v.ResourceConfigurationArn != nil {
+		ok := object.Key("ResourceConfigurationArn")
+		ok.String(*v.ResourceConfigurationArn)
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentUpdateWebAppEndpointDetails(v types.UpdateWebAppEndpointDetails, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	switch uv := v.(type) {
+	case *types.UpdateWebAppEndpointDetailsMemberVpc:
+		av := object.Key("Vpc")
+		if err := awsAwsjson11_serializeDocumentUpdateWebAppVpcConfig(&uv.Value, av); err != nil {
+			return err
+		}
+
+	default:
+		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
+
+	}
+	return nil
+}
+
 func awsAwsjson11_serializeDocumentUpdateWebAppIdentityCenterConfig(v *types.UpdateWebAppIdentityCenterConfig, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -5060,6 +5215,38 @@ func awsAwsjson11_serializeDocumentUpdateWebAppIdentityProviderDetails(v types.U
 	case *types.UpdateWebAppIdentityProviderDetailsMemberIdentityCenterConfig:
 		av := object.Key("IdentityCenterConfig")
 		if err := awsAwsjson11_serializeDocumentUpdateWebAppIdentityCenterConfig(&uv.Value, av); err != nil {
+			return err
+		}
+
+	default:
+		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
+
+	}
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentUpdateWebAppVpcConfig(v *types.UpdateWebAppVpcConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.SubnetIds != nil {
+		ok := object.Key("SubnetIds")
+		if err := awsAwsjson11_serializeDocumentSubnetIds(v.SubnetIds, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentWebAppEndpointDetails(v types.WebAppEndpointDetails, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	switch uv := v.(type) {
+	case *types.WebAppEndpointDetailsMemberVpc:
+		av := object.Key("Vpc")
+		if err := awsAwsjson11_serializeDocumentWebAppVpcConfig(&uv.Value, av); err != nil {
 			return err
 		}
 
@@ -5101,6 +5288,32 @@ func awsAwsjson11_serializeDocumentWebAppUnits(v types.WebAppUnits, value smithy
 		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
 
 	}
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentWebAppVpcConfig(v *types.WebAppVpcConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.SecurityGroupIds != nil {
+		ok := object.Key("SecurityGroupIds")
+		if err := awsAwsjson11_serializeDocumentSecurityGroupIds(v.SecurityGroupIds, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.SubnetIds != nil {
+		ok := object.Key("SubnetIds")
+		if err := awsAwsjson11_serializeDocumentSubnetIds(v.SubnetIds, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.VpcId != nil {
+		ok := object.Key("VpcId")
+		ok.String(*v.VpcId)
+	}
+
 	return nil
 }
 
@@ -5335,6 +5548,13 @@ func awsAwsjson11_serializeOpDocumentCreateConnectorInput(v *CreateConnectorInpu
 		}
 	}
 
+	if v.EgressConfig != nil {
+		ok := object.Key("EgressConfig")
+		if err := awsAwsjson11_serializeDocumentConnectorEgressConfig(v.EgressConfig, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.LoggingRole != nil {
 		ok := object.Key("LoggingRole")
 		ok.String(*v.LoggingRole)
@@ -5439,6 +5659,11 @@ func awsAwsjson11_serializeOpDocumentCreateServerInput(v *CreateServerInput, val
 	if len(v.IdentityProviderType) > 0 {
 		ok := object.Key("IdentityProviderType")
 		ok.String(string(v.IdentityProviderType))
+	}
+
+	if len(v.IpAddressType) > 0 {
+		ok := object.Key("IpAddressType")
+		ok.String(string(v.IpAddressType))
 	}
 
 	if v.LoggingRole != nil {
@@ -5576,6 +5801,13 @@ func awsAwsjson11_serializeOpDocumentCreateWebAppInput(v *CreateWebAppInput, val
 	if v.AccessEndpoint != nil {
 		ok := object.Key("AccessEndpoint")
 		ok.String(*v.AccessEndpoint)
+	}
+
+	if v.EndpointDetails != nil {
+		ok := object.Key("EndpointDetails")
+		if err := awsAwsjson11_serializeDocumentWebAppEndpointDetails(v.EndpointDetails, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.IdentityProviderDetails != nil {
@@ -6441,6 +6673,13 @@ func awsAwsjson11_serializeOpDocumentStartFileTransferInput(v *StartFileTransfer
 		ok.String(*v.ConnectorId)
 	}
 
+	if v.CustomHttpHeaders != nil {
+		ok := object.Key("CustomHttpHeaders")
+		if err := awsAwsjson11_serializeDocumentCustomHttpHeaders(v.CustomHttpHeaders, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.LocalDirectoryPath != nil {
 		ok := object.Key("LocalDirectoryPath")
 		ok.String(*v.LocalDirectoryPath)
@@ -6776,6 +7015,13 @@ func awsAwsjson11_serializeOpDocumentUpdateConnectorInput(v *UpdateConnectorInpu
 		ok.String(*v.ConnectorId)
 	}
 
+	if v.EgressConfig != nil {
+		ok := object.Key("EgressConfig")
+		if err := awsAwsjson11_serializeDocumentUpdateConnectorEgressConfig(v.EgressConfig, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.LoggingRole != nil {
 		ok := object.Key("LoggingRole")
 		ok.String(*v.LoggingRole)
@@ -6873,6 +7119,16 @@ func awsAwsjson11_serializeOpDocumentUpdateServerInput(v *UpdateServerInput, val
 		if err := awsAwsjson11_serializeDocumentIdentityProviderDetails(v.IdentityProviderDetails, ok); err != nil {
 			return err
 		}
+	}
+
+	if len(v.IdentityProviderType) > 0 {
+		ok := object.Key("IdentityProviderType")
+		ok.String(string(v.IdentityProviderType))
+	}
+
+	if len(v.IpAddressType) > 0 {
+		ok := object.Key("IpAddressType")
+		ok.String(string(v.IpAddressType))
 	}
 
 	if v.LoggingRole != nil {
@@ -7023,6 +7279,13 @@ func awsAwsjson11_serializeOpDocumentUpdateWebAppInput(v *UpdateWebAppInput, val
 	if v.AccessEndpoint != nil {
 		ok := object.Key("AccessEndpoint")
 		ok.String(*v.AccessEndpoint)
+	}
+
+	if v.EndpointDetails != nil {
+		ok := object.Key("EndpointDetails")
+		if err := awsAwsjson11_serializeDocumentUpdateWebAppEndpointDetails(v.EndpointDetails, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.IdentityProviderDetails != nil {

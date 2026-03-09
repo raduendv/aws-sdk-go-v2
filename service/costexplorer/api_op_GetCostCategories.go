@@ -11,9 +11,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves an array of Cost Category names and values incurred cost.
+// Retrieves an array of cost category names and values incurred cost.
 //
-// If some Cost Category names and values are not associated with any cost, they
+// If some cost category names and values are not associated with any cost, they
 // will not be returned by this API.
 func (c *Client) GetCostCategories(ctx context.Context, params *GetCostCategoriesInput, optFns ...func(*Options)) (*GetCostCategoriesOutput, error) {
 	if params == nil {
@@ -44,7 +44,7 @@ type GetCostCategoriesInput struct {
 	// be retrieved by calling the ListBillingViews API.
 	BillingViewArn *string
 
-	// The unique name of the Cost Category.
+	// The unique name of the cost category.
 	CostCategoryName *string
 
 	// Use Expression to filter in various Cost Explorer APIs.
@@ -141,9 +141,9 @@ type GetCostCategoriesInput struct {
 
 	// The value that you want to search the filter values for.
 	//
-	// If you don't specify a CostCategoryName , SearchString is used to filter Cost
-	// Category names that match the SearchString pattern. If you specify a
-	// CostCategoryName , SearchString is used to filter Cost Category values that
+	// If you don't specify a CostCategoryName , SearchString is used to filter cost
+	// category names that match the SearchString pattern. If you specify a
+	// CostCategoryName , SearchString is used to filter cost category values that
 	// match the SearchString pattern.
 	SearchString *string
 
@@ -187,10 +187,10 @@ type GetCostCategoriesOutput struct {
 	// This member is required.
 	TotalSize *int32
 
-	// The names of the Cost Categories.
+	// The names of the cost categories.
 	CostCategoryNames []string
 
-	// The Cost Category values.
+	// The cost category values.
 	//
 	// If the CostCategoryName key isn't specified in the request, the
 	// CostCategoryValues fields aren't returned.
@@ -296,16 +296,13 @@ func (c *Client) addOperationGetCostCategoriesMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

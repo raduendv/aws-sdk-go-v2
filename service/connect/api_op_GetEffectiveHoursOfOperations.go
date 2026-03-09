@@ -29,7 +29,7 @@ func (c *Client) GetEffectiveHoursOfOperations(ctx context.Context, params *GetE
 
 type GetEffectiveHoursOfOperationsInput struct {
 
-	// The Date from when the hours of operation are listed.
+	// The date from when the hours of operation are listed.
 	//
 	// This member is required.
 	FromDate *string
@@ -44,7 +44,7 @@ type GetEffectiveHoursOfOperationsInput struct {
 	// This member is required.
 	InstanceId *string
 
-	// The Date until when the hours of operation are listed.
+	// The date until when the hours of operation are listed.
 	//
 	// This member is required.
 	ToDate *string
@@ -54,8 +54,17 @@ type GetEffectiveHoursOfOperationsInput struct {
 
 type GetEffectiveHoursOfOperationsOutput struct {
 
-	// Information about the effective hours of operations
+	// Information about the effective hours of operations.
 	EffectiveHoursOfOperationList []types.EffectiveHoursOfOperations
+
+	// Information about override configurations applied to the base hours of
+	// operation to calculate the effective hours.
+	//
+	// For more information about how override types are applied, see [Build your list of overrides] in the
+	// Administrator Guide.
+	//
+	// [Build your list of overrides]: https://docs.aws.amazon.com/https:/docs.aws.amazon.com/connect/latest/adminguide/hours-of-operation-overrides.html
+	EffectiveOverrideHoursList []types.EffectiveOverrideHours
 
 	// The time zone for the hours of operation.
 	TimeZone *string
@@ -154,16 +163,13 @@ func (c *Client) addOperationGetEffectiveHoursOfOperationsMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -59,6 +59,23 @@ func (DeleteUniqueIdStatus) Values() []DeleteUniqueIdStatus {
 	}
 }
 
+type IdMappingIncrementalRunType string
+
+// Enum values for IdMappingIncrementalRunType
+const (
+	IdMappingIncrementalRunTypeOnDemand IdMappingIncrementalRunType = "ON_DEMAND"
+)
+
+// Values returns all known values for IdMappingIncrementalRunType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IdMappingIncrementalRunType) Values() []IdMappingIncrementalRunType {
+	return []IdMappingIncrementalRunType{
+		"ON_DEMAND",
+	}
+}
+
 type IdMappingType string
 
 // Enum values for IdMappingType
@@ -157,6 +174,27 @@ func (JobStatus) Values() []JobStatus {
 	}
 }
 
+type JobType string
+
+// Enum values for JobType
+const (
+	JobTypeBatch       JobType = "BATCH"
+	JobTypeIncremental JobType = "INCREMENTAL"
+	JobTypeDeleteOnly  JobType = "DELETE_ONLY"
+)
+
+// Values returns all known values for JobType. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (JobType) Values() []JobType {
+	return []JobType{
+		"BATCH",
+		"INCREMENTAL",
+		"DELETE_ONLY",
+	}
+}
+
 type MatchPurpose string
 
 // Enum values for MatchPurpose
@@ -173,6 +211,27 @@ func (MatchPurpose) Values() []MatchPurpose {
 	return []MatchPurpose{
 		"IDENTIFIER_GENERATION",
 		"INDEXING",
+	}
+}
+
+type ProcessingType string
+
+// Enum values for ProcessingType
+const (
+	ProcessingTypeConsistent       ProcessingType = "CONSISTENT"
+	ProcessingTypeEventual         ProcessingType = "EVENTUAL"
+	ProcessingTypeEventualNoLookup ProcessingType = "EVENTUAL_NO_LOOKUP"
+)
+
+// Values returns all known values for ProcessingType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProcessingType) Values() []ProcessingType {
+	return []ProcessingType{
+		"CONSISTENT",
+		"EVENTUAL",
+		"EVENTUAL_NO_LOOKUP",
 	}
 }
 

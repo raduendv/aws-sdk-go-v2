@@ -1845,6 +1845,20 @@ func (m *awsAwsjson10_serializeOpUpdateTransformer) HandleSerialize(ctx context.
 	span.End()
 	return next.HandleSerialize(ctx, in)
 }
+func awsAwsjson10_serializeDocumentAdvancedOptions(v *types.AdvancedOptions, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.X12 != nil {
+		ok := object.Key("x12")
+		if err := awsAwsjson10_serializeDocumentX12AdvancedOptions(v.X12, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentCapabilityConfiguration(v types.CapabilityConfiguration, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1867,6 +1881,13 @@ func awsAwsjson10_serializeDocumentCapabilityOptions(v *types.CapabilityOptions,
 	object := value.Object()
 	defer object.Close()
 
+	if v.InboundEdi != nil {
+		ok := object.Key("inboundEdi")
+		if err := awsAwsjson10_serializeDocumentInboundEdiOptions(v.InboundEdi, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.OutboundEdi != nil {
 		ok := object.Key("outboundEdi")
 		if err := awsAwsjson10_serializeDocumentOutboundEdiOptions(v.OutboundEdi, ok); err != nil {
@@ -1874,6 +1895,17 @@ func awsAwsjson10_serializeDocumentCapabilityOptions(v *types.CapabilityOptions,
 		}
 	}
 
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentCodeList(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
 	return nil
 }
 
@@ -1899,6 +1931,13 @@ func awsAwsjson10_serializeDocumentConversionSource(v *types.ConversionSource, v
 func awsAwsjson10_serializeDocumentConversionTarget(v *types.ConversionTarget, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.AdvancedOptions != nil {
+		ok := object.Key("advancedOptions")
+		if err := awsAwsjson10_serializeDocumentAdvancedOptions(v.AdvancedOptions, ok); err != nil {
+			return err
+		}
+	}
 
 	if len(v.FileFormat) > 0 {
 		ok := object.Key("fileFormat")
@@ -2014,9 +2053,30 @@ func awsAwsjson10_serializeDocumentFormatOptions(v types.FormatOptions, value sm
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentInboundEdiOptions(v *types.InboundEdiOptions, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.X12 != nil {
+		ok := object.Key("x12")
+		if err := awsAwsjson10_serializeDocumentX12InboundEdiOptions(v.X12, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentInputConversion(v *types.InputConversion, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.AdvancedOptions != nil {
+		ok := object.Key("advancedOptions")
+		if err := awsAwsjson10_serializeDocumentAdvancedOptions(v.AdvancedOptions, ok); err != nil {
+			return err
+		}
+	}
 
 	if v.FormatOptions != nil {
 		ok := object.Key("formatOptions")
@@ -2113,6 +2173,13 @@ func awsAwsjson10_serializeDocumentOutboundEdiOptions(v types.OutboundEdiOptions
 func awsAwsjson10_serializeDocumentOutputConversion(v *types.OutputConversion, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.AdvancedOptions != nil {
+		ok := object.Key("advancedOptions")
+		if err := awsAwsjson10_serializeDocumentAdvancedOptions(v.AdvancedOptions, ok); err != nil {
+			return err
+		}
+	}
 
 	if v.FormatOptions != nil {
 		ok := object.Key("formatOptions")
@@ -2270,6 +2337,114 @@ func awsAwsjson10_serializeDocumentTemplateDetails(v types.TemplateDetails, valu
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentWrapOptions(v *types.WrapOptions, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.LineLength != nil {
+		ok := object.Key("lineLength")
+		ok.Integer(*v.LineLength)
+	}
+
+	if len(v.LineTerminator) > 0 {
+		ok := object.Key("lineTerminator")
+		ok.String(string(v.LineTerminator))
+	}
+
+	if len(v.WrapBy) > 0 {
+		ok := object.Key("wrapBy")
+		ok.String(string(v.WrapBy))
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12AcknowledgmentOptions(v *types.X12AcknowledgmentOptions, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.FunctionalAcknowledgment) > 0 {
+		ok := object.Key("functionalAcknowledgment")
+		ok.String(string(v.FunctionalAcknowledgment))
+	}
+
+	if len(v.TechnicalAcknowledgment) > 0 {
+		ok := object.Key("technicalAcknowledgment")
+		ok.String(string(v.TechnicalAcknowledgment))
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12AdvancedOptions(v *types.X12AdvancedOptions, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.SplitOptions != nil {
+		ok := object.Key("splitOptions")
+		if err := awsAwsjson10_serializeDocumentX12SplitOptions(v.SplitOptions, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ValidationOptions != nil {
+		ok := object.Key("validationOptions")
+		if err := awsAwsjson10_serializeDocumentX12ValidationOptions(v.ValidationOptions, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12CodeListValidationRule(v *types.X12CodeListValidationRule, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.CodesToAdd != nil {
+		ok := object.Key("codesToAdd")
+		if err := awsAwsjson10_serializeDocumentCodeList(v.CodesToAdd, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.CodesToRemove != nil {
+		ok := object.Key("codesToRemove")
+		if err := awsAwsjson10_serializeDocumentCodeList(v.CodesToRemove, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ElementId != nil {
+		ok := object.Key("elementId")
+		ok.String(*v.ElementId)
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12ControlNumbers(v *types.X12ControlNumbers, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.StartingFunctionalGroupControlNumber != nil {
+		ok := object.Key("startingFunctionalGroupControlNumber")
+		ok.Integer(*v.StartingFunctionalGroupControlNumber)
+	}
+
+	if v.StartingInterchangeControlNumber != nil {
+		ok := object.Key("startingInterchangeControlNumber")
+		ok.Integer(*v.StartingInterchangeControlNumber)
+	}
+
+	if v.StartingTransactionSetControlNumber != nil {
+		ok := object.Key("startingTransactionSetControlNumber")
+		ok.Integer(*v.StartingTransactionSetControlNumber)
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentX12Delimiters(v *types.X12Delimiters, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -2309,6 +2484,45 @@ func awsAwsjson10_serializeDocumentX12Details(v *types.X12Details, value smithyj
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentX12ElementLengthValidationRule(v *types.X12ElementLengthValidationRule, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ElementId != nil {
+		ok := object.Key("elementId")
+		ok.String(*v.ElementId)
+	}
+
+	if v.MaxLength != nil {
+		ok := object.Key("maxLength")
+		ok.Integer(*v.MaxLength)
+	}
+
+	if v.MinLength != nil {
+		ok := object.Key("minLength")
+		ok.Integer(*v.MinLength)
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12ElementRequirementValidationRule(v *types.X12ElementRequirementValidationRule, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ElementPosition != nil {
+		ok := object.Key("elementPosition")
+		ok.String(*v.ElementPosition)
+	}
+
+	if len(v.Requirement) > 0 {
+		ok := object.Key("requirement")
+		ok.String(string(v.Requirement))
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentX12Envelope(v *types.X12Envelope, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -2316,6 +2530,13 @@ func awsAwsjson10_serializeDocumentX12Envelope(v *types.X12Envelope, value smith
 	if v.Common != nil {
 		ok := object.Key("common")
 		if err := awsAwsjson10_serializeDocumentX12OutboundEdiHeaders(v.Common, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.WrapOptions != nil {
+		ok := object.Key("wrapOptions")
+		if err := awsAwsjson10_serializeDocumentWrapOptions(v.WrapOptions, ok); err != nil {
 			return err
 		}
 	}
@@ -2340,6 +2561,20 @@ func awsAwsjson10_serializeDocumentX12FunctionalGroupHeaders(v *types.X12Functio
 	if v.ResponsibleAgencyCode != nil {
 		ok := object.Key("responsibleAgencyCode")
 		ok.String(*v.ResponsibleAgencyCode)
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12InboundEdiOptions(v *types.X12InboundEdiOptions, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.AcknowledgmentOptions != nil {
+		ok := object.Key("acknowledgmentOptions")
+		if err := awsAwsjson10_serializeDocumentX12AcknowledgmentOptions(v.AcknowledgmentOptions, ok); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -2391,6 +2626,13 @@ func awsAwsjson10_serializeDocumentX12OutboundEdiHeaders(v *types.X12OutboundEdi
 	object := value.Object()
 	defer object.Close()
 
+	if v.ControlNumbers != nil {
+		ok := object.Key("controlNumbers")
+		if err := awsAwsjson10_serializeDocumentX12ControlNumbers(v.ControlNumbers, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Delimiters != nil {
 		ok := object.Key("delimiters")
 		if err := awsAwsjson10_serializeDocumentX12Delimiters(v.Delimiters, ok); err != nil {
@@ -2405,6 +2647,11 @@ func awsAwsjson10_serializeDocumentX12OutboundEdiHeaders(v *types.X12OutboundEdi
 		}
 	}
 
+	if len(v.Gs05TimeFormat) > 0 {
+		ok := object.Key("gs05TimeFormat")
+		ok.String(string(v.Gs05TimeFormat))
+	}
+
 	if v.InterchangeControlHeaders != nil {
 		ok := object.Key("interchangeControlHeaders")
 		if err := awsAwsjson10_serializeDocumentX12InterchangeControlHeaders(v.InterchangeControlHeaders, ok); err != nil {
@@ -2417,6 +2664,78 @@ func awsAwsjson10_serializeDocumentX12OutboundEdiHeaders(v *types.X12OutboundEdi
 		ok.Boolean(*v.ValidateEdi)
 	}
 
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12SplitOptions(v *types.X12SplitOptions, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.SplitBy) > 0 {
+		ok := object.Key("splitBy")
+		ok.String(string(v.SplitBy))
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12ValidationOptions(v *types.X12ValidationOptions, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ValidationRules != nil {
+		ok := object.Key("validationRules")
+		if err := awsAwsjson10_serializeDocumentX12ValidationRules(v.ValidationRules, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12ValidationRule(v types.X12ValidationRule, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	switch uv := v.(type) {
+	case *types.X12ValidationRuleMemberCodeListValidationRule:
+		av := object.Key("codeListValidationRule")
+		if err := awsAwsjson10_serializeDocumentX12CodeListValidationRule(&uv.Value, av); err != nil {
+			return err
+		}
+
+	case *types.X12ValidationRuleMemberElementLengthValidationRule:
+		av := object.Key("elementLengthValidationRule")
+		if err := awsAwsjson10_serializeDocumentX12ElementLengthValidationRule(&uv.Value, av); err != nil {
+			return err
+		}
+
+	case *types.X12ValidationRuleMemberElementRequirementValidationRule:
+		av := object.Key("elementRequirementValidationRule")
+		if err := awsAwsjson10_serializeDocumentX12ElementRequirementValidationRule(&uv.Value, av); err != nil {
+			return err
+		}
+
+	default:
+		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
+
+	}
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentX12ValidationRules(v []types.X12ValidationRule, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if vv := v[i]; vv == nil {
+			continue
+		}
+		if err := awsAwsjson10_serializeDocumentX12ValidationRule(v[i], av); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -2976,6 +3295,13 @@ func awsAwsjson10_serializeOpDocumentTestMappingInput(v *TestMappingInput, value
 func awsAwsjson10_serializeOpDocumentTestParsingInput(v *TestParsingInput, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.AdvancedOptions != nil {
+		ok := object.Key("advancedOptions")
+		if err := awsAwsjson10_serializeDocumentAdvancedOptions(v.AdvancedOptions, ok); err != nil {
+			return err
+		}
+	}
 
 	if v.EdiType != nil {
 		ok := object.Key("ediType")

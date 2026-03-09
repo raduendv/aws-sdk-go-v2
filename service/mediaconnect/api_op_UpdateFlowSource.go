@@ -11,7 +11,25 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates the source of a flow.
+//	Updates the source of a flow.
+//
+// Because UpdateFlowSources and UpdateFlow are separate operations, you can't
+// change both the source type AND the flow size in a single request.
+//
+//   - If you have a MEDIUM flow and you want to change the flow source to NDI®:
+//
+//   - First, use the UpdateFlow operation to upgrade the flow size to LARGE .
+//
+//   - After that, you can then use the UpdateFlowSource operation to configure the
+//     NDI source.
+//
+//   - If you're switching from an NDI source to a transport stream (TS) source
+//     and want to downgrade the flow size:
+//
+//   - First, use the UpdateFlowSource operation to change the flow source type.
+//
+//   - After that, you can then use the UpdateFlow operation to downgrade the flow
+//     size to MEDIUM .
 func (c *Client) UpdateFlowSource(ctx context.Context, params *UpdateFlowSourceInput, optFns ...func(*Options)) (*UpdateFlowSourceOutput, error) {
 	if params == nil {
 		params = &UpdateFlowSourceInput{}
@@ -79,11 +97,22 @@ type UpdateFlowSourceInput struct {
 	// receiver’s minimum latency.
 	MinLatency *int32
 
+	//  The settings for the NDI source. This includes the exact name of the upstream
+	// NDI sender that you want to connect to your source.
+	NdiSourceSettings *types.NdiSourceSettings
+
 	// The protocol that the source uses to deliver the content to MediaConnect.
 	//
 	// Elemental MediaConnect no longer supports the Fujitsu QoS protocol. This
 	// reference is maintained for legacy purposes only.
 	Protocol types.Protocol
+
+	// Indicates whether to enable or disable router integration for this flow source.
+	RouterIntegrationState types.State
+
+	// The encryption configuration for the flow source when router integration is
+	// enabled.
+	RouterIntegrationTransitDecryption *types.FlowTransitEncryption
 
 	// The port that the flow uses to send outbound requests to initiate connection
 	// with the sender.
@@ -116,7 +145,7 @@ type UpdateFlowSourceInput struct {
 
 type UpdateFlowSourceOutput struct {
 
-	// The ARN of the flow that you was updated.
+	// The ARN of the flow that you updated.
 	FlowArn *string
 
 	// The details of the sources that are assigned to the flow.
@@ -216,16 +245,13 @@ func (c *Client) addOperationUpdateFlowSourceMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

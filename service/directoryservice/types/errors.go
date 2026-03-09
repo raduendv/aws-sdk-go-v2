@@ -35,6 +35,46 @@ func (e *AccessDeniedException) ErrorCode() string {
 }
 func (e *AccessDeniedException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
+// A directory assessment is automatically created when you create a hybrid
+// directory. There are two types of assessments: CUSTOMER and SYSTEM . Your Amazon
+// Web Services account has a limit of 100 CUSTOMER directory assessments.
+//
+// If you attempt to create a hybrid directory; and you already have 100 CUSTOMER
+// directory assessments;, you will encounter an error. Delete assessments to free
+// up capacity before trying again.
+//
+// You can request an increase to your CUSTOMER directory assessment quota by
+// contacting customer support or delete existing CUSTOMER directory assessments;
+// to free up capacity.
+type ADAssessmentLimitExceededException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	RequestId *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *ADAssessmentLimitExceededException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *ADAssessmentLimitExceededException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *ADAssessmentLimitExceededException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "ADAssessmentLimitExceededException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *ADAssessmentLimitExceededException) ErrorFault() smithy.ErrorFault {
+	return smithy.FaultClient
+}
+
 // An authentication error occurred.
 type AuthenticationFailedException struct {
 	Message *string
@@ -406,6 +446,35 @@ func (e *DirectoryUnavailableException) ErrorCode() string {
 }
 func (e *DirectoryUnavailableException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
+// A disable operation for CA enrollment policy is already in progress for this
+// directory.
+type DisableAlreadyInProgressException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	RequestId *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *DisableAlreadyInProgressException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *DisableAlreadyInProgressException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *DisableAlreadyInProgressException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "DisableAlreadyInProgressException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *DisableAlreadyInProgressException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
+
 // The maximum allowed number of domain controllers per directory was exceeded.
 // The default limit per directory is 20 domain controllers.
 type DomainControllerLimitExceededException struct {
@@ -436,6 +505,35 @@ func (e *DomainControllerLimitExceededException) ErrorCode() string {
 func (e *DomainControllerLimitExceededException) ErrorFault() smithy.ErrorFault {
 	return smithy.FaultClient
 }
+
+// An enable operation for CA enrollment policy is already in progress for this
+// directory.
+type EnableAlreadyInProgressException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	RequestId *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *EnableAlreadyInProgressException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *EnableAlreadyInProgressException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *EnableAlreadyInProgressException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "EnableAlreadyInProgressException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *EnableAlreadyInProgressException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
 // The specified entity already exists.
 type EntityAlreadyExistsException struct {

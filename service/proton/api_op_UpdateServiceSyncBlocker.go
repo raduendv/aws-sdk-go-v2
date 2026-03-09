@@ -12,6 +12,8 @@ import (
 )
 
 // Update the service sync blocker by resolving it.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) UpdateServiceSyncBlocker(ctx context.Context, params *UpdateServiceSyncBlockerInput, optFns ...func(*Options)) (*UpdateServiceSyncBlockerOutput, error) {
 	if params == nil {
 		params = &UpdateServiceSyncBlockerInput{}
@@ -152,16 +154,13 @@ func (c *Client) addOperationUpdateServiceSyncBlockerMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

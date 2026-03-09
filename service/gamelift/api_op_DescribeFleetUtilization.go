@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Container
+//
 // Retrieves utilization statistics for one or more fleets. Utilization data
 // provides a snapshot of how the fleet's hosting resources are currently being
 // used. For fleets with remote locations, this operation retrieves data for the
@@ -37,12 +39,12 @@ import (
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift Fleets]
+// [Setting up Amazon GameLift Servers Fleets]
 //
 // [GameLift Metrics for Fleets]
 //
 // [FleetUtilization]: https://docs.aws.amazon.com/gamelift/latest/apireference/API_FleetUtilization.html
-// [Setting up Amazon GameLift Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
+// [Setting up Amazon GameLift Servers Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 // [DescribeFleetLocationUtilization]: https://docs.aws.amazon.com/gamelift/latest/apireference/API_DescribeFleetLocationUtilization.html
 // [GameLift Metrics for Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/monitoring-cloudwatch.html#gamelift-metrics-fleet
 func (c *Client) DescribeFleetUtilization(ctx context.Context, params *DescribeFleetUtilizationInput, optFns ...func(*Options)) (*DescribeFleetUtilizationOutput, error) {
@@ -183,16 +185,13 @@ func (c *Client) addOperationDescribeFleetUtilizationMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

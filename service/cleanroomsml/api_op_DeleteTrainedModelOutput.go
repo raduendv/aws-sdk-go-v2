@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes the output of a trained model.
+// Deletes the model artifacts stored by the service.
 func (c *Client) DeleteTrainedModelOutput(ctx context.Context, params *DeleteTrainedModelOutputInput, optFns ...func(*Options)) (*DeleteTrainedModelOutputOutput, error) {
 	if params == nil {
 		params = &DeleteTrainedModelOutputInput{}
@@ -38,6 +38,11 @@ type DeleteTrainedModelOutputInput struct {
 	//
 	// This member is required.
 	TrainedModelArn *string
+
+	// The version identifier of the trained model to delete. If not specified, the
+	// operation will delete the base version of the trained model. When specified,
+	// only the particular version will be deleted.
+	VersionIdentifier *string
 
 	noSmithyDocumentSerde
 }
@@ -137,16 +142,13 @@ func (c *Client) addOperationDeleteTrainedModelOutputMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

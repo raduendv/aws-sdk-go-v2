@@ -73,6 +73,10 @@ type CreateBudgetInput struct {
 	// of this field.
 	Description *string
 
+	// Each tag consists of a tag key and a tag value. Tag keys and values are both
+	// required, but tag values can be empty strings.
+	Tags map[string]string
+
 	noSmithyDocumentSerde
 }
 
@@ -183,16 +187,13 @@ func (c *Client) addOperationCreateBudgetMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

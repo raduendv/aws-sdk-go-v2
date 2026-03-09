@@ -12,11 +12,13 @@ import (
 )
 
 // Creates a transfer location for an object storage system. DataSync can use this
-// location as a source or destination for transferring data.
+// location as a source or destination for transferring data. You can make
+// transfers with or without a [DataSync agent].
 //
 // Before you begin, make sure that you understand the [prerequisites] for DataSync to work with
 // object storage systems.
 //
+// [DataSync agent]: https://docs.aws.amazon.com/datasync/latest/userguide/do-i-need-datasync-agent.html#when-agent-required
 // [prerequisites]: https://docs.aws.amazon.com/datasync/latest/userguide/create-object-location.html#create-object-location-prerequisites
 func (c *Client) CreateLocationObjectStorage(ctx context.Context, params *CreateLocationObjectStorageInput, optFns ...func(*Options)) (*CreateLocationObjectStorageOutput, error) {
 	if params == nil {
@@ -36,18 +38,12 @@ func (c *Client) CreateLocationObjectStorage(ctx context.Context, params *Create
 // CreateLocationObjectStorageRequest
 type CreateLocationObjectStorageInput struct {
 
-	// Specifies the Amazon Resource Names (ARNs) of the DataSync agents that can
-	// connect with your object storage system.
-	//
-	// This member is required.
-	AgentArns []string
-
 	// Specifies the name of the object storage bucket involved in the transfer.
 	//
 	// This member is required.
 	BucketName *string
 
-	// Specifies the domain name or IP version 4 (IPv4) address of the object storage
+	// Specifies the domain name or IP address (IPv4 or IPv6) of the object storage
 	// server that your DataSync agent connects to.
 	//
 	// This member is required.
@@ -57,8 +53,49 @@ type CreateLocationObjectStorageInput struct {
 	// to authenticate with the object storage server.
 	AccessKey *string
 
+	// (Optional) Specifies the Amazon Resource Names (ARNs) of the DataSync agents
+	// that can connect with your object storage system. If you are setting up an
+	// agentless cross-cloud transfer, you do not need to specify a value for this
+	// parameter.
+	//
+	// Make sure you configure this parameter correctly when you first create your
+	// storage location. You cannot add or remove agents from a storage location after
+	// you create it.
+	AgentArns []string
+
+	// Specifies configuration information for a DataSync-managed secret, which
+	// includes the SecretKey that DataSync uses to access a specific object storage
+	// location, with a customer-managed KMS key.
+	//
+	// When you include this parameter as part of a CreateLocationObjectStorage
+	// request, you provide only the KMS key ARN. DataSync uses this KMS key together
+	// with the value you specify for the SecretKey parameter to create a
+	// DataSync-managed secret to store the location access credentials.
+	//
+	// Make sure that DataSync has permission to access the KMS key that you specify.
+	//
+	// You can use either CmkSecretConfig (with SecretKey ) or CustomSecretConfig
+	// (without SecretKey ) to provide credentials for a CreateLocationObjectStorage
+	// request. Do not provide both parameters for the same request.
+	CmkSecretConfig *types.CmkSecretConfig
+
+	// Specifies configuration information for a customer-managed Secrets Manager
+	// secret where the secret key for a specific object storage location is stored in
+	// plain text, in Secrets Manager. This configuration includes the secret ARN, and
+	// the ARN for an IAM role that provides access to the secret.
+	//
+	// You can use either CmkSecretConfig (with SecretKey ) or CustomSecretConfig
+	// (without SecretKey ) to provide credentials for a CreateLocationObjectStorage
+	// request. Do not provide both parameters for the same request.
+	CustomSecretConfig *types.CustomSecretConfig
+
 	// Specifies the secret key (for example, a password) if credentials are required
 	// to authenticate with the object storage server.
+	//
+	// If you provide a secret using SecretKey , but do not provide secret
+	// configuration details using CmkSecretConfig or CustomSecretConfig , then
+	// DataSync stores the token using your Amazon Web Services account's Secrets
+	// Manager secret.
 	SecretKey *string
 
 	// Specifies a certificate chain for DataSync to authenticate with your object
@@ -88,7 +125,8 @@ type CreateLocationObjectStorageInput struct {
 	// traffic on (for example, port 443).
 	ServerPort *int32
 
-	// Specifies the protocol that your object storage server uses to communicate.
+	// Specifies the protocol that your object storage server uses to communicate. If
+	// not specified, the default value is HTTPS .
 	ServerProtocol types.ObjectStorageServerProtocol
 
 	// Specifies the object prefix for your object storage server. If this is a source
@@ -204,16 +242,13 @@ func (c *Client) addOperationCreateLocationObjectStorageMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Create an over-the-air (OTA) task to update a device.
+// Create an over-the-air (OTA) task to target a device.
 func (c *Client) CreateOtaTask(ctx context.Context, params *CreateOtaTaskInput, optFns ...func(*Options)) (*CreateOtaTaskOutput, error) {
 	if params == nil {
 		params = &CreateOtaTaskInput{}
@@ -182,16 +182,13 @@ func (c *Client) addOperationCreateOtaTaskMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

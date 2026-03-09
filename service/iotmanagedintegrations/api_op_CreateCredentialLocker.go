@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-// Create a product credential locker. This operation will trigger the creation of
-// all the manufacturing resources including the Wi-Fi setup key pair and device
-// certificate.
+// Create a credential locker.
+//
+// This operation will not trigger the creation of all the manufacturing resources.
 func (c *Client) CreateCredentialLocker(ctx context.Context, params *CreateCredentialLockerInput, optFns ...func(*Options)) (*CreateCredentialLockerOutput, error) {
 	if params == nil {
 		params = &CreateCredentialLockerInput{}
@@ -150,16 +150,13 @@ func (c *Client) addOperationCreateCredentialLockerMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Container
+//
 // Suspends certain types of activity in a fleet location. Currently, this
 // operation is used to stop auto-scaling activity. For multi-location fleets,
 // fleet actions are managed separately for each location.
@@ -28,15 +30,16 @@ import (
 //   - To stop actions on instances in one of the fleet's remote locations,
 //     provide a fleet ID, a location name, and the type of actions to suspend.
 //
-// If successful, Amazon GameLift no longer initiates scaling events except in
-// response to manual changes using [UpdateFleetCapacity]. To restart fleet actions again, call [StartFleetActions].
+// If successful, Amazon GameLift Servers no longer initiates scaling events
+// except in response to manual changes using [UpdateFleetCapacity]. To restart fleet actions again,
+// call [StartFleetActions].
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift Fleets]
+// [Setting up Amazon GameLift Servers Fleets]
 //
 // [UpdateFleetCapacity]: https://docs.aws.amazon.com/gamelift/latest/apireference/API_UpdateFleetCapacity.html
-// [Setting up Amazon GameLift Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
+// [Setting up Amazon GameLift Servers Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 // [StartFleetActions]: https://docs.aws.amazon.com/gamelift/latest/apireference/API_StartFleetActions.html
 func (c *Client) StopFleetActions(ctx context.Context, params *StopFleetActionsInput, optFns ...func(*Options)) (*StopFleetActionsOutput, error) {
 	if params == nil {
@@ -75,7 +78,7 @@ type StopFleetActionsInput struct {
 
 type StopFleetActionsOutput struct {
 
-	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift fleet
+	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift Servers fleet
 	// resource and uniquely identifies it. ARNs are unique across all Regions. Format
 	// is arn:aws:gamelift:::fleet/fleet-a1234567-b8c9-0d1e-2fa3-b45c6d7e8912 .
 	//
@@ -179,16 +182,13 @@ func (c *Client) addOperationStopFleetActionsMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

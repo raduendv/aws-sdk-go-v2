@@ -52,8 +52,12 @@ type TestConversionOutput struct {
 	// This member is required.
 	ConvertedFileContent *string
 
-	// Returns an array of strings, each containing a message that Amazon Web Services
-	// B2B Data Interchange generates during the conversion.
+	// Returns an array of validation messages that Amazon Web Services B2B Data
+	// Interchange generates during the conversion process. These messages include both
+	// standard EDI validation results and custom validation messages when custom
+	// validation rules are configured. Custom validation messages provide detailed
+	// feedback on element length constraints, code list validations, and element
+	// requirement checks applied during the outbound EDI generation process.
 	ValidationMessages []string
 
 	// Metadata pertaining to the operation's result.
@@ -150,16 +154,13 @@ func (c *Client) addOperationTestConversionMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

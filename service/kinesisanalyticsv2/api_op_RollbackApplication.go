@@ -60,7 +60,7 @@ type RollbackApplicationOutput struct {
 	// This member is required.
 	ApplicationDetail *types.ApplicationDetail
 
-	// Operation ID for tracking RollbackApplication request
+	// The operation ID that can be used to track the request.
 	OperationId *string
 
 	// Metadata pertaining to the operation's result.
@@ -157,16 +157,13 @@ func (c *Client) addOperationRollbackApplicationMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

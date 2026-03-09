@@ -57,8 +57,8 @@ type CreateCachediSCSIVolumeInput struct {
 	// This member is required.
 	GatewayARN *string
 
-	// The network interface of the gateway on which to expose the iSCSI target. Only
-	// IPv4 addresses are accepted. Use DescribeGatewayInformationto get a list of the network interfaces
+	// The network interface of the gateway on which to expose the iSCSI target.
+	// Accepts IPv4 and IPv6 addresses. Use DescribeGatewayInformationto get a list of the network interfaces
 	// available on a gateway.
 	//
 	// Valid Values: A valid IP address.
@@ -223,16 +223,13 @@ func (c *Client) addOperationCreateCachediSCSIVolumeMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

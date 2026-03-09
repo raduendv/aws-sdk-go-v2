@@ -90,6 +90,26 @@ func (m *validateOpCreateAccessPolicy) HandleInitialize(ctx context.Context, in 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateCollectionGroup struct {
+}
+
+func (*validateOpCreateCollectionGroup) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateCollectionGroup) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateCollectionGroupInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateCollectionGroupInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateCollection struct {
 }
 
@@ -105,6 +125,26 @@ func (m *validateOpCreateCollection) HandleInitialize(ctx context.Context, in mi
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpCreateCollectionInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpCreateIndex struct {
+}
+
+func (*validateOpCreateIndex) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateIndex) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateIndexInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateIndexInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -210,6 +250,26 @@ func (m *validateOpDeleteAccessPolicy) HandleInitialize(ctx context.Context, in 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpDeleteCollectionGroup struct {
+}
+
+func (*validateOpDeleteCollectionGroup) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteCollectionGroup) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteCollectionGroupInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteCollectionGroupInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeleteCollection struct {
 }
 
@@ -225,6 +285,26 @@ func (m *validateOpDeleteCollection) HandleInitialize(ctx context.Context, in mi
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDeleteCollectionInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteIndex struct {
+}
+
+func (*validateOpDeleteIndex) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteIndex) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteIndexInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteIndexInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -325,6 +405,26 @@ func (m *validateOpGetAccessPolicy) HandleInitialize(ctx context.Context, in mid
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpGetAccessPolicyInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetIndex struct {
+}
+
+func (*validateOpGetIndex) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetIndex) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetIndexInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetIndexInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -530,6 +630,26 @@ func (m *validateOpUpdateAccessPolicy) HandleInitialize(ctx context.Context, in 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateCollectionGroup struct {
+}
+
+func (*validateOpUpdateCollectionGroup) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateCollectionGroup) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateCollectionGroupInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateCollectionGroupInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpUpdateCollection struct {
 }
 
@@ -545,6 +665,26 @@ func (m *validateOpUpdateCollection) HandleInitialize(ctx context.Context, in mi
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpUpdateCollectionInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpUpdateIndex struct {
+}
+
+func (*validateOpUpdateIndex) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateIndex) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateIndexInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateIndexInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -646,8 +786,16 @@ func addOpCreateAccessPolicyValidationMiddleware(stack *middleware.Stack) error 
 	return stack.Initialize.Add(&validateOpCreateAccessPolicy{}, middleware.After)
 }
 
+func addOpCreateCollectionGroupValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateCollectionGroup{}, middleware.After)
+}
+
 func addOpCreateCollectionValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateCollection{}, middleware.After)
+}
+
+func addOpCreateIndexValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateIndex{}, middleware.After)
 }
 
 func addOpCreateLifecyclePolicyValidationMiddleware(stack *middleware.Stack) error {
@@ -670,8 +818,16 @@ func addOpDeleteAccessPolicyValidationMiddleware(stack *middleware.Stack) error 
 	return stack.Initialize.Add(&validateOpDeleteAccessPolicy{}, middleware.After)
 }
 
+func addOpDeleteCollectionGroupValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteCollectionGroup{}, middleware.After)
+}
+
 func addOpDeleteCollectionValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteCollection{}, middleware.After)
+}
+
+func addOpDeleteIndexValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteIndex{}, middleware.After)
 }
 
 func addOpDeleteLifecyclePolicyValidationMiddleware(stack *middleware.Stack) error {
@@ -692,6 +848,10 @@ func addOpDeleteVpcEndpointValidationMiddleware(stack *middleware.Stack) error {
 
 func addOpGetAccessPolicyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetAccessPolicy{}, middleware.After)
+}
+
+func addOpGetIndexValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetIndex{}, middleware.After)
 }
 
 func addOpGetSecurityConfigValidationMiddleware(stack *middleware.Stack) error {
@@ -734,8 +894,16 @@ func addOpUpdateAccessPolicyValidationMiddleware(stack *middleware.Stack) error 
 	return stack.Initialize.Add(&validateOpUpdateAccessPolicy{}, middleware.After)
 }
 
+func addOpUpdateCollectionGroupValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateCollectionGroup{}, middleware.After)
+}
+
 func addOpUpdateCollectionValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateCollection{}, middleware.After)
+}
+
+func addOpUpdateIndexValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateIndex{}, middleware.After)
 }
 
 func addOpUpdateLifecyclePolicyValidationMiddleware(stack *middleware.Stack) error {
@@ -889,6 +1057,21 @@ func validateTags(v []types.Tag) error {
 	}
 }
 
+func validateVectorOptions(v *types.VectorOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "VectorOptions"}
+	if len(v.ServerlessVectorAcceleration) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ServerlessVectorAcceleration"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpBatchGetEffectiveLifecyclePolicyInput(v *BatchGetEffectiveLifecyclePolicyInput) error {
 	if v == nil {
 		return nil
@@ -963,6 +1146,29 @@ func validateOpCreateAccessPolicyInput(v *CreateAccessPolicyInput) error {
 	}
 }
 
+func validateOpCreateCollectionGroupInput(v *CreateCollectionGroupInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateCollectionGroupInput"}
+	if v.Name == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Name"))
+	}
+	if len(v.StandbyReplicas) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("StandbyReplicas"))
+	}
+	if v.Tags != nil {
+		if err := validateTags(v.Tags); err != nil {
+			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateCollectionInput(v *CreateCollectionInput) error {
 	if v == nil {
 		return nil
@@ -975,6 +1181,29 @@ func validateOpCreateCollectionInput(v *CreateCollectionInput) error {
 		if err := validateTags(v.Tags); err != nil {
 			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
 		}
+	}
+	if v.VectorOptions != nil {
+		if err := validateVectorOptions(v.VectorOptions); err != nil {
+			invalidParams.AddNested("VectorOptions", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpCreateIndexInput(v *CreateIndexInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateIndexInput"}
+	if v.Id == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if v.IndexName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("IndexName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1092,6 +1321,21 @@ func validateOpDeleteAccessPolicyInput(v *DeleteAccessPolicyInput) error {
 	}
 }
 
+func validateOpDeleteCollectionGroupInput(v *DeleteCollectionGroupInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteCollectionGroupInput"}
+	if v.Id == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpDeleteCollectionInput(v *DeleteCollectionInput) error {
 	if v == nil {
 		return nil
@@ -1099,6 +1343,24 @@ func validateOpDeleteCollectionInput(v *DeleteCollectionInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DeleteCollectionInput"}
 	if v.Id == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteIndexInput(v *DeleteIndexInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteIndexInput"}
+	if v.Id == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if v.IndexName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("IndexName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1183,6 +1445,24 @@ func validateOpGetAccessPolicyInput(v *GetAccessPolicyInput) error {
 	}
 	if v.Name == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Name"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetIndexInput(v *GetIndexInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetIndexInput"}
+	if v.Id == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if v.IndexName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("IndexName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1360,6 +1640,21 @@ func validateOpUpdateAccessPolicyInput(v *UpdateAccessPolicyInput) error {
 	}
 }
 
+func validateOpUpdateCollectionGroupInput(v *UpdateCollectionGroupInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateCollectionGroupInput"}
+	if v.Id == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpUpdateCollectionInput(v *UpdateCollectionInput) error {
 	if v == nil {
 		return nil
@@ -1367,6 +1662,24 @@ func validateOpUpdateCollectionInput(v *UpdateCollectionInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "UpdateCollectionInput"}
 	if v.Id == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateIndexInput(v *UpdateIndexInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateIndexInput"}
+	if v.Id == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if v.IndexName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("IndexName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

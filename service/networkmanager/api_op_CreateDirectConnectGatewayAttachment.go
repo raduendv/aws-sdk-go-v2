@@ -49,6 +49,10 @@ type CreateDirectConnectGatewayAttachmentInput struct {
 	// client token
 	ClientToken *string
 
+	// The routing policy label to apply to the Direct Connect Gateway attachment for
+	// traffic routing decisions.
+	RoutingPolicyLabel *string
+
 	// The key value tags to apply to the Direct Connect gateway attachment during
 	// creation.
 	Tags []types.Tag
@@ -158,16 +162,13 @@ func (c *Client) addOperationCreateDirectConnectGatewayAttachmentMiddlewares(sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -43,12 +43,32 @@ type UpdateLocationObjectStorageInput struct {
 	// to authenticate with the object storage server.
 	AccessKey *string
 
-	// Specifies the Amazon Resource Names (ARNs) of the DataSync agents that can
-	// connect with your object storage system.
+	// (Optional) Specifies the Amazon Resource Names (ARNs) of the DataSync agents
+	// that can connect with your object storage system. If you are setting up an
+	// agentless cross-cloud transfer, you do not need to specify a value for this
+	// parameter.
+	//
+	// You cannot add or remove agents from a storage location after you initially
+	// create it.
 	AgentArns []string
+
+	// Specifies configuration information for a DataSync-managed secret, such as an
+	// authentication token or set of credentials that DataSync uses to access a
+	// specific transfer location, and a customer-managed KMS key.
+	CmkSecretConfig *types.CmkSecretConfig
+
+	// Specifies configuration information for a customer-managed secret, such as an
+	// authentication token or set of credentials that DataSync uses to access a
+	// specific transfer location, and a customer-managed KMS key.
+	CustomSecretConfig *types.CustomSecretConfig
 
 	// Specifies the secret key (for example, a password) if credentials are required
 	// to authenticate with the object storage server.
+	//
+	// If you provide a secret using SecretKey , but do not provide secret
+	// configuration details using CmkSecretConfig or CustomSecretConfig , then
+	// DataSync stores the token using your Amazon Web Services account's Secrets
+	// Manager secret.
 	SecretKey *string
 
 	// Specifies a certificate chain for DataSync to authenticate with your object
@@ -76,7 +96,7 @@ type UpdateLocationObjectStorageInput struct {
 	// Updating this parameter doesn't interfere with tasks that you have in progress.
 	ServerCertificate []byte
 
-	// Specifies the domain name or IP version 4 (IPv4) address of the object storage
+	// Specifies the domain name or IP address (IPv4 or IPv6) of the object storage
 	// server that your DataSync agent connects to.
 	ServerHostname *string
 
@@ -190,16 +210,13 @@ func (c *Client) addOperationUpdateLocationObjectStorageMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

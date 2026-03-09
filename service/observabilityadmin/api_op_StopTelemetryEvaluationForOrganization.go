@@ -10,9 +10,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	This action offboards the Organization of the caller AWS account from thef
+//	This action offboards the Organization of the caller Amazon Web Services
 //
-// telemetry config feature.
+// account from the telemetry config feature.
 func (c *Client) StopTelemetryEvaluationForOrganization(ctx context.Context, params *StopTelemetryEvaluationForOrganizationInput, optFns ...func(*Options)) (*StopTelemetryEvaluationForOrganizationOutput, error) {
 	if params == nil {
 		params = &StopTelemetryEvaluationForOrganizationInput{}
@@ -124,16 +124,13 @@ func (c *Client) addOperationStopTelemetryEvaluationForOrganizationMiddlewares(s
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

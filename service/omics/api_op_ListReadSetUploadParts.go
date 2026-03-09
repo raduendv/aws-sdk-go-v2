@@ -11,8 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// This operation will list all parts in a requested multipart upload for a
-// sequence store.
+// Lists all parts in a multipart read set upload for a sequence store and returns
+// the metadata in a JSON formatted output.
 func (c *Client) ListReadSetUploadParts(ctx context.Context, params *ListReadSetUploadPartsInput, optFns ...func(*Options)) (*ListReadSetUploadPartsOutput, error) {
 	if params == nil {
 		params = &ListReadSetUploadPartsInput{}
@@ -164,16 +164,13 @@ func (c *Client) addOperationListReadSetUploadPartsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

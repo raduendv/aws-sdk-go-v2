@@ -43,6 +43,10 @@ type CreateSiteToSiteVpnAttachmentInput struct {
 	// The client token associated with the request.
 	ClientToken *string
 
+	// The routing policy label to apply to the Site-to-Site VPN attachment for
+	// traffic routing decisions.
+	RoutingPolicyLabel *string
+
 	// The tags associated with the request.
 	Tags []types.Tag
 
@@ -151,16 +155,13 @@ func (c *Client) addOperationCreateSiteToSiteVpnAttachmentMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

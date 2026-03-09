@@ -292,6 +292,48 @@ func (ExecutionType) Values() []ExecutionType {
 	}
 }
 
+type HealthStatusReason string
+
+// Enum values for HealthStatusReason
+const (
+	HealthStatusReasonBillingViewNoAccess             HealthStatusReason = "BILLING_VIEW_NO_ACCESS"
+	HealthStatusReasonBillingViewUnhealthy            HealthStatusReason = "BILLING_VIEW_UNHEALTHY"
+	HealthStatusReasonFilterInvalid                   HealthStatusReason = "FILTER_INVALID"
+	HealthStatusReasonMultiYearHistoricalDataDisabled HealthStatusReason = "MULTI_YEAR_HISTORICAL_DATA_DISABLED"
+)
+
+// Values returns all known values for HealthStatusReason. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (HealthStatusReason) Values() []HealthStatusReason {
+	return []HealthStatusReason{
+		"BILLING_VIEW_NO_ACCESS",
+		"BILLING_VIEW_UNHEALTHY",
+		"FILTER_INVALID",
+		"MULTI_YEAR_HISTORICAL_DATA_DISABLED",
+	}
+}
+
+type HealthStatusValue string
+
+// Enum values for HealthStatusValue
+const (
+	HealthStatusValueHealthy   HealthStatusValue = "HEALTHY"
+	HealthStatusValueUnhealthy HealthStatusValue = "UNHEALTHY"
+)
+
+// Values returns all known values for HealthStatusValue. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (HealthStatusValue) Values() []HealthStatusValue {
+	return []HealthStatusValue{
+		"HEALTHY",
+		"UNHEALTHY",
+	}
+}
+
 type MatchOption string
 
 // Enum values for MatchOption
@@ -438,6 +480,7 @@ const (
 	TimeUnitMonthly   TimeUnit = "MONTHLY"
 	TimeUnitQuarterly TimeUnit = "QUARTERLY"
 	TimeUnitAnnually  TimeUnit = "ANNUALLY"
+	TimeUnitCustom    TimeUnit = "CUSTOM"
 )
 
 // Values returns all known values for TimeUnit. Note that this can be expanded in
@@ -450,5 +493,6 @@ func (TimeUnit) Values() []TimeUnit {
 		"MONTHLY",
 		"QUARTERLY",
 		"ANNUALLY",
+		"CUSTOM",
 	}
 }

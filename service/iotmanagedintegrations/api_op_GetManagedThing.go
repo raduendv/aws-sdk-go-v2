@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Get the attributes and capabilities associated with a managed thing.
+// Get details of a managed thing including its attributes and capabilities.
 func (c *Client) GetManagedThing(ctx context.Context, params *GetManagedThingInput, optFns ...func(*Options)) (*GetManagedThingOutput, error) {
 	if params == nil {
 		params = &GetManagedThingInput{}
@@ -55,6 +55,9 @@ type GetManagedThingOutput struct {
 	// The classification of the managed thing such as light bulb or thermostat.
 	Classification *string
 
+	// The identifier of the connector destination associated with this managed thing.
+	ConnectorDestinationId *string
+
 	// The third-party device id as defined by the connector. This device id must not
 	// contain personal identifiable information (PII).
 	//
@@ -64,6 +67,8 @@ type GetManagedThingOutput struct {
 	// The id of the connector policy.
 	//
 	// This parameter is used for cloud-to-cloud devices only.
+	//
+	// Deprecated: ConnectorPolicyId is deprecated
 	ConnectorPolicyId *string
 
 	// The timestamp value of when the device creation request occurred.
@@ -109,7 +114,9 @@ type GetManagedThingOutput struct {
 	ParentControllerId *string
 
 	// The provisioning status of the device in the provisioning workflow for
-	// onboarding to IoT managed integrations.
+	// onboarding to IoT managed integrations. For more information, see [Device Provisioning].
+	//
+	// [Device Provisioning]: https://docs.aws.amazon.com/iot-mi/latest/devguide/device-provisioning.html
 	ProvisioningStatus types.ProvisioningStatus
 
 	// The type of device used. This will be the Amazon Web Services hub controller,
@@ -128,6 +135,10 @@ type GetManagedThingOutput struct {
 
 	// The timestamp value of when the managed thing was last updated at.
 	UpdatedAt *time.Time
+
+	// The Wi-Fi Simple Setup configuration for the managed thing, which defines
+	// provisioning capabilities and timeout settings.
+	WiFiSimpleSetupConfiguration *types.WiFiSimpleSetupConfiguration
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -223,16 +234,13 @@ func (c *Client) addOperationGetManagedThingMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

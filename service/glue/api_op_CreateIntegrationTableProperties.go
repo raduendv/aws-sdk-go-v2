@@ -34,7 +34,12 @@ func (c *Client) CreateIntegrationTableProperties(ctx context.Context, params *C
 
 type CreateIntegrationTablePropertiesInput struct {
 
-	// The connection ARN of the source, or the database ARN of the target.
+	// The Amazon Resource Name (ARN) of the target table for which to create
+	// integration table properties. Currently, this API only supports creating
+	// integration table properties for target tables, and the provided ARN should be
+	// the ARN of the target table in the Glue Data Catalog. Support for creating
+	// integration table properties for source connections (using the connection ARN)
+	// is not yet implemented and will be added in a future release.
 	//
 	// This member is required.
 	ResourceArn *string
@@ -44,7 +49,8 @@ type CreateIntegrationTablePropertiesInput struct {
 	// This member is required.
 	TableName *string
 
-	// A structure for the source table configuration.
+	// A structure for the source table configuration. See the SourceTableConfig
+	// structure to see list of supported source properties.
 	SourceTableConfig *types.SourceTableConfig
 
 	// A structure for the target table configuration.
@@ -148,16 +154,13 @@ func (c *Client) addOperationCreateIntegrationTablePropertiesMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

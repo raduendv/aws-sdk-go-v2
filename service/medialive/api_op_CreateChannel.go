@@ -43,6 +43,9 @@ type CreateChannelInput struct {
 	// The desired engine version for this channel.
 	ChannelEngineVersion *types.ChannelEngineVersionRequest
 
+	// A list of IDs for all the Input Security Groups attached to the channel.
+	ChannelSecurityGroups []string
+
 	// Placeholder documentation for __listOfOutputDestination
 	Destinations []types.OutputDestination
 
@@ -57,6 +60,9 @@ type CreateChannelInput struct {
 
 	// Specification of network and file inputs for this channel
 	InputSpecification *types.InputSpecification
+
+	// The linked channel settings for the channel.
+	LinkedChannelSettings *types.LinkedChannelSettings
 
 	// The log level to write to CloudWatch Logs.
 	LogLevel types.LogLevel
@@ -192,16 +198,13 @@ func (c *Client) addOperationCreateChannelMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

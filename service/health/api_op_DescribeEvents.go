@@ -58,7 +58,7 @@ type DescribeEventsInput struct {
 	// the only supported value at this time.
 	Locale *string
 
-	// The maximum number of items to return in one batch, between 10 and 100,
+	// The maximum number of items to return in one batch, between 1 and 100,
 	// inclusive.
 	MaxResults *int32
 
@@ -175,16 +175,13 @@ func (c *Client) addOperationDescribeEventsMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -192,7 +189,7 @@ func (c *Client) addOperationDescribeEventsMiddlewares(stack *middleware.Stack, 
 
 // DescribeEventsPaginatorOptions is the paginator options for DescribeEvents
 type DescribeEventsPaginatorOptions struct {
-	// The maximum number of items to return in one batch, between 10 and 100,
+	// The maximum number of items to return in one batch, between 1 and 100,
 	// inclusive.
 	Limit int32
 

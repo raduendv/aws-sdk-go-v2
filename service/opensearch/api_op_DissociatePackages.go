@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Dissociates multiple packages from a domain simulatneously.
+// Dissociates multiple packages from a domain simultaneously.
 func (c *Client) DissociatePackages(ctx context.Context, params *DissociatePackagesInput, optFns ...func(*Options)) (*DissociatePackagesOutput, error) {
 	if params == nil {
 		params = &DissociatePackagesInput{}
@@ -143,16 +143,13 @@ func (c *Client) addOperationDissociatePackagesMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

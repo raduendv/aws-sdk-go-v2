@@ -41,9 +41,8 @@ type UpdateComputeNodeGroupInput struct {
 	// This member is required.
 	ComputeNodeGroupIdentifier *string
 
-	// The ID of the Amazon Machine Image (AMI) that Amazon Web Services PCS uses to
-	// launch instances. If not provided, Amazon Web Services PCS uses the AMI ID
-	// specified in the custom launch template.
+	// The ID of the Amazon Machine Image (AMI) that PCS uses to launch instances. If
+	// not provided, PCS uses the AMI ID specified in the custom launch template.
 	AmiId *string
 
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
@@ -54,29 +53,26 @@ type UpdateComputeNodeGroupInput struct {
 	// specify a client token, the CLI and SDK automatically generate 1 for you.
 	ClientToken *string
 
-	// An Amazon EC2 launch template Amazon Web Services PCS uses to launch compute
-	// nodes.
+	// An Amazon EC2 launch template PCS uses to launch compute nodes.
 	CustomLaunchTemplate *types.CustomLaunchTemplate
 
 	// The Amazon Resource Name (ARN) of the IAM instance profile used to pass an IAM
 	// role when launching EC2 instances. The role contained in your instance profile
-	// must have the pcs:RegisterComputeNodeGroupInstance permission. The resource
-	// identifier of the ARN must start with AWSPCS or it must have /aws-pcs/ in its
-	// path.
+	// must have the pcs:RegisterComputeNodeGroupInstance permission and the role name
+	// must start with AWSPCS or must have the path /aws-pcs/ . For more information,
+	// see [IAM instance profiles for PCS]in the PCS User Guide.
 	//
-	// Examples
-	//
-	//   - arn:aws:iam::111122223333:instance-profile/AWSPCS-example-role-1
-	//
-	//   - arn:aws:iam::111122223333:instance-profile/aws-pcs/example-role-2
+	// [IAM instance profiles for PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/security-instance-profiles.html
 	IamInstanceProfileArn *string
 
-	// Specifies how EC2 instances are purchased on your behalf. Amazon Web Services
-	// PCS supports On-Demand and Spot instances. For more information, see [Instance purchasing options]in the
-	// Amazon Elastic Compute Cloud User Guide. If you don't provide this option, it
-	// defaults to On-Demand.
+	// Specifies how EC2 instances are purchased on your behalf. PCS supports
+	// On-Demand Instances, Spot Instances, and Amazon EC2 Capacity Blocks for ML. For
+	// more information, see [Amazon EC2 billing and purchasing options]in the Amazon Elastic Compute Cloud User Guide. For more
+	// information about PCS support for Capacity Blocks, see [Using Amazon EC2 Capacity Blocks for ML with PCS]in the PCS User Guide.
+	// If you don't provide this option, it defaults to On-Demand.
 	//
-	// [Instance purchasing options]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html
+	// [Using Amazon EC2 Capacity Blocks for ML with PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/capacity-blocks.html
+	// [Amazon EC2 billing and purchasing options]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html
 	PurchaseOption types.PurchaseOption
 
 	// Specifies the boundaries of the compute node group auto scaling.
@@ -198,16 +194,13 @@ func (c *Client) addOperationUpdateComputeNodeGroupMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

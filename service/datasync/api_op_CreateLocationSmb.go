@@ -42,14 +42,10 @@ type CreateLocationSmbInput struct {
 	// This member is required.
 	AgentArns []string
 
-	// Specifies the domain name or IP address of the SMB file server that your
-	// DataSync agent connects to.
+	// Specifies the domain name or IP address (IPv4 or IPv6) of the SMB file server
+	// that your DataSync agent connects to.
 	//
-	// Remember the following when configuring this parameter:
-	//
-	//   - You can't specify an IP version 6 (IPv6) address.
-	//
-	//   - If you're using Kerberos authentication, you must specify a domain name.
+	// If you're using Kerberos authentication, you must specify a domain name.
 	//
 	// This member is required.
 	ServerHostname *string
@@ -75,9 +71,39 @@ type CreateLocationSmbInput struct {
 	// [Providing DataSync access to SMB file servers]: https://docs.aws.amazon.com/datasync/latest/userguide/create-smb-location.html#configuring-smb-permissions
 	AuthenticationType types.SmbAuthenticationType
 
-	// Specifies the IPv4 addresses for the DNS servers that your SMB file server
-	// belongs to. This parameter applies only if AuthenticationType is set to KERBEROS
-	// .
+	// Specifies configuration information for a DataSync-managed secret, either a
+	// Password or KerberosKeytab (for NTLM (default) and KERBEROS authentication
+	// types, respectively) that DataSync uses to access a specific SMB storage
+	// location, with a customer-managed KMS key.
+	//
+	// When you include this parameter as part of a CreateLocationSmbRequest request,
+	// you provide only the KMS key ARN. DataSync uses this KMS key together with
+	// either the Password or KerberosKeytab you specify to create a DataSync-managed
+	// secret to store the location access credentials.
+	//
+	// Make sure that DataSync has permission to access the KMS key that you specify.
+	//
+	// You can use either CmkSecretConfig (with either Password or KerberosKeytab ) or
+	// CustomSecretConfig (without any Password and KerberosKeytab ) to provide
+	// credentials for a CreateLocationSmbRequest request. Do not provide both
+	// CmkSecretConfig and CustomSecretConfig parameters for the same request.
+	CmkSecretConfig *types.CmkSecretConfig
+
+	// Specifies configuration information for a customer-managed Secrets Manager
+	// secret where the SMB storage location credentials is stored in Secrets Manager
+	// as plain text (for Password ) or binary (for KerberosKeytab ). This
+	// configuration includes the secret ARN, and the ARN for an IAM role that provides
+	// access to the secret.
+	//
+	// You can use either CmkSecretConfig (with SasConfiguration ) or
+	// CustomSecretConfig (without SasConfiguration ) to provide credentials for a
+	// CreateLocationSmbRequest request. Do not provide both parameters for the same
+	// request.
+	CustomSecretConfig *types.CustomSecretConfig
+
+	// Specifies the IPv4 or IPv6 addresses for the DNS servers that your SMB file
+	// server belongs to. This parameter applies only if AuthenticationType is set to
+	// KERBEROS .
 	//
 	// If you have multiple domains in your environment, configuring this parameter
 	// makes sure that DataSync connects to the right SMB file server.
@@ -93,9 +119,6 @@ type CreateLocationSmbInput struct {
 	// Specifies your Kerberos key table (keytab) file, which includes mappings
 	// between your Kerberos principal and encryption keys.
 	//
-	// The file must be base64 encoded. If you're using the CLI, the encoding is done
-	// for you.
-	//
 	// To avoid task execution errors, make sure that the Kerberos principal that you
 	// use to create the keytab file matches exactly what you specify for
 	// KerberosPrincipal .
@@ -108,7 +131,7 @@ type CreateLocationSmbInput struct {
 	// for you.
 	KerberosKrb5Conf []byte
 
-	// Specifies a Kerberos prinicpal, which is an identity in your Kerberos realm
+	// Specifies a Kerberos principal, which is an identity in your Kerberos realm
 	// that has permission to access the files, folders, and file metadata in your SMB
 	// file server.
 	//
@@ -246,16 +269,13 @@ func (c *Client) addOperationCreateLocationSmbMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

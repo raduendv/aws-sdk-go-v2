@@ -10,6 +10,7 @@
         "api_client_test.go",
         "api_op_AssociateOriginationIdentity.go",
         "api_op_AssociateProtectConfiguration.go",
+        "api_op_CarrierLookup.go",
         "api_op_CreateConfigurationSet.go",
         "api_op_CreateEventDestination.go",
         "api_op_CreateOptOutList.go",
@@ -117,7 +118,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/pinpointsmsvoicev2",
     "unstable": false
 }

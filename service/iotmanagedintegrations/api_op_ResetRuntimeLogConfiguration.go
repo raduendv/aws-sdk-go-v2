@@ -10,8 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Reset a runtime log configuration for a specific managed thing or for all
-// managed things as a group.
+// Reset a runtime log configuration for a specific managed thing.
 func (c *Client) ResetRuntimeLogConfiguration(ctx context.Context, params *ResetRuntimeLogConfigurationInput, optFns ...func(*Options)) (*ResetRuntimeLogConfigurationOutput, error) {
 	if params == nil {
 		params = &ResetRuntimeLogConfigurationInput{}
@@ -132,16 +131,13 @@ func (c *Client) addOperationResetRuntimeLogConfigurationMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

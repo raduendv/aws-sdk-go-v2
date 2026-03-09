@@ -1,3 +1,182 @@
+# v1.102.0 (2026-01-30)
+
+* **Feature**: Improve SessionTag usage guidelines in the GenerateEmbedURLForAnonymousUser API documentation. Update the GetIdentityContext document with the region support context.
+
+# v1.101.0 (2026-01-21)
+
+* **Feature**: Added documentation and model for sheet layout groups - allows sheet elements to be grouped, Added documentation and the feature enables admins to have granular control over connectors under actions, Updated API documentation for PDF Export in Snapshot Export APIs
+
+# v1.100.1 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.100.0 (2025-12-29)
+
+* **Feature**: This release adds support for quick users to be able to perform role upgrades on their own. Additionally it allows admins to make this feature admin or auto approval along with new self upgrade capability that can be restricted by Admins.
+
+# v1.99.0 (2025-12-11)
+
+* **Feature**: This release adds new GetIdentityContext API, Dashboard customization options for tables and pivot tables, Visual styling options- borders and decals, map GeocodingPreferences, KeyPairCredentials for DataSourceCredentials. Snapshot APIs now support registered users. Parameters limit increased to 400
+
+# v1.98.3 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.98.2 (2025-12-02)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.98.1 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.98.0 (2025-11-21)
+
+* **Feature**: Amazon Quick Suite now supports QuickChat as an embedding type when calling the GenerateEmbedUrlForRegisteredUser API, enabling developers to embed conversational AI agents directly into their applications.
+
+# v1.97.0 (2025-11-20)
+
+* **Feature**: Introducing comprehensive theme styling controls. New features include border customization (radius, width, color), flexible padding controls, background styling for cards and sheets, centralized typography management, and visual-level override support across layouts.
+
+# v1.96.3 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.96.2 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.96.1 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.96.0 (2025-11-06)
+
+* **Feature**: Support for New Data Prep Experience
+
+# v1.95.4 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.95.3 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.95.2 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.95.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.95.0 (2025-10-09)
+
+* **Feature**: This release adds support for ActionConnector and Flow, which are new resources associated with Amazon Quick Suite. Additional updates include expanded Data Source options, further branding customization, and new capabilities that can be restricted by Admins.
+
+# v1.94.4 (2025-10-06)
+
+* **Documentation**: Documentation improvements for QuickSight API documentation to clarify that delete operation APIs are global.
+
+# v1.94.3 (2025-09-30)
+
+* **Documentation**: added warnings to a few CLI pages
+
+# v1.94.2 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.94.1 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.94.0 (2025-09-11)
+
+* **Feature**: This release adds support for Account level custom permissions, additional Dashboard Options, and Null support for Q&A.
+
+# v1.93.4 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.93.3 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.93.2 (2025-09-02)
+
+* No change notes available for this release.
+
+# v1.93.1 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.93.0 (2025-08-28)
+
+* **Feature**: Remove incorrect endpoint tests
+
+# v1.92.3 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.92.2 (2025-08-21)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.92.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.92.0 (2025-08-11)
+
+* **Feature**: Add RowAxisDisplayOptions and ColumnAxisDisplayOptions to HeatMapConfiguration, add Actions to PluginVisual, increase limit for CalculatedFields list
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.91.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.90.0 (2025-07-31)
+
+* **Feature**: Added Impala connector support
+
+# v1.89.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.89.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.88.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.88.0 (2025-07-15)
+
+* **Feature**: Introduced custom instructions for topics.
+
+# v1.87.0 (2025-06-30)
+
+* **Feature**: Introduced custom permission capabilities for reporting content. Added menu option in exploration to preserve configuration data when textbox menu option is used. Added support for Athena trusted identity propagation.
+
+# v1.86.2 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.86.1 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
 # v1.86.0 (2025-04-10)
 
 * **Feature**: Add support to analysis and sheet level highlighting in QuickSight.

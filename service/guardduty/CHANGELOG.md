@@ -1,3 +1,192 @@
+# v1.73.0 (2026-01-22)
+
+* **Feature**: Adding new enum value for ScanStatusReason
+
+# v1.72.2 (2026-01-21)
+
+* No change notes available for this release.
+
+# v1.72.1 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.72.0 (2025-12-22)
+
+* **Feature**: Make accountIds a required field in GetRemainingFreeTrialDays API to reflect service behavior.
+
+# v1.71.0 (2025-12-17)
+
+* **Feature**: Add support for dbiResourceId in finding.
+
+# v1.70.1 (2025-12-12)
+
+* No change notes available for this release.
+
+# v1.70.0 (2025-12-09)
+
+* **Feature**: Adding support for Ec2LaunchTemplate Version field
+
+# v1.69.1 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.69.0 (2025-12-02)
+
+* **Feature**: Adding support for extended threat detection for Amazon EC2 and Amazon ECS. Adding support for wild card suppression rules.
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.68.2 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.68.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.68.0 (2025-11-19)
+
+* **Feature**: Add support for scanning and viewing scan results for backup resource types
+
+# v1.67.0 (2025-11-17)
+
+* **Feature**: Add S3 On-Demand Object Scanning
+
+# v1.66.2 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.66.1 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.66.0 (2025-11-10)
+
+* **Feature**: Include tags filed in CreatePublishingDestinationRequest and DescribePublishingDestinationResponse.
+
+# v1.65.4 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.65.3 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.65.2 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.65.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.65.0 (2025-10-15)
+
+* **Feature**: Added default pagination value for ListMalwareProtectionPlans API and updated UpdateFindingsFeedback API
+
+# v1.64.3 (2025-10-02)
+
+* **Documentation**: Updated descriptions for the Location parameter in CreateTrustedEntitySet and CreateThreatEntitySet.
+
+# v1.64.2 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.64.1 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.64.0 (2025-09-11)
+
+* **Feature**: Updated Java SDK implementation of entity set status in GuardDuty API.
+
+# v1.63.4 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.63.3 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.63.2 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.63.1 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.63.0 (2025-08-21)
+
+* **Feature**: Remove Pattern trait from email field
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.62.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.62.0 (2025-08-14)
+
+* **Feature**: Added support for entity lists.
+
+# v1.61.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.60.0 (2025-08-07)
+
+* **Feature**: Added support for VPC owner account ID associated with DNS request in the GuardDuty finding.
+
+# v1.59.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.58.2 (2025-08-01)
+
+* No change notes available for this release.
+
+# v1.58.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.58.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.57.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.57.0 (2025-07-16.2)
+
+* **Feature**: Add expectedBucketOwner parameter to ThreatIntel and IPSet APIs.
+
+# v1.56.0 (2025-06-27)
+
+* **Feature**: Update JSON target for Kubernetes workload resource type.
+
+# v1.55.0 (2025-06-17)
+
+* **Feature**: Adding support for extended threat detection for EKS Audit Logs and EKS Runtime Monitoring.
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.54.6 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.54.5 (2025-05-08)
+
+* **Documentation**: Updated description of a data structure.
+
 # v1.54.4 (2025-05-01)
 
 * No change notes available for this release.

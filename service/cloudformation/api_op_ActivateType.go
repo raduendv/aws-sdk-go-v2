@@ -11,13 +11,26 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Activates a public third-party extension, making it available for use in stack
-// templates. Once you have activated a public third-party extension in your
-// account and Region, use [SetTypeConfiguration]to specify configuration properties for the extension.
-// For more information, see [Using public extensions]in the CloudFormation User Guide.
+// Activates a public third-party extension, such as a resource or module, to make
+// it available for use in stack templates in your current account and Region. It
+// can also create CloudFormation Hooks, which allow you to evaluate resource
+// configurations before CloudFormation provisions them. Hooks integrate with both
+// CloudFormation and Cloud Control API operations.
 //
+// After you activate an extension, you can use [SetTypeConfiguration] to set specific properties for
+// the extension.
+//
+// To see which extensions have been activated, use [ListTypes]. To see configuration details
+// for an extension, use [DescribeType].
+//
+// For more information, see [Activate a third-party public extension in your account] in the CloudFormation User Guide. For information
+// about creating Hooks, see the [CloudFormation Hooks User Guide].
+//
+// [DescribeType]: https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeType.html
 // [SetTypeConfiguration]: https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_SetTypeConfiguration.html
-// [Using public extensions]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/registry-public.html
+// [ListTypes]: https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_ListTypes.html
+// [Activate a third-party public extension in your account]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/registry-public-activate-extension.html
+// [CloudFormation Hooks User Guide]: https://docs.aws.amazon.com/cloudformation-cli/latest/hooks-userguide/what-is-cloudformation-hooks.html
 func (c *Client) ActivateType(ctx context.Context, params *ActivateTypeInput, optFns ...func(*Options)) (*ActivateTypeOutput, error) {
 	if params == nil {
 		params = &ActivateTypeInput{}
@@ -79,7 +92,7 @@ type ActivateTypeInput struct {
 	// PublisherId .
 	TypeName *string
 
-	// An alias to assign to the public extension, in this account and Region. If you
+	// An alias to assign to the public extension in this account and Region. If you
 	// specify an alias for the extension, CloudFormation treats the alias as the
 	// extension type name within this account and Region. You must use the alias to
 	// refer to the extension in your templates, API calls, and CloudFormation console.
@@ -104,7 +117,7 @@ type ActivateTypeInput struct {
 
 type ActivateTypeOutput struct {
 
-	// The Amazon Resource Name (ARN) of the activated extension, in this account and
+	// The Amazon Resource Name (ARN) of the activated extension in this account and
 	// Region.
 	Arn *string
 
@@ -202,16 +215,13 @@ func (c *Client) addOperationActivateTypeMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

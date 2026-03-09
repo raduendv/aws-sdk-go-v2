@@ -13,6 +13,8 @@ import (
 
 // Returns configuration details about all the projects in the current Region in
 // your account.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) ListProjects(ctx context.Context, params *ListProjectsInput, optFns ...func(*Options)) (*ListProjectsOutput, error) {
 	if params == nil {
 		params = &ListProjectsInput{}
@@ -31,10 +33,14 @@ func (c *Client) ListProjects(ctx context.Context, params *ListProjectsInput, op
 type ListProjectsInput struct {
 
 	// The maximum number of results to include in the response.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	MaxResults *int32
 
 	// The token to use when requesting the next set of results. You received this
 	// token from a previous ListProjects operation.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	NextToken *string
 
 	noSmithyDocumentSerde
@@ -44,10 +50,14 @@ type ListProjectsOutput struct {
 
 	// The token to use in a subsequent ListProjects operation to return the next set
 	// of results.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	NextToken *string
 
 	// An array of structures that contain the configuration details of the projects
 	// in the Region.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Projects []types.ProjectSummary
 
 	// Metadata pertaining to the operation's result.
@@ -141,16 +151,13 @@ func (c *Client) addOperationListProjectsMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

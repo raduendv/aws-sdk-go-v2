@@ -34,7 +34,8 @@ func (c *Client) ListStacks(ctx context.Context, params *ListStacksInput, optFns
 // The input for ListStacks action.
 type ListStacksInput struct {
 
-	// A string that identifies the next page of stacks that you want to retrieve.
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	// Stack status to use as a filter. Specify one or more stack status codes to list
@@ -52,7 +53,7 @@ type ListStacksOutput struct {
 	// stacks. If no additional page exists, this value is null.
 	NextToken *string
 
-	// A list of StackSummary structures containing information about the specified
+	// A list of StackSummary structures that contains information about the specified
 	// stacks.
 	StackSummaries []types.StackSummary
 
@@ -147,16 +148,13 @@ func (c *Client) addOperationListStacksMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

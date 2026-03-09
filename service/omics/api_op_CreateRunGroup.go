@@ -10,8 +10,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// You can optionally create a run group to limit the compute resources for the
-// runs that you add to the group.
+// Creates a run group to limit the compute resources for the runs that are added
+// to the group. Returns an ARN, ID, and tags for the run group.
 func (c *Client) CreateRunGroup(ctx context.Context, params *CreateRunGroupInput, optFns ...func(*Options)) (*CreateRunGroupOutput, error) {
 	if params == nil {
 		params = &CreateRunGroupInput{}
@@ -170,16 +170,13 @@ func (c *Client) addOperationCreateRunGroupMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

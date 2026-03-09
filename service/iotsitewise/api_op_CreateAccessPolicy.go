@@ -14,6 +14,9 @@ import (
 // Creates an access policy that grants the specified identity (IAM Identity
 // Center user, IAM Identity Center group, or IAM user) access to the specified IoT
 // SiteWise Monitor portal or project resource.
+//
+// Support for access policies that use an SSO Group as the identity is not
+// supported at this time.
 func (c *Client) CreateAccessPolicy(ctx context.Context, params *CreateAccessPolicyInput, optFns ...func(*Options)) (*CreateAccessPolicyOutput, error) {
 	if params == nil {
 		params = &CreateAccessPolicyInput{}
@@ -179,16 +182,13 @@ func (c *Client) addOperationCreateAccessPolicyMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

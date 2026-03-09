@@ -65,9 +65,14 @@ type JoinDomainInput struct {
 	// This member is required.
 	UserName *string
 
-	// List of IPv4 addresses, NetBIOS names, or host names of your domain server. If
+	// List of IP addresses, NetBIOS names, or host names of your domain server. If
 	// you need to specify the port number include it after the colon (“:”). For
 	// example, mydc.mydomain.com:389 .
+	//
+	// S3 File Gateway supports IPv6 addresses in addition to IPv4 and other existing
+	// formats.
+	//
+	// FSx File Gateway does not support IPv6.
 	DomainControllers []string
 
 	// The organizational unit (OU) is a container in an Active Directory that can
@@ -210,16 +215,13 @@ func (c *Client) addOperationJoinDomainMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -79,12 +79,6 @@ type VerifyPinDataInput struct {
 	// This member is required.
 	PinBlockFormat types.PinBlockFormatForPinData
 
-	// The Primary Account Number (PAN), a unique identifier for a payment credit or
-	// debit card that associates the card with a specific account holder.
-	//
-	// This member is required.
-	PrimaryAccountNumber *string
-
 	// The attributes and values for PIN data verification.
 	//
 	// This member is required.
@@ -103,6 +97,10 @@ type VerifyPinDataInput struct {
 
 	// The length of PIN being verified.
 	PinDataLength *int32
+
+	// The Primary Account Number (PAN), a unique identifier for a payment credit or
+	// debit card that associates the card with a specific account holder.
+	PrimaryAccountNumber *string
 
 	noSmithyDocumentSerde
 }
@@ -235,16 +233,13 @@ func (c *Client) addOperationVerifyPinDataMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

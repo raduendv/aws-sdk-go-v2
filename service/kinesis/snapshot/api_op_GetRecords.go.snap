@@ -1,13 +1,10 @@
 GetRecords
 	Initialize stack step
-		spanInitializeStart
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		setOperationInput
 		ResolveEndpoint
 		OperationSerializer
@@ -18,10 +15,11 @@ GetRecords
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity
@@ -39,5 +37,4 @@ GetRecords
 		OperationDeserializer
 		AddTimeOffsetMiddleware
 		RecordResponseTiming
-		ReadResponseTimeout
 		RequestResponseLogger

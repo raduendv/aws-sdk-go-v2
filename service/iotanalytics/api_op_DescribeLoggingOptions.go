@@ -12,6 +12,8 @@ import (
 )
 
 // Retrieves the current settings of the IoT Analytics logging options.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) DescribeLoggingOptions(ctx context.Context, params *DescribeLoggingOptionsInput, optFns ...func(*Options)) (*DescribeLoggingOptionsOutput, error) {
 	if params == nil {
 		params = &DescribeLoggingOptionsInput{}
@@ -34,6 +36,8 @@ type DescribeLoggingOptionsInput struct {
 type DescribeLoggingOptionsOutput struct {
 
 	// The current settings of the IoT Analytics logging options.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	LoggingOptions *types.LoggingOptions
 
 	// Metadata pertaining to the operation's result.
@@ -127,16 +131,13 @@ func (c *Client) addOperationDescribeLoggingOptionsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

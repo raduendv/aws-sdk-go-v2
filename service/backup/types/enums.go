@@ -97,23 +97,27 @@ type BackupVaultEvent string
 
 // Enum values for BackupVaultEvent
 const (
-	BackupVaultEventBackupJobStarted      BackupVaultEvent = "BACKUP_JOB_STARTED"
-	BackupVaultEventBackupJobCompleted    BackupVaultEvent = "BACKUP_JOB_COMPLETED"
-	BackupVaultEventBackupJobSuccessful   BackupVaultEvent = "BACKUP_JOB_SUCCESSFUL"
-	BackupVaultEventBackupJobFailed       BackupVaultEvent = "BACKUP_JOB_FAILED"
-	BackupVaultEventBackupJobExpired      BackupVaultEvent = "BACKUP_JOB_EXPIRED"
-	BackupVaultEventRestoreJobStarted     BackupVaultEvent = "RESTORE_JOB_STARTED"
-	BackupVaultEventRestoreJobCompleted   BackupVaultEvent = "RESTORE_JOB_COMPLETED"
-	BackupVaultEventRestoreJobSuccessful  BackupVaultEvent = "RESTORE_JOB_SUCCESSFUL"
-	BackupVaultEventRestoreJobFailed      BackupVaultEvent = "RESTORE_JOB_FAILED"
-	BackupVaultEventCopyJobStarted        BackupVaultEvent = "COPY_JOB_STARTED"
-	BackupVaultEventCopyJobSuccessful     BackupVaultEvent = "COPY_JOB_SUCCESSFUL"
-	BackupVaultEventCopyJobFailed         BackupVaultEvent = "COPY_JOB_FAILED"
-	BackupVaultEventRecoveryPointModified BackupVaultEvent = "RECOVERY_POINT_MODIFIED"
-	BackupVaultEventBackupPlanCreated     BackupVaultEvent = "BACKUP_PLAN_CREATED"
-	BackupVaultEventBackupPlanModified    BackupVaultEvent = "BACKUP_PLAN_MODIFIED"
-	BackupVaultEventS3BackupObjectFailed  BackupVaultEvent = "S3_BACKUP_OBJECT_FAILED"
-	BackupVaultEventS3RestoreObjectFailed BackupVaultEvent = "S3_RESTORE_OBJECT_FAILED"
+	BackupVaultEventBackupJobStarted            BackupVaultEvent = "BACKUP_JOB_STARTED"
+	BackupVaultEventBackupJobCompleted          BackupVaultEvent = "BACKUP_JOB_COMPLETED"
+	BackupVaultEventBackupJobSuccessful         BackupVaultEvent = "BACKUP_JOB_SUCCESSFUL"
+	BackupVaultEventBackupJobFailed             BackupVaultEvent = "BACKUP_JOB_FAILED"
+	BackupVaultEventBackupJobExpired            BackupVaultEvent = "BACKUP_JOB_EXPIRED"
+	BackupVaultEventRestoreJobStarted           BackupVaultEvent = "RESTORE_JOB_STARTED"
+	BackupVaultEventRestoreJobCompleted         BackupVaultEvent = "RESTORE_JOB_COMPLETED"
+	BackupVaultEventRestoreJobSuccessful        BackupVaultEvent = "RESTORE_JOB_SUCCESSFUL"
+	BackupVaultEventRestoreJobFailed            BackupVaultEvent = "RESTORE_JOB_FAILED"
+	BackupVaultEventCopyJobStarted              BackupVaultEvent = "COPY_JOB_STARTED"
+	BackupVaultEventCopyJobSuccessful           BackupVaultEvent = "COPY_JOB_SUCCESSFUL"
+	BackupVaultEventCopyJobFailed               BackupVaultEvent = "COPY_JOB_FAILED"
+	BackupVaultEventRecoveryPointModified       BackupVaultEvent = "RECOVERY_POINT_MODIFIED"
+	BackupVaultEventBackupPlanCreated           BackupVaultEvent = "BACKUP_PLAN_CREATED"
+	BackupVaultEventBackupPlanModified          BackupVaultEvent = "BACKUP_PLAN_MODIFIED"
+	BackupVaultEventS3BackupObjectFailed        BackupVaultEvent = "S3_BACKUP_OBJECT_FAILED"
+	BackupVaultEventS3RestoreObjectFailed       BackupVaultEvent = "S3_RESTORE_OBJECT_FAILED"
+	BackupVaultEventContinuousBackupInterrupted BackupVaultEvent = "CONTINUOUS_BACKUP_INTERRUPTED"
+	BackupVaultEventRecoveryPointIndexCompleted BackupVaultEvent = "RECOVERY_POINT_INDEX_COMPLETED"
+	BackupVaultEventRecoveryPointIndexDeleted   BackupVaultEvent = "RECOVERY_POINT_INDEX_DELETED"
+	BackupVaultEventRecoveryPointIndexingFailed BackupVaultEvent = "RECOVERY_POINT_INDEXING_FAILED"
 )
 
 // Values returns all known values for BackupVaultEvent. Note that this can be
@@ -139,6 +143,10 @@ func (BackupVaultEvent) Values() []BackupVaultEvent {
 		"BACKUP_PLAN_MODIFIED",
 		"S3_BACKUP_OBJECT_FAILED",
 		"S3_RESTORE_OBJECT_FAILED",
+		"CONTINUOUS_BACKUP_INTERRUPTED",
+		"RECOVERY_POINT_INDEX_COMPLETED",
+		"RECOVERY_POINT_INDEX_DELETED",
+		"RECOVERY_POINT_INDEXING_FAILED",
 	}
 }
 
@@ -221,6 +229,25 @@ func (CopyJobStatus) Values() []CopyJobStatus {
 	}
 }
 
+type EncryptionKeyType string
+
+// Enum values for EncryptionKeyType
+const (
+	EncryptionKeyTypeAwsOwnedKmsKey        EncryptionKeyType = "AWS_OWNED_KMS_KEY"
+	EncryptionKeyTypeCustomerManagedKmsKey EncryptionKeyType = "CUSTOMER_MANAGED_KMS_KEY"
+)
+
+// Values returns all known values for EncryptionKeyType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EncryptionKeyType) Values() []EncryptionKeyType {
+	return []EncryptionKeyType{
+		"AWS_OWNED_KMS_KEY",
+		"CUSTOMER_MANAGED_KMS_KEY",
+	}
+}
+
 type Index string
 
 // Enum values for Index
@@ -286,6 +313,80 @@ func (LegalHoldStatus) Values() []LegalHoldStatus {
 	}
 }
 
+type LifecycleDeleteAfterEvent string
+
+// Enum values for LifecycleDeleteAfterEvent
+const (
+	LifecycleDeleteAfterEventDeleteAfterCopy LifecycleDeleteAfterEvent = "DELETE_AFTER_COPY"
+)
+
+// Values returns all known values for LifecycleDeleteAfterEvent. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (LifecycleDeleteAfterEvent) Values() []LifecycleDeleteAfterEvent {
+	return []LifecycleDeleteAfterEvent{
+		"DELETE_AFTER_COPY",
+	}
+}
+
+type MalwareScanner string
+
+// Enum values for MalwareScanner
+const (
+	MalwareScannerGuardduty MalwareScanner = "GUARDDUTY"
+)
+
+// Values returns all known values for MalwareScanner. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MalwareScanner) Values() []MalwareScanner {
+	return []MalwareScanner{
+		"GUARDDUTY",
+	}
+}
+
+type MpaRevokeSessionStatus string
+
+// Enum values for MpaRevokeSessionStatus
+const (
+	MpaRevokeSessionStatusPending MpaRevokeSessionStatus = "PENDING"
+	MpaRevokeSessionStatusFailed  MpaRevokeSessionStatus = "FAILED"
+)
+
+// Values returns all known values for MpaRevokeSessionStatus. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MpaRevokeSessionStatus) Values() []MpaRevokeSessionStatus {
+	return []MpaRevokeSessionStatus{
+		"PENDING",
+		"FAILED",
+	}
+}
+
+type MpaSessionStatus string
+
+// Enum values for MpaSessionStatus
+const (
+	MpaSessionStatusPending  MpaSessionStatus = "PENDING"
+	MpaSessionStatusApproved MpaSessionStatus = "APPROVED"
+	MpaSessionStatusFailed   MpaSessionStatus = "FAILED"
+)
+
+// Values returns all known values for MpaSessionStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MpaSessionStatus) Values() []MpaSessionStatus {
+	return []MpaSessionStatus{
+		"PENDING",
+		"APPROVED",
+		"FAILED",
+	}
+}
+
 type RecoveryPointStatus string
 
 // Enum values for RecoveryPointStatus
@@ -294,6 +395,9 @@ const (
 	RecoveryPointStatusPartial   RecoveryPointStatus = "PARTIAL"
 	RecoveryPointStatusDeleting  RecoveryPointStatus = "DELETING"
 	RecoveryPointStatusExpired   RecoveryPointStatus = "EXPIRED"
+	RecoveryPointStatusAvailable RecoveryPointStatus = "AVAILABLE"
+	RecoveryPointStatusStopped   RecoveryPointStatus = "STOPPED"
+	RecoveryPointStatusCreating  RecoveryPointStatus = "CREATING"
 )
 
 // Values returns all known values for RecoveryPointStatus. Note that this can be
@@ -306,6 +410,9 @@ func (RecoveryPointStatus) Values() []RecoveryPointStatus {
 		"PARTIAL",
 		"DELETING",
 		"EXPIRED",
+		"AVAILABLE",
+		"STOPPED",
+		"CREATING",
 	}
 }
 
@@ -449,6 +556,184 @@ func (RestoreValidationStatus) Values() []RestoreValidationStatus {
 	}
 }
 
+type RuleExecutionType string
+
+// Enum values for RuleExecutionType
+const (
+	RuleExecutionTypeContinuous             RuleExecutionType = "CONTINUOUS"
+	RuleExecutionTypeSnapshots              RuleExecutionType = "SNAPSHOTS"
+	RuleExecutionTypeContinuousAndSnapshots RuleExecutionType = "CONTINUOUS_AND_SNAPSHOTS"
+)
+
+// Values returns all known values for RuleExecutionType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RuleExecutionType) Values() []RuleExecutionType {
+	return []RuleExecutionType{
+		"CONTINUOUS",
+		"SNAPSHOTS",
+		"CONTINUOUS_AND_SNAPSHOTS",
+	}
+}
+
+type ScanFinding string
+
+// Enum values for ScanFinding
+const (
+	ScanFindingMalware ScanFinding = "MALWARE"
+)
+
+// Values returns all known values for ScanFinding. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanFinding) Values() []ScanFinding {
+	return []ScanFinding{
+		"MALWARE",
+	}
+}
+
+type ScanJobState string
+
+// Enum values for ScanJobState
+const (
+	ScanJobStateCompleted           ScanJobState = "COMPLETED"
+	ScanJobStateCompletedWithIssues ScanJobState = "COMPLETED_WITH_ISSUES"
+	ScanJobStateFailed              ScanJobState = "FAILED"
+	ScanJobStateCanceled            ScanJobState = "CANCELED"
+)
+
+// Values returns all known values for ScanJobState. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanJobState) Values() []ScanJobState {
+	return []ScanJobState{
+		"COMPLETED",
+		"COMPLETED_WITH_ISSUES",
+		"FAILED",
+		"CANCELED",
+	}
+}
+
+type ScanJobStatus string
+
+// Enum values for ScanJobStatus
+const (
+	ScanJobStatusCreated             ScanJobStatus = "CREATED"
+	ScanJobStatusCompleted           ScanJobStatus = "COMPLETED"
+	ScanJobStatusCompletedWithIssues ScanJobStatus = "COMPLETED_WITH_ISSUES"
+	ScanJobStatusRunning             ScanJobStatus = "RUNNING"
+	ScanJobStatusFailed              ScanJobStatus = "FAILED"
+	ScanJobStatusCanceled            ScanJobStatus = "CANCELED"
+	ScanJobStatusAggregateAll        ScanJobStatus = "AGGREGATE_ALL"
+	ScanJobStatusAny                 ScanJobStatus = "ANY"
+)
+
+// Values returns all known values for ScanJobStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanJobStatus) Values() []ScanJobStatus {
+	return []ScanJobStatus{
+		"CREATED",
+		"COMPLETED",
+		"COMPLETED_WITH_ISSUES",
+		"RUNNING",
+		"FAILED",
+		"CANCELED",
+		"AGGREGATE_ALL",
+		"ANY",
+	}
+}
+
+type ScanMode string
+
+// Enum values for ScanMode
+const (
+	ScanModeFullScan        ScanMode = "FULL_SCAN"
+	ScanModeIncrementalScan ScanMode = "INCREMENTAL_SCAN"
+)
+
+// Values returns all known values for ScanMode. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanMode) Values() []ScanMode {
+	return []ScanMode{
+		"FULL_SCAN",
+		"INCREMENTAL_SCAN",
+	}
+}
+
+type ScanResourceType string
+
+// Enum values for ScanResourceType
+const (
+	ScanResourceTypeEbs ScanResourceType = "EBS"
+	ScanResourceTypeEc2 ScanResourceType = "EC2"
+	ScanResourceTypeS3  ScanResourceType = "S3"
+)
+
+// Values returns all known values for ScanResourceType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanResourceType) Values() []ScanResourceType {
+	return []ScanResourceType{
+		"EBS",
+		"EC2",
+		"S3",
+	}
+}
+
+type ScanResultStatus string
+
+// Enum values for ScanResultStatus
+const (
+	ScanResultStatusNoThreatsFound ScanResultStatus = "NO_THREATS_FOUND"
+	ScanResultStatusThreatsFound   ScanResultStatus = "THREATS_FOUND"
+)
+
+// Values returns all known values for ScanResultStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanResultStatus) Values() []ScanResultStatus {
+	return []ScanResultStatus{
+		"NO_THREATS_FOUND",
+		"THREATS_FOUND",
+	}
+}
+
+type ScanState string
+
+// Enum values for ScanState
+const (
+	ScanStateCanceled            ScanState = "CANCELED"
+	ScanStateCompleted           ScanState = "COMPLETED"
+	ScanStateCompletedWithIssues ScanState = "COMPLETED_WITH_ISSUES"
+	ScanStateCreated             ScanState = "CREATED"
+	ScanStateFailed              ScanState = "FAILED"
+	ScanStateRunning             ScanState = "RUNNING"
+)
+
+// Values returns all known values for ScanState. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanState) Values() []ScanState {
+	return []ScanState{
+		"CANCELED",
+		"COMPLETED",
+		"COMPLETED_WITH_ISSUES",
+		"CREATED",
+		"FAILED",
+		"RUNNING",
+	}
+}
+
 type StorageClass string
 
 // Enum values for StorageClass
@@ -497,6 +782,7 @@ type VaultType string
 const (
 	VaultTypeBackupVault                   VaultType = "BACKUP_VAULT"
 	VaultTypeLogicallyAirGappedBackupVault VaultType = "LOGICALLY_AIR_GAPPED_BACKUP_VAULT"
+	VaultTypeRestoreAccessBackupVault      VaultType = "RESTORE_ACCESS_BACKUP_VAULT"
 )
 
 // Values returns all known values for VaultType. Note that this can be expanded
@@ -507,5 +793,6 @@ func (VaultType) Values() []VaultType {
 	return []VaultType{
 		"BACKUP_VAULT",
 		"LOGICALLY_AIR_GAPPED_BACKUP_VAULT",
+		"RESTORE_ACCESS_BACKUP_VAULT",
 	}
 }

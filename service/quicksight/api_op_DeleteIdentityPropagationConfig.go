@@ -12,10 +12,10 @@ import (
 )
 
 // Deletes all access scopes and authorized targets that are associated with a
-// service from the Amazon QuickSight IAM Identity Center application.
+// service from the Quick Sight IAM Identity Center application.
 //
-// This operation is only supported for Amazon QuickSight accounts that use IAM
-// Identity Center.
+// This operation is only supported for Quick Sight accounts that use IAM Identity
+// Center.
 func (c *Client) DeleteIdentityPropagationConfig(ctx context.Context, params *DeleteIdentityPropagationConfigInput, optFns ...func(*Options)) (*DeleteIdentityPropagationConfigOutput, error) {
 	if params == nil {
 		params = &DeleteIdentityPropagationConfigInput{}
@@ -150,16 +150,13 @@ func (c *Client) addOperationDeleteIdentityPropagationConfigMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

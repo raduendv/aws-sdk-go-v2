@@ -19,16 +19,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpAddTagsToResource struct {
 }
@@ -1034,6 +1025,12 @@ func awsAwsjson11_deserializeOpErrorCreateDocument(response *smithyhttp.Response
 	case strings.EqualFold("MaxDocumentSizeExceeded", errorCode):
 		return awsAwsjson11_deserializeErrorMaxDocumentSizeExceeded(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsAwsjson11_deserializeErrorNoLongerSupportedException(response, errorBody)
+
+	case strings.EqualFold("TooManyUpdates", errorCode):
+		return awsAwsjson11_deserializeErrorTooManyUpdates(response, errorBody)
+
 	default:
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
@@ -1996,6 +1993,9 @@ func awsAwsjson11_deserializeOpErrorDeleteDocument(response *smithyhttp.Response
 
 	case strings.EqualFold("InvalidDocumentOperation", errorCode):
 		return awsAwsjson11_deserializeErrorInvalidDocumentOperation(response, errorBody)
+
+	case strings.EqualFold("TooManyUpdates", errorCode):
+		return awsAwsjson11_deserializeErrorTooManyUpdates(response, errorBody)
 
 	default:
 		genericError := &smithy.GenericAPIError{
@@ -15173,6 +15173,9 @@ func awsAwsjson11_deserializeOpErrorStartChangeRequestExecution(response *smithy
 	case strings.EqualFold("InvalidAutomationExecutionParametersException", errorCode):
 		return awsAwsjson11_deserializeErrorInvalidAutomationExecutionParametersException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsAwsjson11_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	default:
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
@@ -16402,6 +16405,9 @@ func awsAwsjson11_deserializeOpErrorUpdateDocumentMetadata(response *smithyhttp.
 
 	case strings.EqualFold("InvalidDocumentVersion", errorCode):
 		return awsAwsjson11_deserializeErrorInvalidDocumentVersion(response, errorBody)
+
+	case strings.EqualFold("TooManyUpdates", errorCode):
+		return awsAwsjson11_deserializeErrorTooManyUpdates(response, errorBody)
 
 	default:
 		genericError := &smithy.GenericAPIError{
@@ -20432,6 +20438,41 @@ func awsAwsjson11_deserializeErrorMaxDocumentSizeExceeded(response *smithyhttp.R
 
 	output := &types.MaxDocumentSizeExceeded{}
 	err := awsAwsjson11_deserializeDocumentMaxDocumentSizeExceeded(&output, shape)
+
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	return output
+}
+
+func awsAwsjson11_deserializeErrorNoLongerSupportedException(response *smithyhttp.Response, errorBody *bytes.Reader) error {
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	output := &types.NoLongerSupportedException{}
+	err := awsAwsjson11_deserializeDocumentNoLongerSupportedException(&output, shape)
 
 	if err != nil {
 		var snapshot bytes.Buffer
@@ -35637,6 +35678,46 @@ loop:
 	return nil
 }
 
+func awsAwsjson11_deserializeDocumentNoLongerSupportedException(v **types.NoLongerSupportedException, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.NoLongerSupportedException
+	if *v == nil {
+		sv = &types.NoLongerSupportedException{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "message", "Message":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.Message = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson11_deserializeDocumentNonCompliantSummary(v **types.NonCompliantSummary, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -42542,6 +42623,15 @@ func awsAwsjson11_deserializeDocumentSession(v **types.Session, value interface{
 
 	for key, value := range shape {
 		switch key {
+		case "AccessType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AccessType to be of type string, got %T instead", value)
+				}
+				sv.AccessType = types.AccessType(jtv)
+			}
+
 		case "Details":
 			if value != nil {
 				jtv, ok := value.(string)

@@ -35,20 +35,21 @@ type DescribePipelineInput struct {
 	// This member is required.
 	PipelineName *string
 
+	// The ID of the pipeline version to describe.
+	PipelineVersionId *int64
+
 	noSmithyDocumentSerde
 }
 
 type DescribePipelineOutput struct {
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	CreatedBy *types.UserContext
 
 	// The time when the pipeline was created.
 	CreationTime *time.Time
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	LastModifiedBy *types.UserContext
 
 	// The time when the pipeline was last modified.
@@ -77,6 +78,12 @@ type DescribePipelineOutput struct {
 
 	// The status of the pipeline execution.
 	PipelineStatus types.PipelineStatus
+
+	// The description of the pipeline version.
+	PipelineVersionDescription *string
+
+	// The display name of the pipeline version.
+	PipelineVersionDisplayName *string
 
 	// The Amazon Resource Name (ARN) that the pipeline uses to execute.
 	RoleArn *string
@@ -175,16 +182,13 @@ func (c *Client) addOperationDescribePipelineMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

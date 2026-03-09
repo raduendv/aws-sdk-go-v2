@@ -60,6 +60,9 @@ type UpdateReplicationConfigurationTemplateInput struct {
 	// Update replication configuration template EBS encryption key ARN request.
 	EbsEncryptionKeyArn *string
 
+	// Update replication configuration template internet protocol request.
+	InternetProtocol types.InternetProtocol
+
 	// Update replication configuration template Replication Server instance type
 	// request.
 	ReplicationServerInstanceType *string
@@ -115,6 +118,9 @@ type UpdateReplicationConfigurationTemplateOutput struct {
 
 	// Replication Configuration template EBS encryption key ARN.
 	EbsEncryptionKeyArn *string
+
+	// Replication Configuration template internet protocol.
+	InternetProtocol types.InternetProtocol
 
 	// Replication Configuration template server instance type.
 	ReplicationServerInstanceType *string
@@ -231,16 +237,13 @@ func (c *Client) addOperationUpdateReplicationConfigurationTemplateMiddlewares(s
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

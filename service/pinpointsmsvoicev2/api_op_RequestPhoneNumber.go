@@ -13,7 +13,7 @@ import (
 )
 
 // Request an origination phone number for use in your account. For more
-// information on phone number request see [Request a phone number]in the AWS End User Messaging SMS User
+// information on phone number request see [Request a phone number]in the End User Messaging SMS User
 // Guide.
 //
 // [Request a phone number]: https://docs.aws.amazon.com/sms-voice/latest/userguide/phone-numbers-request.html
@@ -70,24 +70,28 @@ type RequestPhoneNumberInput struct {
 	// deleted.
 	DeletionProtectionEnabled *bool
 
+	// By default this is set to false. When set to true the international sending of
+	// phone number is Enabled.
+	InternationalSendingEnabled *bool
+
 	// The name of the OptOutList to associate with the phone number. You can use the
 	// OptOutListName or OptOutListArn.
 	//
-	// If you are using a shared AWS End User Messaging SMS and Voice resource then
-	// you must use the full Amazon Resource Name(ARN).
+	// If you are using a shared End User Messaging SMS resource then you must use the
+	// full Amazon Resource Name(ARN).
 	OptOutListName *string
 
 	// The pool to associated with the phone number. You can use the PoolId or
 	// PoolArn.
 	//
-	// If you are using a shared AWS End User Messaging SMS and Voice resource then
-	// you must use the full Amazon Resource Name(ARN).
+	// If you are using a shared End User Messaging SMS resource then you must use the
+	// full Amazon Resource Name(ARN).
 	PoolId *string
 
 	// Use this field to attach your phone number for an external registration process.
 	RegistrationId *string
 
-	// An array of tags (key and value pairs) associate with the requested phone
+	// An array of tags (key and value pairs) to associate with the requested phone
 	// number.
 	Tags []types.Tag
 
@@ -104,6 +108,10 @@ type RequestPhoneNumberOutput struct {
 	// By default this is set to false. When set to true the phone number can't be
 	// deleted.
 	DeletionProtectionEnabled bool
+
+	// By default this is set to false. When set to true the international sending of
+	// phone number is Enabled.
+	InternationalSendingEnabled bool
 
 	// The two-character code, in ISO 3166-1 alpha-2 format, for the country or
 	// region.
@@ -142,12 +150,12 @@ type RequestPhoneNumberOutput struct {
 	// The unique identifier for the registration.
 	RegistrationId *string
 
-	// By default this is set to false. When an end recipient sends a message that
-	// begins with HELP or STOP to one of your dedicated numbers, AWS End User
-	// Messaging SMS and Voice automatically replies with a customizable message and
-	// adds the end recipient to the OptOutList. When set to true you're responsible
-	// for responding to HELP and STOP requests. You're also responsible for tracking
-	// and honoring opt-out requests.
+	// By default this is set to false. When set to false and an end recipient sends a
+	// message that begins with HELP or STOP to one of your dedicated numbers, End User
+	// Messaging SMS automatically replies with a customizable message and adds the end
+	// recipient to the OptOutList. When set to true you're responsible for responding
+	// to HELP and STOP requests. You're also responsible for tracking and honoring
+	// opt-out requests.
 	SelfManagedOptOutsEnabled bool
 
 	// The current status of the request.
@@ -264,16 +272,13 @@ func (c *Client) addOperationRequestPhoneNumberMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

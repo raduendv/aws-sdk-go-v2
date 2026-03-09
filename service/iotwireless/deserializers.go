@@ -22,14 +22,6 @@ import (
 	"time"
 )
 
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
-
 type awsRestjson1_deserializeOpAssociateAwsAccountWithPartnerAccount struct {
 }
 
@@ -8820,6 +8812,15 @@ func awsRestjson1_deserializeOpDocumentGetWirelessDeviceImportTaskOutput(v **Get
 				sv.PendingImportedDeviceCount = ptr.Int64(i64)
 			}
 
+		case "Positioning":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PositioningConfigStatus to be of type string, got %T instead", value)
+				}
+				sv.Positioning = types.PositioningConfigStatus(jtv)
+			}
+
 		case "Sidewalk":
 			if err := awsRestjson1_deserializeDocumentSidewalkGetStartImportInfo(&sv.Sidewalk, value); err != nil {
 				return err
@@ -10693,6 +10694,20 @@ func awsRestjson1_deserializeOpDocumentListDevicesForWirelessDeviceImportTaskOut
 					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
+			}
+
+		case "Positioning":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PositioningConfigStatus to be of type string, got %T instead", value)
+				}
+				sv.Positioning = types.PositioningConfigStatus(jtv)
+			}
+
+		case "Sidewalk":
+			if err := awsRestjson1_deserializeDocumentSidewalkListDevicesForImportInfo(&sv.Sidewalk, value); err != nil {
+				return err
 			}
 
 		default:
@@ -19932,6 +19947,32 @@ func awsRestjson1_deserializeDocumentLoRaWANGetServiceProfileInfo(v **types.LoRa
 				sv.MinGwDiversity = ptr.Int32(int32(i64))
 			}
 
+		case "NbTransMax":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected NbTransMax to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.NbTransMax = ptr.Int32(int32(i64))
+			}
+
+		case "NbTransMin":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected NbTransMin to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.NbTransMin = ptr.Int32(int32(i64))
+			}
+
 		case "NwkGeoLoc":
 			if value != nil {
 				jtv, ok := value.(bool)
@@ -19988,6 +20029,32 @@ func awsRestjson1_deserializeDocumentLoRaWANGetServiceProfileInfo(v **types.LoRa
 					return err
 				}
 				sv.TargetPer = int32(i64)
+			}
+
+		case "TxPowerIndexMax":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TxPowerIndexMax to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TxPowerIndexMax = ptr.Int32(int32(i64))
+			}
+
+		case "TxPowerIndexMin":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TxPowerIndexMin to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TxPowerIndexMin = ptr.Int32(int32(i64))
 			}
 
 		case "UlBucketSize":
@@ -22505,6 +22572,11 @@ func awsRestjson1_deserializeDocumentSidewalkDevice(v **types.SidewalkDevice, va
 				sv.DeviceProfileId = ptr.String(jtv)
 			}
 
+		case "Positioning":
+			if err := awsRestjson1_deserializeDocumentSidewalkPositioning(&sv.Positioning, value); err != nil {
+				return err
+			}
+
 		case "PrivateKeys":
 			if err := awsRestjson1_deserializeDocumentPrivateKeysList(&sv.PrivateKeys, value); err != nil {
 				return err
@@ -22738,6 +22810,11 @@ func awsRestjson1_deserializeDocumentSidewalkGetStartImportInfo(v **types.Sidewa
 				return err
 			}
 
+		case "Positioning":
+			if err := awsRestjson1_deserializeDocumentSidewalkPositioning(&sv.Positioning, value); err != nil {
+				return err
+			}
+
 		case "Role":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -22801,6 +22878,11 @@ func awsRestjson1_deserializeDocumentSidewalkListDevice(v **types.SidewalkListDe
 				sv.DeviceProfileId = ptr.String(jtv)
 			}
 
+		case "Positioning":
+			if err := awsRestjson1_deserializeDocumentSidewalkPositioning(&sv.Positioning, value); err != nil {
+				return err
+			}
+
 		case "SidewalkId":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -22826,6 +22908,82 @@ func awsRestjson1_deserializeDocumentSidewalkListDevice(v **types.SidewalkListDe
 					return fmt.Errorf("expected WirelessDeviceSidewalkStatus to be of type string, got %T instead", value)
 				}
 				sv.Status = types.WirelessDeviceSidewalkStatus(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentSidewalkListDevicesForImportInfo(v **types.SidewalkListDevicesForImportInfo, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.SidewalkListDevicesForImportInfo
+	if *v == nil {
+		sv = &types.SidewalkListDevicesForImportInfo{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Positioning":
+			if err := awsRestjson1_deserializeDocumentSidewalkPositioning(&sv.Positioning, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentSidewalkPositioning(v **types.SidewalkPositioning, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.SidewalkPositioning
+	if *v == nil {
+		sv = &types.SidewalkPositioning{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "DestinationName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DestinationName to be of type string, got %T instead", value)
+				}
+				sv.DestinationName = ptr.String(jtv)
 			}
 
 		default:
@@ -23698,6 +23856,15 @@ func awsRestjson1_deserializeDocumentWirelessDeviceImportTask(v **types.Wireless
 				sv.PendingImportedDeviceCount = ptr.Int64(i64)
 			}
 
+		case "Positioning":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PositioningConfigStatus to be of type string, got %T instead", value)
+				}
+				sv.Positioning = types.PositioningConfigStatus(jtv)
+			}
+
 		case "Sidewalk":
 			if err := awsRestjson1_deserializeDocumentSidewalkGetStartImportInfo(&sv.Sidewalk, value); err != nil {
 				return err
@@ -23989,6 +24156,15 @@ func awsRestjson1_deserializeDocumentWirelessDeviceStatistics(v **types.Wireless
 					return fmt.Errorf("expected WirelessDeviceName to be of type string, got %T instead", value)
 				}
 				sv.Name = ptr.String(jtv)
+			}
+
+		case "Positioning":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PositioningConfigStatus to be of type string, got %T instead", value)
+				}
+				sv.Positioning = types.PositioningConfigStatus(jtv)
 			}
 
 		case "Sidewalk":

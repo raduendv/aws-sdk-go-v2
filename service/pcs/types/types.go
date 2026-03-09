@@ -7,6 +7,58 @@ import (
 	"time"
 )
 
+// The accounting configuration includes configurable settings for Slurm
+// accounting. It's a property of the ClusterSlurmConfiguration object.
+type Accounting struct {
+
+	// The default value for mode is NONE . A value of STANDARD means Slurm accounting
+	// is enabled.
+	//
+	// This member is required.
+	Mode AccountingMode
+
+	// The default value for all purge settings for slurmdbd.conf . For more
+	// information, see the [slurmdbd.conf documentation at SchedMD].
+	//
+	// The default value for defaultPurgeTimeInDays is -1 .
+	//
+	// A value of -1 means there is no purge time and records persist as long as the
+	// cluster exists.
+	//
+	// 0 isn't a valid value.
+	//
+	// [slurmdbd.conf documentation at SchedMD]: https://slurm.schedmd.com/slurmdbd.conf.html
+	DefaultPurgeTimeInDays *int32
+
+	noSmithyDocumentSerde
+}
+
+// The accounting configuration includes configurable settings for Slurm
+// accounting. It's a property of the ClusterSlurmConfiguration object.
+type AccountingRequest struct {
+
+	// The default value for mode is NONE . A value of STANDARD means Slurm accounting
+	// is enabled.
+	//
+	// This member is required.
+	Mode AccountingMode
+
+	// The default value for all purge settings for slurmdbd.conf . For more
+	// information, see the [slurmdbd.conf documentation at SchedMD].
+	//
+	// The default value for defaultPurgeTimeInDays is -1 .
+	//
+	// A value of -1 means there is no purge time and records persist as long as the
+	// cluster exists.
+	//
+	// 0 isn't a valid value.
+	//
+	// [slurmdbd.conf documentation at SchedMD]: https://slurm.schedmd.com/slurmdbd.conf.html
+	DefaultPurgeTimeInDays *int32
+
+	noSmithyDocumentSerde
+}
+
 // The cluster resource and configuration.
 type Cluster struct {
 
@@ -60,6 +112,15 @@ type Cluster struct {
 	//
 	// The provisioning status doesn't indicate the overall health of the cluster.
 	//
+	// The resource enters the SUSPENDING and SUSPENDED states when the scheduler is
+	// beyond end of life and we have suspended the cluster. When in these states, you
+	// can't use the cluster. The cluster controller is down and all compute instances
+	// are terminated. The resources still count toward your service quotas. You can
+	// delete a resource if its status is SUSPENDED . For more information, see [Frequently asked questions about Slurm versions in PCS] in
+	// the PCS User Guide.
+	//
+	// [Frequently asked questions about Slurm versions in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions_faq.html
+	//
 	// This member is required.
 	Status ClusterStatus
 
@@ -78,8 +139,15 @@ type Cluster struct {
 // Additional options related to the Slurm scheduler.
 type ClusterSlurmConfiguration struct {
 
+	// The accounting configuration includes configurable settings for Slurm
+	// accounting.
+	Accounting *Accounting
+
 	// The shared Slurm key for authentication, also known as the cluster secret.
 	AuthKey *SlurmAuthKey
+
+	// The JWT authentication configuration for Slurm REST API access.
+	JwtAuth *JwtAuth
 
 	// The time (in seconds) before an idle node is scaled down.
 	//
@@ -88,6 +156,9 @@ type ClusterSlurmConfiguration struct {
 
 	// Additional Slurm-specific configuration that directly maps to Slurm settings.
 	SlurmCustomSettings []SlurmCustomSetting
+
+	// The Slurm REST API configuration for the cluster.
+	SlurmRest *SlurmRest
 
 	noSmithyDocumentSerde
 }
@@ -95,6 +166,10 @@ type ClusterSlurmConfiguration struct {
 // Additional options related to the Slurm scheduler.
 type ClusterSlurmConfigurationRequest struct {
 
+	// The accounting configuration includes configurable settings for Slurm
+	// accounting.
+	Accounting *AccountingRequest
+
 	// The time (in seconds) before an idle node is scaled down.
 	//
 	// Default: 600
@@ -102,6 +177,9 @@ type ClusterSlurmConfigurationRequest struct {
 
 	// Additional Slurm-specific configuration that directly maps to Slurm settings.
 	SlurmCustomSettings []SlurmCustomSetting
+
+	// The Slurm REST API configuration for the cluster.
+	SlurmRest *SlurmRestRequest
 
 	noSmithyDocumentSerde
 }
@@ -138,6 +216,15 @@ type ClusterSummary struct {
 	//
 	// The provisioning status doesn't indicate the overall health of the cluster.
 	//
+	// The resource enters the SUSPENDING and SUSPENDED states when the scheduler is
+	// beyond end of life and we have suspended the cluster. When in these states, you
+	// can't use the cluster. The cluster controller is down and all compute instances
+	// are terminated. The resources still count toward your service quotas. You can
+	// delete a resource if its status is SUSPENDED . For more information, see [Frequently asked questions about Slurm versions in PCS] in
+	// the PCS User Guide.
+	//
+	// [Frequently asked questions about Slurm versions in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions_faq.html
+	//
 	// This member is required.
 	Status ClusterStatus
 
@@ -162,23 +249,18 @@ type ComputeNodeGroup struct {
 	// This member is required.
 	CreatedAt *time.Time
 
-	// An Amazon EC2 launch template Amazon Web Services PCS uses to launch compute
-	// nodes.
+	// An Amazon EC2 launch template PCS uses to launch compute nodes.
 	//
 	// This member is required.
 	CustomLaunchTemplate *CustomLaunchTemplate
 
 	// The Amazon Resource Name (ARN) of the IAM instance profile used to pass an IAM
 	// role when launching EC2 instances. The role contained in your instance profile
-	// must have the pcs:RegisterComputeNodeGroupInstance permission. The resource
-	// identifier of the ARN must start with AWSPCS or it must have /aws-pcs/ in its
-	// path.
+	// must have the pcs:RegisterComputeNodeGroupInstance permission and the role name
+	// must start with AWSPCS or must have the path /aws-pcs/ . For more information,
+	// see [IAM instance profiles for PCS]in the PCS User Guide.
 	//
-	// Examples
-	//
-	//   - arn:aws:iam::111122223333:instance-profile/AWSPCS-example-role-1
-	//
-	//   - arn:aws:iam::111122223333:instance-profile/aws-pcs/example-role-2
+	// [IAM instance profiles for PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/security-instance-profiles.html
 	//
 	// This member is required.
 	IamInstanceProfileArn *string
@@ -188,8 +270,8 @@ type ComputeNodeGroup struct {
 	// This member is required.
 	Id *string
 
-	// A list of EC2 instance configurations that Amazon Web Services PCS can
-	// provision in the compute node group.
+	// A list of EC2 instance configurations that PCS can provision in the compute
+	// node group.
 	//
 	// This member is required.
 	InstanceConfigs []InstanceConfig
@@ -214,6 +296,15 @@ type ComputeNodeGroup struct {
 	// The provisioning status doesn't indicate the overall health of the compute node
 	// group.
 	//
+	// The resource enters the SUSPENDING and SUSPENDED states when the scheduler is
+	// beyond end of life and we have suspended the cluster. When in these states, you
+	// can't use the cluster. The cluster controller is down and all compute instances
+	// are terminated. The resources still count toward your service quotas. You can
+	// delete a resource if its status is SUSPENDED . For more information, see [Frequently asked questions about Slurm versions in PCS] in
+	// the PCS User Guide.
+	//
+	// [Frequently asked questions about Slurm versions in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions_faq.html
+	//
 	// This member is required.
 	Status ComputeNodeGroupStatus
 
@@ -223,20 +314,21 @@ type ComputeNodeGroup struct {
 	// This member is required.
 	SubnetIds []string
 
-	// The ID of the Amazon Machine Image (AMI) that Amazon Web Services PCS uses to
-	// launch instances. If not provided, Amazon Web Services PCS uses the AMI ID
-	// specified in the custom launch template.
+	// The ID of the Amazon Machine Image (AMI) that PCS uses to launch instances. If
+	// not provided, PCS uses the AMI ID specified in the custom launch template.
 	AmiId *string
 
 	// The list of errors that occurred during compute node group provisioning.
 	ErrorInfo []ErrorInfo
 
-	// Specifies how EC2 instances are purchased on your behalf. Amazon Web Services
-	// PCS supports On-Demand and Spot instances. For more information, see [Instance purchasing options]in the
-	// Amazon Elastic Compute Cloud User Guide. If you don't provide this option, it
-	// defaults to On-Demand.
+	// Specifies how EC2 instances are purchased on your behalf. PCS supports
+	// On-Demand Instances, Spot Instances, and Amazon EC2 Capacity Blocks for ML. For
+	// more information, see [Amazon EC2 billing and purchasing options]in the Amazon Elastic Compute Cloud User Guide. For more
+	// information about PCS support for Capacity Blocks, see [Using Amazon EC2 Capacity Blocks for ML with PCS]in the PCS User Guide.
+	// If you don't provide this option, it defaults to On-Demand.
 	//
-	// [Instance purchasing options]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html
+	// [Using Amazon EC2 Capacity Blocks for ML with PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/capacity-blocks.html
+	// [Amazon EC2 billing and purchasing options]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html
 	PurchaseOption PurchaseOption
 
 	// Additional options related to the Slurm scheduler.
@@ -314,14 +406,22 @@ type ComputeNodeGroupSummary struct {
 	// The provisioning status doesn't indicate the overall health of the compute node
 	// group.
 	//
+	// The resource enters the SUSPENDING and SUSPENDED states when the scheduler is
+	// beyond end of life and we have suspended the cluster. When in these states, you
+	// can't use the cluster. The cluster controller is down and all compute instances
+	// are terminated. The resources still count toward your service quotas. You can
+	// delete a resource if its status is SUSPENDED . For more information, see [Frequently asked questions about Slurm versions in PCS] in
+	// the PCS User Guide.
+	//
+	// [Frequently asked questions about Slurm versions in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions_faq.html
+	//
 	// This member is required.
 	Status ComputeNodeGroupStatus
 
 	noSmithyDocumentSerde
 }
 
-// An Amazon EC2 launch template Amazon Web Services PCS uses to launch compute
-// nodes.
+// An Amazon EC2 launch template PCS uses to launch compute nodes.
 type CustomLaunchTemplate struct {
 
 	// The ID of the EC2 launch template to use to provision instances.
@@ -349,9 +449,11 @@ type Endpoint struct {
 	// This member is required.
 	Port *string
 
-	// The endpoint's private IP address.
+	// For clusters that use IPv4, this is the endpoint's private IP address.
 	//
-	// Example: 2.2.2.2
+	// Example: 10.1.2.3
+	//
+	// For clusters configured to use IPv6, this is an empty string.
 	//
 	// This member is required.
 	PrivateIpAddress *string
@@ -361,9 +463,14 @@ type Endpoint struct {
 	// This member is required.
 	Type EndpointType
 
+	// The endpoint's IPv6 address.
+	//
+	// Example: 2001:db8::1
+	Ipv6Address *string
+
 	// The endpoint's public IP address.
 	//
-	// Example: 1.1.1.1
+	// Example: 192.0.2.1
 	PublicIpAddress *string
 
 	noSmithyDocumentSerde
@@ -381,12 +488,10 @@ type ErrorInfo struct {
 	noSmithyDocumentSerde
 }
 
-// An EC2 instance configuration Amazon Web Services PCS uses to launch compute
-// nodes.
+// An EC2 instance configuration PCS uses to launch compute nodes.
 type InstanceConfig struct {
 
-	// The EC2 instance type that Amazon Web Services PCS can provision in the compute
-	// node group.
+	// The EC2 instance type that PCS can provision in the compute node group.
 	//
 	// Example: t2.xlarge
 	InstanceType *string
@@ -394,8 +499,39 @@ type InstanceConfig struct {
 	noSmithyDocumentSerde
 }
 
+// The JWT authentication configuration for Slurm REST API access.
+type JwtAuth struct {
+
+	// The JWT key for Slurm REST API authentication.
+	JwtKey *JwtKey
+
+	noSmithyDocumentSerde
+}
+
+// The JWT key stored in Amazon Web Services Secrets Manager for Slurm REST API
+// authentication.
+type JwtKey struct {
+
+	// The Amazon Resource Name (ARN) of the Amazon Web Services Secrets Manager
+	// secret containing the JWT key.
+	//
+	// This member is required.
+	SecretArn *string
+
+	// The version of the Amazon Web Services Secrets Manager secret containing the
+	// JWT key.
+	//
+	// This member is required.
+	SecretVersion *string
+
+	noSmithyDocumentSerde
+}
+
 // The networking configuration for the cluster's control plane.
 type Networking struct {
+
+	// The IP address version the cluster uses. The default is IPV4 .
+	NetworkType NetworkType
 
 	// The list of security group IDs associated with the Elastic Network Interface
 	// (ENI) created in subnets.
@@ -416,7 +552,7 @@ type Networking struct {
 	//
 	//   - Ports: All
 	//
-	//   - Destination: 0.0.0.0/0 (IPv4)
+	//   - Destination: 0.0.0.0/0 (IPv4) or ::/0 (IPv6)
 	//
 	//   - Outbound rule 2
 	//
@@ -427,10 +563,10 @@ type Networking struct {
 	//   - Destination: Self
 	SecurityGroupIds []string
 
-	// The ID of the subnet where Amazon Web Services PCS creates an Elastic Network
-	// Interface (ENI) to enable communication between managed controllers and Amazon
-	// Web Services PCS resources. The subnet must have an available IP address, cannot
-	// reside in AWS Outposts, AWS Wavelength, or an AWS Local Zone.
+	// The ID of the subnet where PCS creates an Elastic Network Interface (ENI) to
+	// enable communication between managed controllers and PCS resources. The subnet
+	// must have an available IP address, cannot reside in Outposts, Wavelength, or an
+	// Amazon Web Services Local Zone.
 	//
 	// Example: subnet-abcd1234
 	SubnetIds []string
@@ -441,17 +577,20 @@ type Networking struct {
 // The networking configuration for the cluster's control plane.
 type NetworkingRequest struct {
 
+	// The IP address version the cluster uses. The default is IPV4 .
+	NetworkType NetworkType
+
 	// A list of security group IDs associated with the Elastic Network Interface
 	// (ENI) created in subnets.
 	SecurityGroupIds []string
 
-	// The list of subnet IDs where Amazon Web Services PCS creates an Elastic Network
-	// Interface (ENI) to enable communication between managed controllers and Amazon
-	// Web Services PCS resources. Subnet IDs have the form subnet-0123456789abcdef0 .
+	// The list of subnet IDs where PCS creates an Elastic Network Interface (ENI) to
+	// enable communication between managed controllers and PCS resources. Subnet IDs
+	// have the form subnet-0123456789abcdef0 .
 	//
 	// Subnets can't be in Outposts, Wavelength or an Amazon Web Services Local Zone.
 	//
-	// Amazon Web Services PCS currently supports only 1 subnet in this list.
+	// PCS currently supports only 1 subnet in this list.
 	SubnetIds []string
 
 	noSmithyDocumentSerde
@@ -500,11 +639,41 @@ type Queue struct {
 	//
 	// The provisioning status doesn't indicate the overall health of the queue.
 	//
+	// The resource enters the SUSPENDING and SUSPENDED states when the scheduler is
+	// beyond end of life and we have suspended the cluster. When in these states, you
+	// can't use the cluster. The cluster controller is down and all compute instances
+	// are terminated. The resources still count toward your service quotas. You can
+	// delete a resource if its status is SUSPENDED . For more information, see [Frequently asked questions about Slurm versions in PCS] in
+	// the PCS User Guide.
+	//
+	// [Frequently asked questions about Slurm versions in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions_faq.html
+	//
 	// This member is required.
 	Status QueueStatus
 
 	// The list of errors that occurred during queue provisioning.
 	ErrorInfo []ErrorInfo
+
+	// Additional options related to the Slurm scheduler.
+	SlurmConfiguration *QueueSlurmConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// Additional options related to the Slurm scheduler.
+type QueueSlurmConfiguration struct {
+
+	// Additional Slurm-specific configuration that directly maps to Slurm settings.
+	SlurmCustomSettings []SlurmCustomSetting
+
+	noSmithyDocumentSerde
+}
+
+// Additional options related to the Slurm scheduler.
+type QueueSlurmConfigurationRequest struct {
+
+	// Additional Slurm-specific configuration that directly maps to Slurm settings.
+	SlurmCustomSettings []SlurmCustomSetting
 
 	noSmithyDocumentSerde
 }
@@ -545,6 +714,15 @@ type QueueSummary struct {
 	// The provisioning status of the queue.
 	//
 	// The provisioning status doesn't indicate the overall health of the queue.
+	//
+	// The resource enters the SUSPENDING and SUSPENDED states when the scheduler is
+	// beyond end of life and we have suspended the cluster. When in these states, you
+	// can't use the cluster. The cluster controller is down and all compute instances
+	// are terminated. The resources still count toward your service quotas. You can
+	// delete a resource if its status is SUSPENDED . For more information, see [Frequently asked questions about Slurm versions in PCS] in
+	// the PCS User Guide.
+	//
+	// [Frequently asked questions about Slurm versions in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions_faq.html
 	//
 	// This member is required.
 	Status QueueStatus
@@ -587,19 +765,18 @@ type ScalingConfigurationRequest struct {
 // The cluster management and job scheduling software associated with the cluster.
 type Scheduler struct {
 
-	// The software Amazon Web Services PCS uses to manage cluster scaling and job
-	// scheduling.
+	// The software PCS uses to manage cluster scaling and job scheduling.
 	//
 	// This member is required.
 	Type SchedulerType
 
-	// The version of the specified scheduling software that Amazon Web Services PCS
-	// uses to manage cluster scaling and job scheduling. For more information, see [Slurm versions in Amazon Web Services PCS]in
-	// the Amazon Web Services PCS User Guide.
+	// The version of the specified scheduling software that PCS uses to manage
+	// cluster scaling and job scheduling. For more information, see [Slurm versions in PCS]in the PCS User
+	// Guide.
 	//
-	// Valid Values: 23.11 | 24.05
+	// Valid Values: 23.11 | 24.05 | 24.11
 	//
-	// [Slurm versions in Amazon Web Services PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions.html
+	// [Slurm versions in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions.html
 	//
 	// This member is required.
 	Version *string
@@ -610,19 +787,18 @@ type Scheduler struct {
 // The cluster management and job scheduling software associated with the cluster.
 type SchedulerRequest struct {
 
-	// The software Amazon Web Services PCS uses to manage cluster scaling and job
-	// scheduling.
+	// The software PCS uses to manage cluster scaling and job scheduling.
 	//
 	// This member is required.
 	Type SchedulerType
 
-	// The version of the specified scheduling software that Amazon Web Services PCS
-	// uses to manage cluster scaling and job scheduling. For more information, see [Slurm versions in Amazon Web Services PCS]in
-	// the Amazon Web Services PCS User Guide.
+	// The version of the specified scheduling software that PCS uses to manage
+	// cluster scaling and job scheduling. For more information, see [Slurm versions in PCS]in the PCS User
+	// Guide.
 	//
-	// Valid Values: 23.11 | 24.05
+	// Valid Values: 23.11 | 24.05 | 24.11
 	//
-	// [Slurm versions in Amazon Web Services PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions.html
+	// [Slurm versions in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-versions.html
 	//
 	// This member is required.
 	Version *string
@@ -633,7 +809,7 @@ type SchedulerRequest struct {
 // The shared Slurm key for authentication, also known as the cluster secret.
 type SlurmAuthKey struct {
 
-	// The Amazon Resource Name (ARN) of the the shared Slurm key.
+	// The Amazon Resource Name (ARN) of the shared Slurm key.
 	//
 	// This member is required.
 	SecretArn *string
@@ -647,35 +823,17 @@ type SlurmAuthKey struct {
 }
 
 // Additional settings that directly map to Slurm settings.
+//
+// PCS supports a subset of Slurm settings. For more information, see [Configuring custom Slurm settings in PCS] in the PCS
+// User Guide.
+//
+// [Configuring custom Slurm settings in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-custom-settings.html
 type SlurmCustomSetting struct {
 
-	// Amazon Web Services PCS supports configuration of the following Slurm
-	// parameters:
+	// PCS supports custom Slurm settings for clusters, compute node groups, and
+	// queues. For more information, see [Configuring custom Slurm settings in PCS]in the PCS User Guide.
 	//
-	//   - For clusters
-	//
-	// [Prolog]
-	//   - Prolog
-	//
-	// [Epilog]
-	//   - Epilog
-	//
-	// [SelectTypeParameters]
-	//   - SelectTypeParameters
-	//
-	//   - For compute node groups
-	//
-	// [Weight]
-	//   - Weight
-	//
-	// [RealMemory]
-	//   - RealMemory
-	//
-	// [SelectTypeParameters]: https://slurm.schedmd.com/slurm.conf.html#OPT_SelectTypeParameters
-	// [Prolog]: https://slurm.schedmd.com/slurm.conf.html#OPT_Prolog_1
-	// [Epilog]: https://slurm.schedmd.com/slurm.conf.html#OPT_Epilog_1
-	// [Weight]: https://slurm.schedmd.com/slurm.conf.html#OPT_Weight
-	// [RealMemory]: https://slurm.schedmd.com/slurm.conf.html#OPT_Weight
+	// [Configuring custom Slurm settings in PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/slurm-custom-settings.html
 	//
 	// This member is required.
 	ParameterName *string
@@ -688,18 +846,88 @@ type SlurmCustomSetting struct {
 	noSmithyDocumentSerde
 }
 
+// The Slurm REST API configuration includes settings for enabling and configuring
+// the Slurm REST API. It's a property of the ClusterSlurmConfiguration object.
+type SlurmRest struct {
+
+	// The default value for mode is NONE . A value of STANDARD means the Slurm REST
+	// API is enabled.
+	//
+	// This member is required.
+	Mode SlurmRestMode
+
+	noSmithyDocumentSerde
+}
+
+// The Slurm REST API configuration includes settings for enabling and configuring
+// the Slurm REST API. It's a property of the ClusterSlurmConfiguration object.
+type SlurmRestRequest struct {
+
+	// The default value for mode is NONE . A value of STANDARD means the Slurm REST
+	// API is enabled.
+	//
+	// This member is required.
+	Mode SlurmRestMode
+
+	noSmithyDocumentSerde
+}
+
 // Additional configuration when you specify SPOT as the purchaseOption for the
 // CreateComputeNodeGroup API action.
 type SpotOptions struct {
 
-	// The Amazon EC2 allocation strategy Amazon Web Services PCS uses to provision
-	// EC2 instances. Amazon Web Services PCS supports lowest price, capacity
-	// optimized, and price capacity optimized. For more information, see [Use allocation strategies to determine how EC2 Fleet or Spot Fleet fulfills Spot and On-Demand capacity]in the
-	// Amazon Elastic Compute Cloud User Guide. If you don't provide this option, it
-	// defaults to price capacity optimized.
+	// The Amazon EC2 allocation strategy PCS uses to provision EC2 instances. PCS
+	// supports lowest price, capacity optimized, and price capacity optimized. For
+	// more information, see [Use allocation strategies to determine how EC2 Fleet or Spot Fleet fulfills Spot and On-Demand capacity]in the Amazon Elastic Compute Cloud User Guide. If you
+	// don't provide this option, it defaults to price capacity optimized.
 	//
 	// [Use allocation strategies to determine how EC2 Fleet or Spot Fleet fulfills Spot and On-Demand capacity]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet-allocation-strategy.html
 	AllocationStrategy SpotAllocationStrategy
+
+	noSmithyDocumentSerde
+}
+
+// The accounting configuration includes configurable settings for Slurm
+// accounting.
+type UpdateAccountingRequest struct {
+
+	// The default value for all purge settings for slurmdbd.conf . For more
+	// information, see the [slurmdbd.conf documentation at SchedMD].
+	//
+	// The default value for defaultPurgeTimeInDays is -1 .
+	//
+	// A value of -1 means there is no purge time and records persist as long as the
+	// cluster exists.
+	//
+	// 0 isn't a valid value.
+	//
+	// [slurmdbd.conf documentation at SchedMD]: https://slurm.schedmd.com/slurmdbd.conf.html
+	DefaultPurgeTimeInDays *int32
+
+	// The default value for mode is NONE . A value of STANDARD means Slurm accounting
+	// is enabled.
+	Mode AccountingMode
+
+	noSmithyDocumentSerde
+}
+
+// Additional options related to the Slurm scheduler.
+type UpdateClusterSlurmConfigurationRequest struct {
+
+	// The accounting configuration includes configurable settings for Slurm
+	// accounting.
+	Accounting *UpdateAccountingRequest
+
+	// The time (in seconds) before an idle node is scaled down.
+	//
+	// Default: 600
+	ScaleDownIdleTimeInSeconds *int32
+
+	// Additional Slurm-specific configuration that directly maps to Slurm settings.
+	SlurmCustomSettings []SlurmCustomSetting
+
+	// The Slurm REST API configuration for the cluster.
+	SlurmRest *UpdateSlurmRestRequest
 
 	noSmithyDocumentSerde
 }
@@ -709,6 +937,26 @@ type UpdateComputeNodeGroupSlurmConfigurationRequest struct {
 
 	// Additional Slurm-specific configuration that directly maps to Slurm settings.
 	SlurmCustomSettings []SlurmCustomSetting
+
+	noSmithyDocumentSerde
+}
+
+// Additional options related to the Slurm scheduler.
+type UpdateQueueSlurmConfigurationRequest struct {
+
+	// Additional Slurm-specific configuration that directly maps to Slurm settings.
+	SlurmCustomSettings []SlurmCustomSetting
+
+	noSmithyDocumentSerde
+}
+
+// The Slurm REST API configuration includes settings for enabling and configuring
+// the Slurm REST API.
+type UpdateSlurmRestRequest struct {
+
+	// The default value for mode is NONE . A value of STANDARD means the Slurm REST
+	// API is enabled.
+	Mode SlurmRestMode
 
 	noSmithyDocumentSerde
 }

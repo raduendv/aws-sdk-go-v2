@@ -10,10 +10,13 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: Anywhere
+//
 // Removes a compute resource from an Anywhere fleet. Deregistered computes can no
-// longer host game sessions through Amazon GameLift. Use this operation with an
-// Anywhere fleet that doesn't use the Amazon GameLift Agent For Anywhere fleets
-// with the Agent, the Agent handles all compute registry tasks for you.
+// longer host game sessions through Amazon GameLift Servers. Use this operation
+// with an Anywhere fleet that doesn't use the Amazon GameLift Servers Agent For
+// Anywhere fleets with the Agent, the Agent handles all compute registry tasks for
+// you.
 //
 // To deregister a compute, call this operation from the compute that's being
 // deregistered and specify the compute name and the fleet ID.
@@ -144,16 +147,13 @@ func (c *Client) addOperationDeregisterComputeMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

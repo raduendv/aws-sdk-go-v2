@@ -21,8 +21,10 @@
         "api_op_GetApproximateUsageRecords.go",
         "api_op_GetCommitmentPurchaseAnalysis.go",
         "api_op_GetCostAndUsage.go",
+        "api_op_GetCostAndUsageComparisons.go",
         "api_op_GetCostAndUsageWithResources.go",
         "api_op_GetCostCategories.go",
+        "api_op_GetCostComparisonDrivers.go",
         "api_op_GetCostForecast.go",
         "api_op_GetDimensionValues.go",
         "api_op_GetReservationCoverage.go",
@@ -40,6 +42,7 @@
         "api_op_ListCostAllocationTagBackfillHistory.go",
         "api_op_ListCostAllocationTags.go",
         "api_op_ListCostCategoryDefinitions.go",
+        "api_op_ListCostCategoryResourceAssociations.go",
         "api_op_ListSavingsPlansPurchaseRecommendationGeneration.go",
         "api_op_ListTagsForResource.go",
         "api_op_ProvideAnomalyFeedback.go",
@@ -71,7 +74,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/costexplorer",
     "unstable": false
 }

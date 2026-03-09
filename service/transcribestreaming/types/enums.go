@@ -133,60 +133,105 @@ type LanguageCode string
 
 // Enum values for LanguageCode
 const (
-	LanguageCodeEnUs LanguageCode = "en-US"
-	LanguageCodeEnGb LanguageCode = "en-GB"
-	LanguageCodeEsUs LanguageCode = "es-US"
-	LanguageCodeFrCa LanguageCode = "fr-CA"
-	LanguageCodeFrFr LanguageCode = "fr-FR"
-	LanguageCodeEnAu LanguageCode = "en-AU"
-	LanguageCodeItIt LanguageCode = "it-IT"
-	LanguageCodeDeDe LanguageCode = "de-DE"
-	LanguageCodePtBr LanguageCode = "pt-BR"
-	LanguageCodeJaJp LanguageCode = "ja-JP"
-	LanguageCodeKoKr LanguageCode = "ko-KR"
-	LanguageCodeZhCn LanguageCode = "zh-CN"
-	LanguageCodeThTh LanguageCode = "th-TH"
-	LanguageCodeEsEs LanguageCode = "es-ES"
-	LanguageCodeArSa LanguageCode = "ar-SA"
-	LanguageCodePtPt LanguageCode = "pt-PT"
-	LanguageCodeCaEs LanguageCode = "ca-ES"
-	LanguageCodeArAe LanguageCode = "ar-AE"
-	LanguageCodeHiIn LanguageCode = "hi-IN"
-	LanguageCodeZhHk LanguageCode = "zh-HK"
-	LanguageCodeNlNl LanguageCode = "nl-NL"
-	LanguageCodeNoNo LanguageCode = "no-NO"
-	LanguageCodeSvSe LanguageCode = "sv-SE"
-	LanguageCodePlPl LanguageCode = "pl-PL"
-	LanguageCodeFiFi LanguageCode = "fi-FI"
-	LanguageCodeZhTw LanguageCode = "zh-TW"
-	LanguageCodeEnIn LanguageCode = "en-IN"
-	LanguageCodeEnIe LanguageCode = "en-IE"
-	LanguageCodeEnNz LanguageCode = "en-NZ"
-	LanguageCodeEnAb LanguageCode = "en-AB"
-	LanguageCodeEnZa LanguageCode = "en-ZA"
-	LanguageCodeEnWl LanguageCode = "en-WL"
-	LanguageCodeDeCh LanguageCode = "de-CH"
-	LanguageCodeAfZa LanguageCode = "af-ZA"
-	LanguageCodeEuEs LanguageCode = "eu-ES"
-	LanguageCodeHrHr LanguageCode = "hr-HR"
-	LanguageCodeCsCz LanguageCode = "cs-CZ"
-	LanguageCodeDaDk LanguageCode = "da-DK"
-	LanguageCodeFaIr LanguageCode = "fa-IR"
-	LanguageCodeGlEs LanguageCode = "gl-ES"
-	LanguageCodeElGr LanguageCode = "el-GR"
-	LanguageCodeHeIl LanguageCode = "he-IL"
-	LanguageCodeIdId LanguageCode = "id-ID"
-	LanguageCodeLvLv LanguageCode = "lv-LV"
-	LanguageCodeMsMy LanguageCode = "ms-MY"
-	LanguageCodeRoRo LanguageCode = "ro-RO"
-	LanguageCodeRuRu LanguageCode = "ru-RU"
-	LanguageCodeSrRs LanguageCode = "sr-RS"
-	LanguageCodeSkSk LanguageCode = "sk-SK"
-	LanguageCodeSoSo LanguageCode = "so-SO"
-	LanguageCodeTlPh LanguageCode = "tl-PH"
-	LanguageCodeUkUa LanguageCode = "uk-UA"
-	LanguageCodeViVn LanguageCode = "vi-VN"
-	LanguageCodeZuZa LanguageCode = "zu-ZA"
+	LanguageCodeEnUs  LanguageCode = "en-US"
+	LanguageCodeEnGb  LanguageCode = "en-GB"
+	LanguageCodeEsUs  LanguageCode = "es-US"
+	LanguageCodeFrCa  LanguageCode = "fr-CA"
+	LanguageCodeFrFr  LanguageCode = "fr-FR"
+	LanguageCodeEnAu  LanguageCode = "en-AU"
+	LanguageCodeItIt  LanguageCode = "it-IT"
+	LanguageCodeDeDe  LanguageCode = "de-DE"
+	LanguageCodePtBr  LanguageCode = "pt-BR"
+	LanguageCodeJaJp  LanguageCode = "ja-JP"
+	LanguageCodeKoKr  LanguageCode = "ko-KR"
+	LanguageCodeZhCn  LanguageCode = "zh-CN"
+	LanguageCodeThTh  LanguageCode = "th-TH"
+	LanguageCodeEsEs  LanguageCode = "es-ES"
+	LanguageCodeArSa  LanguageCode = "ar-SA"
+	LanguageCodePtPt  LanguageCode = "pt-PT"
+	LanguageCodeCaEs  LanguageCode = "ca-ES"
+	LanguageCodeArAe  LanguageCode = "ar-AE"
+	LanguageCodeHiIn  LanguageCode = "hi-IN"
+	LanguageCodeZhHk  LanguageCode = "zh-HK"
+	LanguageCodeNlNl  LanguageCode = "nl-NL"
+	LanguageCodeNoNo  LanguageCode = "no-NO"
+	LanguageCodeSvSe  LanguageCode = "sv-SE"
+	LanguageCodePlPl  LanguageCode = "pl-PL"
+	LanguageCodeFiFi  LanguageCode = "fi-FI"
+	LanguageCodeZhTw  LanguageCode = "zh-TW"
+	LanguageCodeEnIn  LanguageCode = "en-IN"
+	LanguageCodeEnIe  LanguageCode = "en-IE"
+	LanguageCodeEnNz  LanguageCode = "en-NZ"
+	LanguageCodeEnAb  LanguageCode = "en-AB"
+	LanguageCodeEnZa  LanguageCode = "en-ZA"
+	LanguageCodeEnWl  LanguageCode = "en-WL"
+	LanguageCodeDeCh  LanguageCode = "de-CH"
+	LanguageCodeAfZa  LanguageCode = "af-ZA"
+	LanguageCodeEuEs  LanguageCode = "eu-ES"
+	LanguageCodeHrHr  LanguageCode = "hr-HR"
+	LanguageCodeCsCz  LanguageCode = "cs-CZ"
+	LanguageCodeDaDk  LanguageCode = "da-DK"
+	LanguageCodeFaIr  LanguageCode = "fa-IR"
+	LanguageCodeGlEs  LanguageCode = "gl-ES"
+	LanguageCodeElGr  LanguageCode = "el-GR"
+	LanguageCodeHeIl  LanguageCode = "he-IL"
+	LanguageCodeIdId  LanguageCode = "id-ID"
+	LanguageCodeLvLv  LanguageCode = "lv-LV"
+	LanguageCodeMsMy  LanguageCode = "ms-MY"
+	LanguageCodeRoRo  LanguageCode = "ro-RO"
+	LanguageCodeRuRu  LanguageCode = "ru-RU"
+	LanguageCodeSrRs  LanguageCode = "sr-RS"
+	LanguageCodeSkSk  LanguageCode = "sk-SK"
+	LanguageCodeSoSo  LanguageCode = "so-SO"
+	LanguageCodeTlPh  LanguageCode = "tl-PH"
+	LanguageCodeUkUa  LanguageCode = "uk-UA"
+	LanguageCodeViVn  LanguageCode = "vi-VN"
+	LanguageCodeZuZa  LanguageCode = "zu-ZA"
+	LanguageCodeAmEt  LanguageCode = "am-ET"
+	LanguageCodeBeBy  LanguageCode = "be-BY"
+	LanguageCodeBgBg  LanguageCode = "bg-BG"
+	LanguageCodeBnIn  LanguageCode = "bn-IN"
+	LanguageCodeBsBa  LanguageCode = "bs-BA"
+	LanguageCodeCkbIq LanguageCode = "ckb-IQ"
+	LanguageCodeCkbIr LanguageCode = "ckb-IR"
+	LanguageCodeCyWl  LanguageCode = "cy-WL"
+	LanguageCodeEsMx  LanguageCode = "es-MX"
+	LanguageCodeEtEt  LanguageCode = "et-ET"
+	LanguageCodeFaAf  LanguageCode = "fa-AF"
+	LanguageCodeGuIn  LanguageCode = "gu-IN"
+	LanguageCodeHtHt  LanguageCode = "ht-HT"
+	LanguageCodeHuHu  LanguageCode = "hu-HU"
+	LanguageCodeHyAm  LanguageCode = "hy-AM"
+	LanguageCodeIsIs  LanguageCode = "is-IS"
+	LanguageCodeJvId  LanguageCode = "jv-ID"
+	LanguageCodeKaGe  LanguageCode = "ka-GE"
+	LanguageCodeKabDz LanguageCode = "kab-DZ"
+	LanguageCodeKkKz  LanguageCode = "kk-KZ"
+	LanguageCodeKmKh  LanguageCode = "km-KH"
+	LanguageCodeKnIn  LanguageCode = "kn-IN"
+	LanguageCodeLgIn  LanguageCode = "lg-IN"
+	LanguageCodeLtLt  LanguageCode = "lt-LT"
+	LanguageCodeMkMk  LanguageCode = "mk-MK"
+	LanguageCodeMlIn  LanguageCode = "ml-IN"
+	LanguageCodeMrIn  LanguageCode = "mr-IN"
+	LanguageCodeMyMm  LanguageCode = "my-MM"
+	LanguageCodeNeNp  LanguageCode = "ne-NP"
+	LanguageCodeOrIn  LanguageCode = "or-IN"
+	LanguageCodePaIn  LanguageCode = "pa-IN"
+	LanguageCodePsAf  LanguageCode = "ps-AF"
+	LanguageCodeSiLk  LanguageCode = "si-LK"
+	LanguageCodeSlSi  LanguageCode = "sl-SI"
+	LanguageCodeSqAl  LanguageCode = "sq-AL"
+	LanguageCodeSuId  LanguageCode = "su-ID"
+	LanguageCodeSwBi  LanguageCode = "sw-BI"
+	LanguageCodeSwKe  LanguageCode = "sw-KE"
+	LanguageCodeSwRw  LanguageCode = "sw-RW"
+	LanguageCodeSwTz  LanguageCode = "sw-TZ"
+	LanguageCodeSwUg  LanguageCode = "sw-UG"
+	LanguageCodeTaIn  LanguageCode = "ta-IN"
+	LanguageCodeTeIn  LanguageCode = "te-IN"
+	LanguageCodeTrTr  LanguageCode = "tr-TR"
+	LanguageCodeUzUz  LanguageCode = "uz-UZ"
 )
 
 // Values returns all known values for LanguageCode. Note that this can be
@@ -249,6 +294,51 @@ func (LanguageCode) Values() []LanguageCode {
 		"uk-UA",
 		"vi-VN",
 		"zu-ZA",
+		"am-ET",
+		"be-BY",
+		"bg-BG",
+		"bn-IN",
+		"bs-BA",
+		"ckb-IQ",
+		"ckb-IR",
+		"cy-WL",
+		"es-MX",
+		"et-ET",
+		"fa-AF",
+		"gu-IN",
+		"ht-HT",
+		"hu-HU",
+		"hy-AM",
+		"is-IS",
+		"jv-ID",
+		"ka-GE",
+		"kab-DZ",
+		"kk-KZ",
+		"km-KH",
+		"kn-IN",
+		"lg-IN",
+		"lt-LT",
+		"mk-MK",
+		"ml-IN",
+		"mr-IN",
+		"my-MM",
+		"ne-NP",
+		"or-IN",
+		"pa-IN",
+		"ps-AF",
+		"si-LK",
+		"sl-SI",
+		"sq-AL",
+		"su-ID",
+		"sw-BI",
+		"sw-KE",
+		"sw-RW",
+		"sw-TZ",
+		"sw-UG",
+		"ta-IN",
+		"te-IN",
+		"tr-TR",
+		"uz-UZ",
 	}
 }
 
@@ -335,6 +425,11 @@ type MedicalScribeNoteTemplate string
 const (
 	MedicalScribeNoteTemplateHistoryAndPhysical MedicalScribeNoteTemplate = "HISTORY_AND_PHYSICAL"
 	MedicalScribeNoteTemplateGirpp              MedicalScribeNoteTemplate = "GIRPP"
+	MedicalScribeNoteTemplateDap                MedicalScribeNoteTemplate = "DAP"
+	MedicalScribeNoteTemplateSirp               MedicalScribeNoteTemplate = "SIRP"
+	MedicalScribeNoteTemplateBirp               MedicalScribeNoteTemplate = "BIRP"
+	MedicalScribeNoteTemplateBehavioralSoap     MedicalScribeNoteTemplate = "BEHAVIORAL_SOAP"
+	MedicalScribeNoteTemplatePhysicalSoap       MedicalScribeNoteTemplate = "PHYSICAL_SOAP"
 )
 
 // Values returns all known values for MedicalScribeNoteTemplate. Note that this
@@ -345,6 +440,11 @@ func (MedicalScribeNoteTemplate) Values() []MedicalScribeNoteTemplate {
 	return []MedicalScribeNoteTemplate{
 		"HISTORY_AND_PHYSICAL",
 		"GIRPP",
+		"DAP",
+		"SIRP",
+		"BIRP",
+		"BEHAVIORAL_SOAP",
+		"PHYSICAL_SOAP",
 	}
 }
 
@@ -488,6 +588,27 @@ func (ParticipantRole) Values() []ParticipantRole {
 	return []ParticipantRole{
 		"AGENT",
 		"CUSTOMER",
+	}
+}
+
+type Pronouns string
+
+// Enum values for Pronouns
+const (
+	PronounsHeHim    Pronouns = "HE_HIM"
+	PronounsSheHer   Pronouns = "SHE_HER"
+	PronounsTheyThem Pronouns = "THEY_THEM"
+)
+
+// Values returns all known values for Pronouns. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Pronouns) Values() []Pronouns {
+	return []Pronouns{
+		"HE_HIM",
+		"SHE_HER",
+		"THEY_THEM",
 	}
 }
 

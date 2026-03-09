@@ -10,13 +10,15 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2
+//
 // Removes a VPC peering connection. To delete the connection, you must have a
 // valid authorization for the VPC peering connection that you want to delete..
 //
 // Once a valid authorization exists, call this operation from the Amazon Web
-// Services account that is used to manage the Amazon GameLift fleets. Identify the
-// connection to delete by the connection ID and fleet ID. If successful, the
-// connection is removed.
+// Services account that is used to manage the Amazon GameLift Servers fleets.
+// Identify the connection to delete by the connection ID and fleet ID. If
+// successful, the connection is removed.
 //
 // # Related actions
 //
@@ -150,16 +152,13 @@ func (c *Client) addOperationDeleteVpcPeeringConnectionMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

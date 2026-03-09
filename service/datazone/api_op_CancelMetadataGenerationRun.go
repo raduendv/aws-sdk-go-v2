@@ -11,6 +11,15 @@ import (
 )
 
 // Cancels the metadata generation run.
+//
+// Prerequisites:
+//
+//   - The run must exist and be in a cancelable status (e.g., SUBMITTED,
+//     IN_PROGRESS).
+//
+//   - Runs in SUCCEEDED status cannot be cancelled.
+//
+//   - User must have access to the run and cancel permissions.
 func (c *Client) CancelMetadataGenerationRun(ctx context.Context, params *CancelMetadataGenerationRunInput, optFns ...func(*Options)) (*CancelMetadataGenerationRunOutput, error) {
 	if params == nil {
 		params = &CancelMetadataGenerationRunInput{}
@@ -137,16 +146,13 @@ func (c *Client) addOperationCancelMetadataGenerationRunMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

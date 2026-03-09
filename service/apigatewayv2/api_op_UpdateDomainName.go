@@ -41,6 +41,9 @@ type UpdateDomainNameInput struct {
 	// The mutual TLS authentication configuration for a custom domain name.
 	MutualTlsAuthentication *types.MutualTlsAuthenticationInput
 
+	// The routing mode.
+	RoutingMode types.RoutingMode
+
 	noSmithyDocumentSerde
 }
 
@@ -52,11 +55,17 @@ type UpdateDomainNameOutput struct {
 	// The name of the DomainName resource.
 	DomainName *string
 
+	// The ARN of the DomainName resource.
+	DomainNameArn *string
+
 	// The domain name configurations.
 	DomainNameConfigurations []types.DomainNameConfiguration
 
 	// The mutual TLS authentication configuration for a custom domain name.
 	MutualTlsAuthentication *types.MutualTlsAuthentication
+
+	// The routing mode.
+	RoutingMode types.RoutingMode
 
 	// The collection of tags associated with a domain name.
 	Tags map[string]string
@@ -155,16 +164,13 @@ func (c *Client) addOperationUpdateDomainNameMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

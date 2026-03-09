@@ -87,6 +87,9 @@ type DescribeEndpointConfigOutput struct {
 	// storing it on the ML storage volume attached to the instance.
 	KmsKeyId *string
 
+	// The configuration parameters for utilization metrics.
+	MetricsConfig *types.MetricsConfig
+
 	// An array of ProductionVariant objects, one for each model that you want to host
 	// at this endpoint in shadow mode with production traffic replicated from the
 	// model specified on ProductionVariants .
@@ -193,16 +196,13 @@ func (c *Client) addOperationDescribeEndpointConfigMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -310,6 +310,26 @@ func (m *validateOpUntagResource) HandleInitialize(ctx context.Context, in middl
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateCluster struct {
+}
+
+func (*validateOpUpdateCluster) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateCluster) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateClusterInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateClusterInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpUpdateComputeNodeGroup struct {
 }
 
@@ -410,12 +430,31 @@ func addOpUntagResourceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUntagResource{}, middleware.After)
 }
 
+func addOpUpdateClusterValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateCluster{}, middleware.After)
+}
+
 func addOpUpdateComputeNodeGroupValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateComputeNodeGroup{}, middleware.After)
 }
 
 func addOpUpdateQueueValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateQueue{}, middleware.After)
+}
+
+func validateAccountingRequest(v *types.AccountingRequest) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AccountingRequest"}
+	if len(v.Mode) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Mode"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
 }
 
 func validateClusterSlurmConfigurationRequest(v *types.ClusterSlurmConfigurationRequest) error {
@@ -426,6 +465,16 @@ func validateClusterSlurmConfigurationRequest(v *types.ClusterSlurmConfiguration
 	if v.SlurmCustomSettings != nil {
 		if err := validateSlurmCustomSettings(v.SlurmCustomSettings); err != nil {
 			invalidParams.AddNested("SlurmCustomSettings", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Accounting != nil {
+		if err := validateAccountingRequest(v.Accounting); err != nil {
+			invalidParams.AddNested("Accounting", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.SlurmRest != nil {
+		if err := validateSlurmRestRequest(v.SlurmRest); err != nil {
+			invalidParams.AddNested("SlurmRest", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -462,6 +511,23 @@ func validateCustomLaunchTemplate(v *types.CustomLaunchTemplate) error {
 	}
 	if v.Version == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Version"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateQueueSlurmConfigurationRequest(v *types.QueueSlurmConfigurationRequest) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "QueueSlurmConfigurationRequest"}
+	if v.SlurmCustomSettings != nil {
+		if err := validateSlurmCustomSettings(v.SlurmCustomSettings); err != nil {
+			invalidParams.AddNested("SlurmCustomSettings", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -535,11 +601,60 @@ func validateSlurmCustomSettings(v []types.SlurmCustomSetting) error {
 	}
 }
 
+func validateSlurmRestRequest(v *types.SlurmRestRequest) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SlurmRestRequest"}
+	if len(v.Mode) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Mode"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateUpdateClusterSlurmConfigurationRequest(v *types.UpdateClusterSlurmConfigurationRequest) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateClusterSlurmConfigurationRequest"}
+	if v.SlurmCustomSettings != nil {
+		if err := validateSlurmCustomSettings(v.SlurmCustomSettings); err != nil {
+			invalidParams.AddNested("SlurmCustomSettings", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateUpdateComputeNodeGroupSlurmConfigurationRequest(v *types.UpdateComputeNodeGroupSlurmConfigurationRequest) error {
 	if v == nil {
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "UpdateComputeNodeGroupSlurmConfigurationRequest"}
+	if v.SlurmCustomSettings != nil {
+		if err := validateSlurmCustomSettings(v.SlurmCustomSettings); err != nil {
+			invalidParams.AddNested("SlurmCustomSettings", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateUpdateQueueSlurmConfigurationRequest(v *types.UpdateQueueSlurmConfigurationRequest) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateQueueSlurmConfigurationRequest"}
 	if v.SlurmCustomSettings != nil {
 		if err := validateSlurmCustomSettings(v.SlurmCustomSettings); err != nil {
 			invalidParams.AddNested("SlurmCustomSettings", err.(smithy.InvalidParamsError))
@@ -641,6 +756,11 @@ func validateOpCreateQueueInput(v *CreateQueueInput) error {
 	}
 	if v.QueueName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("QueueName"))
+	}
+	if v.SlurmConfiguration != nil {
+		if err := validateQueueSlurmConfigurationRequest(v.SlurmConfiguration); err != nil {
+			invalidParams.AddNested("SlurmConfiguration", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -850,6 +970,26 @@ func validateOpUntagResourceInput(v *UntagResourceInput) error {
 	}
 }
 
+func validateOpUpdateClusterInput(v *UpdateClusterInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateClusterInput"}
+	if v.ClusterIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterIdentifier"))
+	}
+	if v.SlurmConfiguration != nil {
+		if err := validateUpdateClusterSlurmConfigurationRequest(v.SlurmConfiguration); err != nil {
+			invalidParams.AddNested("SlurmConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpUpdateComputeNodeGroupInput(v *UpdateComputeNodeGroupInput) error {
 	if v == nil {
 		return nil
@@ -893,6 +1033,11 @@ func validateOpUpdateQueueInput(v *UpdateQueueInput) error {
 	}
 	if v.QueueIdentifier == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("QueueIdentifier"))
+	}
+	if v.SlurmConfiguration != nil {
+		if err := validateUpdateQueueSlurmConfigurationRequest(v.SlurmConfiguration); err != nil {
+			invalidParams.AddNested("SlurmConfiguration", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

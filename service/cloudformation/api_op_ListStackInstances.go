@@ -12,7 +12,7 @@ import (
 )
 
 // Returns summary information about stack instances that are associated with the
-// specified stack set. You can filter for stack instances that are associated with
+// specified StackSet. You can filter for stack instances that are associated with
 // a specific Amazon Web Services account name or Region, or that have a specific
 // status.
 func (c *Client) ListStackInstances(ctx context.Context, params *ListStackInstancesInput, optFns ...func(*Options)) (*ListStackInstancesOutput, error) {
@@ -32,8 +32,7 @@ func (c *Client) ListStackInstances(ctx context.Context, params *ListStackInstan
 
 type ListStackInstancesInput struct {
 
-	// The name or unique ID of the stack set that you want to list stack instances
-	// for.
+	// The name or unique ID of the StackSet that you want to list stack instances for.
 	//
 	// This member is required.
 	StackSetName *string
@@ -42,7 +41,7 @@ type ListStackInstancesInput struct {
 	// administrator in the organization's management account or as a delegated
 	// administrator in a member account.
 	//
-	// By default, SELF is specified. Use SELF for stack sets with self-managed
+	// By default, SELF is specified. Use SELF for StackSets with self-managed
 	// permissions.
 	//
 	//   - If you are signed in to the management account, specify SELF .
@@ -66,11 +65,8 @@ type ListStackInstancesInput struct {
 	// set of results.
 	MaxResults *int32
 
-	// If the previous request didn't return all the remaining results, the response's
-	// NextToken parameter value is set to a token. To retrieve the next set of
-	// results, call ListStackInstances again and assign that token to the request
-	// object's NextToken parameter. If there are no remaining results, the previous
-	// response object's NextToken parameter is set to null .
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	// The name of the Amazon Web Services account that you want to list stack
@@ -189,16 +185,13 @@ func (c *Client) addOperationListStackInstancesMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

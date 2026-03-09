@@ -290,6 +290,18 @@ func TestCheckSnapshot_GetDashboard(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetEventConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetEventConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetEventConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetEventDataStore(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetEventDataStore(context.Background(), nil, func(o *Options) {
@@ -446,6 +458,18 @@ func TestCheckSnapshot_ListImports(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListInsightsData(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListInsightsData(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListInsightsData")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListInsightsMetricData(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListInsightsMetricData(context.Background(), nil, func(o *Options) {
@@ -511,6 +535,18 @@ func TestCheckSnapshot_LookupEvents(t *testing.T) {
 	_, err := svc.LookupEvents(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "LookupEvents")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_PutEventConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutEventConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutEventConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -973,6 +1009,18 @@ func TestUpdateSnapshot_GetDashboard(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetEventConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetEventConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetEventConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetEventDataStore(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetEventDataStore(context.Background(), nil, func(o *Options) {
@@ -1129,6 +1177,18 @@ func TestUpdateSnapshot_ListImports(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListInsightsData(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListInsightsData(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListInsightsData")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListInsightsMetricData(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListInsightsMetricData(context.Background(), nil, func(o *Options) {
@@ -1194,6 +1254,18 @@ func TestUpdateSnapshot_LookupEvents(t *testing.T) {
 	_, err := svc.LookupEvents(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "LookupEvents")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_PutEventConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutEventConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutEventConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

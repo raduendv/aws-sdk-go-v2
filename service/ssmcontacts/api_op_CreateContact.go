@@ -44,7 +44,13 @@ type CreateContactInput struct {
 	// This member is required.
 	Plan *types.Plan
 
-	// To create an escalation plan use ESCALATION . To create a contact use PERSONAL .
+	// The type of contact to create.
+	//
+	//   - PERSONAL : A single, individual contact.
+	//
+	//   - ESCALATION : An escalation plan.
+	//
+	//   - ONCALL_SCHEDULE : An on-call schedule.
 	//
 	// This member is required.
 	Type types.ContactType
@@ -167,16 +173,13 @@ func (c *Client) addOperationCreateContactMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -134,6 +134,23 @@ func (EventCategory) Values() []EventCategory {
 	}
 }
 
+type EventCategoryAggregation string
+
+// Enum values for EventCategoryAggregation
+const (
+	EventCategoryAggregationData EventCategoryAggregation = "Data"
+)
+
+// Values returns all known values for EventCategoryAggregation. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EventCategoryAggregation) Values() []EventCategoryAggregation {
+	return []EventCategoryAggregation{
+		"Data",
+	}
+}
+
 type EventDataStoreStatus string
 
 // Enum values for EventDataStoreStatus
@@ -268,6 +285,45 @@ func (InsightType) Values() []InsightType {
 	}
 }
 
+type ListInsightsDataDimensionKey string
+
+// Enum values for ListInsightsDataDimensionKey
+const (
+	ListInsightsDataDimensionKeyEventId     ListInsightsDataDimensionKey = "EventId"
+	ListInsightsDataDimensionKeyEventName   ListInsightsDataDimensionKey = "EventName"
+	ListInsightsDataDimensionKeyEventSource ListInsightsDataDimensionKey = "EventSource"
+)
+
+// Values returns all known values for ListInsightsDataDimensionKey. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ListInsightsDataDimensionKey) Values() []ListInsightsDataDimensionKey {
+	return []ListInsightsDataDimensionKey{
+		"EventId",
+		"EventName",
+		"EventSource",
+	}
+}
+
+type ListInsightsDataType string
+
+// Enum values for ListInsightsDataType
+const (
+	ListInsightsDataTypeInsightsEvents ListInsightsDataType = "InsightsEvents"
+)
+
+// Values returns all known values for ListInsightsDataType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ListInsightsDataType) Values() []ListInsightsDataType {
+	return []ListInsightsDataType{
+		"InsightsEvents",
+	}
+}
+
 type LookupAttributeKey string
 
 // Enum values for LookupAttributeKey
@@ -296,6 +352,25 @@ func (LookupAttributeKey) Values() []LookupAttributeKey {
 		"ResourceName",
 		"EventSource",
 		"AccessKeyId",
+	}
+}
+
+type MaxEventSize string
+
+// Enum values for MaxEventSize
+const (
+	MaxEventSizeStandard MaxEventSize = "Standard"
+	MaxEventSizeLarge    MaxEventSize = "Large"
+)
+
+// Values returns all known values for MaxEventSize. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MaxEventSize) Values() []MaxEventSize {
+	return []MaxEventSize{
+		"Standard",
+		"Large",
 	}
 }
 
@@ -383,5 +458,64 @@ func (RefreshScheduleStatus) Values() []RefreshScheduleStatus {
 	return []RefreshScheduleStatus{
 		"ENABLED",
 		"DISABLED",
+	}
+}
+
+type SourceEventCategory string
+
+// Enum values for SourceEventCategory
+const (
+	SourceEventCategoryManagement SourceEventCategory = "Management"
+	SourceEventCategoryData       SourceEventCategory = "Data"
+)
+
+// Values returns all known values for SourceEventCategory. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SourceEventCategory) Values() []SourceEventCategory {
+	return []SourceEventCategory{
+		"Management",
+		"Data",
+	}
+}
+
+type Template string
+
+// Enum values for Template
+const (
+	TemplateApiActivity    Template = "API_ACTIVITY"
+	TemplateResourceAccess Template = "RESOURCE_ACCESS"
+	TemplateUserActions    Template = "USER_ACTIONS"
+)
+
+// Values returns all known values for Template. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Template) Values() []Template {
+	return []Template{
+		"API_ACTIVITY",
+		"RESOURCE_ACCESS",
+		"USER_ACTIONS",
+	}
+}
+
+type Type string
+
+// Enum values for Type
+const (
+	TypeTagContext     Type = "TagContext"
+	TypeRequestContext Type = "RequestContext"
+)
+
+// Values returns all known values for Type. Note that this can be expanded in the
+// future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Type) Values() []Type {
+	return []Type{
+		"TagContext",
+		"RequestContext",
 	}
 }

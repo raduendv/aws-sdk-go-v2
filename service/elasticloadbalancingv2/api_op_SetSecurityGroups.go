@@ -47,8 +47,8 @@ type SetSecurityGroupsInput struct {
 	SecurityGroups []string
 
 	// Indicates whether to evaluate inbound security group rules for traffic sent to
-	// a Network Load Balancer through Amazon Web Services PrivateLink. The default is
-	// on .
+	// a Network Load Balancer through Amazon Web Services PrivateLink. Applies only if
+	// the load balancer has an associated security group. The default is on .
 	EnforceSecurityGroupInboundRulesOnPrivateLinkTraffic types.EnforceSecurityGroupInboundRulesOnPrivateLinkTrafficEnum
 
 	noSmithyDocumentSerde
@@ -157,16 +157,13 @@ func (c *Client) addOperationSetSecurityGroupsMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

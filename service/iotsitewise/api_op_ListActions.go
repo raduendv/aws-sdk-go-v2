@@ -45,6 +45,12 @@ type ListActionsInput struct {
 	// The token to be used for the next set of paginated results.
 	NextToken *string
 
+	// The ID of the resolved resource.
+	ResolveToResourceId *string
+
+	// The type of the resolved resource.
+	ResolveToResourceType types.ResolveToResourceType
+
 	noSmithyDocumentSerde
 }
 
@@ -158,16 +164,13 @@ func (c *Client) addOperationListActionsMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

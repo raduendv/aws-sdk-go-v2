@@ -42,6 +42,9 @@ type RemoveAssistantAIAgentInput struct {
 	// This member is required.
 	AssistantId *string
 
+	// The orchestrator use case for the AI Agent being removed.
+	OrchestratorUseCase *string
+
 	noSmithyDocumentSerde
 }
 
@@ -140,16 +143,13 @@ func (c *Client) addOperationRemoveAssistantAIAgentMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

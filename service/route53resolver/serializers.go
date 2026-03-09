@@ -4755,6 +4755,11 @@ func awsAwsjson11_serializeOpDocumentCreateResolverEndpointInput(v *CreateResolv
 		ok.String(string(v.ResolverEndpointType))
 	}
 
+	if v.RniEnhancedMetricsEnabled != nil {
+		ok := object.Key("RniEnhancedMetricsEnabled")
+		ok.Boolean(*v.RniEnhancedMetricsEnabled)
+	}
+
 	if v.SecurityGroupIds != nil {
 		ok := object.Key("SecurityGroupIds")
 		if err := awsAwsjson11_serializeDocumentSecurityGroupIds(v.SecurityGroupIds, ok); err != nil {
@@ -4767,6 +4772,11 @@ func awsAwsjson11_serializeOpDocumentCreateResolverEndpointInput(v *CreateResolv
 		if err := awsAwsjson11_serializeDocumentTagList(v.Tags, ok); err != nil {
 			return err
 		}
+	}
+
+	if v.TargetNameServerMetricsEnabled != nil {
+		ok := object.Key("TargetNameServerMetricsEnabled")
+		ok.Boolean(*v.TargetNameServerMetricsEnabled)
 	}
 
 	return nil
@@ -4808,6 +4818,11 @@ func awsAwsjson11_serializeOpDocumentCreateResolverRuleInput(v *CreateResolverRu
 	if v.CreatorRequestId != nil {
 		ok := object.Key("CreatorRequestId")
 		ok.String(*v.CreatorRequestId)
+	}
+
+	if v.DelegationRecord != nil {
+		ok := object.Key("DelegationRecord")
+		ok.String(*v.DelegationRecord)
 	}
 
 	if v.DomainName != nil {
@@ -5921,6 +5936,16 @@ func awsAwsjson11_serializeOpDocumentUpdateResolverEndpointInput(v *UpdateResolv
 	if len(v.ResolverEndpointType) > 0 {
 		ok := object.Key("ResolverEndpointType")
 		ok.String(string(v.ResolverEndpointType))
+	}
+
+	if v.RniEnhancedMetricsEnabled != nil {
+		ok := object.Key("RniEnhancedMetricsEnabled")
+		ok.Boolean(*v.RniEnhancedMetricsEnabled)
+	}
+
+	if v.TargetNameServerMetricsEnabled != nil {
+		ok := object.Key("TargetNameServerMetricsEnabled")
+		ok.Boolean(*v.TargetNameServerMetricsEnabled)
 	}
 
 	if v.UpdateIpAddresses != nil {

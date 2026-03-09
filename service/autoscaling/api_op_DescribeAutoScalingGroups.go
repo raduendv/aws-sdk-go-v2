@@ -54,6 +54,10 @@ type DescribeAutoScalingGroupsInput struct {
 	// One or more filters to limit the results based on specific tags.
 	Filters []types.Filter
 
+	//  Specifies whether to include information about Amazon EC2 instances in the
+	// response. When set to true (default), the response includes instance details.
+	IncludeInstances *bool
+
 	// The maximum number of items to return with this call. The default value is 50
 	// and the maximum value is 100 .
 	MaxRecords *int32
@@ -169,16 +173,13 @@ func (c *Client) addOperationDescribeAutoScalingGroupsMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

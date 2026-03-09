@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates an existing Cost Category. Changes made to the Cost Category rules will
+// Updates an existing cost category. Changes made to the cost category rules will
 // be used to categorize the current month’s expenses and future expenses. This
 // won’t change categorization for the previous months.
 func (c *Client) UpdateCostCategoryDefinition(ctx context.Context, params *UpdateCostCategoryDefinitionInput, optFns ...func(*Options)) (*UpdateCostCategoryDefinitionOutput, error) {
@@ -31,12 +31,12 @@ func (c *Client) UpdateCostCategoryDefinition(ctx context.Context, params *Updat
 
 type UpdateCostCategoryDefinitionInput struct {
 
-	// The unique identifier for your Cost Category.
+	// The unique identifier for your cost category.
 	//
 	// This member is required.
 	CostCategoryArn *string
 
-	// The rule schema version in this particular Cost Category.
+	// The rule schema version in this particular cost category.
 	//
 	// This member is required.
 	RuleVersion types.CostCategoryRuleVersion
@@ -51,14 +51,14 @@ type UpdateCostCategoryDefinitionInput struct {
 	// The default value for the cost category.
 	DefaultValue *string
 
-	// The Cost Category's effective start date. It can only be a billing start date
+	// The cost category's effective start date. It can only be a billing start date
 	// (first day of the month). If the date isn't provided, it's the first day of the
 	// current month. Dates can't be before the previous twelve months, or in the
 	// future.
 	EffectiveStart *string
 
-	//  The split charge rules used to allocate your charges between your Cost
-	// Category values.
+	//  The split charge rules used to allocate your charges between your cost
+	// category values.
 	SplitChargeRules []types.CostCategorySplitChargeRule
 
 	noSmithyDocumentSerde
@@ -66,10 +66,10 @@ type UpdateCostCategoryDefinitionInput struct {
 
 type UpdateCostCategoryDefinitionOutput struct {
 
-	// The unique identifier for your Cost Category.
+	// The unique identifier for your cost category.
 	CostCategoryArn *string
 
-	// The Cost Category's effective start date. It can only be a billing start date
+	// The cost category's effective start date. It can only be a billing start date
 	// (first day of the month).
 	EffectiveStart *string
 
@@ -167,16 +167,13 @@ func (c *Client) addOperationUpdateCostCategoryDefinitionMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

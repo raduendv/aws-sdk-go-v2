@@ -49,6 +49,9 @@ type SendMessageInput struct {
 	// This member is required.
 	Type types.MessageType
 
+	// The identifier of the AI Agent to use for processing the message.
+	AiAgentId *string
+
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
 	// of the request. If not provided, the AWS SDK populates this field.For more
 	// information about idempotency, see Making retries safe with idempotent APIs.
@@ -61,6 +64,12 @@ type SendMessageInput struct {
 
 	// The conversation context before the Amazon Q in Connect session.
 	ConversationContext *types.ConversationContext
+
+	// Additional metadata for the message.
+	Metadata map[string]string
+
+	// The orchestrator use case for message processing.
+	OrchestratorUseCase *string
 
 	noSmithyDocumentSerde
 }
@@ -179,16 +188,13 @@ func (c *Client) addOperationSendMessageMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

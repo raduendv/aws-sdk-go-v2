@@ -145,6 +145,15 @@ var defaultPartitions = endpoints.Partitions{
 				Region: "af-south-1",
 			}: endpoints.Endpoint{},
 			endpoints.EndpointKey{
+				Region: "ap-northeast-1",
+			}: endpoints.Endpoint{},
+			endpoints.EndpointKey{
+				Region: "ap-northeast-2",
+			}: endpoints.Endpoint{},
+			endpoints.EndpointKey{
+				Region: "ap-southeast-1",
+			}: endpoints.Endpoint{},
+			endpoints.EndpointKey{
 				Region: "ap-southeast-2",
 			}: endpoints.Endpoint{},
 			endpoints.EndpointKey{
@@ -233,9 +242,23 @@ var defaultPartitions = endpoints.Partitions{
 		ID: "aws-eusc",
 		Defaults: map[endpoints.DefaultKey]endpoints.Endpoint{
 			{
+				Variant: endpoints.DualStackVariant,
+			}: {
+				Hostname:          "connect-campaigns.{region}.api.amazonwebservices.eu",
+				Protocols:         []string{"https"},
+				SignatureVersions: []string{"v4"},
+			},
+			{
 				Variant: endpoints.FIPSVariant,
 			}: {
 				Hostname:          "connect-campaigns-fips.{region}.amazonaws.eu",
+				Protocols:         []string{"https"},
+				SignatureVersions: []string{"v4"},
+			},
+			{
+				Variant: endpoints.FIPSVariant | endpoints.DualStackVariant,
+			}: {
+				Hostname:          "connect-campaigns-fips.{region}.api.amazonwebservices.eu",
 				Protocols:         []string{"https"},
 				SignatureVersions: []string{"v4"},
 			},

@@ -11,10 +11,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Creates a privacy budget template for a specified membership. Each membership
-// can have only one privacy budget template, but it can be deleted and recreated.
-// If you need to change the privacy budget template for a membership, use the UpdatePrivacyBudgetTemplate
-// operation.
+// Creates a privacy budget template for a specified collaboration. Each
+// collaboration can have only one privacy budget template. If you need to change
+// the privacy budget template, use the UpdatePrivacyBudgetTemplateoperation.
 func (c *Client) CreatePrivacyBudgetTemplate(ctx context.Context, params *CreatePrivacyBudgetTemplateInput, optFns ...func(*Options)) (*CreatePrivacyBudgetTemplateOutput, error) {
 	if params == nil {
 		params = &CreatePrivacyBudgetTemplateInput{}
@@ -32,18 +31,6 @@ func (c *Client) CreatePrivacyBudgetTemplate(ctx context.Context, params *Create
 
 type CreatePrivacyBudgetTemplateInput struct {
 
-	// How often the privacy budget refreshes.
-	//
-	// If you plan to regularly bring new data into the collaboration, you can use
-	// CALENDAR_MONTH to automatically get a new privacy budget for the collaboration
-	// every calendar month. Choosing this option allows arbitrary amounts of
-	// information to be revealed about rows of the data when repeatedly queries across
-	// refreshes. Avoid choosing this if the same rows will be repeatedly queried
-	// between privacy budget refreshes.
-	//
-	// This member is required.
-	AutoRefresh types.PrivacyBudgetTemplateAutoRefresh
-
 	// A unique identifier for one of your memberships for a collaboration. The
 	// privacy budget template is created in the collaboration that this membership
 	// belongs to. Accepts a membership ID.
@@ -60,6 +47,16 @@ type CreatePrivacyBudgetTemplateInput struct {
 	//
 	// This member is required.
 	PrivacyBudgetType types.PrivacyBudgetType
+
+	// How often the privacy budget refreshes.
+	//
+	// If you plan to regularly bring new data into the collaboration, you can use
+	// CALENDAR_MONTH to automatically get a new privacy budget for the collaboration
+	// every calendar month. Choosing this option allows arbitrary amounts of
+	// information to be revealed about rows of the data when repeatedly queries across
+	// refreshes. Avoid choosing this if the same rows will be repeatedly queried
+	// between privacy budget refreshes.
+	AutoRefresh types.PrivacyBudgetTemplateAutoRefresh
 
 	// An optional label that you can assign to a resource when you create it. Each
 	// tag consists of a key and an optional value, both of which you define. When you
@@ -171,16 +168,13 @@ func (c *Client) addOperationCreatePrivacyBudgetTemplateMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

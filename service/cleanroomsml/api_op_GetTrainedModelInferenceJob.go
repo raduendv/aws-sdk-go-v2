@@ -164,6 +164,11 @@ type GetTrainedModelInferenceJobOutput struct {
 	//   of aws do not count against your tags per resource limit.
 	Tags map[string]string
 
+	// The version identifier of the trained model used for this inference job. This
+	// identifies the specific version of the trained model that was used to generate
+	// the inference results.
+	TrainedModelVersionIdentifier *string
+
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
 
@@ -258,16 +263,13 @@ func (c *Client) addOperationGetTrainedModelInferenceJobMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

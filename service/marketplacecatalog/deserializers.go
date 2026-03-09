@@ -15,21 +15,11 @@ import (
 	smithyio "github.com/aws/smithy-go/io"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpBatchDescribeEntities struct {
 }
@@ -3094,6 +3084,11 @@ func awsRestjson1_deserializeDocumentEntitySummary(v **types.EntitySummary, valu
 				sv.LastModifiedDate = ptr.String(jtv)
 			}
 
+		case "MachineLearningProductSummary":
+			if err := awsRestjson1_deserializeDocumentMachineLearningProductSummary(&sv.MachineLearningProductSummary, value); err != nil {
+				return err
+			}
+
 		case "Name":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -3101,6 +3096,11 @@ func awsRestjson1_deserializeDocumentEntitySummary(v **types.EntitySummary, valu
 					return fmt.Errorf("expected EntityNameString to be of type string, got %T instead", value)
 				}
 				sv.Name = ptr.String(jtv)
+			}
+
+		case "OfferSetSummary":
+			if err := awsRestjson1_deserializeDocumentOfferSetSummary(&sv.OfferSetSummary, value); err != nil {
+				return err
 			}
 
 		case "OfferSummary":
@@ -3336,6 +3336,55 @@ func awsRestjson1_deserializeDocumentJsonDocumentType(v *document.Interface, val
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentMachineLearningProductSummary(v **types.MachineLearningProductSummary, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.MachineLearningProductSummary
+	if *v == nil {
+		sv = &types.MachineLearningProductSummary{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "ProductTitle":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MachineLearningProductTitleString to be of type string, got %T instead", value)
+				}
+				sv.ProductTitle = ptr.String(jtv)
+			}
+
+		case "Visibility":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MachineLearningProductVisibilityString to be of type string, got %T instead", value)
+				}
+				sv.Visibility = types.MachineLearningProductVisibilityString(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentOfferBuyerAccountsList(v *[]string, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3369,6 +3418,114 @@ func awsRestjson1_deserializeDocumentOfferBuyerAccountsList(v *[]string, value i
 
 	}
 	*v = cv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentOfferSetAssociatedOfferIdsList(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected OfferSetAssociatedOfferIdsString to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentOfferSetSummary(v **types.OfferSetSummary, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.OfferSetSummary
+	if *v == nil {
+		sv = &types.OfferSetSummary{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "AssociatedOfferIds":
+			if err := awsRestjson1_deserializeDocumentOfferSetAssociatedOfferIdsList(&sv.AssociatedOfferIds, value); err != nil {
+				return err
+			}
+
+		case "Name":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OfferSetNameString to be of type string, got %T instead", value)
+				}
+				sv.Name = ptr.String(jtv)
+			}
+
+		case "ReleaseDate":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTimeISO8601 to be of type string, got %T instead", value)
+				}
+				sv.ReleaseDate = ptr.String(jtv)
+			}
+
+		case "SolutionId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OfferSetSolutionIdString to be of type string, got %T instead", value)
+				}
+				sv.SolutionId = ptr.String(jtv)
+			}
+
+		case "State":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OfferSetStateString to be of type string, got %T instead", value)
+				}
+				sv.State = types.OfferSetStateString(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
 	return nil
 }
 
@@ -3415,6 +3572,15 @@ func awsRestjson1_deserializeDocumentOfferSummary(v **types.OfferSummary, value 
 					return fmt.Errorf("expected OfferNameString to be of type string, got %T instead", value)
 				}
 				sv.Name = ptr.String(jtv)
+			}
+
+		case "OfferSetId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OfferSetIdString to be of type string, got %T instead", value)
+				}
+				sv.OfferSetId = ptr.String(jtv)
 			}
 
 		case "ProductId":

@@ -41,7 +41,7 @@ type GetClusterInput struct {
 	noSmithyDocumentSerde
 }
 
-// Output Mixin
+// The output of a cluster.
 type GetClusterOutput struct {
 
 	// The ARN of the retrieved cluster.
@@ -69,11 +69,18 @@ type GetClusterOutput struct {
 	// This member is required.
 	Status types.ClusterStatus
 
-	// The ARNs of the clusters linked to the retrieved cluster.
-	LinkedClusterArns []string
+	// The current encryption configuration details for the cluster.
+	EncryptionDetails *types.EncryptionDetails
 
-	// The witness Region of the cluster. Applicable only for multi-Region clusters.
-	WitnessRegion *string
+	// The connection endpoint for the cluster.
+	Endpoint *string
+
+	// Returns the current multi-Region cluster configuration, including witness
+	// region and linked cluster information.
+	MultiRegionProperties *types.MultiRegionProperties
+
+	// Map of tags.
+	Tags map[string]string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -169,16 +176,13 @@ func (c *Client) addOperationGetClusterMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

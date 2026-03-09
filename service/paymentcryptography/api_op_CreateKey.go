@@ -25,14 +25,30 @@ import (
 // cryptographic operations that you can perform using the key, for example key
 // class (example: SYMMETRIC_KEY ), key algorithm (example: TDES_2KEY ), key usage
 // (example: TR31_P0_PIN_ENCRYPTION_KEY ) and key modes of use (example: Encrypt ).
-// For information about valid combinations of key attributes, see [Understanding key attributes]in the Amazon
+// Amazon Web Services Payment Cryptography binds key attributes to keys using key
+// blocks when you store or export them. Amazon Web Services Payment Cryptography
+// stores the key contents wrapped and never stores or transmits them in the clear.
+//
+// For information about valid combinations of key attributes, see [Understanding key attributes] in the Amazon
 // Web Services Payment Cryptography User Guide. The mutable data contained within
 // a key includes usage timestamp and key deletion timestamp and can be modified
 // after creation.
 //
-// Amazon Web Services Payment Cryptography binds key attributes to keys using key
-// blocks when you store or export them. Amazon Web Services Payment Cryptography
-// stores the key contents wrapped and never stores or transmits them in the clear.
+// You can use the CreateKey operation to generate an ECC (Elliptic Curve
+// Cryptography) key pair used for establishing an ECDH (Elliptic Curve
+// Diffie-Hellman) key agreement between two parties. In the ECDH key agreement
+// process, both parties generate their own ECC key pair with key usage K3 and
+// exchange the public keys. Each party then use their private key, the received
+// public key from the other party, and the key derivation parameters including key
+// derivation function, hash algorithm, derivation data, and key algorithm to
+// derive a shared key.
+//
+// To maintain the single-use principle of cryptographic keys in payments, ECDH
+// derived keys should not be used for multiple purposes, such as a
+// TR31_P0_PIN_ENCRYPTION_KEY and TR31_K1_KEY_BLOCK_PROTECTION_KEY . When creating
+// ECC key pairs in Amazon Web Services Payment Cryptography you can optionally set
+// the DeriveKeyUsage parameter, which defines the key usage bound to the
+// symmetric key that will be derived using the ECC key pair.
 //
 // Cross-account use: This operation can't be used across different Amazon Web
 // Services accounts.
@@ -78,8 +94,11 @@ type CreateKeyInput struct {
 	// This member is required.
 	KeyAttributes *types.KeyAttributes
 
-	// The cryptographic usage of an ECDH derived key as deﬁned in section A.5.2 of
-	// the TR-31 spec.
+	// The intended cryptographic usage of keys derived from the ECC key pair to be
+	// created.
+	//
+	// After creating an ECC key pair, you cannot change the intended cryptographic
+	// usage of keys derived from it using ECDH.
 	DeriveKeyUsage types.DeriveKeyUsage
 
 	// Specifies whether to enable the key. If the key is enabled, it is activated for
@@ -96,6 +115,14 @@ type CreateKeyInput struct {
 	// the input data is 16 bytes of zero and retaining the 3 highest order bytes of
 	// the encrypted result.
 	KeyCheckValueAlgorithm types.KeyCheckValueAlgorithm
+
+	// A list of Amazon Web Services Regions for key replication operations.
+	//
+	// Each region in the list must be a valid Amazon Web Services Region identifier
+	// where Amazon Web Services Payment Cryptography is available. This list is used
+	// to specify which regions should be added to or removed from a key's replication
+	// configuration.
+	ReplicationRegions []string
 
 	// Assigns one or more tags to the Amazon Web Services Payment Cryptography key.
 	// Use this parameter to tag a key when it is created. To tag an existing Amazon
@@ -219,16 +246,13 @@ func (c *Client) addOperationCreateKeyMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

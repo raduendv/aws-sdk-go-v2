@@ -10,10 +10,12 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Removes a tag assigned to a Amazon GameLift resource. You can use resource tags
-// to organize Amazon Web Services resources for a range of purposes. This
-// operation handles the permissions necessary to manage tags for Amazon GameLift
-// resources that support tagging.
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
+// Removes a tag assigned to a Amazon GameLift Servers resource. You can use
+// resource tags to organize Amazon Web Services resources for a range of purposes.
+// This operation handles the permissions necessary to manage tags for Amazon
+// GameLift Servers resources that support tagging.
 //
 // To remove a tag from a resource, specify the unique ARN value for the resource
 // and provide a string list containing one or more tags to remove. This operation
@@ -50,9 +52,9 @@ func (c *Client) UntagResource(ctx context.Context, params *UntagResourceInput, 
 type UntagResourceInput struct {
 
 	// The Amazon Resource Name ([ARN] ) that uniquely identifies the Amazon GameLift
-	// resource that you want to remove tags from. Amazon GameLift includes resource
-	// ARNs in the data object for the resource. You can retrieve the ARN by calling a
-	// List or Describe operation for the resource type.
+	// Servers resource that you want to remove tags from. Amazon GameLift Servers
+	// includes resource ARNs in the data object for the resource. You can retrieve the
+	// ARN by calling a List or Describe operation for the resource type.
 	//
 	// [ARN]: https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html
 	//
@@ -60,7 +62,7 @@ type UntagResourceInput struct {
 	ResourceARN *string
 
 	// A list of one or more tag keys to remove from the specified Amazon GameLift
-	// resource.
+	// Servers resource.
 	//
 	// This member is required.
 	TagKeys []string
@@ -163,16 +165,13 @@ func (c *Client) addOperationUntagResourceMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

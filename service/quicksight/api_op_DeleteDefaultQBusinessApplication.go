@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes a linked Amazon Q Business application from an Amazon QuickSight account
+// Deletes a linked Amazon Q Business application from an Quick Sight account
 func (c *Client) DeleteDefaultQBusinessApplication(ctx context.Context, params *DeleteDefaultQBusinessApplicationInput, optFns ...func(*Options)) (*DeleteDefaultQBusinessApplicationOutput, error) {
 	if params == nil {
 		params = &DeleteDefaultQBusinessApplicationInput{}
@@ -28,16 +28,16 @@ func (c *Client) DeleteDefaultQBusinessApplication(ctx context.Context, params *
 
 type DeleteDefaultQBusinessApplicationInput struct {
 
-	// The ID of the Amazon QuickSight account that you want to disconnect from a
-	// Amazon Q Business application.
+	// The ID of the Quick Sight account that you want to disconnect from a Amazon Q
+	// Business application.
 	//
 	// This member is required.
 	AwsAccountId *string
 
-	// The Amazon QuickSight namespace that you want to delete a linked Amazon Q
-	// Business application from. If this field is left blank, the Amazon Q Business
-	// application is deleted from the default namespace. Currently, the default
-	// namespace is the only valid value for this parameter.
+	// The Quick Sight namespace that you want to delete a linked Amazon Q Business
+	// application from. If this field is left blank, the Amazon Q Business application
+	// is deleted from the default namespace. Currently, the default namespace is the
+	// only valid value for this parameter.
 	Namespace *string
 
 	noSmithyDocumentSerde
@@ -145,16 +145,13 @@ func (c *Client) addOperationDeleteDefaultQBusinessApplicationMiddlewares(stack 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

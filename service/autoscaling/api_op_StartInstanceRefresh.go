@@ -95,7 +95,7 @@ type StartInstanceRefreshInput struct {
 	//   - Bake time
 	Preferences *types.RefreshPreferences
 
-	// The strategy to use for the instance refresh. The only valid value is Rolling .
+	// The strategy to use for the instance refresh. The default value is Rolling .
 	Strategy types.RefreshStrategy
 
 	noSmithyDocumentSerde
@@ -200,16 +200,13 @@ func (c *Client) addOperationStartInstanceRefreshMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

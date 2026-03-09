@@ -9,6 +9,7 @@
         "api_client.go",
         "api_client_test.go",
         "api_op_GetDataAutomationStatus.go",
+        "api_op_InvokeDataAutomation.go",
         "api_op_InvokeDataAutomationAsync.go",
         "api_op_ListTagsForResource.go",
         "api_op_TagResource.go",
@@ -30,9 +31,10 @@
         "types/enums.go",
         "types/errors.go",
         "types/types.go",
+        "types/types_exported_test.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/bedrockdataautomationruntime",
     "unstable": false
 }

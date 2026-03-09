@@ -70,6 +70,9 @@ type GetNextMessageOutput struct {
 	// This member is required.
 	Type types.MessageType
 
+	// Indicates whether the chunked response has been terminated.
+	ChunkedResponseTerminated *bool
+
 	// The conversation data stored on an Amazon Q in Connect Session.
 	ConversationSessionData []types.RuntimeSessionData
 
@@ -170,16 +173,13 @@ func (c *Client) addOperationGetNextMessageMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

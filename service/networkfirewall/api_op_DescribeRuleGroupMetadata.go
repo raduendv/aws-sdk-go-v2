@@ -85,8 +85,14 @@ type DescribeRuleGroupMetadataOutput struct {
 	// Returns the metadata objects for the specified rule group.
 	Description *string
 
-	// The last time that the rule group was changed.
+	// A timestamp indicating when the rule group was last modified.
 	LastModifiedTime *time.Time
+
+	// The display name of the product listing for this rule group.
+	ListingName *string
+
+	// The unique identifier for the product listing associated with this rule group.
+	ProductId *string
 
 	// Additional options governing how Network Firewall handles the rule group. You
 	// can only use these for stateful rule groups.
@@ -98,6 +104,10 @@ type DescribeRuleGroupMetadataOutput struct {
 	//
 	// This setting is required for requests that do not include the RuleGroupARN .
 	Type types.RuleGroupType
+
+	// The name of the Amazon Web Services Marketplace vendor that provides this rule
+	// group.
+	VendorName *string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -190,16 +200,13 @@ func (c *Client) addOperationDescribeRuleGroupMetadataMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

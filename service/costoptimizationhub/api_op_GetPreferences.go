@@ -39,6 +39,11 @@ type GetPreferencesOutput struct {
 	// Retrieves the status of the "member account discount visibility" preference.
 	MemberAccountDiscountVisibility types.MemberAccountDiscountVisibility
 
+	// Retrieves the current preferences for how Reserved Instances and Savings Plans
+	// cost-saving opportunities are prioritized in terms of payment option and term
+	// length.
+	PreferredCommitment *types.PreferredCommitment
+
 	// Retrieves the status of the "savings estimation mode" preference.
 	SavingsEstimationMode types.SavingsEstimationMode
 
@@ -133,16 +138,13 @@ func (c *Client) addOperationGetPreferencesMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

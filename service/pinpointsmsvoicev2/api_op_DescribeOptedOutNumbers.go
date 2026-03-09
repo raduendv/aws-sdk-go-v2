@@ -41,8 +41,8 @@ type DescribeOptedOutNumbersInput struct {
 	// The OptOutListName or OptOutListArn of the OptOutList. You can use DescribeOptOutLists to find the
 	// values for OptOutListName and OptOutListArn.
 	//
-	// If you are using a shared AWS End User Messaging SMS and Voice resource then
-	// you must use the full Amazon Resource Name(ARN).
+	// If you are using a shared End User Messaging SMS resource then you must use the
+	// full Amazon Resource Name(ARN).
 	//
 	// This member is required.
 	OptOutListName *string
@@ -175,16 +175,13 @@ func (c *Client) addOperationDescribeOptedOutNumbersMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

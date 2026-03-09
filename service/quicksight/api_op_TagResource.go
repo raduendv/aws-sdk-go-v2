@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Assigns one or more tags (key-value pairs) to the specified Amazon QuickSight
+// Assigns one or more tags (key-value pairs) to the specified Amazon Quick Sight
 // resource.
 //
 // Tags can help you organize and categorize your resources. You can also use them
@@ -22,17 +22,17 @@ import (
 // If you specify a tag key that is already associated with the resource, the new
 // tag value that you specify replaces the previous value for that tag.
 //
-// You can associate as many as 50 tags with a resource. Amazon QuickSight
+// You can associate as many as 50 tags with a resource. Amazon Quick Sight
 // supports tagging on data set, data source, dashboard, template, topic, and user.
 //
-// Tagging for Amazon QuickSight works in a similar way to tagging for other
+// Tagging for Amazon Quick Sight works in a similar way to tagging for other
 // Amazon Web Services services, except for the following:
 //
-//   - Tags are used to track costs for users in Amazon QuickSight. You can't tag
-//     other resources that Amazon QuickSight costs are based on, such as storage
+//   - Tags are used to track costs for users in Amazon Quick Sight. You can't tag
+//     other resources that Amazon Quick Sight costs are based on, such as storage
 //     capacoty (SPICE), session usage, alert consumption, or reporting units.
 //
-//   - Amazon QuickSight doesn't currently support the tag editor for Resource
+//   - Amazon Quick Sight doesn't currently support the tag editor for Resource
 //     Groups.
 func (c *Client) TagResource(ctx context.Context, params *TagResourceInput, optFns ...func(*Options)) (*TagResourceOutput, error) {
 	if params == nil {
@@ -167,16 +167,13 @@ func (c *Client) addOperationTagResourceMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

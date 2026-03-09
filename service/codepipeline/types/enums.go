@@ -232,6 +232,25 @@ func (EncryptionKeyType) Values() []EncryptionKeyType {
 	}
 }
 
+type EnvironmentVariableType string
+
+// Enum values for EnvironmentVariableType
+const (
+	EnvironmentVariableTypePlaintext      EnvironmentVariableType = "PLAINTEXT"
+	EnvironmentVariableTypeSecretsManager EnvironmentVariableType = "SECRETS_MANAGER"
+)
+
+// Values returns all known values for EnvironmentVariableType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EnvironmentVariableType) Values() []EnvironmentVariableType {
+	return []EnvironmentVariableType{
+		"PLAINTEXT",
+		"SECRETS_MANAGER",
+	}
+}
+
 type ExecutionMode string
 
 // Enum values for ExecutionMode
@@ -660,6 +679,23 @@ func (StartTimeRange) Values() []StartTimeRange {
 	return []StartTimeRange{
 		"Latest",
 		"All",
+	}
+}
+
+type TargetFilterName string
+
+// Enum values for TargetFilterName
+const (
+	TargetFilterNameTargetStatus TargetFilterName = "TARGET_STATUS"
+)
+
+// Values returns all known values for TargetFilterName. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TargetFilterName) Values() []TargetFilterName {
+	return []TargetFilterName{
+		"TARGET_STATUS",
 	}
 }
 

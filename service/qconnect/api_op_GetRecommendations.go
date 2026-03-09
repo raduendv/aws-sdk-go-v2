@@ -65,6 +65,9 @@ type GetRecommendationsInput struct {
 	// response in the next request to retrieve the next set of chunks.
 	NextChunkToken *string
 
+	// The type of recommendation being requested.
+	RecommendationType types.RecommendationType
+
 	// The duration (in seconds) for which the call waits for a recommendation to be
 	// made available before returning. If a recommendation is available, the call
 	// returns sooner than WaitTimeSeconds . If no messages are available and the wait
@@ -178,16 +181,13 @@ func (c *Client) addOperationGetRecommendationsMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

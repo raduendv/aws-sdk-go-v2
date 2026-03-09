@@ -163,6 +163,19 @@ type CreateDBClusterInput struct {
 	//   - Cannot be a reserved word for the chosen database engine.
 	MasterUsername *string
 
+	// The network type of the cluster.
+	//
+	// The network type is determined by the DBSubnetGroup specified for the cluster.
+	// A DBSubnetGroup can support only the IPv4 protocol or the IPv4 and the IPv6
+	// protocols ( DUAL ).
+	//
+	// For more information, see [DocumentDB clusters in a VPC] in the Amazon DocumentDB Developer Guide.
+	//
+	// Valid Values: IPV4 | DUAL
+	//
+	// [DocumentDB clusters in a VPC]: https://docs.aws.amazon.com/documentdb/latest/developerguide/vpc-clusters.html
+	NetworkType *string
+
 	// The port number on which the instances in the cluster accept connections.
 	Port *int32
 
@@ -199,6 +212,9 @@ type CreateDBClusterInput struct {
 	// Constraints: Minimum 30-minute window.
 	PreferredMaintenanceWindow *string
 
+	// Contains the scaling configuration of an Amazon DocumentDB Serverless cluster.
+	ServerlessV2ScalingConfiguration *types.ServerlessV2ScalingConfiguration
+
 	// The AWS region the resource is in. The presigned URL will be created with this
 	// region, if the PresignURL member is empty set.
 	SourceRegion *string
@@ -215,9 +231,9 @@ type CreateDBClusterInput struct {
 	//
 	// Default value is standard
 	//
-	// When you create a DocumentDB DB cluster with the storage type set to iopt1 , the
-	// storage type is returned in the response. The storage type isn't returned when
-	// you set it to standard .
+	// When you create an Amazon DocumentDB cluster with the storage type set to iopt1
+	// , the storage type is returned in the response. The storage type isn't returned
+	// when you set it to standard .
 	StorageType *string
 
 	// The tags to be assigned to the cluster.
@@ -335,16 +351,13 @@ func (c *Client) addOperationCreateDBClusterMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

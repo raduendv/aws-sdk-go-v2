@@ -1,3 +1,158 @@
+# v1.57.1 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.57.0 (2025-12-18)
+
+* **Feature**: Amazon OpenSearch Service adds support for warm nodes, enabling new multi-tier architecture.
+
+# v1.56.0 (2025-12-10)
+
+* **Feature**: The CreateApplication API now supports an optional kms key arn parameter to allow customers to specify a CMK for application encryption.
+
+# v1.55.2 (2025-12-09)
+
+* No change notes available for this release.
+
+# v1.55.1 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.55.0 (2025-12-02)
+
+* **Feature**: GPU-acceleration helps you build large-scale vector databases faster and more efficiently. You can enable this feature on new OpenSearch domains and OpenSearch Serverless collections. This feature uses GPU-acceleration to reduce the time needed to index data into vector indexes.
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.54.2 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.54.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.54.0 (2025-11-17)
+
+* **Feature**: This release adds index operation APIs to support Automatic Semantic Enrichment feature
+
+# v1.53.2 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.53.1 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.53.0 (2025-11-07)
+
+* **Feature**: This release introduces the Default Application feature, allowing users to set, change, or unset a preferred OpenSearch UI application on a per-region basis for a streamlined and consistent user experience.
+
+# v1.52.10 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.52.9 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.8 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.7 (2025-10-22)
+
+* No change notes available for this release.
+
+# v1.52.6 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.5 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.4 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.3 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.52.2 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.1 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.0 (2025-08-28)
+
+* **Feature**: Remove incorrect endpoint tests
+
+# v1.51.3 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.51.2 (2025-08-21)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.51.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.51.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.50.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.0 (2025-07-31)
+
+* **Feature**: Granular access control support for NEO-SAML with IAMFederation for AOS data source
+
+# v1.48.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.48.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.47.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.47.0 (2025-07-15)
+
+* **Feature**: AWS Opensearch adds support for enabling s3 vector engine options. After enabling this option, customers will be able to create indices with s3 vector engine.
+
+# v1.46.6 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.46.5 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.46.4 (2025-06-06)
+
+* No change notes available for this release.
+
 # v1.46.3 (2025-04-10)
 
 * No change notes available for this release.

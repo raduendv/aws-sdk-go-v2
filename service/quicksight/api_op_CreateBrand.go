@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Creates an Amazon QuickSight brand.
+// Creates an Quick Sight brand.
 func (c *Client) CreateBrand(ctx context.Context, params *CreateBrandInput, optFns ...func(*Options)) (*CreateBrandOutput, error) {
 	if params == nil {
 		params = &CreateBrandInput{}
@@ -34,7 +34,7 @@ type CreateBrandInput struct {
 	// This member is required.
 	AwsAccountId *string
 
-	// The ID of the Amazon QuickSight brand.
+	// The ID of the Quick Suite brand.
 	//
 	// This member is required.
 	BrandId *string
@@ -153,16 +153,13 @@ func (c *Client) addOperationCreateBrandMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

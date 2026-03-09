@@ -90,13 +90,6 @@ type DescribeAgreementOutput struct {
 	//
 	//   - REPLACED – The agreement was replaced using an agreement replacement offer.
 	//
-	//   - ROLLED_BACK (Only applicable to inactive agreement revisions) – The
-	//   agreement revision has been rolled back because of an error. An earlier revision
-	//   is now active.
-	//
-	//   - SUPERCEDED (Only applicable to inactive agreement revisions) – The agreement
-	//   revision is no longer active and another agreement revision is now active.
-	//
 	//   - TERMINATED – The agreement ended before the defined end date because of an
 	//   AWS termination (for example, a payment failure).
 	Status types.AgreementStatus
@@ -195,16 +188,13 @@ func (c *Client) addOperationDescribeAgreementMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

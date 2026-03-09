@@ -15,6 +15,8 @@ import (
 //
 // For more information, see [Environment account connections] in the Proton User guide.
 //
+// Deprecated: AWS Proton is not accepting new customers.
+//
 // [Environment account connections]: https://docs.aws.amazon.com/proton/latest/userguide/ag-env-account-connections.html
 func (c *Client) ListEnvironmentAccountConnections(ctx context.Context, params *ListEnvironmentAccountConnectionsInput, optFns ...func(*Options)) (*ListEnvironmentAccountConnectionsOutput, error) {
 	if params == nil {
@@ -163,16 +165,13 @@ func (c *Client) addOperationListEnvironmentAccountConnectionsMiddlewares(stack 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

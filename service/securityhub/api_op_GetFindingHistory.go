@@ -12,10 +12,18 @@ import (
 	"time"
 )
 
-//	Returns history for a Security Hub finding in the last 90 days. The history
+//	Returns the history of a Security Hub finding. The history includes changes
 //
-// includes changes made to any fields in the Amazon Web Services Security Finding
-// Format (ASFF).
+// made to any fields in the Amazon Web Services Security Finding Format (ASFF)
+// except top-level timestamp fields, such as the CreatedAt and UpdatedAt fields.
+//
+// This operation might return fewer results than the maximum number of results (
+// MaxResults ) specified in a request, even when more results are available. If
+// this occurs, the response includes a NextToken value, which you should use to
+// retrieve the next set of results in the response. The presence of a NextToken
+// value in a response doesn't necessarily indicate that the results are
+// incomplete. However, you should continue to specify a NextToken value until you
+// receive a response that doesn't include this value.
 func (c *Client) GetFindingHistory(ctx context.Context, params *GetFindingHistoryInput, optFns ...func(*Options)) (*GetFindingHistoryOutput, error) {
 	if params == nil {
 		params = &GetFindingHistoryInput{}
@@ -49,8 +57,7 @@ type GetFindingHistoryInput struct {
 	// timestamp of the finding to the EndTime . If you provide neither StartTime nor
 	// EndTime , Security Hub returns finding history from the CreatedAt timestamp of
 	// the finding to the time at which the API is called. In all of these scenarios,
-	// the response is limited to 100 results, and the maximum time period is limited
-	// to 90 days.
+	// the response is limited to 100 results.
 	//
 	// For more information about the validation and formatting of timestamp fields in
 	// Security Hub, see [Timestamps].
@@ -79,8 +86,7 @@ type GetFindingHistoryInput struct {
 	// timestamp of the finding to the EndTime . If you provide neither StartTime nor
 	// EndTime , Security Hub returns finding history from the CreatedAt timestamp of
 	// the finding to the time at which the API is called. In all of these scenarios,
-	// the response is limited to 100 results, and the maximum time period is limited
-	// to 90 days.
+	// the response is limited to 100 results.
 	//
 	// For more information about the validation and formatting of timestamp fields in
 	// Security Hub, see [Timestamps].
@@ -197,16 +203,13 @@ func (c *Client) addOperationGetFindingHistoryMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

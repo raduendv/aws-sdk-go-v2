@@ -13,7 +13,7 @@ import (
 
 // Creates an app block.
 //
-// App blocks are an Amazon AppStream 2.0 resource that stores the details about
+// App blocks are a WorkSpaces Applications resource that stores the details about
 // the virtual hard disk in an S3 bucket. It also stores the setup script with
 // details about how to mount the virtual hard disk. The virtual hard disk includes
 // the application binaries and other files necessary to launch your applications.
@@ -169,16 +169,13 @@ func (c *Client) addOperationCreateAppBlockMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

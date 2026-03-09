@@ -53,6 +53,9 @@ type DeregisterStreamConsumerInput struct {
 	// [Amazon Resource Names (ARNs) and Amazon Web Services Service Namespaces]: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-kinesis-streams
 	StreamARN *string
 
+	// Not Implemented. Reserved for future use.
+	StreamId *string
+
 	noSmithyDocumentSerde
 }
 
@@ -60,6 +63,7 @@ func (in *DeregisterStreamConsumerInput) bindEndpointParams(p *EndpointParameter
 
 	p.StreamARN = in.StreamARN
 	p.ConsumerARN = in.ConsumerARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("control")
 }
 
@@ -155,16 +159,13 @@ func (c *Client) addOperationDeregisterStreamConsumerMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

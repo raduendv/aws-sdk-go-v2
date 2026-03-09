@@ -63,6 +63,12 @@ type UpdateEvaluationFormInput struct {
 	// This member is required.
 	Title *string
 
+	// A boolean flag indicating whether to update evaluation form to draft state.
+	AsDraft bool
+
+	// Whether automated evaluations are enabled.
+	AutoEvaluationConfiguration *types.EvaluationFormAutoEvaluationConfiguration
+
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
 	// of the request. If not provided, the Amazon Web Services SDK populates this
 	// field. For more information about idempotency, see [Making retries safe with idempotent APIs].
@@ -76,8 +82,17 @@ type UpdateEvaluationFormInput struct {
 	// The description of the evaluation form.
 	Description *string
 
+	// Configuration for language settings of the evaluation form.
+	LanguageConfiguration *types.EvaluationFormLanguageConfiguration
+
+	// Configuration for evaluation review settings of the evaluation form.
+	ReviewConfiguration *types.EvaluationReviewConfiguration
+
 	// A scoring strategy of the evaluation form.
 	ScoringStrategy *types.EvaluationFormScoringStrategy
+
+	// Configuration that specifies the target for the evaluation form.
+	TargetConfiguration *types.EvaluationFormTargetConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -196,16 +211,13 @@ func (c *Client) addOperationUpdateEvaluationFormMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

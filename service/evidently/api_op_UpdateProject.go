@@ -20,6 +20,8 @@ import (
 //
 // Don't use this operation to update the tags of a project. Instead, use [TagResource].
 //
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
+//
 // [TagResource]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_TagResource.html
 // [CreateProject]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_CreateProject.html
 // [UpdateProjectDataDelivery]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_UpdateProjectDataDelivery.html
@@ -43,6 +45,8 @@ type UpdateProjectInput struct {
 	// The name or ARN of the project to update.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	// Use this parameter if the project will use client-side evaluation powered by
@@ -54,9 +58,13 @@ type UpdateProjectInput struct {
 	// application that will be used for client-side evaluation.
 	//
 	// [EvaluateFeature]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_EvaluateFeature.html
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	AppConfigResource *types.ProjectAppConfigResourceConfig
 
 	// An optional description of the project.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Description *string
 
 	noSmithyDocumentSerde
@@ -67,6 +75,8 @@ type UpdateProjectOutput struct {
 	// A structure containing information about the updated project.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *types.Project
 
 	// Metadata pertaining to the operation's result.
@@ -163,16 +173,13 @@ func (c *Client) addOperationUpdateProjectMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

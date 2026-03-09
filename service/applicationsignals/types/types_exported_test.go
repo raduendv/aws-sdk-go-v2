@@ -7,6 +7,36 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/applicationsignals/types"
 )
 
+func ExampleAuditTargetEntity_outputUsage() {
+	var union types.AuditTargetEntity
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.AuditTargetEntityMemberCanary:
+		_ = v.Value // Value is types.CanaryEntity
+
+	case *types.AuditTargetEntityMemberService:
+		_ = v.Value // Value is types.ServiceEntity
+
+	case *types.AuditTargetEntityMemberServiceOperation:
+		_ = v.Value // Value is types.ServiceOperationEntity
+
+	case *types.AuditTargetEntityMemberSlo:
+		_ = v.Value // Value is types.ServiceLevelObjectiveEntity
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.ServiceEntity
+var _ *types.ServiceOperationEntity
+var _ *types.ServiceLevelObjectiveEntity
+var _ *types.CanaryEntity
+
 func ExampleInterval_outputUsage() {
 	var union types.Interval
 	// type switches can be used to check the union value

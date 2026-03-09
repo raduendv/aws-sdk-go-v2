@@ -48,6 +48,12 @@ type DescribeFlowOperationInput struct {
 	// single flow operation.
 	AvailabilityZone *string
 
+	// The Amazon Resource Name (ARN) of a VPC endpoint association.
+	VpcEndpointAssociationArn *string
+
+	// A unique identifier for the primary endpoint associated with a firewall.
+	VpcEndpointId *string
+
 	noSmithyDocumentSerde
 }
 
@@ -90,6 +96,12 @@ type DescribeFlowOperationOutput struct {
 	// reason for the error or failure. Options include Flow operation error and Flow
 	// timeout .
 	StatusMessage *string
+
+	// The Amazon Resource Name (ARN) of a VPC endpoint association.
+	VpcEndpointAssociationArn *string
+
+	// A unique identifier for the primary endpoint associated with a firewall.
+	VpcEndpointId *string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -185,16 +197,13 @@ func (c *Client) addOperationDescribeFlowOperationMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

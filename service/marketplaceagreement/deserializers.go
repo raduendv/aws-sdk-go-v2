@@ -18,16 +18,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson10_deserializeOpDescribeAgreement struct {
 }
@@ -698,6 +689,16 @@ loop:
 			}
 			mv = *destAddr
 			uv = &types.AcceptedTermMemberValidityTerm{Value: mv}
+			break loop
+
+		case "variablePaymentTerm":
+			var mv types.VariablePaymentTerm
+			destAddr := &mv
+			if err := awsAwsjson10_deserializeDocumentVariablePaymentTerm(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.AcceptedTermMemberVariablePaymentTerm{Value: mv}
 			break loop
 
 		default:
@@ -1879,6 +1880,15 @@ func awsAwsjson10_deserializeDocumentProposalSummary(v **types.ProposalSummary, 
 				sv.OfferId = ptr.String(jtv)
 			}
 
+		case "offerSetId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OfferSetId to be of type string, got %T instead", value)
+				}
+				sv.OfferSetId = ptr.String(jtv)
+			}
+
 		case "resources":
 			if err := awsAwsjson10_deserializeDocumentResources(&sv.Resources, value); err != nil {
 				return err
@@ -2895,6 +2905,118 @@ func awsAwsjson10_deserializeDocumentValidityTerm(v **types.ValidityTerm, value 
 					return fmt.Errorf("expected UnversionedTermType to be of type string, got %T instead", value)
 				}
 				sv.Type = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentVariablePaymentTerm(v **types.VariablePaymentTerm, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.VariablePaymentTerm
+	if *v == nil {
+		sv = &types.VariablePaymentTerm{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "configuration":
+			if err := awsAwsjson10_deserializeDocumentVariablePaymentTermConfiguration(&sv.Configuration, value); err != nil {
+				return err
+			}
+
+		case "currencyCode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CurrencyCode to be of type string, got %T instead", value)
+				}
+				sv.CurrencyCode = ptr.String(jtv)
+			}
+
+		case "maxTotalChargeAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+				}
+				sv.MaxTotalChargeAmount = ptr.String(jtv)
+			}
+
+		case "type":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UnversionedTermType to be of type string, got %T instead", value)
+				}
+				sv.Type = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentVariablePaymentTermConfiguration(v **types.VariablePaymentTermConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.VariablePaymentTermConfiguration
+	if *v == nil {
+		sv = &types.VariablePaymentTermConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "expirationDuration":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ISO8601Duration to be of type string, got %T instead", value)
+				}
+				sv.ExpirationDuration = ptr.String(jtv)
+			}
+
+		case "paymentRequestApprovalStrategy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PaymentRequestApprovalStrategy to be of type string, got %T instead", value)
+				}
+				sv.PaymentRequestApprovalStrategy = types.PaymentRequestApprovalStrategy(jtv)
 			}
 
 		default:

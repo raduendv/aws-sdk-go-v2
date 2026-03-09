@@ -1,12 +1,10 @@
 DescribeStackEvents
 	Initialize stack step
-		spanInitializeStart
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		SetLogger
-		spanInitializeEnd
+		OperationInputValidation
 	Serialize stack step
-		spanBuildRequestStart
 		setOperationInput
 		ResolveEndpoint
 		OperationSerializer
@@ -17,10 +15,11 @@ DescribeStackEvents
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

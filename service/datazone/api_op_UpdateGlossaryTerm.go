@@ -12,6 +12,16 @@ import (
 )
 
 // Updates a business glossary term in Amazon DataZone.
+//
+// Prerequisites:
+//
+//   - Glossary term must exist in the specified domain.
+//
+//   - New name must not conflict with existing terms in the same glossary.
+//
+//   - User must have permissions on the term.
+//
+//   - The term must not be in DELETED status.
 func (c *Client) UpdateGlossaryTerm(ctx context.Context, params *UpdateGlossaryTermInput, optFns ...func(*Options)) (*UpdateGlossaryTermOutput, error) {
 	if params == nil {
 		params = &UpdateGlossaryTermInput{}
@@ -97,6 +107,9 @@ type UpdateGlossaryTermOutput struct {
 
 	// The term relations to be updated as part of the UpdateGlossaryTerm action.
 	TermRelations *types.TermRelations
+
+	// The usage restriction of a term within a restricted glossary.
+	UsageRestrictions []types.GlossaryUsageRestriction
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -192,16 +205,13 @@ func (c *Client) addOperationUpdateGlossaryTermMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

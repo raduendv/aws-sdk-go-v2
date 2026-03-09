@@ -31,7 +31,7 @@ type CreateThemeAliasInput struct {
 
 	// The name that you want to give to the theme alias that you are creating. The
 	// alias name can't begin with a $ . Alias names that start with $ are reserved by
-	// Amazon QuickSight.
+	// Amazon Quick Sight.
 	//
 	// This member is required.
 	AliasName *string
@@ -160,16 +160,13 @@ func (c *Client) addOperationCreateThemeAliasMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

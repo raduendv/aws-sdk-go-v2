@@ -51,8 +51,8 @@ type GetMatchingWorkflowOutput struct {
 	// This member is required.
 	InputSourceConfig []types.InputSource
 
-	// A list of OutputSource objects, each of which contains fields OutputS3Path ,
-	// ApplyNormalization , and Output .
+	// A list of OutputSource objects, each of which contains fields outputS3Path ,
+	// applyNormalization , KMSArn , and output .
 	//
 	// This member is required.
 	OutputSourceConfig []types.OutputSource
@@ -188,16 +188,13 @@ func (c *Client) addOperationGetMatchingWorkflowMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

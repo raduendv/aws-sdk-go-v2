@@ -20,16 +20,7 @@ import (
 	"io/ioutil"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpCreateCampaign struct {
 }
@@ -1623,6 +1614,167 @@ func awsRestjson1_deserializeOpDocumentGetConnectInstanceConfigOutput(v **GetCon
 	return nil
 }
 
+type awsRestjson1_deserializeOpGetInstanceCommunicationLimits struct {
+}
+
+func (*awsRestjson1_deserializeOpGetInstanceCommunicationLimits) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsRestjson1_deserializeOpGetInstanceCommunicationLimits) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsRestjson1_deserializeOpErrorGetInstanceCommunicationLimits(response, &metadata)
+	}
+	output := &GetInstanceCommunicationLimitsOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsRestjson1_deserializeOpDocumentGetInstanceCommunicationLimitsOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		return out, metadata, &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body with invalid JSON, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+	}
+
+	span.End()
+	return out, metadata, err
+}
+
+func awsRestjson1_deserializeOpErrorGetInstanceCommunicationLimits(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+	if len(headerCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(headerCode)
+	}
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	jsonCode, message, err := restjson.GetErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if len(headerCode) == 0 && len(jsonCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(jsonCode)
+	}
+	if len(message) != 0 {
+		errorMessage = message
+	}
+
+	switch {
+	case strings.EqualFold("AccessDeniedException", errorCode):
+		return awsRestjson1_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsRestjson1_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ValidationException", errorCode):
+		return awsRestjson1_deserializeErrorValidationException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+func awsRestjson1_deserializeOpDocumentGetInstanceCommunicationLimitsOutput(v **GetInstanceCommunicationLimitsOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *GetInstanceCommunicationLimitsOutput
+	if *v == nil {
+		sv = &GetInstanceCommunicationLimitsOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "communicationLimitsConfig":
+			if err := awsRestjson1_deserializeDocumentInstanceCommunicationLimitsConfig(&sv.CommunicationLimitsConfig, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 type awsRestjson1_deserializeOpGetInstanceOnboardingJobStatus struct {
 }
 
@@ -2495,6 +2647,112 @@ func awsRestjson1_deserializeOpErrorPutConnectInstanceIntegration(response *smit
 
 	case strings.EqualFold("ThrottlingException", errorCode):
 		return awsRestjson1_deserializeErrorThrottlingException(response, errorBody)
+
+	case strings.EqualFold("ValidationException", errorCode):
+		return awsRestjson1_deserializeErrorValidationException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+type awsRestjson1_deserializeOpPutInstanceCommunicationLimits struct {
+}
+
+func (*awsRestjson1_deserializeOpPutInstanceCommunicationLimits) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsRestjson1_deserializeOpPutInstanceCommunicationLimits) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsRestjson1_deserializeOpErrorPutInstanceCommunicationLimits(response, &metadata)
+	}
+	output := &PutInstanceCommunicationLimitsOutput{}
+	out.Result = output
+
+	if _, err = io.Copy(ioutil.Discard, response.Body); err != nil {
+		return out, metadata, &smithy.DeserializationError{
+			Err: fmt.Errorf("failed to discard response body, %w", err),
+		}
+	}
+
+	span.End()
+	return out, metadata, err
+}
+
+func awsRestjson1_deserializeOpErrorPutInstanceCommunicationLimits(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+	if len(headerCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(headerCode)
+	}
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	jsonCode, message, err := restjson.GetErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if len(headerCode) == 0 && len(jsonCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(jsonCode)
+	}
+	if len(message) != 0 {
+		errorMessage = message
+	}
+
+	switch {
+	case strings.EqualFold("AccessDeniedException", errorCode):
+		return awsRestjson1_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsRestjson1_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsRestjson1_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsRestjson1_deserializeErrorValidationException(response, errorBody)
@@ -4848,6 +5106,42 @@ func awsRestjson1_deserializeDocumentAccessDeniedException(v **types.AccessDenie
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentAgentActions(v *[]types.AgentAction, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.AgentAction
+	if *v == nil {
+		cv = []types.AgentAction{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.AgentAction
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected AgentAction to be of type string, got %T instead", value)
+			}
+			col = types.AgentAction(jtv)
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentAgentlessConfig(v **types.AgentlessConfig, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -5025,6 +5319,15 @@ func awsRestjson1_deserializeDocumentCampaign(v **types.Campaign, value interfac
 				return err
 			}
 
+		case "type":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ExternalCampaignType to be of type string, got %T instead", value)
+				}
+				sv.Type = types.ExternalCampaignType(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -5111,6 +5414,15 @@ func awsRestjson1_deserializeDocumentCampaignSummary(v **types.CampaignSummary, 
 				return err
 			}
 
+		case "type":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ExternalCampaignType to be of type string, got %T instead", value)
+				}
+				sv.Type = types.ExternalCampaignType(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -5188,6 +5500,11 @@ func awsRestjson1_deserializeDocumentChannelSubtypeConfig(v **types.ChannelSubty
 
 		case "telephony":
 			if err := awsRestjson1_deserializeDocumentTelephonyChannelSubtypeConfig(&sv.Telephony, value); err != nil {
+				return err
+			}
+
+		case "whatsApp":
+			if err := awsRestjson1_deserializeDocumentWhatsAppChannelSubtypeConfig(&sv.WhatsApp, value); err != nil {
 				return err
 			}
 
@@ -5401,6 +5718,15 @@ func awsRestjson1_deserializeDocumentCommunicationLimitsConfig(v **types.Communi
 				return err
 			}
 
+		case "instanceLimitsHandling":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected InstanceLimitsHandling to be of type string, got %T instead", value)
+				}
+				sv.InstanceLimitsHandling = types.InstanceLimitsHandling(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -5449,6 +5775,11 @@ func awsRestjson1_deserializeDocumentCommunicationTimeConfig(v **types.Communica
 
 		case "telephony":
 			if err := awsRestjson1_deserializeDocumentTimeWindow(&sv.Telephony, value); err != nil {
+				return err
+			}
+
+		case "whatsApp":
+			if err := awsRestjson1_deserializeDocumentTimeWindow(&sv.WhatsApp, value); err != nil {
 				return err
 			}
 
@@ -6127,6 +6458,42 @@ func awsRestjson1_deserializeDocumentFailedRequestList(v *[]types.FailedRequest,
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentInstanceCommunicationLimitsConfig(v **types.InstanceCommunicationLimitsConfig, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.InstanceCommunicationLimitsConfig
+	if *v == nil {
+		sv = &types.InstanceCommunicationLimitsConfig{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "allChannelSubtypes":
+			if err := awsRestjson1_deserializeDocumentCommunicationLimits(&sv.AllChannelSubtypes, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentInstanceConfig(v **types.InstanceConfig, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -6267,6 +6634,16 @@ loop:
 			}
 			mv = *destAddr
 			uv = &types.IntegrationSummaryMemberCustomerProfiles{Value: mv}
+			break loop
+
+		case "lambda":
+			var mv types.LambdaIntegrationSummary
+			destAddr := &mv
+			if err := awsRestjson1_deserializeDocumentLambdaIntegrationSummary(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.IntegrationSummaryMemberLambda{Value: mv}
 			break loop
 
 		case "qConnect":
@@ -6466,6 +6843,46 @@ func awsRestjson1_deserializeDocumentInvalidStateException(v **types.InvalidStat
 					return fmt.Errorf("expected XAmazonErrorType to be of type string, got %T instead", value)
 				}
 				sv.XAmzErrorType = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentLambdaIntegrationSummary(v **types.LambdaIntegrationSummary, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.LambdaIntegrationSummary
+	if *v == nil {
+		sv = &types.LambdaIntegrationSummary{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "functionArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LambdaArn to be of type string, got %T instead", value)
+				}
+				sv.FunctionArn = ptr.String(jtv)
 			}
 
 		default:
@@ -6686,6 +7103,81 @@ func awsRestjson1_deserializeDocumentPredictiveConfig(v **types.PredictiveConfig
 					return fmt.Errorf("expected BandwidthAllocation to be a JSON Number, got %T instead", value)
 
 				}
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentPreviewConfig(v **types.PreviewConfig, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.PreviewConfig
+	if *v == nil {
+		sv = &types.PreviewConfig{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "agentActions":
+			if err := awsRestjson1_deserializeDocumentAgentActions(&sv.AgentActions, value); err != nil {
+				return err
+			}
+
+		case "bandwidthAllocation":
+			if value != nil {
+				switch jtv := value.(type) {
+				case json.Number:
+					f64, err := jtv.Float64()
+					if err != nil {
+						return err
+					}
+					sv.BandwidthAllocation = ptr.Float64(f64)
+
+				case string:
+					var f64 float64
+					switch {
+					case strings.EqualFold(jtv, "NaN"):
+						f64 = math.NaN()
+
+					case strings.EqualFold(jtv, "Infinity"):
+						f64 = math.Inf(1)
+
+					case strings.EqualFold(jtv, "-Infinity"):
+						f64 = math.Inf(-1)
+
+					default:
+						return fmt.Errorf("unknown JSON number value: %s", jtv)
+
+					}
+					sv.BandwidthAllocation = ptr.Float64(f64)
+
+				default:
+					return fmt.Errorf("expected BandwidthAllocation to be a JSON Number, got %T instead", value)
+
+				}
+			}
+
+		case "timeoutConfig":
+			if err := awsRestjson1_deserializeDocumentTimeoutConfig(&sv.TimeoutConfig, value); err != nil {
+				return err
 			}
 
 		default:
@@ -7726,6 +8218,19 @@ func awsRestjson1_deserializeDocumentTelephonyOutboundConfig(v **types.Telephony
 				sv.ConnectSourcePhoneNumber = ptr.String(jtv)
 			}
 
+		case "ringTimeout":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected RingTimeout to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.RingTimeout = ptr.Int32(int32(i64))
+			}
+
 		default:
 			_, _ = key, value
 
@@ -7773,6 +8278,16 @@ loop:
 			}
 			mv = *destAddr
 			uv = &types.TelephonyOutboundModeMemberPredictive{Value: mv}
+			break loop
+
+		case "preview":
+			var mv types.PreviewConfig
+			destAddr := &mv
+			if err := awsRestjson1_deserializeDocumentPreviewConfig(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.TelephonyOutboundModeMemberPreview{Value: mv}
 			break loop
 
 		case "progressive":
@@ -7833,6 +8348,50 @@ func awsRestjson1_deserializeDocumentThrottlingException(v **types.ThrottlingExc
 					return fmt.Errorf("expected XAmazonErrorType to be of type string, got %T instead", value)
 				}
 				sv.XAmzErrorType = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentTimeoutConfig(v **types.TimeoutConfig, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.TimeoutConfig
+	if *v == nil {
+		sv = &types.TimeoutConfig{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "durationInSeconds":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TimeoutDuration to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DurationInSeconds = ptr.Int32(int32(i64))
 			}
 
 		default:
@@ -8014,5 +8573,169 @@ func awsRestjson1_deserializeDocumentValidationException(v **types.ValidationExc
 		}
 	}
 	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentWhatsAppChannelSubtypeConfig(v **types.WhatsAppChannelSubtypeConfig, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.WhatsAppChannelSubtypeConfig
+	if *v == nil {
+		sv = &types.WhatsAppChannelSubtypeConfig{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "capacity":
+			if value != nil {
+				switch jtv := value.(type) {
+				case json.Number:
+					f64, err := jtv.Float64()
+					if err != nil {
+						return err
+					}
+					sv.Capacity = ptr.Float64(f64)
+
+				case string:
+					var f64 float64
+					switch {
+					case strings.EqualFold(jtv, "NaN"):
+						f64 = math.NaN()
+
+					case strings.EqualFold(jtv, "Infinity"):
+						f64 = math.Inf(1)
+
+					case strings.EqualFold(jtv, "-Infinity"):
+						f64 = math.Inf(-1)
+
+					default:
+						return fmt.Errorf("unknown JSON number value: %s", jtv)
+
+					}
+					sv.Capacity = ptr.Float64(f64)
+
+				default:
+					return fmt.Errorf("expected Capacity to be a JSON Number, got %T instead", value)
+
+				}
+			}
+
+		case "defaultOutboundConfig":
+			if err := awsRestjson1_deserializeDocumentWhatsAppOutboundConfig(&sv.DefaultOutboundConfig, value); err != nil {
+				return err
+			}
+
+		case "outboundMode":
+			if err := awsRestjson1_deserializeDocumentWhatsAppOutboundMode(&sv.OutboundMode, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentWhatsAppOutboundConfig(v **types.WhatsAppOutboundConfig, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.WhatsAppOutboundConfig
+	if *v == nil {
+		sv = &types.WhatsAppOutboundConfig{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "connectSourcePhoneNumberArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Arn to be of type string, got %T instead", value)
+				}
+				sv.ConnectSourcePhoneNumberArn = ptr.String(jtv)
+			}
+
+		case "wisdomTemplateArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Arn to be of type string, got %T instead", value)
+				}
+				sv.WisdomTemplateArn = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentWhatsAppOutboundMode(v *types.WhatsAppOutboundMode, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var uv types.WhatsAppOutboundMode
+loop:
+	for key, value := range shape {
+		if value == nil {
+			continue
+		}
+		switch key {
+		case "agentless":
+			var mv types.AgentlessConfig
+			destAddr := &mv
+			if err := awsRestjson1_deserializeDocumentAgentlessConfig(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.WhatsAppOutboundModeMemberAgentless{Value: mv}
+			break loop
+
+		default:
+			uv = &types.UnknownUnionMember{Tag: key}
+			break loop
+
+		}
+	}
+	*v = uv
 	return nil
 }

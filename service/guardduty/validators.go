@@ -210,6 +210,26 @@ func (m *validateOpCreateSampleFindings) HandleInitialize(ctx context.Context, i
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateThreatEntitySet struct {
+}
+
+func (*validateOpCreateThreatEntitySet) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateThreatEntitySet) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateThreatEntitySetInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateThreatEntitySetInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateThreatIntelSet struct {
 }
 
@@ -225,6 +245,26 @@ func (m *validateOpCreateThreatIntelSet) HandleInitialize(ctx context.Context, i
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpCreateThreatIntelSetInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpCreateTrustedEntitySet struct {
+}
+
+func (*validateOpCreateTrustedEntitySet) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateTrustedEntitySet) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateTrustedEntitySetInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateTrustedEntitySetInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -390,6 +430,26 @@ func (m *validateOpDeletePublishingDestination) HandleInitialize(ctx context.Con
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpDeleteThreatEntitySet struct {
+}
+
+func (*validateOpDeleteThreatEntitySet) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteThreatEntitySet) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteThreatEntitySetInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteThreatEntitySetInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeleteThreatIntelSet struct {
 }
 
@@ -405,6 +465,26 @@ func (m *validateOpDeleteThreatIntelSet) HandleInitialize(ctx context.Context, i
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDeleteThreatIntelSetInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteTrustedEntitySet struct {
+}
+
+func (*validateOpDeleteTrustedEntitySet) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteTrustedEntitySet) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteTrustedEntitySetInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteTrustedEntitySetInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -730,6 +810,26 @@ func (m *validateOpGetMalwareProtectionPlan) HandleInitialize(ctx context.Contex
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetMalwareScan struct {
+}
+
+func (*validateOpGetMalwareScan) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetMalwareScan) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetMalwareScanInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetMalwareScanInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetMalwareScanSettings struct {
 }
 
@@ -830,6 +930,26 @@ func (m *validateOpGetRemainingFreeTrialDays) HandleInitialize(ctx context.Conte
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetThreatEntitySet struct {
+}
+
+func (*validateOpGetThreatEntitySet) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetThreatEntitySet) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetThreatEntitySetInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetThreatEntitySetInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetThreatIntelSet struct {
 }
 
@@ -845,6 +965,26 @@ func (m *validateOpGetThreatIntelSet) HandleInitialize(ctx context.Context, in m
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpGetThreatIntelSetInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetTrustedEntitySet struct {
+}
+
+func (*validateOpGetTrustedEntitySet) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetTrustedEntitySet) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetTrustedEntitySetInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetTrustedEntitySetInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1030,6 +1170,26 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpListThreatEntitySets struct {
+}
+
+func (*validateOpListThreatEntitySets) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListThreatEntitySets) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListThreatEntitySetsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListThreatEntitySetsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpListThreatIntelSets struct {
 }
 
@@ -1045,6 +1205,26 @@ func (m *validateOpListThreatIntelSets) HandleInitialize(ctx context.Context, in
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListThreatIntelSetsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpListTrustedEntitySets struct {
+}
+
+func (*validateOpListTrustedEntitySets) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListTrustedEntitySets) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListTrustedEntitySetsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListTrustedEntitySetsInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1350,6 +1530,26 @@ func (m *validateOpUpdatePublishingDestination) HandleInitialize(ctx context.Con
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateThreatEntitySet struct {
+}
+
+func (*validateOpUpdateThreatEntitySet) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateThreatEntitySet) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateThreatEntitySetInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateThreatEntitySetInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpUpdateThreatIntelSet struct {
 }
 
@@ -1365,6 +1565,26 @@ func (m *validateOpUpdateThreatIntelSet) HandleInitialize(ctx context.Context, i
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpUpdateThreatIntelSetInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpUpdateTrustedEntitySet struct {
+}
+
+func (*validateOpUpdateTrustedEntitySet) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateTrustedEntitySet) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateTrustedEntitySetInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateTrustedEntitySetInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1410,8 +1630,16 @@ func addOpCreateSampleFindingsValidationMiddleware(stack *middleware.Stack) erro
 	return stack.Initialize.Add(&validateOpCreateSampleFindings{}, middleware.After)
 }
 
+func addOpCreateThreatEntitySetValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateThreatEntitySet{}, middleware.After)
+}
+
 func addOpCreateThreatIntelSetValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateThreatIntelSet{}, middleware.After)
+}
+
+func addOpCreateTrustedEntitySetValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateTrustedEntitySet{}, middleware.After)
 }
 
 func addOpDeclineInvitationsValidationMiddleware(stack *middleware.Stack) error {
@@ -1446,8 +1674,16 @@ func addOpDeletePublishingDestinationValidationMiddleware(stack *middleware.Stac
 	return stack.Initialize.Add(&validateOpDeletePublishingDestination{}, middleware.After)
 }
 
+func addOpDeleteThreatEntitySetValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteThreatEntitySet{}, middleware.After)
+}
+
 func addOpDeleteThreatIntelSetValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteThreatIntelSet{}, middleware.After)
+}
+
+func addOpDeleteTrustedEntitySetValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteTrustedEntitySet{}, middleware.After)
 }
 
 func addOpDescribeMalwareScansValidationMiddleware(stack *middleware.Stack) error {
@@ -1514,6 +1750,10 @@ func addOpGetMalwareProtectionPlanValidationMiddleware(stack *middleware.Stack) 
 	return stack.Initialize.Add(&validateOpGetMalwareProtectionPlan{}, middleware.After)
 }
 
+func addOpGetMalwareScanValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetMalwareScan{}, middleware.After)
+}
+
 func addOpGetMalwareScanSettingsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetMalwareScanSettings{}, middleware.After)
 }
@@ -1534,8 +1774,16 @@ func addOpGetRemainingFreeTrialDaysValidationMiddleware(stack *middleware.Stack)
 	return stack.Initialize.Add(&validateOpGetRemainingFreeTrialDays{}, middleware.After)
 }
 
+func addOpGetThreatEntitySetValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetThreatEntitySet{}, middleware.After)
+}
+
 func addOpGetThreatIntelSetValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetThreatIntelSet{}, middleware.After)
+}
+
+func addOpGetTrustedEntitySetValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetTrustedEntitySet{}, middleware.After)
 }
 
 func addOpGetUsageStatisticsValidationMiddleware(stack *middleware.Stack) error {
@@ -1574,8 +1822,16 @@ func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
 }
 
+func addOpListThreatEntitySetsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListThreatEntitySets{}, middleware.After)
+}
+
 func addOpListThreatIntelSetsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListThreatIntelSets{}, middleware.After)
+}
+
+func addOpListTrustedEntitySetsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListTrustedEntitySets{}, middleware.After)
 }
 
 func addOpStartMalwareScanValidationMiddleware(stack *middleware.Stack) error {
@@ -1638,8 +1894,16 @@ func addOpUpdatePublishingDestinationValidationMiddleware(stack *middleware.Stac
 	return stack.Initialize.Add(&validateOpUpdatePublishingDestination{}, middleware.After)
 }
 
+func addOpUpdateThreatEntitySetValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateThreatEntitySet{}, middleware.After)
+}
+
 func addOpUpdateThreatIntelSetValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateThreatIntelSet{}, middleware.After)
+}
+
+func addOpUpdateTrustedEntitySetValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateTrustedEntitySet{}, middleware.After)
 }
 
 func validateAccountDetail(v *types.AccountDetail) error {
@@ -1691,6 +1955,21 @@ func validateDataSourceConfigurations(v *types.DataSourceConfigurations) error {
 		if err := validateKubernetesConfiguration(v.Kubernetes); err != nil {
 			invalidParams.AddNested("Kubernetes", err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateIncrementalScanDetails(v *types.IncrementalScanDetails) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "IncrementalScanDetails"}
+	if v.BaselineResourceArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("BaselineResourceArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1821,6 +2100,21 @@ func validateOrganizationS3LogsConfiguration(v *types.OrganizationS3LogsConfigur
 	}
 }
 
+func validateRecoveryPoint(v *types.RecoveryPoint) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RecoveryPoint"}
+	if v.BackupVaultName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("BackupVaultName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateS3LogsConfiguration(v *types.S3LogsConfiguration) error {
 	if v == nil {
 		return nil
@@ -1901,6 +2195,31 @@ func validateScanResourceCriteria(v *types.ScanResourceCriteria) error {
 	if v.Exclude != nil {
 		if err := validateScanCriterion(v.Exclude); err != nil {
 			invalidParams.AddNested("Exclude", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateStartMalwareScanConfiguration(v *types.StartMalwareScanConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StartMalwareScanConfiguration"}
+	if v.Role == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Role"))
+	}
+	if v.IncrementalScanDetails != nil {
+		if err := validateIncrementalScanDetails(v.IncrementalScanDetails); err != nil {
+			invalidParams.AddNested("IncrementalScanDetails", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.RecoveryPoint != nil {
+		if err := validateRecoveryPoint(v.RecoveryPoint); err != nil {
+			invalidParams.AddNested("RecoveryPoint", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -2114,11 +2433,65 @@ func validateOpCreateSampleFindingsInput(v *CreateSampleFindingsInput) error {
 	}
 }
 
+func validateOpCreateThreatEntitySetInput(v *CreateThreatEntitySetInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateThreatEntitySetInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if v.Name == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Name"))
+	}
+	if len(v.Format) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Format"))
+	}
+	if v.Location == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Location"))
+	}
+	if v.Activate == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Activate"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateThreatIntelSetInput(v *CreateThreatIntelSetInput) error {
 	if v == nil {
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "CreateThreatIntelSetInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if v.Name == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Name"))
+	}
+	if len(v.Format) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Format"))
+	}
+	if v.Location == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Location"))
+	}
+	if v.Activate == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Activate"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpCreateTrustedEntitySetInput(v *CreateTrustedEntitySetInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateTrustedEntitySetInput"}
 	if v.DetectorId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
 	}
@@ -2273,6 +2646,24 @@ func validateOpDeletePublishingDestinationInput(v *DeletePublishingDestinationIn
 	}
 }
 
+func validateOpDeleteThreatEntitySetInput(v *DeleteThreatEntitySetInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteThreatEntitySetInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if v.ThreatEntitySetId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ThreatEntitySetId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpDeleteThreatIntelSetInput(v *DeleteThreatIntelSetInput) error {
 	if v == nil {
 		return nil
@@ -2283,6 +2674,24 @@ func validateOpDeleteThreatIntelSetInput(v *DeleteThreatIntelSetInput) error {
 	}
 	if v.ThreatIntelSetId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ThreatIntelSetId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteTrustedEntitySetInput(v *DeleteTrustedEntitySetInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteTrustedEntitySetInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if v.TrustedEntitySetId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TrustedEntitySetId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2549,6 +2958,21 @@ func validateOpGetMalwareProtectionPlanInput(v *GetMalwareProtectionPlanInput) e
 	}
 }
 
+func validateOpGetMalwareScanInput(v *GetMalwareScanInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetMalwareScanInput"}
+	if v.ScanId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ScanId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetMalwareScanSettingsInput(v *GetMalwareScanSettingsInput) error {
 	if v == nil {
 		return nil
@@ -2623,6 +3047,27 @@ func validateOpGetRemainingFreeTrialDaysInput(v *GetRemainingFreeTrialDaysInput)
 	if v.DetectorId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
 	}
+	if v.AccountIds == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AccountIds"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetThreatEntitySetInput(v *GetThreatEntitySetInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetThreatEntitySetInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if v.ThreatEntitySetId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ThreatEntitySetId"))
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -2640,6 +3085,24 @@ func validateOpGetThreatIntelSetInput(v *GetThreatIntelSetInput) error {
 	}
 	if v.ThreatIntelSetId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ThreatIntelSetId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetTrustedEntitySetInput(v *GetTrustedEntitySetInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetTrustedEntitySetInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if v.TrustedEntitySetId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TrustedEntitySetId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2792,11 +3255,41 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	}
 }
 
+func validateOpListThreatEntitySetsInput(v *ListThreatEntitySetsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListThreatEntitySetsInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpListThreatIntelSetsInput(v *ListThreatIntelSetsInput) error {
 	if v == nil {
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "ListThreatIntelSetsInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpListTrustedEntitySetsInput(v *ListTrustedEntitySetsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListTrustedEntitySetsInput"}
 	if v.DetectorId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
 	}
@@ -2814,6 +3307,11 @@ func validateOpStartMalwareScanInput(v *StartMalwareScanInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "StartMalwareScanInput"}
 	if v.ResourceArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if v.ScanConfiguration != nil {
+		if err := validateStartMalwareScanConfiguration(v.ScanConfiguration); err != nil {
+			invalidParams.AddNested("ScanConfiguration", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3085,6 +3583,24 @@ func validateOpUpdatePublishingDestinationInput(v *UpdatePublishingDestinationIn
 	}
 }
 
+func validateOpUpdateThreatEntitySetInput(v *UpdateThreatEntitySetInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateThreatEntitySetInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if v.ThreatEntitySetId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ThreatEntitySetId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpUpdateThreatIntelSetInput(v *UpdateThreatIntelSetInput) error {
 	if v == nil {
 		return nil
@@ -3095,6 +3611,24 @@ func validateOpUpdateThreatIntelSetInput(v *UpdateThreatIntelSetInput) error {
 	}
 	if v.ThreatIntelSetId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ThreatIntelSetId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateTrustedEntitySetInput(v *UpdateTrustedEntitySetInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateTrustedEntitySetInput"}
+	if v.DetectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DetectorId"))
+	}
+	if v.TrustedEntitySetId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TrustedEntitySetId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

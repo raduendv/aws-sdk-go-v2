@@ -14,7 +14,7 @@ import (
 
 // This operation returns information about a job you previously initiated,
 // including the job initiation date, the user who initiated the job, the job
-// status code/message and the Amazon SNS topic to notify after Amazon S3 Glacier
+// status code/message and the Amazon SNS topic to notify after Amazon Glacier
 // (Glacier) completes the job. For more information about initiating a job, see InitiateJob.
 //
 // This operation enables you to check the status of your job. However, it is
@@ -54,7 +54,7 @@ type DescribeJobInput struct {
 
 	// The AccountId value is the AWS account ID of the account that owns the vault.
 	// You can either specify an AWS account ID or optionally a single ' - ' (hyphen),
-	// in which case Amazon S3 Glacier uses the AWS account ID associated with the
+	// in which case Amazon Glacier uses the AWS account ID associated with the
 	// credentials used to sign the request. If you use an account ID, do not include
 	// any hyphens ('-') in the ID.
 	//
@@ -279,16 +279,13 @@ func (c *Client) addOperationDescribeJobMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

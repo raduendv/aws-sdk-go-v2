@@ -51,7 +51,8 @@ type CancelImageCreationOutput struct {
 	// The client token that uniquely identifies the request.
 	ClientToken *string
 
-	// The ARN of the image whose creation this request canceled.
+	// The Amazon Resource Name (ARN) of the image whose creation this request
+	// canceled.
 	ImageBuildVersionArn *string
 
 	// The request ID that uniquely identifies this request.
@@ -154,16 +155,13 @@ func (c *Client) addOperationCancelImageCreationMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

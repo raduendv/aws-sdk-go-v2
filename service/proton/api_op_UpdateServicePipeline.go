@@ -40,6 +40,8 @@ import (
 // recommended (latest) major and minor version of the current template by default.
 // You can specify a different major version that's higher than the major version
 // in use and a minor version.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) UpdateServicePipeline(ctx context.Context, params *UpdateServicePipelineInput, optFns ...func(*Options)) (*UpdateServicePipelineOutput, error) {
 	if params == nil {
 		params = &UpdateServicePipelineInput{}
@@ -214,16 +216,13 @@ func (c *Client) addOperationUpdateServicePipelineMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

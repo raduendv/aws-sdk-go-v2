@@ -11,9 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Container
+//
 // Requests authorization to remotely connect to a hosting resource in a Amazon
-// GameLift managed fleet. This operation is not used with Amazon GameLift Anywhere
-// fleets.
+// GameLift Servers managed fleet. This operation is not used with Amazon GameLift
+// Servers Anywhere fleets.
 //
 // # Request options
 //
@@ -74,9 +76,10 @@ type GetComputeAccessInput struct {
 
 type GetComputeAccessOutput struct {
 
-	// The Amazon Resource Name ([ARN] ) that is assigned to an Amazon GameLift compute
-	// resource and uniquely identifies it. ARNs are unique across all Regions. Format
-	// is arn:aws:gamelift:::compute/compute-a1234567-b8c9-0d1e-2fa3-b45c6d7e8912 .
+	// The Amazon Resource Name ([ARN] ) that is assigned to an Amazon GameLift Servers
+	// compute resource and uniquely identifies it. ARNs are unique across all Regions.
+	// Format is
+	// arn:aws:gamelift:::compute/compute-a1234567-b8c9-0d1e-2fa3-b45c6d7e8912 .
 	//
 	// [ARN]: https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html
 	ComputeArn *string
@@ -93,7 +96,7 @@ type GetComputeAccessOutput struct {
 	// the compute resource with Amazon EC2 Systems Manager (SSM).
 	Credentials *types.AwsCredentials
 
-	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift fleet
+	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift Servers fleet
 	// resource and uniquely identifies it. ARNs are unique across all Regions. Format
 	// is arn:aws:gamelift:::fleet/fleet-a1234567-b8c9-0d1e-2fa3-b45c6d7e8912 .
 	//
@@ -200,16 +203,13 @@ func (c *Client) addOperationGetComputeAccessMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

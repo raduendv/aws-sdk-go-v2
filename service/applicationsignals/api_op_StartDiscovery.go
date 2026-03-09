@@ -29,6 +29,10 @@ import (
 //
 //   - autoscaling:DescribeAutoScalingGroups
 //
+// A service-linked CloudTrail event channel is created to process CloudTrail
+// events and return change event information. This includes last deployment time,
+// userName, eventName, and other event metadata.
+//
 // After completing this step, you still need to instrument your Java and Python
 // applications to send data to Application Signals. For more information, see [Enabling Application Signals].
 //
@@ -144,16 +148,13 @@ func (c *Client) addOperationStartDiscoveryMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

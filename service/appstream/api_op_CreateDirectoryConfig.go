@@ -11,9 +11,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Creates a Directory Config object in AppStream 2.0. This object includes the
-// configuration information required to join fleets and image builders to
-// Microsoft Active Directory domains.
+// Creates a Directory Config object in WorkSpaces Applications. This object
+// includes the configuration information required to join fleets and image
+// builders to Microsoft Active Directory domains.
 func (c *Client) CreateDirectoryConfig(ctx context.Context, params *CreateDirectoryConfigInput, optFns ...func(*Options)) (*CreateDirectoryConfigOutput, error) {
 	if params == nil {
 		params = &CreateDirectoryConfigInput{}
@@ -158,16 +158,13 @@ func (c *Client) addOperationCreateDirectoryConfigMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

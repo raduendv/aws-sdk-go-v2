@@ -53,6 +53,10 @@ type CreateRedshiftIdcApplicationInput struct {
 	// This member is required.
 	RedshiftIdcApplicationName *string
 
+	// The type of application being created. Valid values are None or Lakehouse . Use
+	// Lakehouse to enable Amazon Redshift federated permissions on cluster.
+	ApplicationType types.ApplicationType
+
 	// The token issuer list for the Amazon Redshift IAM Identity Center application
 	// instance.
 	AuthorizedTokenIssuerList []types.AuthorizedTokenIssuer
@@ -64,6 +68,14 @@ type CreateRedshiftIdcApplicationInput struct {
 	// A collection of service integrations for the Redshift IAM Identity Center
 	// application.
 	ServiceIntegrations []types.ServiceIntegrationsUnion
+
+	// A list of tags keys that Redshift Identity Center applications copy to IAM
+	// Identity Center. For each input key, the tag corresponding to the key-value pair
+	// is propagated.
+	SsoTagKeys []string
+
+	// A list of tags.
+	Tags []types.Tag
 
 	noSmithyDocumentSerde
 }
@@ -167,16 +179,13 @@ func (c *Client) addOperationCreateRedshiftIdcApplicationMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

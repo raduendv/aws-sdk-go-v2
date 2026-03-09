@@ -241,9 +241,11 @@ type CreateJobInput struct {
 	//   worker type for jobs whose workloads contain your most demanding transforms,
 	//   aggregations, joins, and queries. This worker type is available only for Glue
 	//   version 3.0 or later Spark ETL jobs in the following Amazon Web Services
-	//   Regions: US East (Ohio), US East (N. Virginia), US West (Oregon), Asia Pacific
-	//   (Singapore), Asia Pacific (Sydney), Asia Pacific (Tokyo), Canada (Central),
-	//   Europe (Frankfurt), Europe (Ireland), and Europe (Stockholm).
+	//   Regions: US East (Ohio), US East (N. Virginia), US West (N. California), US West
+	//   (Oregon), Asia Pacific (Mumbai), Asia Pacific (Seoul), Asia Pacific (Singapore),
+	//   Asia Pacific (Sydney), Asia Pacific (Tokyo), Canada (Central), Europe
+	//   (Frankfurt), Europe (Ireland), Europe (London), Europe (Spain), Europe
+	//   (Stockholm), and South America (São Paulo).
 	//
 	//   - For the G.8X worker type, each worker maps to 8 DPU (32 vCPUs, 128 GB of
 	//   memory) with 512GB disk, and provides 1 executor per worker. We recommend this
@@ -364,16 +366,13 @@ func (c *Client) addOperationCreateJobMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

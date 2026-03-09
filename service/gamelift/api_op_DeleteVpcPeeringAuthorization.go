@@ -10,6 +10,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2
+//
 // Cancels a pending VPC peering authorization for the specified VPC. If you need
 // to delete an existing VPC peering connection, use [DeleteVpcPeeringConnection].
 //
@@ -37,19 +39,19 @@ func (c *Client) DeleteVpcPeeringAuthorization(ctx context.Context, params *Dele
 type DeleteVpcPeeringAuthorizationInput struct {
 
 	// A unique identifier for the Amazon Web Services account that you use to manage
-	// your Amazon GameLift fleet. You can find your Account ID in the Amazon Web
-	// Services Management Console under account settings.
+	// your Amazon GameLift Servers fleet. You can find your Account ID in the Amazon
+	// Web Services Management Console under account settings.
 	//
 	// This member is required.
 	GameLiftAwsAccountId *string
 
 	// A unique identifier for a VPC with resources to be accessed by your Amazon
-	// GameLift fleet. The VPC must be in the same Region as your fleet. To look up a
-	// VPC ID, use the [VPC Dashboard]in the Amazon Web Services Management Console. Learn more about
-	// VPC peering in [VPC Peering with Amazon GameLift Fleets].
+	// GameLift Servers fleet. The VPC must be in the same Region as your fleet. To
+	// look up a VPC ID, use the [VPC Dashboard]in the Amazon Web Services Management Console. Learn
+	// more about VPC peering in [VPC Peering with Amazon GameLift Servers Fleets].
 	//
 	// [VPC Dashboard]: https://console.aws.amazon.com/vpc/
-	// [VPC Peering with Amazon GameLift Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/vpc-peering.html
+	// [VPC Peering with Amazon GameLift Servers Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/vpc-peering.html
 	//
 	// This member is required.
 	PeerVpcId *string
@@ -152,16 +154,13 @@ func (c *Client) addOperationDeleteVpcPeeringAuthorizationMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

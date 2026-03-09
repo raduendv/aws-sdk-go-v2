@@ -59,8 +59,7 @@ type CreateLocationHdfsInput struct {
 
 	// The Kerberos key table (keytab) that contains mappings between the defined
 	// Kerberos principal and the encrypted keys. You can load the keytab from a file
-	// by providing the file's address. If you're using the CLI, it performs base64
-	// encoding for you. Otherwise, provide the base64-encoded text.
+	// by providing the file's address.
 	//
 	// If KERBEROS is specified for AuthenticationType , this parameter is required.
 	KerberosKeytab []byte
@@ -211,16 +210,13 @@ func (c *Client) addOperationCreateLocationHdfsMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

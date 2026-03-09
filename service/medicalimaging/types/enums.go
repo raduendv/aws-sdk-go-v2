@@ -62,6 +62,9 @@ const (
 	ImageSetWorkflowStatusUpdateFailed              ImageSetWorkflowStatus = "UPDATE_FAILED"
 	ImageSetWorkflowStatusDeleting                  ImageSetWorkflowStatus = "DELETING"
 	ImageSetWorkflowStatusDeleted                   ImageSetWorkflowStatus = "DELETED"
+	ImageSetWorkflowStatusImporting                 ImageSetWorkflowStatus = "IMPORTING"
+	ImageSetWorkflowStatusImported                  ImageSetWorkflowStatus = "IMPORTED"
+	ImageSetWorkflowStatusImportFailed              ImageSetWorkflowStatus = "IMPORT_FAILED"
 )
 
 // Values returns all known values for ImageSetWorkflowStatus. Note that this can
@@ -80,6 +83,9 @@ func (ImageSetWorkflowStatus) Values() []ImageSetWorkflowStatus {
 		"UPDATE_FAILED",
 		"DELETING",
 		"DELETED",
+		"IMPORTING",
+		"IMPORTED",
+		"IMPORT_FAILED",
 	}
 }
 
@@ -103,6 +109,25 @@ func (JobStatus) Values() []JobStatus {
 		"IN_PROGRESS",
 		"COMPLETED",
 		"FAILED",
+	}
+}
+
+type LosslessStorageFormat string
+
+// Enum values for LosslessStorageFormat
+const (
+	LosslessStorageFormatHtj2k            LosslessStorageFormat = "HTJ2K"
+	LosslessStorageFormatJpeg2000Lossless LosslessStorageFormat = "JPEG_2000_LOSSLESS"
+)
+
+// Values returns all known values for LosslessStorageFormat. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (LosslessStorageFormat) Values() []LosslessStorageFormat {
+	return []LosslessStorageFormat{
+		"HTJ2K",
+		"JPEG_2000_LOSSLESS",
 	}
 }
 
@@ -162,5 +187,27 @@ func (SortOrder) Values() []SortOrder {
 	return []SortOrder{
 		"ASC",
 		"DESC",
+	}
+}
+
+type StorageTier string
+
+// Enum values for StorageTier
+const (
+	// Frequent access storage tier for image sets that are accessed regularly
+	StorageTierFrequentAccess StorageTier = "FREQUENT_ACCESS"
+	// Archive instant access storage tier for image sets that are accessed
+	// infrequently
+	StorageTierArchiveInstantAccess StorageTier = "ARCHIVE_INSTANT_ACCESS"
+)
+
+// Values returns all known values for StorageTier. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (StorageTier) Values() []StorageTier {
+	return []StorageTier{
+		"FREQUENT_ACCESS",
+		"ARCHIVE_INSTANT_ACCESS",
 	}
 }

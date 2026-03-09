@@ -7,6 +7,60 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/transfer/types"
 )
 
+func ExampleConnectorEgressConfig_outputUsage() {
+	var union types.ConnectorEgressConfig
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.ConnectorEgressConfigMemberVpcLattice:
+		_ = v.Value // Value is types.ConnectorVpcLatticeEgressConfig
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.ConnectorVpcLatticeEgressConfig
+
+func ExampleDescribedConnectorEgressConfig_outputUsage() {
+	var union types.DescribedConnectorEgressConfig
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.DescribedConnectorEgressConfigMemberVpcLattice:
+		_ = v.Value // Value is types.DescribedConnectorVpcLatticeEgressConfig
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.DescribedConnectorVpcLatticeEgressConfig
+
+func ExampleDescribedWebAppEndpointDetails_outputUsage() {
+	var union types.DescribedWebAppEndpointDetails
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.DescribedWebAppEndpointDetailsMemberVpc:
+		_ = v.Value // Value is types.DescribedWebAppVpcConfig
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.DescribedWebAppVpcConfig
+
 func ExampleDescribedWebAppIdentityProviderDetails_outputUsage() {
 	var union types.DescribedWebAppIdentityProviderDetails
 	// type switches can be used to check the union value
@@ -25,6 +79,42 @@ func ExampleDescribedWebAppIdentityProviderDetails_outputUsage() {
 
 var _ *types.DescribedIdentityCenterConfig
 
+func ExampleUpdateConnectorEgressConfig_outputUsage() {
+	var union types.UpdateConnectorEgressConfig
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.UpdateConnectorEgressConfigMemberVpcLattice:
+		_ = v.Value // Value is types.UpdateConnectorVpcLatticeEgressConfig
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.UpdateConnectorVpcLatticeEgressConfig
+
+func ExampleUpdateWebAppEndpointDetails_outputUsage() {
+	var union types.UpdateWebAppEndpointDetails
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.UpdateWebAppEndpointDetailsMemberVpc:
+		_ = v.Value // Value is types.UpdateWebAppVpcConfig
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.UpdateWebAppVpcConfig
+
 func ExampleUpdateWebAppIdentityProviderDetails_outputUsage() {
 	var union types.UpdateWebAppIdentityProviderDetails
 	// type switches can be used to check the union value
@@ -42,6 +132,24 @@ func ExampleUpdateWebAppIdentityProviderDetails_outputUsage() {
 }
 
 var _ *types.UpdateWebAppIdentityCenterConfig
+
+func ExampleWebAppEndpointDetails_outputUsage() {
+	var union types.WebAppEndpointDetails
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.WebAppEndpointDetailsMemberVpc:
+		_ = v.Value // Value is types.WebAppVpcConfig
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.WebAppVpcConfig
 
 func ExampleWebAppIdentityProviderDetails_outputUsage() {
 	var union types.WebAppIdentityProviderDetails

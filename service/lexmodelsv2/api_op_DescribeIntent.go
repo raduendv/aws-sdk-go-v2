@@ -91,6 +91,9 @@ type DescribeIntentOutput struct {
 	// Prompts that Amazon Lex sends to the user to confirm completion of an intent.
 	IntentConfirmationSetting *types.IntentConfirmationSetting
 
+	// The display name specified for the intent.
+	IntentDisplayName *string
+
 	// The unique identifier assigned to the intent when it was created.
 	IntentId *string
 
@@ -219,16 +222,13 @@ func (c *Client) addOperationDescribeIntentMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

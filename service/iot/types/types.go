@@ -785,6 +785,38 @@ type AwsJobTimeoutConfig struct {
 	noSmithyDocumentSerde
 }
 
+// Configures the command to treat the payloadTemplate as a JSON document for
+// preprocessing. This preprocessor substitutes placeholders with parameter values
+// to generate the command execution request payload.
+type AwsJsonSubstitutionCommandPreprocessorConfig struct {
+
+	// Converts the command preprocessor result to the format defined by this
+	// parameter, before sending it to the device.
+	//
+	// This member is required.
+	OutputFormat OutputFormat
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for batching.
+type BatchConfig struct {
+
+	// The maximum amount of time (in milliseconds) that an outgoing call waits for
+	// other calls with which it batches messages of the same type. The higher the
+	// setting, the longer the latency of the batched HTTP Action will be.
+	MaxBatchOpenMs *int32
+
+	// The maximum number of messages that are batched together in a single action
+	// execution.
+	MaxBatchSize *int32
+
+	// Maximum size of a message batch, in bytes.
+	MaxBatchSizeBytes *int32
+
+	noSmithyDocumentSerde
+}
+
 // A Device Defender security profile behavior.
 type Behavior struct {
 
@@ -1321,15 +1353,20 @@ type CommandParameter struct {
 	// The description of the command parameter.
 	Description *string
 
-	// The value used to describe the command. When you assign a value to a parameter,
-	// it will override any default value that you had already specified.
+	// The type of the command parameter.
+	Type CommandParameterType
+
+	// Parameter value that overrides the default value, if set.
 	Value *CommandParameterValue
+
+	// The list of conditions that a command parameter value must satisfy to create a
+	// command execution.
+	ValueConditions []CommandParameterValueCondition
 
 	noSmithyDocumentSerde
 }
 
-// The range of possible values that's used to describe a specific command
-// parameter.
+// The value of a command parameter used to create a command execution.
 //
 // The commandParameterValue can only have one of the below fields listed.
 type CommandParameterValue struct {
@@ -1364,6 +1401,63 @@ type CommandParameterValue struct {
 	noSmithyDocumentSerde
 }
 
+// The comparison operand used to compare the defined value against the value
+// supplied in request.
+type CommandParameterValueComparisonOperand struct {
+
+	// An operand of number value type, defined as a string.
+	Number *string
+
+	// An operand of numerical range value type.
+	NumberRange *CommandParameterValueNumberRange
+
+	// A List of operands of numerical value type, defined as strings.
+	Numbers []string
+
+	// An operand of string value type.
+	String_ *string
+
+	// A List of operands of string value type.
+	Strings []string
+
+	noSmithyDocumentSerde
+}
+
+// A condition for the command parameter that must be evaluated to true for
+// successful creation of a command execution.
+type CommandParameterValueCondition struct {
+
+	// The comparison operator for the command parameter.
+	//
+	// IN_RANGE, and NOT_IN_RANGE operators include boundary values.
+	//
+	// This member is required.
+	ComparisonOperator CommandParameterValueComparisonOperator
+
+	// The comparison operand for the command parameter.
+	//
+	// This member is required.
+	Operand *CommandParameterValueComparisonOperand
+
+	noSmithyDocumentSerde
+}
+
+// The numerical range value type to compare a command parameter value against.
+type CommandParameterValueNumberRange struct {
+
+	// The maximum value of a numerical range of a command parameter value.
+	//
+	// This member is required.
+	Max *string
+
+	// The minimum value of a numerical range of a command parameter value.
+	//
+	// This member is required.
+	Min *string
+
+	noSmithyDocumentSerde
+}
+
 // The command payload object that contains the instructions for the device to
 // process.
 type CommandPayload struct {
@@ -1377,6 +1471,17 @@ type CommandPayload struct {
 	//
 	// [Common MIME types]: https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types/Common_types
 	ContentType *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration that determines how the payloadTemplate is processed by the
+// service to generate the final payload sent to devices at StartCommandExecution
+// API invocation.
+type CommandPreprocessor struct {
+
+	// Configuration for the JSON substitution preprocessor.
+	AwsJsonSubstitution *AwsJsonSubstitutionCommandPreprocessorConfig
 
 	noSmithyDocumentSerde
 }
@@ -1413,6 +1518,25 @@ type Configuration struct {
 
 	// True to enable the configuration.
 	Enabled bool
+
+	noSmithyDocumentSerde
+}
+
+// The encryption configuration details that include the status information of the
+// Key Management Service (KMS) key and the KMS access role.
+type ConfigurationDetails struct {
+
+	// The health status of KMS key and KMS access role. If either KMS key or KMS
+	// access role is UNHEALTHY , the return value will be UNHEALTHY . To use a
+	// customer managed KMS key, the value of configurationStatus must be HEALTHY .
+	ConfigurationStatus ConfigurationStatus
+
+	// The error code that indicates either the KMS key or the KMS access role is
+	// UNHEALTHY . Valid values: KMS_KEY_VALIDATION_ERROR and ROLE_VALIDATION_ERROR .
+	ErrorCode *string
+
+	// The detailed error message that corresponds to the errorCode .
+	ErrorMessage *string
 
 	noSmithyDocumentSerde
 }
@@ -1934,6 +2058,11 @@ type HttpAction struct {
 	// The authentication method to use when sending data to an HTTPS endpoint.
 	Auth *HttpAuthorization
 
+	// The configuration settings for batching. For more information, see [Batching HTTP action messages].
+	//
+	// [Batching HTTP action messages]: https://docs.aws.amazon.com/iot/latest/developerguide/http_batching.html
+	BatchConfig *BatchConfig
+
 	// The URL to which IoT sends a confirmation message. The value of the
 	// confirmation URL must be a prefix of the endpoint URL. If you do not specify a
 	// confirmation URL IoT uses the endpoint URL as the confirmation URL. If you use
@@ -1941,6 +2070,10 @@ type HttpAction struct {
 	// rule destinations that match each possible value of the substitution template
 	// before traffic is allowed to your endpoint URL.
 	ConfirmationUrl *string
+
+	// Whether to process the HTTP action messages into a single request. Value can be
+	// true or false.
+	EnableBatching *bool
 
 	// The HTTP headers to send with the message data.
 	Headers []HttpActionHeader
@@ -2670,6 +2803,30 @@ type LocationTimestamp struct {
 	// Valid values: SECONDS | MILLISECONDS | MICROSECONDS | NANOSECONDS . The default
 	// is MILLISECONDS .
 	Unit *string
+
+	noSmithyDocumentSerde
+}
+
+//	Configuration for event-based logging that specifies which event types to log
+//
+// and their logging settings. Used for account-level logging overrides.
+type LogEventConfiguration struct {
+
+	//  The type of event to log. These include event types like Connect, Publish, and
+	// Disconnect.
+	//
+	// This member is required.
+	EventType *string
+
+	//  CloudWatch Log Group for event-based logging. Specifies where log events
+	// should be sent. The log destination for event-based logging overrides default
+	// Log Group for the specified event type and applies to all resources associated
+	// with that event.
+	LogDestination *string
+
+	//  The logging level for the specified event type. Determines the verbosity of
+	// log messages generated for this event type.
+	LogLevel LogLevel
 
 	noSmithyDocumentSerde
 }

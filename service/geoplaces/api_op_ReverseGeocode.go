@@ -11,9 +11,16 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	The ReverseGeocode operation allows you to retrieve addresses and place
+// ReverseGeocode converts geographic coordinates into a human-readable address or
+// place. You can obtain address component, and other related information such as
+// place type, category, street information. The Reverse Geocode API supports
+// filtering to on place type so that you can refine result based on your need.
+// Also, The Reverse Geocode API can also provide additional features such as time
+// zone information and the inclusion of political views.
 //
-// information from coordinates.
+// For more information, see [Reverse Geocode] in the Amazon Location Service Developer Guide.
+//
+// [Reverse Geocode]: https://docs.aws.amazon.com/location/latest/developerguide/reverse-geocode.html
 func (c *Client) ReverseGeocode(ctx context.Context, params *ReverseGeocodeInput, optFns ...func(*Options)) (*ReverseGeocodeOutput, error) {
 	if params == nil {
 		params = &ReverseGeocodeInput{}
@@ -31,9 +38,9 @@ func (c *Client) ReverseGeocode(ctx context.Context, params *ReverseGeocodeInput
 
 type ReverseGeocodeInput struct {
 
-	// The position, in [lng, lat] for which you are querying nearby resultsfor.
-	// Results closer to the position will be ranked higher then results further away
-	// from the position
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude]
+	// for which you are querying nearby results for. Results closer to the position
+	// will be ranked higher then results further away from the position
 	//
 	// This member is required.
 	QueryPosition []float64
@@ -43,10 +50,24 @@ type ReverseGeocodeInput struct {
 	AdditionalFeatures []types.ReverseGeocodeAdditionalFeature
 
 	// A structure which contains a set of inclusion/exclusion properties that results
-	// must posses in order to be returned as a result.
+	// must possess in order to be returned as a result.
 	Filter *types.ReverseGeocodeFilter
 
+	// The heading in degrees from true north in a navigation context. The heading is
+	// measured as the angle clockwise from the North direction.
+	//
+	// Example: North is 0 degrees, East is 90 degrees, South is 180 degrees, and West
+	// is 270 degrees.
+	Heading float64
+
 	// Indicates if the results will be stored. Defaults to SingleUse , if left empty.
+	//
+	// Storing the response of an ReverseGeocode query is required to comply with
+	// service terms, but charged at a higher cost per request. Please review the [user agreement]and [service pricing structure]
+	// to determine the correct setting for your use case.
+	//
+	// [service pricing structure]: https://aws.amazon.com/location/pricing/
+	// [user agreement]: https://aws.amazon.com/location/sla/
 	IntendedUse types.ReverseGeocodeIntendedUse
 
 	// Optional: The API key to be used for authorization. Either an API key or valid
@@ -61,6 +82,8 @@ type ReverseGeocodeInput struct {
 	Language *string
 
 	// An optional limit for the number of results returned in a single call.
+	//
+	// Default value: 1
 	MaxResults *int32
 
 	// The alpha-2 or alpha-3 character code for the political view of a country. The
@@ -79,7 +102,7 @@ type ReverseGeocodeOutput struct {
 
 	// The pricing bucket for which the query is charged at.
 	//
-	// For more inforamtion on pricing, please visit [Amazon Location Service Pricing].
+	// For more information on pricing, please visit [Amazon Location Service Pricing].
 	//
 	// [Amazon Location Service Pricing]: https://aws.amazon.com/location/pricing/
 	//
@@ -183,16 +206,13 @@ func (c *Client) addOperationReverseGeocodeMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

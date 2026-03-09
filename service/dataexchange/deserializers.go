@@ -20,16 +20,7 @@ import (
 	"io/ioutil"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpAcceptDataGrant struct {
 }
@@ -1188,6 +1179,11 @@ func awsRestjson1_deserializeOpDocumentCreateEventActionOutput(v **CreateEventAc
 					return fmt.Errorf("expected Id to be of type string, got %T instead", value)
 				}
 				sv.Id = ptr.String(jtv)
+			}
+
+		case "Tags":
+			if err := awsRestjson1_deserializeDocumentMapOf__string(&sv.Tags, value); err != nil {
+				return err
 			}
 
 		case "UpdatedAt":
@@ -3254,6 +3250,11 @@ func awsRestjson1_deserializeOpDocumentGetEventActionOutput(v **GetEventActionOu
 					return fmt.Errorf("expected Id to be of type string, got %T instead", value)
 				}
 				sv.Id = ptr.String(jtv)
+			}
+
+		case "Tags":
+			if err := awsRestjson1_deserializeDocumentMapOf__string(&sv.Tags, value); err != nil {
+				return err
 			}
 
 		case "UpdatedAt":

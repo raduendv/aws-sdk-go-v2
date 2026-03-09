@@ -1,12 +1,12 @@
 module github.com/aws/aws-sdk-go-v2/service/directoryservicedata
 
-go 1.22
+go 1.23
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.36.3
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.34
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.34
-	github.com/aws/smithy-go v1.22.2
+	github.com/aws/aws-sdk-go-v2 v1.41.1
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.17
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.17
+	github.com/aws/smithy-go v1.24.0
 )
 
 replace github.com/aws/aws-sdk-go-v2 => ../../

@@ -12,7 +12,49 @@ import (
 	"time"
 )
 
-// Creates a cluster in Amazon Aurora DSQL.
+// The CreateCluster API allows you to create both single-Region clusters and
+// multi-Region clusters. With the addition of the multiRegionProperties parameter,
+// you can create a cluster with witness Region support and establish peer
+// relationships with clusters in other Regions during creation.
+//
+// Creating multi-Region clusters requires additional IAM permissions beyond those
+// needed for single-Region clusters, as detailed in the Required permissions
+// section below.
+//
+// # Required permissions
+//
+// dsql:CreateCluster Required to create a cluster.
+//
+// Resources: arn:aws:dsql:region:account-id:cluster/*
+//
+// dsql:TagResource Permission to add tags to a resource.
+//
+// Resources: arn:aws:dsql:region:account-id:cluster/*
+//
+// dsql:PutMultiRegionProperties Permission to configure multi-Region properties
+// for a cluster.
+//
+// Resources: arn:aws:dsql:region:account-id:cluster/*
+//
+// dsql:AddPeerCluster When specifying multiRegionProperties.clusters , permission
+// to add peer clusters.
+//
+// Resources:
+//
+//   - Local cluster: arn:aws:dsql:region:account-id:cluster/*
+//
+//   - Each peer cluster: exact ARN of each specified peer cluster
+//
+// dsql:PutWitnessRegion When specifying multiRegionProperties.witnessRegion ,
+// permission to set a witness Region. This permission is checked both in the
+// cluster Region and in the witness Region.
+//
+// Resources: arn:aws:dsql:region:account-id:cluster/*
+//
+// Condition Keys: dsql:WitnessRegion (matching the specified witness region)
+//
+//   - The witness Region specified in multiRegionProperties.witnessRegion cannot
+//     be the same as the cluster's Region.
 func (c *Client) CreateCluster(ctx context.Context, params *CreateClusterInput, optFns ...func(*Options)) (*CreateClusterOutput, error) {
 	if params == nil {
 		params = &CreateClusterInput{}
@@ -30,6 +72,11 @@ func (c *Client) CreateCluster(ctx context.Context, params *CreateClusterInput, 
 
 type CreateClusterInput struct {
 
+	// An optional field that controls whether to bypass the lockout prevention check.
+	// When set to true, this parameter allows you to apply a policy that might lock
+	// you out of the cluster. Use with caution.
+	BypassPolicyLockoutSafetyCheck bool
+
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
 	// of the request. Idempotency ensures that an API request completes only once.
 	// With an idempotent request, if the original request completes successfully, the
@@ -44,13 +91,26 @@ type CreateClusterInput struct {
 	// before you can delete your cluster.
 	DeletionProtectionEnabled *bool
 
+	// The KMS key that encrypts and protects the data on your cluster. You can
+	// specify the ARN, ID, or alias of an existing key or have Amazon Web Services
+	// create a default key for you.
+	KmsEncryptionKey *string
+
+	// The configuration settings when creating a multi-Region cluster, including the
+	// witness region and linked cluster properties.
+	MultiRegionProperties *types.MultiRegionProperties
+
+	// An optional resource-based policy document in JSON format that defines access
+	// permissions for the cluster.
+	Policy *string
+
 	// A map of key and value pairs to use to tag your cluster.
 	Tags map[string]string
 
 	noSmithyDocumentSerde
 }
 
-// Output Mixin
+// The output of a created cluster.
 type CreateClusterOutput struct {
 
 	// The ARN of the created cluster.
@@ -77,6 +137,17 @@ type CreateClusterOutput struct {
 	//
 	// This member is required.
 	Status types.ClusterStatus
+
+	// The encryption configuration for the cluster that was specified during the
+	// creation process, including the KMS key identifier and encryption state.
+	EncryptionDetails *types.EncryptionDetails
+
+	// The connection endpoint for the created cluster.
+	Endpoint *string
+
+	// The multi-Region cluster configuration details that were set during cluster
+	// creation
+	MultiRegionProperties *types.MultiRegionProperties
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -172,16 +243,13 @@ func (c *Client) addOperationCreateClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

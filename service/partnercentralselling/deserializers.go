@@ -19,16 +19,7 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson10_deserializeOpAcceptEngagementInvitation struct {
 }
@@ -440,6 +431,138 @@ func awsAwsjson10_deserializeOpErrorCreateEngagement(response *smithyhttp.Respon
 	case strings.EqualFold("ConflictException", errorCode):
 		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsAwsjson10_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
+	case strings.EqualFold("ThrottlingException", errorCode):
+		return awsAwsjson10_deserializeErrorThrottlingException(response, errorBody)
+
+	case strings.EqualFold("ValidationException", errorCode):
+		return awsAwsjson10_deserializeErrorValidationException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+type awsAwsjson10_deserializeOpCreateEngagementContext struct {
+}
+
+func (*awsAwsjson10_deserializeOpCreateEngagementContext) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson10_deserializeOpCreateEngagementContext) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson10_deserializeOpErrorCreateEngagementContext(response, &metadata)
+	}
+	output := &CreateEngagementContextOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson10_deserializeOpDocumentCreateEngagementContextOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson10_deserializeOpErrorCreateEngagementContext(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("AccessDeniedException", errorCode):
+		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -565,6 +688,9 @@ func awsAwsjson10_deserializeOpErrorCreateEngagementInvitation(response *smithyh
 
 	case strings.EqualFold("ConflictException", errorCode):
 		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -818,6 +944,9 @@ func awsAwsjson10_deserializeOpErrorCreateResourceSnapshot(response *smithyhttp.
 	case strings.EqualFold("ConflictException", errorCode):
 		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -944,6 +1073,9 @@ func awsAwsjson10_deserializeOpErrorCreateResourceSnapshotJob(response *smithyht
 	case strings.EqualFold("ConflictException", errorCode):
 		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -1047,6 +1179,9 @@ func awsAwsjson10_deserializeOpErrorDeleteResourceSnapshotJob(response *smithyht
 
 	case strings.EqualFold("ConflictException", errorCode):
 		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -1391,6 +1526,9 @@ func awsAwsjson10_deserializeOpErrorGetEngagement(response *smithyhttp.Response,
 	switch {
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -1758,6 +1896,9 @@ func awsAwsjson10_deserializeOpErrorGetResourceSnapshot(response *smithyhttp.Res
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -1877,6 +2018,9 @@ func awsAwsjson10_deserializeOpErrorGetResourceSnapshotJob(response *smithyhttp.
 	switch {
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -1998,6 +2142,9 @@ func awsAwsjson10_deserializeOpErrorGetSellingSystemSettings(response *smithyhtt
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -2118,6 +2265,9 @@ func awsAwsjson10_deserializeOpErrorListEngagementByAcceptingInvitationTasks(res
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -2237,6 +2387,9 @@ func awsAwsjson10_deserializeOpErrorListEngagementFromOpportunityTasks(response 
 	switch {
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -2481,6 +2634,9 @@ func awsAwsjson10_deserializeOpErrorListEngagementMembers(response *smithyhttp.R
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -2600,6 +2756,9 @@ func awsAwsjson10_deserializeOpErrorListEngagementResourceAssociations(response 
 	switch {
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -2721,6 +2880,9 @@ func awsAwsjson10_deserializeOpErrorListEngagements(response *smithyhttp.Respons
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -2802,6 +2964,129 @@ func (m *awsAwsjson10_deserializeOpListOpportunities) HandleDeserialize(ctx cont
 }
 
 func awsAwsjson10_deserializeOpErrorListOpportunities(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("AccessDeniedException", errorCode):
+		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ThrottlingException", errorCode):
+		return awsAwsjson10_deserializeErrorThrottlingException(response, errorBody)
+
+	case strings.EqualFold("ValidationException", errorCode):
+		return awsAwsjson10_deserializeErrorValidationException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+type awsAwsjson10_deserializeOpListOpportunityFromEngagementTasks struct {
+}
+
+func (*awsAwsjson10_deserializeOpListOpportunityFromEngagementTasks) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson10_deserializeOpListOpportunityFromEngagementTasks) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson10_deserializeOpErrorListOpportunityFromEngagementTasks(response, &metadata)
+	}
+	output := &ListOpportunityFromEngagementTasksOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson10_deserializeOpDocumentListOpportunityFromEngagementTasksOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson10_deserializeOpErrorListOpportunityFromEngagementTasks(response *smithyhttp.Response, metadata *middleware.Metadata) error {
 	var errorBuffer bytes.Buffer
 	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
@@ -2964,6 +3249,9 @@ func awsAwsjson10_deserializeOpErrorListResourceSnapshotJobs(response *smithyhtt
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -3083,6 +3371,9 @@ func awsAwsjson10_deserializeOpErrorListResourceSnapshots(response *smithyhttp.R
 	switch {
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -3209,6 +3500,9 @@ func awsAwsjson10_deserializeOpErrorListSolutions(response *smithyhttp.Response,
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ThrottlingException", errorCode):
+		return awsAwsjson10_deserializeErrorThrottlingException(response, errorBody)
 
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsAwsjson10_deserializeErrorValidationException(response, errorBody)
@@ -3446,6 +3740,9 @@ func awsAwsjson10_deserializeOpErrorPutSellingSystemSettings(response *smithyhtt
 	switch {
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -3828,6 +4125,135 @@ func awsAwsjson10_deserializeOpErrorStartEngagementFromOpportunityTask(response 
 	}
 }
 
+type awsAwsjson10_deserializeOpStartOpportunityFromEngagementTask struct {
+}
+
+func (*awsAwsjson10_deserializeOpStartOpportunityFromEngagementTask) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson10_deserializeOpStartOpportunityFromEngagementTask) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson10_deserializeOpErrorStartOpportunityFromEngagementTask(response, &metadata)
+	}
+	output := &StartOpportunityFromEngagementTaskOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson10_deserializeOpDocumentStartOpportunityFromEngagementTaskOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson10_deserializeOpErrorStartOpportunityFromEngagementTask(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("AccessDeniedException", errorCode):
+		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsAwsjson10_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
+	case strings.EqualFold("ThrottlingException", errorCode):
+		return awsAwsjson10_deserializeErrorThrottlingException(response, errorBody)
+
+	case strings.EqualFold("ValidationException", errorCode):
+		return awsAwsjson10_deserializeErrorValidationException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
 type awsAwsjson10_deserializeOpStartResourceSnapshotJob struct {
 }
 
@@ -3906,6 +4332,9 @@ func awsAwsjson10_deserializeOpErrorStartResourceSnapshotJob(response *smithyhtt
 	switch {
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -4004,6 +4433,9 @@ func awsAwsjson10_deserializeOpErrorStopResourceSnapshotJob(response *smithyhttp
 	switch {
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -4360,6 +4792,135 @@ func awsAwsjson10_deserializeOpErrorUntagResource(response *smithyhttp.Response,
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ThrottlingException", errorCode):
+		return awsAwsjson10_deserializeErrorThrottlingException(response, errorBody)
+
+	case strings.EqualFold("ValidationException", errorCode):
+		return awsAwsjson10_deserializeErrorValidationException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+type awsAwsjson10_deserializeOpUpdateEngagementContext struct {
+}
+
+func (*awsAwsjson10_deserializeOpUpdateEngagementContext) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson10_deserializeOpUpdateEngagementContext) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson10_deserializeOpErrorUpdateEngagementContext(response, &metadata)
+	}
+	output := &UpdateEngagementContextOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson10_deserializeOpDocumentUpdateEngagementContextOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson10_deserializeOpErrorUpdateEngagementContext(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("AccessDeniedException", errorCode):
+		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsAwsjson10_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("ThrottlingException", errorCode):
 		return awsAwsjson10_deserializeErrorThrottlingException(response, errorBody)
@@ -4779,6 +5340,15 @@ func awsAwsjson10_deserializeDocumentAccessDeniedException(v **types.AccessDenie
 				sv.Message = ptr.String(jtv)
 			}
 
+		case "Reason":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AccessDeniedExceptionErrorCode to be of type string, got %T instead", value)
+				}
+				sv.Reason = types.AccessDeniedExceptionErrorCode(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -5142,6 +5712,42 @@ func awsAwsjson10_deserializeDocumentAddressSummary(v **types.AddressSummary, va
 	return nil
 }
 
+func awsAwsjson10_deserializeDocumentAmountMap(v *map[string]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var mv map[string]string
+	if *v == nil {
+		mv = map[string]string{}
+	} else {
+		mv = *v
+	}
+
+	for key, value := range shape {
+		var parsedVal string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected MonetaryAmount to be of type string, got %T instead", value)
+			}
+			parsedVal = jtv
+		}
+		mv[key] = parsedVal
+
+	}
+	*v = mv
+	return nil
+}
+
 func awsAwsjson10_deserializeDocumentApnPrograms(v *[]string, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -5178,6 +5784,42 @@ func awsAwsjson10_deserializeDocumentApnPrograms(v *[]string, value interface{})
 	return nil
 }
 
+func awsAwsjson10_deserializeDocumentAwsAccountIdOrAliasList(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected AwsAccount to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
 func awsAwsjson10_deserializeDocumentAwsMarketplaceOfferIdentifiers(v *[]string, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -5204,6 +5846,42 @@ func awsAwsjson10_deserializeDocumentAwsMarketplaceOfferIdentifiers(v *[]string,
 			jtv, ok := value.(string)
 			if !ok {
 				return fmt.Errorf("expected AwsMarketplaceOfferIdentifier to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentAwsMarketplaceOfferSetIdentifiers(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected AwsMarketplaceOfferSetIdentifier to be of type string, got %T instead", value)
 			}
 			col = jtv
 		}
@@ -5272,6 +5950,11 @@ func awsAwsjson10_deserializeDocumentAwsOpportunityInsights(v **types.AwsOpportu
 
 	for key, value := range shape {
 		switch key {
+		case "AwsProductsSpendInsightsBySource":
+			if err := awsAwsjson10_deserializeDocumentAwsProductsSpendInsightsBySource(&sv.AwsProductsSpendInsightsBySource, value); err != nil {
+				return err
+			}
+
 		case "EngagementScore":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -5393,6 +6076,15 @@ func awsAwsjson10_deserializeDocumentAwsOpportunityProject(v **types.AwsOpportun
 
 	for key, value := range shape {
 		switch key {
+		case "AwsPartition":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AwsPartition to be of type string, got %T instead", value)
+				}
+				sv.AwsPartition = types.AwsPartition(jtv)
+			}
+
 		case "ExpectedCustomerSpend":
 			if err := awsAwsjson10_deserializeDocumentExpectedCustomerSpendList(&sv.ExpectedCustomerSpend, value); err != nil {
 				return err
@@ -5448,6 +6140,112 @@ func awsAwsjson10_deserializeDocumentAwsOpportunityRelatedEntities(v **types.Aws
 	return nil
 }
 
+func awsAwsjson10_deserializeDocumentAwsOpportunitySummaryFullView(v **types.AwsOpportunitySummaryFullView, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.AwsOpportunitySummaryFullView
+	if *v == nil {
+		sv = &types.AwsOpportunitySummaryFullView{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Customer":
+			if err := awsAwsjson10_deserializeDocumentAwsOpportunityCustomer(&sv.Customer, value); err != nil {
+				return err
+			}
+
+		case "Insights":
+			if err := awsAwsjson10_deserializeDocumentAwsOpportunityInsights(&sv.Insights, value); err != nil {
+				return err
+			}
+
+		case "InvolvementType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SalesInvolvementType to be of type string, got %T instead", value)
+				}
+				sv.InvolvementType = types.SalesInvolvementType(jtv)
+			}
+
+		case "InvolvementTypeChangeReason":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected InvolvementTypeChangeReason to be of type string, got %T instead", value)
+				}
+				sv.InvolvementTypeChangeReason = types.InvolvementTypeChangeReason(jtv)
+			}
+
+		case "LifeCycle":
+			if err := awsAwsjson10_deserializeDocumentAwsOpportunityLifeCycle(&sv.LifeCycle, value); err != nil {
+				return err
+			}
+
+		case "OpportunityTeam":
+			if err := awsAwsjson10_deserializeDocumentAwsOpportunityTeamMembersList(&sv.OpportunityTeam, value); err != nil {
+				return err
+			}
+
+		case "Origin":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OpportunityOrigin to be of type string, got %T instead", value)
+				}
+				sv.Origin = types.OpportunityOrigin(jtv)
+			}
+
+		case "Project":
+			if err := awsAwsjson10_deserializeDocumentAwsOpportunityProject(&sv.Project, value); err != nil {
+				return err
+			}
+
+		case "RelatedEntityIds":
+			if err := awsAwsjson10_deserializeDocumentAwsOpportunityRelatedEntities(&sv.RelatedEntityIds, value); err != nil {
+				return err
+			}
+
+		case "RelatedOpportunityId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OpportunityIdentifier to be of type string, got %T instead", value)
+				}
+				sv.RelatedOpportunityId = ptr.String(jtv)
+			}
+
+		case "Visibility":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Visibility to be of type string, got %T instead", value)
+				}
+				sv.Visibility = types.Visibility(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson10_deserializeDocumentAwsOpportunityTeamMembersList(v *[]types.AwsTeamMember, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -5479,6 +6277,92 @@ func awsAwsjson10_deserializeDocumentAwsOpportunityTeamMembersList(v *[]types.Aw
 
 	}
 	*v = cv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentAwsProductDetails(v **types.AwsProductDetails, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.AwsProductDetails
+	if *v == nil {
+		sv = &types.AwsProductDetails{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Amount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MonetaryAmount to be of type string, got %T instead", value)
+				}
+				sv.Amount = ptr.String(jtv)
+			}
+
+		case "Categories":
+			if err := awsAwsjson10_deserializeDocumentStringList(&sv.Categories, value); err != nil {
+				return err
+			}
+
+		case "Optimizations":
+			if err := awsAwsjson10_deserializeDocumentAwsProductOptimizationsList(&sv.Optimizations, value); err != nil {
+				return err
+			}
+
+		case "OptimizedAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MonetaryAmount to be of type string, got %T instead", value)
+				}
+				sv.OptimizedAmount = ptr.String(jtv)
+			}
+
+		case "PotentialSavingsAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MonetaryAmount to be of type string, got %T instead", value)
+				}
+				sv.PotentialSavingsAmount = ptr.String(jtv)
+			}
+
+		case "ProductCode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.ProductCode = ptr.String(jtv)
+			}
+
+		case "ServiceCode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.ServiceCode = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
 	return nil
 }
 
@@ -5515,6 +6399,250 @@ func awsAwsjson10_deserializeDocumentAwsProductIdentifiers(v *[]string, value in
 
 	}
 	*v = cv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentAwsProductInsights(v **types.AwsProductInsights, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.AwsProductInsights
+	if *v == nil {
+		sv = &types.AwsProductInsights{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "AwsProducts":
+			if err := awsAwsjson10_deserializeDocumentAwsProductsList(&sv.AwsProducts, value); err != nil {
+				return err
+			}
+
+		case "CurrencyCode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CurrencyCode to be of type string, got %T instead", value)
+				}
+				sv.CurrencyCode = types.CurrencyCode(jtv)
+			}
+
+		case "Frequency":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PaymentFrequency to be of type string, got %T instead", value)
+				}
+				sv.Frequency = types.PaymentFrequency(jtv)
+			}
+
+		case "TotalAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MonetaryAmount to be of type string, got %T instead", value)
+				}
+				sv.TotalAmount = ptr.String(jtv)
+			}
+
+		case "TotalAmountByCategory":
+			if err := awsAwsjson10_deserializeDocumentAmountMap(&sv.TotalAmountByCategory, value); err != nil {
+				return err
+			}
+
+		case "TotalOptimizedAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MonetaryAmount to be of type string, got %T instead", value)
+				}
+				sv.TotalOptimizedAmount = ptr.String(jtv)
+			}
+
+		case "TotalPotentialSavingsAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MonetaryAmount to be of type string, got %T instead", value)
+				}
+				sv.TotalPotentialSavingsAmount = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentAwsProductOptimization(v **types.AwsProductOptimization, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.AwsProductOptimization
+	if *v == nil {
+		sv = &types.AwsProductOptimization{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Description":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.Description = ptr.String(jtv)
+			}
+
+		case "SavingsAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MonetaryAmount to be of type string, got %T instead", value)
+				}
+				sv.SavingsAmount = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentAwsProductOptimizationsList(v *[]types.AwsProductOptimization, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.AwsProductOptimization
+	if *v == nil {
+		cv = []types.AwsProductOptimization{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.AwsProductOptimization
+		destAddr := &col
+		if err := awsAwsjson10_deserializeDocumentAwsProductOptimization(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentAwsProductsList(v *[]types.AwsProductDetails, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.AwsProductDetails
+	if *v == nil {
+		cv = []types.AwsProductDetails{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.AwsProductDetails
+		destAddr := &col
+		if err := awsAwsjson10_deserializeDocumentAwsProductDetails(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentAwsProductsSpendInsightsBySource(v **types.AwsProductsSpendInsightsBySource, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.AwsProductsSpendInsightsBySource
+	if *v == nil {
+		sv = &types.AwsProductsSpendInsightsBySource{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "AWS":
+			if err := awsAwsjson10_deserializeDocumentAwsProductInsights(&sv.AWS, value); err != nil {
+				return err
+			}
+
+		case "Partner":
+			if err := awsAwsjson10_deserializeDocumentAwsProductInsights(&sv.Partner, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
 	return nil
 }
 
@@ -5947,6 +7075,15 @@ func awsAwsjson10_deserializeDocumentEngagementContextDetails(v **types.Engageme
 
 	for key, value := range shape {
 		switch key {
+		case "Id":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementContextIdentifier to be of type string, got %T instead", value)
+				}
+				sv.Id = ptr.String(jtv)
+			}
+
 		case "Payload":
 			if err := awsAwsjson10_deserializeDocumentEngagementContextPayload(&sv.Payload, value); err != nil {
 				return err
@@ -6000,6 +7137,16 @@ loop:
 			uv = &types.EngagementContextPayloadMemberCustomerProject{Value: mv}
 			break loop
 
+		case "Lead":
+			var mv types.LeadContext
+			destAddr := &mv
+			if err := awsAwsjson10_deserializeDocumentLeadContext(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.EngagementContextPayloadMemberLead{Value: mv}
+			break loop
+
 		default:
 			uv = &types.UnknownUnionMember{Tag: key}
 			break loop
@@ -6037,6 +7184,42 @@ func awsAwsjson10_deserializeDocumentEngagementContexts(v *[]types.EngagementCon
 			return err
 		}
 		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentEngagementContextTypeList(v *[]types.EngagementContextType, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.EngagementContextType
+	if *v == nil {
+		cv = []types.EngagementContextType{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.EngagementContextType
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected EngagementContextType to be of type string, got %T instead", value)
+			}
+			col = types.EngagementContextType(jtv)
+		}
 		cv = append(cv, col)
 
 	}
@@ -6671,6 +7854,11 @@ func awsAwsjson10_deserializeDocumentEngagementSummary(v **types.EngagementSumma
 				sv.Arn = ptr.String(jtv)
 			}
 
+		case "ContextTypes":
+			if err := awsAwsjson10_deserializeDocumentEngagementContextTypeList(&sv.ContextTypes, value); err != nil {
+				return err
+			}
+
 		case "CreatedAt":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -6713,6 +7901,28 @@ func awsAwsjson10_deserializeDocumentEngagementSummary(v **types.EngagementSumma
 					return err
 				}
 				sv.MemberCount = ptr.Int32(int32(i64))
+			}
+
+		case "ModifiedAt":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTime to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.ModifiedAt = ptr.Time(t)
+			}
+
+		case "ModifiedBy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AwsAccount to be of type string, got %T instead", value)
+				}
+				sv.ModifiedBy = ptr.String(jtv)
 			}
 
 		case "Title":
@@ -6793,7 +8003,7 @@ func awsAwsjson10_deserializeDocumentExpectedCustomerSpend(v **types.ExpectedCus
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected Amount to be of type string, got %T instead", value)
 				}
 				sv.Amount = ptr.String(jtv)
 			}
@@ -6811,7 +8021,7 @@ func awsAwsjson10_deserializeDocumentExpectedCustomerSpend(v **types.ExpectedCus
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected WebsiteUrl to be of type string, got %T instead", value)
+					return fmt.Errorf("expected EstimationUrl to be of type string, got %T instead", value)
 				}
 				sv.EstimationUrl = ptr.String(jtv)
 			}
@@ -6906,6 +8116,552 @@ func awsAwsjson10_deserializeDocumentInternalServerException(v **types.InternalS
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.Message = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentLeadContact(v **types.LeadContact, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.LeadContact
+	if *v == nil {
+		sv = &types.LeadContact{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "BusinessTitle":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected JobTitle to be of type string, got %T instead", value)
+				}
+				sv.BusinessTitle = ptr.String(jtv)
+			}
+
+		case "Email":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Email to be of type string, got %T instead", value)
+				}
+				sv.Email = ptr.String(jtv)
+			}
+
+		case "FirstName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Name to be of type string, got %T instead", value)
+				}
+				sv.FirstName = ptr.String(jtv)
+			}
+
+		case "LastName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Name to be of type string, got %T instead", value)
+				}
+				sv.LastName = ptr.String(jtv)
+			}
+
+		case "Phone":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PhoneNumber to be of type string, got %T instead", value)
+				}
+				sv.Phone = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentLeadContext(v **types.LeadContext, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.LeadContext
+	if *v == nil {
+		sv = &types.LeadContext{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Customer":
+			if err := awsAwsjson10_deserializeDocumentLeadCustomer(&sv.Customer, value); err != nil {
+				return err
+			}
+
+		case "Interactions":
+			if err := awsAwsjson10_deserializeDocumentLeadInteractionList(&sv.Interactions, value); err != nil {
+				return err
+			}
+
+		case "QualificationStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LeadQualificationStatus to be of type string, got %T instead", value)
+				}
+				sv.QualificationStatus = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentLeadCustomer(v **types.LeadCustomer, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.LeadCustomer
+	if *v == nil {
+		sv = &types.LeadCustomer{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Address":
+			if err := awsAwsjson10_deserializeDocumentAddressSummary(&sv.Address, value); err != nil {
+				return err
+			}
+
+		case "AwsMaturity":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AwsMaturity to be of type string, got %T instead", value)
+				}
+				sv.AwsMaturity = ptr.String(jtv)
+			}
+
+		case "CompanyName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CompanyName to be of type string, got %T instead", value)
+				}
+				sv.CompanyName = ptr.String(jtv)
+			}
+
+		case "Industry":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Industry to be of type string, got %T instead", value)
+				}
+				sv.Industry = types.Industry(jtv)
+			}
+
+		case "MarketSegment":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MarketSegment to be of type string, got %T instead", value)
+				}
+				sv.MarketSegment = types.MarketSegment(jtv)
+			}
+
+		case "WebsiteUrl":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CompanyWebsiteUrl to be of type string, got %T instead", value)
+				}
+				sv.WebsiteUrl = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentLeadInteraction(v **types.LeadInteraction, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.LeadInteraction
+	if *v == nil {
+		sv = &types.LeadInteraction{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "BusinessProblem":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementCustomerBusinessProblem to be of type string, got %T instead", value)
+				}
+				sv.BusinessProblem = ptr.String(jtv)
+			}
+
+		case "Contact":
+			if err := awsAwsjson10_deserializeDocumentLeadContact(&sv.Contact, value); err != nil {
+				return err
+			}
+
+		case "CustomerAction":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CustomerAction to be of type string, got %T instead", value)
+				}
+				sv.CustomerAction = ptr.String(jtv)
+			}
+
+		case "InteractionDate":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTime to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.InteractionDate = ptr.Time(t)
+			}
+
+		case "SourceId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LeadSourceId to be of type string, got %T instead", value)
+				}
+				sv.SourceId = ptr.String(jtv)
+			}
+
+		case "SourceName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LeadSourceName to be of type string, got %T instead", value)
+				}
+				sv.SourceName = ptr.String(jtv)
+			}
+
+		case "SourceType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LeadSourceType to be of type string, got %T instead", value)
+				}
+				sv.SourceType = ptr.String(jtv)
+			}
+
+		case "Usecase":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementUseCase to be of type string, got %T instead", value)
+				}
+				sv.Usecase = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentLeadInteractionList(v *[]types.LeadInteraction, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.LeadInteraction
+	if *v == nil {
+		cv = []types.LeadInteraction{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.LeadInteraction
+		destAddr := &col
+		if err := awsAwsjson10_deserializeDocumentLeadInteraction(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentLeadInvitationCustomer(v **types.LeadInvitationCustomer, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.LeadInvitationCustomer
+	if *v == nil {
+		sv = &types.LeadInvitationCustomer{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "AwsMaturity":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AwsMaturity to be of type string, got %T instead", value)
+				}
+				sv.AwsMaturity = ptr.String(jtv)
+			}
+
+		case "CompanyName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CompanyName to be of type string, got %T instead", value)
+				}
+				sv.CompanyName = ptr.String(jtv)
+			}
+
+		case "CountryCode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CountryCode to be of type string, got %T instead", value)
+				}
+				sv.CountryCode = types.CountryCode(jtv)
+			}
+
+		case "Industry":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Industry to be of type string, got %T instead", value)
+				}
+				sv.Industry = types.Industry(jtv)
+			}
+
+		case "MarketSegment":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MarketSegment to be of type string, got %T instead", value)
+				}
+				sv.MarketSegment = types.MarketSegment(jtv)
+			}
+
+		case "WebsiteUrl":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CompanyWebsiteUrl to be of type string, got %T instead", value)
+				}
+				sv.WebsiteUrl = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentLeadInvitationInteraction(v **types.LeadInvitationInteraction, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.LeadInvitationInteraction
+	if *v == nil {
+		sv = &types.LeadInvitationInteraction{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "ContactBusinessTitle":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected JobTitle to be of type string, got %T instead", value)
+				}
+				sv.ContactBusinessTitle = ptr.String(jtv)
+			}
+
+		case "SourceId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LeadSourceId to be of type string, got %T instead", value)
+				}
+				sv.SourceId = ptr.String(jtv)
+			}
+
+		case "SourceName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LeadSourceName to be of type string, got %T instead", value)
+				}
+				sv.SourceName = ptr.String(jtv)
+			}
+
+		case "SourceType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LeadSourceType to be of type string, got %T instead", value)
+				}
+				sv.SourceType = ptr.String(jtv)
+			}
+
+		case "Usecase":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementUseCase to be of type string, got %T instead", value)
+				}
+				sv.Usecase = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentLeadInvitationPayload(v **types.LeadInvitationPayload, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.LeadInvitationPayload
+	if *v == nil {
+		sv = &types.LeadInvitationPayload{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Customer":
+			if err := awsAwsjson10_deserializeDocumentLeadInvitationCustomer(&sv.Customer, value); err != nil {
+				return err
+			}
+
+		case "Interaction":
+			if err := awsAwsjson10_deserializeDocumentLeadInvitationInteraction(&sv.Interaction, value); err != nil {
+				return err
 			}
 
 		default:
@@ -7399,6 +9155,165 @@ func awsAwsjson10_deserializeDocumentListEngagementFromOpportunityTaskSummary(v 
 					return fmt.Errorf("expected EngagementInvitationIdentifier to be of type string, got %T instead", value)
 				}
 				sv.EngagementInvitationId = ptr.String(jtv)
+			}
+
+		case "Message":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.Message = ptr.String(jtv)
+			}
+
+		case "OpportunityId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OpportunityIdentifier to be of type string, got %T instead", value)
+				}
+				sv.OpportunityId = ptr.String(jtv)
+			}
+
+		case "ReasonCode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ReasonCode to be of type string, got %T instead", value)
+				}
+				sv.ReasonCode = types.ReasonCode(jtv)
+			}
+
+		case "ResourceSnapshotJobId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResourceSnapshotJobIdentifier to be of type string, got %T instead", value)
+				}
+				sv.ResourceSnapshotJobId = ptr.String(jtv)
+			}
+
+		case "StartTime":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTime to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.StartTime = ptr.Time(t)
+			}
+
+		case "TaskArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected TaskArn to be of type string, got %T instead", value)
+				}
+				sv.TaskArn = ptr.String(jtv)
+			}
+
+		case "TaskId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected TaskIdentifier to be of type string, got %T instead", value)
+				}
+				sv.TaskId = ptr.String(jtv)
+			}
+
+		case "TaskStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected TaskStatus to be of type string, got %T instead", value)
+				}
+				sv.TaskStatus = types.TaskStatus(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentListOpportunityFromEngagementTaskSummaries(v *[]types.ListOpportunityFromEngagementTaskSummary, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.ListOpportunityFromEngagementTaskSummary
+	if *v == nil {
+		cv = []types.ListOpportunityFromEngagementTaskSummary{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.ListOpportunityFromEngagementTaskSummary
+		destAddr := &col
+		if err := awsAwsjson10_deserializeDocumentListOpportunityFromEngagementTaskSummary(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentListOpportunityFromEngagementTaskSummary(v **types.ListOpportunityFromEngagementTaskSummary, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.ListOpportunityFromEngagementTaskSummary
+	if *v == nil {
+		sv = &types.ListOpportunityFromEngagementTaskSummary{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "ContextId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ContextIdentifier to be of type string, got %T instead", value)
+				}
+				sv.ContextId = ptr.String(jtv)
+			}
+
+		case "EngagementId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementIdentifier to be of type string, got %T instead", value)
+				}
+				sv.EngagementId = ptr.String(jtv)
 			}
 
 		case "Message":
@@ -8016,6 +9931,16 @@ loop:
 			continue
 		}
 		switch key {
+		case "LeadInvitation":
+			var mv types.LeadInvitationPayload
+			destAddr := &mv
+			if err := awsAwsjson10_deserializeDocumentLeadInvitationPayload(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.PayloadMemberLeadInvitation{Value: mv}
+			break loop
+
 		case "OpportunityInvitation":
 			var mv types.OpportunityInvitationPayload
 			destAddr := &mv
@@ -8193,6 +10118,15 @@ func awsAwsjson10_deserializeDocumentProject(v **types.Project, value interface{
 		case "ApnPrograms":
 			if err := awsAwsjson10_deserializeDocumentApnPrograms(&sv.ApnPrograms, value); err != nil {
 				return err
+			}
+
+		case "AwsPartition":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AwsPartition to be of type string, got %T instead", value)
+				}
+				sv.AwsPartition = types.AwsPartition(jtv)
 			}
 
 		case "CompetitorName":
@@ -8553,6 +10487,11 @@ func awsAwsjson10_deserializeDocumentRelatedEntityIdentifiers(v **types.RelatedE
 				return err
 			}
 
+		case "AwsMarketplaceOfferSets":
+			if err := awsAwsjson10_deserializeDocumentAwsMarketplaceOfferSetIdentifiers(&sv.AwsMarketplaceOfferSets, value); err != nil {
+				return err
+			}
+
 		case "AwsProducts":
 			if err := awsAwsjson10_deserializeDocumentAwsProductIdentifiers(&sv.AwsProducts, value); err != nil {
 				return err
@@ -8733,6 +10672,16 @@ loop:
 			continue
 		}
 		switch key {
+		case "AwsOpportunitySummaryFullView":
+			var mv types.AwsOpportunitySummaryFullView
+			destAddr := &mv
+			if err := awsAwsjson10_deserializeDocumentAwsOpportunitySummaryFullView(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.ResourceSnapshotPayloadMemberAwsOpportunitySummaryFullView{Value: mv}
+			break loop
+
 		case "OpportunitySummary":
 			var mv types.OpportunitySummaryView
 			destAddr := &mv
@@ -9293,6 +11242,42 @@ func awsAwsjson10_deserializeDocumentSolutionList(v *[]types.SolutionBase, value
 	return nil
 }
 
+func awsAwsjson10_deserializeDocumentStringList(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected String to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
 func awsAwsjson10_deserializeDocumentTag(v **types.Tag, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -9598,6 +11583,77 @@ func awsAwsjson10_deserializeDocumentValidationExceptionErrorList(v *[]types.Val
 	return nil
 }
 
+func awsAwsjson10_deserializeOpDocumentCreateEngagementContextOutput(v **CreateEngagementContextOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *CreateEngagementContextOutput
+	if *v == nil {
+		sv = &CreateEngagementContextOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "ContextId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementContextIdentifier to be of type string, got %T instead", value)
+				}
+				sv.ContextId = ptr.String(jtv)
+			}
+
+		case "EngagementArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementArn to be of type string, got %T instead", value)
+				}
+				sv.EngagementArn = ptr.String(jtv)
+			}
+
+		case "EngagementId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementIdentifier to be of type string, got %T instead", value)
+				}
+				sv.EngagementId = ptr.String(jtv)
+			}
+
+		case "EngagementLastModifiedAt":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTime to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.EngagementLastModifiedAt = ptr.Time(t)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson10_deserializeOpDocumentCreateEngagementInvitationOutput(v **CreateEngagementInvitationOutput, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -9685,6 +11741,19 @@ func awsAwsjson10_deserializeOpDocumentCreateEngagementOutput(v **CreateEngageme
 					return fmt.Errorf("expected EngagementIdentifier to be of type string, got %T instead", value)
 				}
 				sv.Id = ptr.String(jtv)
+			}
+
+		case "ModifiedAt":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTime to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.ModifiedAt = ptr.Time(t)
 			}
 
 		default:
@@ -10244,6 +12313,28 @@ func awsAwsjson10_deserializeOpDocumentGetEngagementOutput(v **GetEngagementOutp
 				sv.MemberCount = ptr.Int32(int32(i64))
 			}
 
+		case "ModifiedAt":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTime to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.ModifiedAt = ptr.Time(t)
+			}
+
+		case "ModifiedBy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AwsAccount to be of type string, got %T instead", value)
+				}
+				sv.ModifiedBy = ptr.String(jtv)
+			}
+
 		case "Title":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -10676,6 +12767,11 @@ func awsAwsjson10_deserializeOpDocumentGetResourceSnapshotOutput(v **GetResource
 				sv.Revision = ptr.Int32(int32(i64))
 			}
 
+		case "TargetMemberAccounts":
+			if err := awsAwsjson10_deserializeDocumentAwsAccountIdOrAliasList(&sv.TargetMemberAccounts, value); err != nil {
+				return err
+			}
+
 		default:
 			_, _ = key, value
 
@@ -11037,6 +13133,51 @@ func awsAwsjson10_deserializeOpDocumentListOpportunitiesOutput(v **ListOpportuni
 
 		case "OpportunitySummaries":
 			if err := awsAwsjson10_deserializeDocumentOpportunitySummaries(&sv.OpportunitySummaries, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeOpDocumentListOpportunityFromEngagementTasksOutput(v **ListOpportunityFromEngagementTasksOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *ListOpportunityFromEngagementTasksOutput
+	if *v == nil {
+		sv = &ListOpportunityFromEngagementTasksOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "NextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
+			}
+
+		case "TaskSummaries":
+			if err := awsAwsjson10_deserializeDocumentListOpportunityFromEngagementTaskSummaries(&sv.TaskSummaries, value); err != nil {
 				return err
 			}
 
@@ -11510,6 +13651,131 @@ func awsAwsjson10_deserializeOpDocumentStartEngagementFromOpportunityTaskOutput(
 	return nil
 }
 
+func awsAwsjson10_deserializeOpDocumentStartOpportunityFromEngagementTaskOutput(v **StartOpportunityFromEngagementTaskOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *StartOpportunityFromEngagementTaskOutput
+	if *v == nil {
+		sv = &StartOpportunityFromEngagementTaskOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "ContextId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ContextIdentifier to be of type string, got %T instead", value)
+				}
+				sv.ContextId = ptr.String(jtv)
+			}
+
+		case "EngagementId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementIdentifier to be of type string, got %T instead", value)
+				}
+				sv.EngagementId = ptr.String(jtv)
+			}
+
+		case "Message":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.Message = ptr.String(jtv)
+			}
+
+		case "OpportunityId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected OpportunityIdentifier to be of type string, got %T instead", value)
+				}
+				sv.OpportunityId = ptr.String(jtv)
+			}
+
+		case "ReasonCode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ReasonCode to be of type string, got %T instead", value)
+				}
+				sv.ReasonCode = types.ReasonCode(jtv)
+			}
+
+		case "ResourceSnapshotJobId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResourceSnapshotJobIdentifier to be of type string, got %T instead", value)
+				}
+				sv.ResourceSnapshotJobId = ptr.String(jtv)
+			}
+
+		case "StartTime":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTime to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.StartTime = ptr.Time(t)
+			}
+
+		case "TaskArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected TaskArn to be of type string, got %T instead", value)
+				}
+				sv.TaskArn = ptr.String(jtv)
+			}
+
+		case "TaskId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected TaskIdentifier to be of type string, got %T instead", value)
+				}
+				sv.TaskId = ptr.String(jtv)
+			}
+
+		case "TaskStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected TaskStatus to be of type string, got %T instead", value)
+				}
+				sv.TaskStatus = types.TaskStatus(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson10_deserializeOpDocumentTagResourceOutput(v **TagResourceOutput, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -11563,6 +13829,77 @@ func awsAwsjson10_deserializeOpDocumentUntagResourceOutput(v **UntagResourceOutp
 
 	for key, value := range shape {
 		switch key {
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeOpDocumentUpdateEngagementContextOutput(v **UpdateEngagementContextOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *UpdateEngagementContextOutput
+	if *v == nil {
+		sv = &UpdateEngagementContextOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "ContextId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementContextIdentifier to be of type string, got %T instead", value)
+				}
+				sv.ContextId = ptr.String(jtv)
+			}
+
+		case "EngagementArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementArn to be of type string, got %T instead", value)
+				}
+				sv.EngagementArn = ptr.String(jtv)
+			}
+
+		case "EngagementId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngagementIdentifier to be of type string, got %T instead", value)
+				}
+				sv.EngagementId = ptr.String(jtv)
+			}
+
+		case "EngagementLastModifiedAt":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DateTime to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.EngagementLastModifiedAt = ptr.Time(t)
+			}
+
 		default:
 			_, _ = key, value
 

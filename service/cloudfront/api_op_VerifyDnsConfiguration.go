@@ -32,7 +32,8 @@ func (c *Client) VerifyDnsConfiguration(ctx context.Context, params *VerifyDnsCo
 
 type VerifyDnsConfigurationInput struct {
 
-	// The ID of the distribution tenant.
+	// The identifier of the distribution tenant. You can specify the ARN, ID, or name
+	// of the distribution tenant.
 	//
 	// This member is required.
 	Identifier *string
@@ -142,16 +143,13 @@ func (c *Client) addOperationVerifyDnsConfigurationMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

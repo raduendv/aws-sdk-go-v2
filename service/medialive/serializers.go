@@ -725,6 +725,13 @@ func awsRestjson1_serializeOpDocumentCreateChannelInput(v *CreateChannelInput, v
 		}
 	}
 
+	if v.ChannelSecurityGroups != nil {
+		ok := object.Key("channelSecurityGroups")
+		if err := awsRestjson1_serializeDocument__listOf__string(v.ChannelSecurityGroups, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Destinations != nil {
 		ok := object.Key("destinations")
 		if err := awsRestjson1_serializeDocument__listOfOutputDestination(v.Destinations, ok); err != nil {
@@ -754,6 +761,13 @@ func awsRestjson1_serializeOpDocumentCreateChannelInput(v *CreateChannelInput, v
 	if v.InputSpecification != nil {
 		ok := object.Key("inputSpecification")
 		if err := awsRestjson1_serializeDocumentInputSpecification(v.InputSpecification, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.LinkedChannelSettings != nil {
+		ok := object.Key("linkedChannelSettings")
+		if err := awsRestjson1_serializeDocumentLinkedChannelSettings(v.LinkedChannelSettings, ok); err != nil {
 			return err
 		}
 	}
@@ -1628,6 +1642,13 @@ func awsRestjson1_serializeOpDocumentCreateInputInput(v *CreateInputInput, value
 	if v.RoleArn != nil {
 		ok := object.Key("roleArn")
 		ok.String(*v.RoleArn)
+	}
+
+	if v.RouterSettings != nil {
+		ok := object.Key("routerSettings")
+		if err := awsRestjson1_serializeDocumentRouterSettings(v.RouterSettings, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.SdiSources != nil {
@@ -5649,6 +5670,89 @@ func awsRestjson1_serializeOpHttpBindingsGetSignalMapInput(v *GetSignalMapInput,
 	return nil
 }
 
+type awsRestjson1_serializeOpListAlerts struct {
+}
+
+func (*awsRestjson1_serializeOpListAlerts) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpListAlerts) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*ListAlertsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/prod/channels/{ChannelId}/alerts")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsListAlertsInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsListAlertsInput(v *ListAlertsInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.ChannelId == nil || len(*v.ChannelId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member ChannelId must not be empty")}
+	}
+	if v.ChannelId != nil {
+		if err := encoder.SetURI("ChannelId").String(*v.ChannelId); err != nil {
+			return err
+		}
+	}
+
+	if v.MaxResults != nil {
+		encoder.SetQuery("maxResults").Integer(*v.MaxResults)
+	}
+
+	if v.NextToken != nil {
+		encoder.SetQuery("nextToken").String(*v.NextToken)
+	}
+
+	if v.StateFilter != nil {
+		encoder.SetQuery("stateFilter").String(*v.StateFilter)
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpListChannelPlacementGroups struct {
 }
 
@@ -5953,6 +6057,89 @@ func awsRestjson1_serializeOpHttpBindingsListCloudWatchAlarmTemplatesInput(v *Li
 
 	if v.SignalMapIdentifier != nil {
 		encoder.SetQuery("signalMapIdentifier").String(*v.SignalMapIdentifier)
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpListClusterAlerts struct {
+}
+
+func (*awsRestjson1_serializeOpListClusterAlerts) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpListClusterAlerts) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*ListClusterAlertsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/prod/clusters/{ClusterId}/alerts")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsListClusterAlertsInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsListClusterAlertsInput(v *ListClusterAlertsInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.ClusterId == nil || len(*v.ClusterId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member ClusterId must not be empty")}
+	}
+	if v.ClusterId != nil {
+		if err := encoder.SetURI("ClusterId").String(*v.ClusterId); err != nil {
+			return err
+		}
+	}
+
+	if v.MaxResults != nil {
+		encoder.SetQuery("maxResults").Integer(*v.MaxResults)
+	}
+
+	if v.NextToken != nil {
+		encoder.SetQuery("nextToken").String(*v.NextToken)
+	}
+
+	if v.StateFilter != nil {
+		encoder.SetQuery("stateFilter").String(*v.StateFilter)
 	}
 
 	return nil
@@ -6459,6 +6646,89 @@ func awsRestjson1_serializeOpHttpBindingsListInputSecurityGroupsInput(v *ListInp
 
 	if v.NextToken != nil {
 		encoder.SetQuery("nextToken").String(*v.NextToken)
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpListMultiplexAlerts struct {
+}
+
+func (*awsRestjson1_serializeOpListMultiplexAlerts) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpListMultiplexAlerts) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*ListMultiplexAlertsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/prod/multiplexes/{MultiplexId}/alerts")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsListMultiplexAlertsInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsListMultiplexAlertsInput(v *ListMultiplexAlertsInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.MaxResults != nil {
+		encoder.SetQuery("maxResults").Integer(*v.MaxResults)
+	}
+
+	if v.MultiplexId == nil || len(*v.MultiplexId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member MultiplexId must not be empty")}
+	}
+	if v.MultiplexId != nil {
+		if err := encoder.SetURI("MultiplexId").String(*v.MultiplexId); err != nil {
+			return err
+		}
+	}
+
+	if v.NextToken != nil {
+		encoder.SetQuery("nextToken").String(*v.NextToken)
+	}
+
+	if v.StateFilter != nil {
+		encoder.SetQuery("stateFilter").String(*v.StateFilter)
 	}
 
 	return nil
@@ -8693,6 +8963,13 @@ func awsRestjson1_serializeOpDocumentUpdateChannelInput(v *UpdateChannelInput, v
 	object := value.Object()
 	defer object.Close()
 
+	if v.AnywhereSettings != nil {
+		ok := object.Key("anywhereSettings")
+		if err := awsRestjson1_serializeDocumentAnywhereSettings(v.AnywhereSettings, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.CdiInputSpecification != nil {
 		ok := object.Key("cdiInputSpecification")
 		if err := awsRestjson1_serializeDocumentCdiInputSpecification(v.CdiInputSpecification, ok); err != nil {
@@ -8703,6 +8980,13 @@ func awsRestjson1_serializeOpDocumentUpdateChannelInput(v *UpdateChannelInput, v
 	if v.ChannelEngineVersion != nil {
 		ok := object.Key("channelEngineVersion")
 		if err := awsRestjson1_serializeDocumentChannelEngineVersionRequest(v.ChannelEngineVersion, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ChannelSecurityGroups != nil {
+		ok := object.Key("channelSecurityGroups")
+		if err := awsRestjson1_serializeDocument__listOf__string(v.ChannelSecurityGroups, ok); err != nil {
 			return err
 		}
 	}
@@ -8736,6 +9020,13 @@ func awsRestjson1_serializeOpDocumentUpdateChannelInput(v *UpdateChannelInput, v
 	if v.InputSpecification != nil {
 		ok := object.Key("inputSpecification")
 		if err := awsRestjson1_serializeDocumentInputSpecification(v.InputSpecification, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.LinkedChannelSettings != nil {
+		ok := object.Key("linkedChannelSettings")
+		if err := awsRestjson1_serializeDocumentLinkedChannelSettings(v.LinkedChannelSettings, ok); err != nil {
 			return err
 		}
 	}
@@ -9691,6 +9982,13 @@ func awsRestjson1_serializeOpDocumentUpdateInputInput(v *UpdateInputInput, value
 	if v.Sources != nil {
 		ok := object.Key("sources")
 		if err := awsRestjson1_serializeDocument__listOfInputSourceRequest(v.Sources, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.SpecialRouterSettings != nil {
+		ok := object.Key("specialRouterSettings")
+		if err := awsRestjson1_serializeDocumentSpecialRouterSettings(v.SpecialRouterSettings, ok); err != nil {
 			return err
 		}
 	}
@@ -10698,6 +10996,19 @@ func awsRestjson1_serializeDocument__listOf__stringPatternS(v []string, value sm
 	return nil
 }
 
+func awsRestjson1_serializeDocument__listOfAdditionalDestinations(v []types.AdditionalDestinations, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentAdditionalDestinations(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocument__listOfAudioChannelMapping(v []types.AudioChannelMapping, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -11080,6 +11391,19 @@ func awsRestjson1_serializeDocument__listOfMediaConnectFlowRequest(v []types.Med
 	return nil
 }
 
+func awsRestjson1_serializeDocument__listOfMediaPackageAdditionalDestinations(v []types.MediaPackageAdditionalDestinations, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentMediaPackageAdditionalDestinations(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocument__listOfMediaPackageOutputDestinationSettings(v []types.MediaPackageOutputDestinationSettings, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -11217,6 +11541,19 @@ func awsRestjson1_serializeDocument__listOfRouteCreateRequest(v []types.RouteCre
 	for i := range v {
 		av := array.Value()
 		if err := awsRestjson1_serializeDocumentRouteCreateRequest(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocument__listOfRouterDestinationSettings(v []types.RouterDestinationSettings, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentRouterDestinationSettings(&v[i], av); err != nil {
 			return err
 		}
 	}
@@ -11470,6 +11807,20 @@ func awsRestjson1_serializeDocumentAccountConfiguration(v *types.AccountConfigur
 	if v.KmsKeyId != nil {
 		ok := object.Key("kmsKeyId")
 		ok.String(*v.KmsKeyId)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentAdditionalDestinations(v *types.AdditionalDestinations, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Destination != nil {
+		ok := object.Key("destination")
+		if err := awsRestjson1_serializeDocumentOutputLocationRef(v.Destination, ok); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -12085,6 +12436,16 @@ func awsRestjson1_serializeDocumentAv1Settings(v *types.Av1Settings, value smith
 		ok.String(string(v.AfdSignaling))
 	}
 
+	if len(v.BitDepth) > 0 {
+		ok := object.Key("bitDepth")
+		ok.String(string(v.BitDepth))
+	}
+
+	if v.Bitrate != nil {
+		ok := object.Key("bitrate")
+		ok.Integer(*v.Bitrate)
+	}
+
 	if v.BufSize != nil {
 		ok := object.Key("bufSize")
 		ok.Integer(*v.BufSize)
@@ -12150,6 +12511,11 @@ func awsRestjson1_serializeDocumentAv1Settings(v *types.Av1Settings, value smith
 		ok.Integer(*v.MaxBitrate)
 	}
 
+	if v.MinBitrate != nil {
+		ok := object.Key("minBitrate")
+		ok.Integer(*v.MinBitrate)
+	}
+
 	if v.MinIInterval != nil {
 		ok := object.Key("minIInterval")
 		ok.Integer(*v.MinIInterval)
@@ -12170,9 +12536,24 @@ func awsRestjson1_serializeDocumentAv1Settings(v *types.Av1Settings, value smith
 		ok.Integer(*v.QvbrQualityLevel)
 	}
 
+	if len(v.RateControlMode) > 0 {
+		ok := object.Key("rateControlMode")
+		ok.String(string(v.RateControlMode))
+	}
+
 	if len(v.SceneChangeDetect) > 0 {
 		ok := object.Key("sceneChangeDetect")
 		ok.String(string(v.SceneChangeDetect))
+	}
+
+	if len(v.SpatialAq) > 0 {
+		ok := object.Key("spatialAq")
+		ok.String(string(v.SpatialAq))
+	}
+
+	if len(v.TemporalAq) > 0 {
+		ok := object.Key("temporalAq")
+		ok.String(string(v.TemporalAq))
 	}
 
 	if v.TimecodeBurninSettings != nil {
@@ -12180,6 +12561,11 @@ func awsRestjson1_serializeDocumentAv1Settings(v *types.Av1Settings, value smith
 		if err := awsRestjson1_serializeDocumentTimecodeBurninSettings(v.TimecodeBurninSettings, ok); err != nil {
 			return err
 		}
+	}
+
+	if len(v.TimecodeInsertion) > 0 {
+		ok := object.Key("timecodeInsertion")
+		ok.String(string(v.TimecodeInsertion))
 	}
 
 	return nil
@@ -12406,6 +12792,11 @@ func awsRestjson1_serializeDocumentBurnInDestinationSettings(v *types.BurnInDest
 	if v.ShadowYOffset != nil {
 		ok := object.Key("shadowYOffset")
 		ok.Integer(*v.ShadowYOffset)
+	}
+
+	if len(v.SubtitleRows) > 0 {
+		ok := object.Key("subtitleRows")
+		ok.String(string(v.SubtitleRows))
 	}
 
 	if len(v.TeletextGridControl) > 0 {
@@ -12839,6 +13230,13 @@ func awsRestjson1_serializeDocumentCmafIngestGroupSettings(v *types.CmafIngestGr
 	object := value.Object()
 	defer object.Close()
 
+	if v.AdditionalDestinations != nil {
+		ok := object.Key("additionalDestinations")
+		if err := awsRestjson1_serializeDocument__listOfAdditionalDestinations(v.AdditionalDestinations, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.CaptionLanguageMappings != nil {
 		ok := object.Key("captionLanguageMappings")
 		if err := awsRestjson1_serializeDocument__listOfCmafIngestCaptionLanguageMapping(v.CaptionLanguageMappings, ok); err != nil {
@@ -12981,6 +13379,18 @@ func awsRestjson1_serializeDocumentColorSpacePassthroughSettings(v *types.ColorS
 	return nil
 }
 
+func awsRestjson1_serializeDocumentDisabledLockingSettings(v *types.DisabledLockingSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.CustomEpoch != nil {
+		ok := object.Key("customEpoch")
+		ok.String(*v.CustomEpoch)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentDolbyVision81Settings(v *types.DolbyVision81Settings, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -13111,6 +13521,11 @@ func awsRestjson1_serializeDocumentDvbSubDestinationSettings(v *types.DvbSubDest
 	if v.ShadowYOffset != nil {
 		ok := object.Key("shadowYOffset")
 		ok.Integer(*v.ShadowYOffset)
+	}
+
+	if len(v.SubtitleRows) > 0 {
+		ok := object.Key("subtitleRows")
+		ok.String(string(v.SubtitleRows))
 	}
 
 	if len(v.TeletextGridControl) > 0 {
@@ -13777,6 +14192,23 @@ func awsRestjson1_serializeDocumentFmp4HlsSettings(v *types.Fmp4HlsSettings, val
 	return nil
 }
 
+func awsRestjson1_serializeDocumentFollowerChannelSettings(v *types.FollowerChannelSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.LinkedChannelType) > 0 {
+		ok := object.Key("linkedChannelType")
+		ok.String(string(v.LinkedChannelType))
+	}
+
+	if v.PrimaryChannelArn != nil {
+		ok := object.Key("primaryChannelArn")
+		ok.String(*v.PrimaryChannelArn)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentFollowModeScheduleActionStartSettings(v *types.FollowModeScheduleActionStartSettings, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -14115,6 +14547,11 @@ func awsRestjson1_serializeDocumentH264Settings(v *types.H264Settings, value smi
 		ok.Integer(*v.MaxBitrate)
 	}
 
+	if v.MinBitrate != nil {
+		ok := object.Key("minBitrate")
+		ok.Integer(*v.MinBitrate)
+	}
+
 	if v.MinIInterval != nil {
 		ok := object.Key("minIInterval")
 		ok.Integer(*v.MinIInterval)
@@ -14245,6 +14682,13 @@ func awsRestjson1_serializeDocumentH265ColorSpaceSettings(v *types.H265ColorSpac
 		}
 	}
 
+	if v.Hlg2020Settings != nil {
+		ok := object.Key("hlg2020Settings")
+		if err := awsRestjson1_serializeDocumentHlg2020Settings(v.Hlg2020Settings, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Rec601Settings != nil {
 		ok := object.Key("rec601Settings")
 		if err := awsRestjson1_serializeDocumentRec601Settings(v.Rec601Settings, ok); err != nil {
@@ -14356,9 +14800,19 @@ func awsRestjson1_serializeDocumentH265Settings(v *types.H265Settings, value smi
 		ok.Integer(*v.FramerateNumerator)
 	}
 
+	if len(v.GopBReference) > 0 {
+		ok := object.Key("gopBReference")
+		ok.String(string(v.GopBReference))
+	}
+
 	if v.GopClosedCadence != nil {
 		ok := object.Key("gopClosedCadence")
 		ok.Integer(*v.GopClosedCadence)
+	}
+
+	if v.GopNumBFrames != nil {
+		ok := object.Key("gopNumBFrames")
+		ok.Integer(*v.GopNumBFrames)
 	}
 
 	if v.GopSize != nil {
@@ -14397,6 +14851,11 @@ func awsRestjson1_serializeDocumentH265Settings(v *types.H265Settings, value smi
 	if v.MaxBitrate != nil {
 		ok := object.Key("maxBitrate")
 		ok.Integer(*v.MaxBitrate)
+	}
+
+	if v.MinBitrate != nil {
+		ok := object.Key("minBitrate")
+		ok.Integer(*v.MinBitrate)
 	}
 
 	if v.MinIInterval != nil {
@@ -14459,6 +14918,11 @@ func awsRestjson1_serializeDocumentH265Settings(v *types.H265Settings, value smi
 		ok.Integer(*v.Slices)
 	}
 
+	if len(v.SubgopLength) > 0 {
+		ok := object.Key("subgopLength")
+		ok.String(string(v.SubgopLength))
+	}
+
 	if len(v.Tier) > 0 {
 		ok := object.Key("tier")
 		ok.String(string(v.Tier))
@@ -14512,6 +14976,13 @@ func awsRestjson1_serializeDocumentHdr10Settings(v *types.Hdr10Settings, value s
 		ok := object.Key("maxFall")
 		ok.Integer(*v.MaxFall)
 	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentHlg2020Settings(v *types.Hlg2020Settings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
 
 	return nil
 }
@@ -15699,6 +16170,27 @@ func awsRestjson1_serializeDocumentKeyProviderSettings(v *types.KeyProviderSetti
 	return nil
 }
 
+func awsRestjson1_serializeDocumentLinkedChannelSettings(v *types.LinkedChannelSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.FollowerChannelSettings != nil {
+		ok := object.Key("followerChannelSettings")
+		if err := awsRestjson1_serializeDocumentFollowerChannelSettings(v.FollowerChannelSettings, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.PrimaryChannelSettings != nil {
+		ok := object.Key("primaryChannelSettings")
+		if err := awsRestjson1_serializeDocumentPrimaryChannelSettings(v.PrimaryChannelSettings, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentM2tsSettings(v *types.M2tsSettings, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -16157,7 +16649,7 @@ func awsRestjson1_serializeDocumentMediaConnectFlowRequest(v *types.MediaConnect
 	return nil
 }
 
-func awsRestjson1_serializeDocumentMediaPackageGroupSettings(v *types.MediaPackageGroupSettings, value smithyjson.Value) error {
+func awsRestjson1_serializeDocumentMediaPackageAdditionalDestinations(v *types.MediaPackageAdditionalDestinations, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
 
@@ -16171,9 +16663,35 @@ func awsRestjson1_serializeDocumentMediaPackageGroupSettings(v *types.MediaPacka
 	return nil
 }
 
+func awsRestjson1_serializeDocumentMediaPackageGroupSettings(v *types.MediaPackageGroupSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Destination != nil {
+		ok := object.Key("destination")
+		if err := awsRestjson1_serializeDocumentOutputLocationRef(v.Destination, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.MediapackageV2GroupSettings != nil {
+		ok := object.Key("mediapackageV2GroupSettings")
+		if err := awsRestjson1_serializeDocumentMediaPackageV2GroupSettings(v.MediapackageV2GroupSettings, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentMediaPackageOutputDestinationSettings(v *types.MediaPackageOutputDestinationSettings, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.ChannelEndpointId != nil {
+		ok := object.Key("channelEndpointId")
+		ok.String(*v.ChannelEndpointId)
+	}
 
 	if v.ChannelGroup != nil {
 		ok := object.Key("channelGroup")
@@ -16190,12 +16708,117 @@ func awsRestjson1_serializeDocumentMediaPackageOutputDestinationSettings(v *type
 		ok.String(*v.ChannelName)
 	}
 
+	if v.MediaPackageRegionName != nil {
+		ok := object.Key("mediaPackageRegionName")
+		ok.String(*v.MediaPackageRegionName)
+	}
+
 	return nil
 }
 
 func awsRestjson1_serializeDocumentMediaPackageOutputSettings(v *types.MediaPackageOutputSettings, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.MediaPackageV2DestinationSettings != nil {
+		ok := object.Key("mediaPackageV2DestinationSettings")
+		if err := awsRestjson1_serializeDocumentMediaPackageV2DestinationSettings(v.MediaPackageV2DestinationSettings, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentMediaPackageV2DestinationSettings(v *types.MediaPackageV2DestinationSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.AudioGroupId != nil {
+		ok := object.Key("audioGroupId")
+		ok.String(*v.AudioGroupId)
+	}
+
+	if v.AudioRenditionSets != nil {
+		ok := object.Key("audioRenditionSets")
+		ok.String(*v.AudioRenditionSets)
+	}
+
+	if len(v.HlsAutoSelect) > 0 {
+		ok := object.Key("hlsAutoSelect")
+		ok.String(string(v.HlsAutoSelect))
+	}
+
+	if len(v.HlsDefault) > 0 {
+		ok := object.Key("hlsDefault")
+		ok.String(string(v.HlsDefault))
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentMediaPackageV2GroupSettings(v *types.MediaPackageV2GroupSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.AdditionalDestinations != nil {
+		ok := object.Key("additionalDestinations")
+		if err := awsRestjson1_serializeDocument__listOfMediaPackageAdditionalDestinations(v.AdditionalDestinations, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.CaptionLanguageMappings != nil {
+		ok := object.Key("captionLanguageMappings")
+		if err := awsRestjson1_serializeDocument__listOfCaptionLanguageMapping(v.CaptionLanguageMappings, ok); err != nil {
+			return err
+		}
+	}
+
+	if len(v.Id3Behavior) > 0 {
+		ok := object.Key("id3Behavior")
+		ok.String(string(v.Id3Behavior))
+	}
+
+	if len(v.KlvBehavior) > 0 {
+		ok := object.Key("klvBehavior")
+		ok.String(string(v.KlvBehavior))
+	}
+
+	if len(v.NielsenId3Behavior) > 0 {
+		ok := object.Key("nielsenId3Behavior")
+		ok.String(string(v.NielsenId3Behavior))
+	}
+
+	if len(v.Scte35Type) > 0 {
+		ok := object.Key("scte35Type")
+		ok.String(string(v.Scte35Type))
+	}
+
+	if v.SegmentLength != nil {
+		ok := object.Key("segmentLength")
+		ok.Integer(*v.SegmentLength)
+	}
+
+	if len(v.SegmentLengthUnits) > 0 {
+		ok := object.Key("segmentLengthUnits")
+		ok.String(string(v.SegmentLengthUnits))
+	}
+
+	if len(v.TimedMetadataId3Frame) > 0 {
+		ok := object.Key("timedMetadataId3Frame")
+		ok.String(string(v.TimedMetadataId3Frame))
+	}
+
+	if v.TimedMetadataId3Period != nil {
+		ok := object.Key("timedMetadataId3Period")
+		ok.Integer(*v.TimedMetadataId3Period)
+	}
+
+	if len(v.TimedMetadataPassthrough) > 0 {
+		ok := object.Key("timedMetadataPassthrough")
+		ok.String(string(v.TimedMetadataPassthrough))
+	}
 
 	return nil
 }
@@ -17154,6 +17777,13 @@ func awsRestjson1_serializeDocumentNodeInterfaceMapping(v *types.NodeInterfaceMa
 		ok.String(string(v.NetworkInterfaceMode))
 	}
 
+	if v.PhysicalInterfaceIpAddresses != nil {
+		ok := object.Key("physicalInterfaceIpAddresses")
+		if err := awsRestjson1_serializeDocument__listOf__string(v.PhysicalInterfaceIpAddresses, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.PhysicalInterfaceName != nil {
 		ok := object.Key("physicalInterfaceName")
 		ok.String(*v.PhysicalInterfaceName)
@@ -17229,6 +17859,13 @@ func awsRestjson1_serializeDocumentOutputDestination(v *types.OutputDestination,
 	if v.Id != nil {
 		ok := object.Key("id")
 		ok.String(*v.Id)
+	}
+
+	if v.LogicalInterfaceNames != nil {
+		ok := object.Key("logicalInterfaceNames")
+		if err := awsRestjson1_serializeDocument__listOf__string(v.LogicalInterfaceNames, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.MediaPackageSettings != nil {
@@ -17408,6 +18045,13 @@ func awsRestjson1_serializeDocumentOutputLockingSettings(v *types.OutputLockingS
 	object := value.Object()
 	defer object.Close()
 
+	if v.DisabledLockingSettings != nil {
+		ok := object.Key("disabledLockingSettings")
+		if err := awsRestjson1_serializeDocumentDisabledLockingSettings(v.DisabledLockingSettings, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.EpochLockingSettings != nil {
 		ok := object.Key("epochLockingSettings")
 		if err := awsRestjson1_serializeDocumentEpochLockingSettings(v.EpochLockingSettings, ok); err != nil {
@@ -17527,6 +18171,16 @@ func awsRestjson1_serializeDocumentPipelineLockingSettings(v *types.PipelineLock
 	object := value.Object()
 	defer object.Close()
 
+	if v.CustomEpoch != nil {
+		ok := object.Key("customEpoch")
+		ok.String(*v.CustomEpoch)
+	}
+
+	if len(v.PipelineLockingMethod) > 0 {
+		ok := object.Key("pipelineLockingMethod")
+		ok.String(string(v.PipelineLockingMethod))
+	}
+
 	return nil
 }
 
@@ -17537,6 +18191,18 @@ func awsRestjson1_serializeDocumentPipelinePauseStateSettings(v *types.PipelineP
 	if len(v.PipelineId) > 0 {
 		ok := object.Key("pipelineId")
 		ok.String(string(v.PipelineId))
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentPrimaryChannelSettings(v *types.PrimaryChannelSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.LinkedChannelType) > 0 {
+		ok := object.Key("linkedChannelType")
+		ok.String(string(v.LinkedChannelType))
 	}
 
 	return nil
@@ -17616,6 +18282,42 @@ func awsRestjson1_serializeDocumentRouteCreateRequest(v *types.RouteCreateReques
 	if v.Gateway != nil {
 		ok := object.Key("gateway")
 		ok.String(*v.Gateway)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentRouterDestinationSettings(v *types.RouterDestinationSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.AvailabilityZoneName != nil {
+		ok := object.Key("availabilityZoneName")
+		ok.String(*v.AvailabilityZoneName)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentRouterSettings(v *types.RouterSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Destinations != nil {
+		ok := object.Key("destinations")
+		if err := awsRestjson1_serializeDocument__listOfRouterDestinationSettings(v.Destinations, ok); err != nil {
+			return err
+		}
+	}
+
+	if len(v.EncryptionType) > 0 {
+		ok := object.Key("encryptionType")
+		ok.String(string(v.EncryptionType))
+	}
+
+	if v.SecretArn != nil {
+		ok := object.Key("secretArn")
+		ok.String(*v.SecretArn)
 	}
 
 	return nil
@@ -18272,6 +18974,18 @@ func awsRestjson1_serializeDocumentSmpteTtDestinationSettings(v *types.SmpteTtDe
 	return nil
 }
 
+func awsRestjson1_serializeDocumentSpecialRouterSettings(v *types.SpecialRouterSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.RouterArn != nil {
+		ok := object.Key("routerArn")
+		ok.String(*v.RouterArn)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentSrtCallerDecryptionRequest(v *types.SrtCallerDecryptionRequest, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -18335,13 +19049,64 @@ func awsRestjson1_serializeDocumentSrtGroupSettings(v *types.SrtGroupSettings, v
 	return nil
 }
 
+func awsRestjson1_serializeDocumentSrtListenerDecryptionRequest(v *types.SrtListenerDecryptionRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.Algorithm) > 0 {
+		ok := object.Key("algorithm")
+		ok.String(string(v.Algorithm))
+	}
+
+	if v.PassphraseSecretArn != nil {
+		ok := object.Key("passphraseSecretArn")
+		ok.String(*v.PassphraseSecretArn)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentSrtListenerSettingsRequest(v *types.SrtListenerSettingsRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Decryption != nil {
+		ok := object.Key("decryption")
+		if err := awsRestjson1_serializeDocumentSrtListenerDecryptionRequest(v.Decryption, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.MinimumLatency != nil {
+		ok := object.Key("minimumLatency")
+		ok.Integer(*v.MinimumLatency)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("streamId")
+		ok.String(*v.StreamId)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentSrtOutputDestinationSettings(v *types.SrtOutputDestinationSettings, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
 
+	if len(v.ConnectionMode) > 0 {
+		ok := object.Key("connectionMode")
+		ok.String(string(v.ConnectionMode))
+	}
+
 	if v.EncryptionPassphraseSecretArn != nil {
 		ok := object.Key("encryptionPassphraseSecretArn")
 		ok.String(*v.EncryptionPassphraseSecretArn)
+	}
+
+	if v.ListenerPort != nil {
+		ok := object.Key("listenerPort")
+		ok.Integer(*v.ListenerPort)
 	}
 
 	if v.StreamId != nil {
@@ -18400,6 +19165,13 @@ func awsRestjson1_serializeDocumentSrtSettingsRequest(v *types.SrtSettingsReques
 	if v.SrtCallerSources != nil {
 		ok := object.Key("srtCallerSources")
 		if err := awsRestjson1_serializeDocument__listOfSrtCallerSourceRequest(v.SrtCallerSources, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.SrtListenerSettings != nil {
+		ok := object.Key("srtListenerSettings")
+		if err := awsRestjson1_serializeDocumentSrtListenerSettingsRequest(v.SrtListenerSettings, ok); err != nil {
 			return err
 		}
 	}

@@ -73,6 +73,9 @@ type CreateImageInput struct {
 	// The image tests configuration of the image.
 	ImageTestsConfiguration *types.ImageTestsConfiguration
 
+	// Define logging configuration for the image build process.
+	LoggingConfiguration *types.ImageLoggingConfiguration
+
 	// The tags of the image.
 	Tags map[string]string
 
@@ -89,6 +92,9 @@ type CreateImageOutput struct {
 
 	// The Amazon Resource Name (ARN) of the image that the request created.
 	ImageBuildVersionArn *string
+
+	// The resource ARNs with different wildcard variations of semantic versioning.
+	LatestVersionReferences *types.LatestVersionReferences
 
 	// The request ID that uniquely identifies this request.
 	RequestId *string
@@ -190,16 +196,13 @@ func (c *Client) addOperationCreateImageMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

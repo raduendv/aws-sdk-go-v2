@@ -1,3 +1,147 @@
+# v1.36.0 (2026-02-04)
+
+* **Feature**: Amazon Connect Cases now supports larger, multi-line text fields with up to 4,100 characters. Administrators can use the Admin UI to select the appropriate configuration (single-line or multi-line) on a per-field basis, improving case documentation capabilities.
+
+# v1.35.0 (2026-01-26)
+
+* **Feature**: Amazon Connect now enables you to use tag-based access controls to define who can access specific cases. You can associate tags with case templates and configure security profiles to determine which users can access cases with those tags.
+
+# v1.34.9 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.34.8 (2025-12-19)
+
+* No change notes available for this release.
+
+# v1.34.7 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.34.6 (2025-12-02)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.34.5 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.34.4 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.34.3 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.34.2 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.34.1 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.34.0 (2025-10-31)
+
+* **Feature**: Added two new case rule types: Parent Child Field Options (restricts child field options based on parent field value) and Hidden (controls child field visibility based on parent field value). Both enable dynamic field behavior within templates.
+
+# v1.33.0 (2025-10-30)
+
+* **Feature**: Update endpoint ruleset parameters casing
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.32.2 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.32.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.32.0 (2025-10-02)
+
+* **Feature**: New Search All Related Items API enables searching related items across cases
+
+# v1.31.0 (2025-09-30)
+
+* **Feature**: This release adds support for two new related item types: ConnectCase for linking Amazon Connect cases and Custom for user-defined related items with configurable fields.
+
+# v1.30.6 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.30.5 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.30.4 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.30.3 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.30.2 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.30.1 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.30.0 (2025-08-21)
+
+* **Feature**: Remove incorrect endpoint tests
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.29.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.29.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.28.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.27.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.27.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.26.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.26.0 (2025-07-02)
+
+* **Feature**: This release adds DeleteCase and DeleteRelatedItem APIs, which enable deleting cases and comments, undoing contact association, and removing service level agreements (SLAs) from cases. Contact center admins can use these APIs to delete cases when requested by customers and correct agent errors.
+
+# v1.25.2 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.25.1 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
 # v1.25.0 (2025-04-29)
 
 * **Feature**: Introduces CustomEntity as part of the UserUnion data type. This field is used to indicate the entity who is performing the API action.

@@ -63,7 +63,7 @@ type UpdateDashboardPermissionsOutput struct {
 	// The ID for the dashboard.
 	DashboardId *string
 
-	// Updates the permissions of a shared link to an Amazon QuickSight dashboard.
+	// Updates the permissions of a shared link to an Quick Sight dashboard.
 	LinkSharingConfiguration *types.LinkSharingConfiguration
 
 	// Information about the permissions on the dashboard.
@@ -169,16 +169,13 @@ func (c *Client) addOperationUpdateDashboardPermissionsMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

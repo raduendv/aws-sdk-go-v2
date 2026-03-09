@@ -62,6 +62,9 @@ type DescribeTrainingPlanOutput struct {
 	// The number of instances currently available for use in this training plan.
 	AvailableInstanceCount *int32
 
+	// The number of available spare instances in the training plan.
+	AvailableSpareInstanceCount *int32
+
 	// The currency code for the upfront fee (e.g., USD).
 	CurrencyCode *string
 
@@ -89,8 +92,8 @@ type DescribeTrainingPlanOutput struct {
 	// training plan.
 	StatusMessage *string
 
-	// The target resources (e.g., SageMaker Training Jobs, SageMaker HyperPod) that
-	// can use this training plan.
+	// The target resources (e.g., SageMaker Training Jobs, SageMaker HyperPod,
+	// SageMaker Endpoints) that can use this training plan.
 	//
 	// Training plans are specific to their target resource.
 	//
@@ -99,10 +102,20 @@ type DescribeTrainingPlanOutput struct {
 	//
 	//   - A training plan for HyperPod clusters can be used exclusively to provide
 	//   compute resources to a cluster's instance group.
+	//
+	//   - A training plan for SageMaker endpoints can be used exclusively to provide
+	//   compute resources to SageMaker endpoints for model deployment.
 	TargetResources []types.SageMakerResourceName
 
 	// The total number of instances reserved in this training plan.
 	TotalInstanceCount *int32
+
+	// The total number of UltraServers reserved to this training plan.
+	TotalUltraServerCount *int32
+
+	// The number of instances in the training plan that are currently in an unhealthy
+	// state.
+	UnhealthyInstanceCount *int32
 
 	// The upfront fee for the training plan.
 	UpfrontFee *string
@@ -201,16 +214,13 @@ func (c *Client) addOperationDescribeTrainingPlanMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

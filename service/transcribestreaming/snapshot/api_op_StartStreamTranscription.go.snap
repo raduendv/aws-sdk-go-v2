@@ -1,13 +1,10 @@
 StartStreamTranscription
 	Initialize stack step
-		spanInitializeStart
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		setOperationInput
 		ResolveEndpoint
 		OperationSerializer
@@ -17,12 +14,13 @@ StartStreamTranscription
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		ComputePayloadHash
 		SigV4ContentSHA256Header
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

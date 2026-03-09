@@ -39,8 +39,14 @@ type CreateCollectionInput struct {
 	// Unique, case-sensitive identifier to ensure idempotency of the request.
 	ClientToken *string
 
+	// The name of the collection group to associate with the collection.
+	CollectionGroupName *string
+
 	// Description of the collection.
 	Description *string
+
+	// Encryption settings for the collection.
+	EncryptionConfig *types.EncryptionConfig
 
 	// Indicates whether standby replicas should be used for a collection.
 	StandbyReplicas types.StandbyReplicas
@@ -51,6 +57,9 @@ type CreateCollectionInput struct {
 
 	// The type of collection.
 	Type types.CollectionType
+
+	// Configuration options for vector search capabilities in the collection.
+	VectorOptions *types.VectorOptions
 
 	noSmithyDocumentSerde
 }
@@ -157,16 +166,13 @@ func (c *Client) addOperationCreateCollectionMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

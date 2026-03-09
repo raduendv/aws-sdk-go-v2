@@ -44,11 +44,16 @@ type UpdateWirelessDeviceInput struct {
 	LoRaWAN *types.LoRaWANUpdateDevice
 
 	// The new name of the resource.
+	//
+	// The following special characters aren't accepted: <>^#~$
 	Name *string
 
-	// FPort values for the GNSS, stream, and ClockSync functions of the positioning
-	// information.
+	// The integration status of the Device Location feature for LoRaWAN and Sidewalk
+	// devices.
 	Positioning types.PositioningConfigStatus
+
+	// The updated sidewalk properties.
+	Sidewalk *types.SidewalkUpdateWirelessDevice
 
 	noSmithyDocumentSerde
 }
@@ -148,16 +153,13 @@ func (c *Client) addOperationUpdateWirelessDeviceMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

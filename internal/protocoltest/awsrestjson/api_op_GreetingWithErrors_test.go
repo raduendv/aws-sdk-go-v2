@@ -111,129 +111,28 @@ func TestClient_GreetingWithErrors_awsRestjson1Deserialize(t *testing.T) {
 	}
 }
 
-func TestClient_GreetingWithErrors_FooError_awsRestjson1Deserialize(t *testing.T) {
+func TestClient_GreetingWithErrors_InvalidGreeting_awsRestjson1Deserialize(t *testing.T) {
 	cases := map[string]struct {
 		StatusCode    int
 		Header        http.Header
 		BodyMediaType string
 		Body          []byte
-		ExpectError   *types.FooError
+		ExpectError   *types.InvalidGreeting
 	}{
-		// Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.
-		"RestJsonFooErrorUsingXAmznErrorType": {
-			StatusCode: 500,
+		// Parses simple JSON errors
+		"RestJsonInvalidGreetingError": {
+			StatusCode: 400,
 			Header: http.Header{
-				"X-Amzn-Errortype": []string{"FooError"},
-			},
-			ExpectError: &types.FooError{},
-		},
-		// Some X-Amzn-Errortype headers contain URLs. Clients need to split the URL on
-		// ':' and take only the first half of the string. For example,
-		// 'ValidationException:http://internal.amazon.com/coral/com.amazon.coral.validate/'
-		// is to be interpreted as 'ValidationException'.
-		//
-		// For an example service see Amazon Polly.
-		"RestJsonFooErrorUsingXAmznErrorTypeWithUri": {
-			StatusCode: 500,
-			Header: http.Header{
-				"X-Amzn-Errortype": []string{"FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"},
-			},
-			ExpectError: &types.FooError{},
-		},
-		// X-Amzn-Errortype might contain a URL and a namespace. Client should extract
-		// only the shape name. This is a pathalogical case that might not actually happen
-		// in any deployed AWS service.
-		"RestJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace": {
-			StatusCode: 500,
-			Header: http.Header{
-				"X-Amzn-Errortype": []string{"aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"},
-			},
-			ExpectError: &types.FooError{},
-		},
-		// This example uses the 'code' property in the output rather than
-		// X-Amzn-Errortype. Some services do this though it's preferable to send the
-		// X-Amzn-Errortype. Client implementations must first check for the
-		// X-Amzn-Errortype and then check for a top-level 'code' property.
-		//
-		// For example service see Amazon S3 Glacier.
-		"RestJsonFooErrorUsingCode": {
-			StatusCode: 500,
-			Header: http.Header{
-				"Content-Type": []string{"application/json"},
+				"Content-Type":     []string{"application/json"},
+				"X-Amzn-Errortype": []string{"InvalidGreeting"},
 			},
 			BodyMediaType: "application/json",
 			Body: []byte(`{
-			    "code": "FooError"
+			    "Message": "Hi"
 			}`),
-			ExpectError: &types.FooError{},
-		},
-		// Some services serialize errors using code, and it might contain a namespace.
-		// Clients should just take the last part of the string after '#'.
-		"RestJsonFooErrorUsingCodeAndNamespace": {
-			StatusCode: 500,
-			Header: http.Header{
-				"Content-Type": []string{"application/json"},
+			ExpectError: &types.InvalidGreeting{
+				Message: ptr.String("Hi"),
 			},
-			BodyMediaType: "application/json",
-			Body: []byte(`{
-			    "code": "aws.protocoltests.restjson#FooError"
-			}`),
-			ExpectError: &types.FooError{},
-		},
-		// Some services serialize errors using code, and it might contain a namespace. It
-		// also might contain a URI. Clients should just take the last part of the string
-		// after '#' and before ":". This is a pathalogical case that might not occur in
-		// any deployed AWS service.
-		"RestJsonFooErrorUsingCodeUriAndNamespace": {
-			StatusCode: 500,
-			Header: http.Header{
-				"Content-Type": []string{"application/json"},
-			},
-			BodyMediaType: "application/json",
-			Body: []byte(`{
-			    "code": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
-			}`),
-			ExpectError: &types.FooError{},
-		},
-		// Some services serialize errors using __type.
-		"RestJsonFooErrorWithDunderType": {
-			StatusCode: 500,
-			Header: http.Header{
-				"Content-Type": []string{"application/json"},
-			},
-			BodyMediaType: "application/json",
-			Body: []byte(`{
-			    "__type": "FooError"
-			}`),
-			ExpectError: &types.FooError{},
-		},
-		// Some services serialize errors using __type, and it might contain a namespace.
-		// Clients should just take the last part of the string after '#'.
-		"RestJsonFooErrorWithDunderTypeAndNamespace": {
-			StatusCode: 500,
-			Header: http.Header{
-				"Content-Type": []string{"application/json"},
-			},
-			BodyMediaType: "application/json",
-			Body: []byte(`{
-			    "__type": "aws.protocoltests.restjson#FooError"
-			}`),
-			ExpectError: &types.FooError{},
-		},
-		// Some services serialize errors using __type, and it might contain a namespace.
-		// It also might contain a URI. Clients should just take the last part of the
-		// string after '#' and before ":". This is a pathalogical case that might not
-		// occur in any deployed AWS service.
-		"RestJsonFooErrorWithDunderTypeUriAndNamespace": {
-			StatusCode: 500,
-			Header: http.Header{
-				"Content-Type": []string{"application/json"},
-			},
-			BodyMediaType: "application/json",
-			Body: []byte(`{
-			    "__type": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
-			}`),
-			ExpectError: &types.FooError{},
 		},
 	}
 	for name, c := range cases {
@@ -292,7 +191,7 @@ func TestClient_GreetingWithErrors_FooError_awsRestjson1Deserialize(t *testing.T
 				Operation() string
 			}
 			if !errors.As(err, &opErr) {
-				t.Fatalf("expect *types.FooError operation error, got %T", err)
+				t.Fatalf("expect *types.InvalidGreeting operation error, got %T", err)
 			}
 			if e, a := ServiceID, opErr.Service(); e != a {
 				t.Errorf("expect %v operation service name, got %v", e, a)
@@ -300,9 +199,9 @@ func TestClient_GreetingWithErrors_FooError_awsRestjson1Deserialize(t *testing.T
 			if e, a := "GreetingWithErrors", opErr.Operation(); e != a {
 				t.Errorf("expect %v operation service name, got %v", e, a)
 			}
-			var actualErr *types.FooError
+			var actualErr *types.InvalidGreeting
 			if !errors.As(err, &actualErr) {
-				t.Fatalf("expect *types.FooError result error, got %T", err)
+				t.Fatalf("expect *types.InvalidGreeting result error, got %T", err)
 			}
 			if err := smithytesting.CompareValues(c.ExpectError, actualErr); err != nil {
 				t.Errorf("expect c.ExpectError value match:\n%v", err)
@@ -428,28 +327,152 @@ func TestClient_GreetingWithErrors_ComplexError_awsRestjson1Deserialize(t *testi
 	}
 }
 
-func TestClient_GreetingWithErrors_InvalidGreeting_awsRestjson1Deserialize(t *testing.T) {
+func TestClient_GreetingWithErrors_FooError_awsRestjson1Deserialize(t *testing.T) {
 	cases := map[string]struct {
 		StatusCode    int
 		Header        http.Header
 		BodyMediaType string
 		Body          []byte
-		ExpectError   *types.InvalidGreeting
+		ExpectError   *types.FooError
 	}{
-		// Parses simple JSON errors
-		"RestJsonInvalidGreetingError": {
-			StatusCode: 400,
+		// Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.
+		"RestJsonFooErrorUsingXAmznErrorType": {
+			StatusCode: 500,
 			Header: http.Header{
-				"Content-Type":     []string{"application/json"},
-				"X-Amzn-Errortype": []string{"InvalidGreeting"},
+				"X-Amzn-Errortype": []string{"FooError"},
+			},
+			ExpectError: &types.FooError{},
+		},
+		// Some X-Amzn-Errortype headers contain URLs. Clients need to split the URL on
+		// ':' and take only the first half of the string. For example,
+		// 'ValidationException:http://internal.amazon.com/coral/com.amazon.coral.validate/'
+		// is to be interpreted as 'ValidationException'.
+		//
+		// For an example service see Amazon Polly.
+		"RestJsonFooErrorUsingXAmznErrorTypeWithUri": {
+			StatusCode: 500,
+			Header: http.Header{
+				"X-Amzn-Errortype": []string{"FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"},
+			},
+			ExpectError: &types.FooError{},
+		},
+		// X-Amzn-Errortype might contain a URL and a namespace. Client should extract
+		// only the shape name. This is a pathalogical case that might not actually happen
+		// in any deployed AWS service.
+		"RestJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace": {
+			StatusCode: 500,
+			Header: http.Header{
+				"X-Amzn-Errortype": []string{"aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"},
+			},
+			ExpectError: &types.FooError{},
+		},
+		// This example uses the 'code' property in the output rather than
+		// X-Amzn-Errortype. Some services do this though it's preferable to send the
+		// X-Amzn-Errortype. Client implementations must first check for the
+		// X-Amzn-Errortype and then check for a top-level 'code' property.
+		//
+		// For example service see Amazon S3 Glacier.
+		"RestJsonFooErrorUsingCode": {
+			StatusCode: 500,
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
 			},
 			BodyMediaType: "application/json",
 			Body: []byte(`{
-			    "Message": "Hi"
+			    "code": "FooError"
 			}`),
-			ExpectError: &types.InvalidGreeting{
-				Message: ptr.String("Hi"),
+			ExpectError: &types.FooError{},
+		},
+		// Some services serialize errors using code, and it might contain a namespace.
+		// Clients should just take the last part of the string after '#'.
+		"RestJsonFooErrorUsingCodeAndNamespace": {
+			StatusCode: 500,
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
 			},
+			BodyMediaType: "application/json",
+			Body: []byte(`{
+			    "code": "aws.protocoltests.restjson#FooError"
+			}`),
+			ExpectError: &types.FooError{},
+		},
+		// Some services serialize errors using code, and it might contain a namespace. It
+		// also might contain a URI. Clients should just take the last part of the string
+		// after '#' and before ":". This is a pathalogical case that might not occur in
+		// any deployed AWS service.
+		"RestJsonFooErrorUsingCodeUriAndNamespace": {
+			StatusCode: 500,
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
+			},
+			BodyMediaType: "application/json",
+			Body: []byte(`{
+			    "code": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
+			}`),
+			ExpectError: &types.FooError{},
+		},
+		// Some services serialize errors using __type.
+		"RestJsonFooErrorWithDunderType": {
+			StatusCode: 500,
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
+			},
+			BodyMediaType: "application/json",
+			Body: []byte(`{
+			    "__type": "FooError"
+			}`),
+			ExpectError: &types.FooError{},
+		},
+		// Some services serialize errors using __type, and it might contain a namespace.
+		// Clients should just take the last part of the string after '#'.
+		"RestJsonFooErrorWithDunderTypeAndNamespace": {
+			StatusCode: 500,
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
+			},
+			BodyMediaType: "application/json",
+			Body: []byte(`{
+			    "__type": "aws.protocoltests.restjson#FooError"
+			}`),
+			ExpectError: &types.FooError{},
+		},
+		// Some services serialize errors using __type, and it might contain a namespace.
+		// It also might contain a URI. Clients should just take the last part of the
+		// string after '#' and before ":". This is a pathalogical case that might not
+		// occur in any deployed AWS service.
+		"RestJsonFooErrorWithDunderTypeUriAndNamespace": {
+			StatusCode: 500,
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
+			},
+			BodyMediaType: "application/json",
+			Body: []byte(`{
+			    "__type": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
+			}`),
+			ExpectError: &types.FooError{},
+		},
+		// Some services serialize errors using __type, and if the response includes
+		// additional shapes that belong to a different namespace there'll be a nested
+		// __type property that must not be considered when determining which error to be
+		// surfaced.
+		//
+		// For an example service see Amazon DynamoDB.
+		"RestJsonFooErrorWithNestedTypeProperty": {
+			StatusCode: 500,
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
+			},
+			BodyMediaType: "application/json",
+			Body: []byte(`{
+			    "__type": "aws.protocoltests.restjson#FooError",
+			    "ErrorDetails": [
+			      {
+			          "__type": "com.amazon.internal#ErrorDetails",
+			          "reason": "Some reason"
+			      }
+			    ]
+			}`),
+			ExpectError: &types.FooError{},
 		},
 	}
 	for name, c := range cases {
@@ -508,7 +531,7 @@ func TestClient_GreetingWithErrors_InvalidGreeting_awsRestjson1Deserialize(t *te
 				Operation() string
 			}
 			if !errors.As(err, &opErr) {
-				t.Fatalf("expect *types.InvalidGreeting operation error, got %T", err)
+				t.Fatalf("expect *types.FooError operation error, got %T", err)
 			}
 			if e, a := ServiceID, opErr.Service(); e != a {
 				t.Errorf("expect %v operation service name, got %v", e, a)
@@ -516,9 +539,9 @@ func TestClient_GreetingWithErrors_InvalidGreeting_awsRestjson1Deserialize(t *te
 			if e, a := "GreetingWithErrors", opErr.Operation(); e != a {
 				t.Errorf("expect %v operation service name, got %v", e, a)
 			}
-			var actualErr *types.InvalidGreeting
+			var actualErr *types.FooError
 			if !errors.As(err, &actualErr) {
-				t.Fatalf("expect *types.InvalidGreeting result error, got %T", err)
+				t.Fatalf("expect *types.FooError result error, got %T", err)
 			}
 			if err := smithytesting.CompareValues(c.ExpectError, actualErr); err != nil {
 				t.Errorf("expect c.ExpectError value match:\n%v", err)

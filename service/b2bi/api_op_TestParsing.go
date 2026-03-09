@@ -49,6 +49,11 @@ type TestParsingInput struct {
 	// This member is required.
 	InputFile *types.S3Location
 
+	// Specifies advanced options for parsing the input EDI file. These options allow
+	// for more granular control over the parsing process, including split options for
+	// X12 files.
+	AdvancedOptions *types.AdvancedOptions
+
 	noSmithyDocumentSerde
 }
 
@@ -59,6 +64,18 @@ type TestParsingOutput struct {
 	//
 	// This member is required.
 	ParsedFileContent *string
+
+	// Returns an array of parsed file contents when the input file is split according
+	// to the specified split options. Each element in the array represents a separate
+	// split file's parsed content.
+	ParsedSplitFileContents []string
+
+	// Returns an array of validation messages generated during EDI validation. These
+	// messages provide detailed information about validation errors, warnings, or
+	// confirmations based on the configured X12 validation rules such as element
+	// length constraints, code list validations, and element requirement checks. This
+	// field is populated when the TestParsing API validates EDI documents.
+	ValidationMessages []string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -154,16 +171,13 @@ func (c *Client) addOperationTestParsingMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

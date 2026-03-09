@@ -78,6 +78,12 @@ type CreateWebhookInput struct {
 	// manualCreation is only available for GitHub webhooks.
 	ManualCreation *bool
 
+	// A PullRequestBuildPolicy object that defines comment-based approval
+	// requirements for triggering builds on pull requests. This policy helps control
+	// when automated builds are executed based on contributor permissions and approval
+	// workflows.
+	PullRequestBuildPolicy *types.PullRequestBuildPolicy
+
 	// The scope configuration for global or organization webhooks.
 	//
 	// Global or organization webhooks are only available for GitHub and Github
@@ -187,16 +193,13 @@ func (c *Client) addOperationCreateWebhookMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

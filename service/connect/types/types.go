@@ -30,6 +30,38 @@ type AdditionalEmailRecipients struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration settings for after contact work (ACW) timeout.
+type AfterContactWorkConfig struct {
+
+	// The ACW timeout duration in seconds. Minimum: 1 second. Maximum: 2,000,000
+	// seconds (24 days). Enter 0 for indefinite ACW time.
+	AfterContactWorkTimeLimit int32
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for after contact work (ACW) timeout for a specific
+// channel.
+type AfterContactWorkConfigPerChannel struct {
+
+	// The ACW timeout settings for this channel.
+	//
+	// This member is required.
+	AfterContactWorkConfig *AfterContactWorkConfig
+
+	// The channel for this ACW timeout configuration. Valid values: VOICE, CHAT,
+	// TASK, EMAIL.
+	//
+	// This member is required.
+	Channel Channel
+
+	// The ACW timeout settings for agent-first callbacks. This setting only applies
+	// to the VOICE channel.
+	AgentFirstCallbackAfterContactWorkConfig *AfterContactWorkConfig
+
+	noSmithyDocumentSerde
+}
+
 // The distribution of agents between the instance and its replica(s).
 type AgentConfig struct {
 
@@ -76,6 +108,15 @@ type AgentContactReference struct {
 	noSmithyDocumentSerde
 }
 
+// Information about agent-first outbound strategy configuration.
+type AgentFirst struct {
+
+	// Information about preview configuration of agent first outbound strategy
+	Preview *Preview
+
+	noSmithyDocumentSerde
+}
+
 // Information about an agent hierarchy group.
 type AgentHierarchyGroup struct {
 
@@ -112,6 +153,9 @@ type AgentHierarchyGroups struct {
 
 // Information about the agent who accepted the contact.
 type AgentInfo struct {
+
+	// The timestamp when the contact was accepted by the agent.
+	AcceptedByAgentTimestamp *time.Time
 
 	// The difference in time, in whole seconds, between AfterContactWorkStartTimestamp
 	// and AfterContactWorkEndTimestamp .
@@ -152,6 +196,9 @@ type AgentInfo struct {
 	// The identifier of the agent who accepted the contact.
 	Id *string
 
+	// The timestamp when the agent finished previewing the contact.
+	PreviewEndTimestamp *time.Time
+
 	// List of StateTransition for a supervisor.
 	StateTransitions []StateTransition
 
@@ -168,8 +215,8 @@ type AgentQualityMetrics struct {
 }
 
 // Can be used to define a list of preferred agents to target the contact to
-// within the queue.  Note that agents must have the queue in their routing profile
-// in order to be offered the  contact.
+// within the queue. Note that agents must have the queue in their routing profile
+// in order to be offered the contact.
 type AgentsCriteria struct {
 
 	// An object to specify a list of agents, by user ID.
@@ -215,6 +262,18 @@ type AgentStatus struct {
 	noSmithyDocumentSerde
 }
 
+// Information about the agent status assigned to the user.
+type AgentStatusIdentifier struct {
+
+	// The Amazon Resource Name (ARN) of the agent status.
+	Arn *string
+
+	// The identifier of the agent status.
+	Id *string
+
+	noSmithyDocumentSerde
+}
+
 // Information about the agent's status.
 type AgentStatusReference struct {
 
@@ -235,8 +294,8 @@ type AgentStatusSearchCriteria struct {
 
 	// A leaf node condition which can be used to specify a string condition.
 	//
-	// The currently supported values for FieldName are name ,   description , state ,
-	// type , displayOrder ,  and resourceID .
+	// The currently supported values for FieldName are name , description , state ,
+	// type , displayOrder , and resourceID .
 	AndConditions []AgentStatusSearchCriteria
 
 	// A list of conditions which would be applied together with an OR condition.
@@ -244,8 +303,8 @@ type AgentStatusSearchCriteria struct {
 
 	// A leaf node condition which can be used to specify a string condition.
 	//
-	// The currently supported values for FieldName are name ,   description , state ,
-	// type , displayOrder ,  and resourceID .
+	// The currently supported values for FieldName are name , description , state ,
+	// type , displayOrder , and resourceID .
 	StringCondition *StringCondition
 
 	noSmithyDocumentSerde
@@ -287,6 +346,34 @@ type AgentStatusSummary struct {
 
 	// The type of the agent status.
 	Type AgentStatusType
+
+	noSmithyDocumentSerde
+}
+
+// Information of the AI agent involved in the contact.
+type AiAgentInfo struct {
+
+	//  A boolean flag indicating whether the contact initially handled by this AI
+	// agent was escalated to a human agent.
+	AiAgentEscalated bool
+
+	//  The unique identifier that specifies both the AI agent ID and its version
+	// number that was involved in the contact
+	AiAgentVersionId *string
+
+	//  The use case or scenario for which the AI agent is involved in the contact
+	AiUseCase AiUseCase
+
+	noSmithyDocumentSerde
+}
+
+// Configuration information of an email alias.
+type AliasConfiguration struct {
+
+	// The email address ID.
+	//
+	// This member is required.
+	EmailAddressId *string
 
 	noSmithyDocumentSerde
 }
@@ -358,12 +445,16 @@ type AnswerMachineDetectionConfig struct {
 // A third-party application's metadata.
 type Application struct {
 
-	// The permissions that the agent is granted on the application. Only the ACCESS
-	// permission is supported.
+	// The permissions that the agent is granted on the application. For third-party
+	// applications, only the ACCESS permission is supported. For MCP Servers, the
+	// permissions are tool Identifiers accepted by MCP Server.
 	ApplicationPermissions []string
 
 	// Namespace of the application that you want to give access to.
 	Namespace *string
+
+	//  Type of Application.
+	Type ApplicationType
 
 	noSmithyDocumentSerde
 }
@@ -605,7 +696,7 @@ type AudioQualityMetricsInfo struct {
 }
 
 // This API is in preview release for Amazon Connect and is subject to change. To
-// request access to this API, contact Amazon Web ServicesSupport.
+// request access to this API, contact Amazon Web Services Support.
 //
 // Information about an authentication profile. An authentication profile is a
 // resource that stores the authentication settings for users in your contact
@@ -670,13 +761,23 @@ type AuthenticationProfile struct {
 	// Administrator Guide.
 	//
 	// [Configure the session duration]: https://docs.aws.amazon.com/connect/latest/adminguide/authentication-profiles.html#configure-session-timeouts
+	//
+	// Deprecated: PeriodicSessionDuration is deprecated. Use
+	// SessionInactivityDuration instead.
 	PeriodicSessionDuration *int32
+
+	// The period, in minutes, before an agent is automatically signed out of the
+	// contact center when they go inactive.
+	SessionInactivityDuration *int32
+
+	// Determines if automatic logout on user inactivity is enabled.
+	SessionInactivityHandlingEnabled *bool
 
 	noSmithyDocumentSerde
 }
 
 // This API is in preview release for Amazon Connect and is subject to change. To
-// request access to this API, contact Amazon Web ServicesSupport.
+// request access to this API, contact Amazon Web Services Support.
 //
 // A summary of a given authentication profile.
 type AuthenticationProfileSummary struct {
@@ -706,6 +807,62 @@ type AuthenticationProfileSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration settings for auto-accept for a specific channel.
+type AutoAcceptConfig struct {
+
+	// Indicates whether auto-accept is enabled for this channel. When enabled,
+	// available agents are automatically connected to contacts from this channel.
+	//
+	// This member is required.
+	AutoAccept bool
+
+	// The channel for this auto-accept configuration. Valid values: VOICE, CHAT,
+	// TASK, EMAIL.
+	//
+	// This member is required.
+	Channel Channel
+
+	// Indicates whether auto-accept is enabled for agent-first callbacks. This
+	// setting only applies to the VOICE channel.
+	AgentFirstCallbackAutoAccept *bool
+
+	noSmithyDocumentSerde
+}
+
+// Configuration information about automated evaluations.
+type AutoEvaluationConfiguration struct {
+
+	// Whether automated evaluations are enabled.
+	//
+	// This member is required.
+	Enabled bool
+
+	noSmithyDocumentSerde
+}
+
+// Details about automated evaluations.
+type AutoEvaluationDetails struct {
+
+	// Whether automated evaluation is enabled.
+	//
+	// This member is required.
+	AutoEvaluationEnabled bool
+
+	// The status of the contact auto-evaluation.
+	AutoEvaluationStatus AutoEvaluationStatus
+
+	noSmithyDocumentSerde
+}
+
+// Information about automatic fail configuration for an evaluation form.
+type AutomaticFailConfiguration struct {
+
+	// The referenceId of the target section for auto failure.
+	TargetSection *string
+
+	noSmithyDocumentSerde
+}
+
 // Information about available phone numbers.
 type AvailableNumberSummary struct {
 
@@ -718,6 +875,210 @@ type AvailableNumberSummary struct {
 
 	// The type of phone number.
 	PhoneNumberType PhoneNumberType
+
+	noSmithyDocumentSerde
+}
+
+// A batch create data table value failure result.
+type BatchCreateDataTableValueFailureResult struct {
+
+	// The result's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The result's message.
+	//
+	// This member is required.
+	Message *string
+
+	// The result's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A batch create data table value success result.
+type BatchCreateDataTableValueSuccessResult struct {
+
+	// The result's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The result's lock version.
+	//
+	// This member is required.
+	LockVersion *DataTableLockVersion
+
+	// The result's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValue
+
+	// The result's record ID.
+	//
+	// This member is required.
+	RecordId *string
+
+	noSmithyDocumentSerde
+}
+
+// A batch delete data table value failure result.
+type BatchDeleteDataTableValueFailureResult struct {
+
+	// The result's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The result's message.
+	//
+	// This member is required.
+	Message *string
+
+	// The result's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A batch delete data table value success result.
+type BatchDeleteDataTableValueSuccessResult struct {
+
+	// The result's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The result's lock version.
+	//
+	// This member is required.
+	LockVersion *DataTableLockVersion
+
+	// The result's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A batch describe data table value failure result.
+type BatchDescribeDataTableValueFailureResult struct {
+
+	// The result's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The result's message.
+	//
+	// This member is required.
+	Message *string
+
+	// The result's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A batch describe data table value success result.
+type BatchDescribeDataTableValueSuccessResult struct {
+
+	// The result's attribute ID.
+	//
+	// This member is required.
+	AttributeId *string
+
+	// The result's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The result's lock version.
+	//
+	// This member is required.
+	LockVersion *DataTableLockVersion
+
+	// The result's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValueResponse
+
+	// The result's record ID.
+	//
+	// This member is required.
+	RecordId *string
+
+	// The result's last modified region.
+	LastModifiedRegion *string
+
+	// The result's last modified time.
+	LastModifiedTime *time.Time
+
+	// The result's value.
+	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// A batch update data table value failure result.
+type BatchUpdateDataTableValueFailureResult struct {
+
+	// The result's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The result's message.
+	//
+	// This member is required.
+	Message *string
+
+	// The result's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A batch update data table value success result.
+type BatchUpdateDataTableValueSuccessResult struct {
+
+	// The result's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The result's lock version.
+	//
+	// This member is required.
+	LockVersion *DataTableLockVersion
+
+	// The result's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A boolean search condition for Search APIs.
+type BooleanCondition struct {
+
+	// Boolean property comparison type.
+	ComparisonType BooleanComparisonType
+
+	// A name of the property to be searched.
+	FieldName *string
 
 	noSmithyDocumentSerde
 }
@@ -756,6 +1117,39 @@ type CaseSlaConfiguration struct {
 	// CaseSlaConfiguration. The SLA is considered met if any one of these target field
 	// values matches the actual field value.
 	TargetFieldValues []FieldValueUnion
+
+	noSmithyDocumentSerde
+}
+
+// Information about the overall participant interactions at the contact level.
+type ChatContactMetrics struct {
+
+	// The time for an agent to respond after obtaining a chat contact.
+	AgentFirstResponseTimeInMillis *int64
+
+	// The agent first response timestamp for a chat contact.
+	AgentFirstResponseTimestamp *time.Time
+
+	// The time it took for a contact to end after the last customer message.
+	ConversationCloseTimeInMillis *int64
+
+	// The number of conversation turns in a chat contact, which represents the
+	// back-and-forth exchanges between customer and other participants.
+	ConversationTurnCount *int32
+
+	// A boolean flag indicating whether multiparty chat or supervisor barge were
+	// enabled on this contact.
+	MultiParty *bool
+
+	// The total number of characters from bot and automated messages on a chat
+	// contact.
+	TotalBotMessageLengthInChars *int32
+
+	// The total number of bot and automated messages on a chat contact.
+	TotalBotMessages *int32
+
+	// The number of chat messages on the contact.
+	TotalMessages *int32
 
 	noSmithyDocumentSerde
 }
@@ -826,6 +1220,21 @@ type ChatMessage struct {
 	//
 	// This member is required.
 	ContentType *string
+
+	noSmithyDocumentSerde
+}
+
+// Information about how agent, bot, and customer interact in a chat contact.
+type ChatMetrics struct {
+
+	// Information about agent interactions in a contact.
+	AgentMetrics *ParticipantMetrics
+
+	// Information about the overall participant interactions at the contact level.
+	ChatContactMetrics *ChatContactMetrics
+
+	// Information about customer interactions in a contact.
+	CustomerMetrics *ParticipantMetrics
 
 	noSmithyDocumentSerde
 }
@@ -944,7 +1353,7 @@ type Condition struct {
 
 	// A leaf node condition which can be used to specify a string condition.
 	//
-	// The currently supported values for FieldName are name and  value .
+	// The currently supported values for FieldName are name and value .
 	StringCondition *StringCondition
 
 	noSmithyDocumentSerde
@@ -989,6 +1398,9 @@ type Contact struct {
 	// How the contact reached your contact center.
 	Channel Channel
 
+	// Information about how agent, bot, and customer interact in a chat contact.
+	ChatMetrics *ChatMetrics
+
 	// The timestamp when customer endpoint connected to Amazon Connect.
 	ConnectedToSystemTimestamp *time.Time
 
@@ -1026,13 +1438,21 @@ type Contact struct {
 	// Information about the call disconnect experience.
 	DisconnectDetails *DisconnectDetails
 
-	// The disconnect reason for the contact.
+	// The disconnect reason for the contact. For a list and description of all the
+	// possible disconnect reasons by channel, see DisconnectReason under [ContactTraceRecord]in the
+	// Amazon Connect Administrator Guide.
+	//
+	// [ContactTraceRecord]: https://docs.aws.amazon.com/connect/latest/adminguide/ctr-data-model.html#ctr-ContactTraceRecord
 	DisconnectReason *string
 
 	// The date and time that the customer endpoint disconnected from the current
 	// contact, in UTC time. In transfer scenarios, the DisconnectTimestamp of the
 	// previous contact indicates the date and time when that contact ended.
 	DisconnectTimestamp *time.Time
+
+	// Information about the global resiliency configuration for the contact,
+	// including traffic distribution details.
+	GlobalResiliencyMetadata *GlobalResiliencyMetadata
 
 	// The identifier for the contact.
 	Id *string
@@ -1065,6 +1485,12 @@ type Contact struct {
 	// The name of the contact.
 	Name *string
 
+	//  List of next contact entries for the contact.
+	NextContacts []NextContactEntry
+
+	// Information about the outbound strategy.
+	OutboundStrategy *OutboundStrategy
+
 	// If this contact is not the first contact, this is the ID of the previous
 	// contact.
 	PreviousContactId *string
@@ -1095,6 +1521,9 @@ type Contact struct {
 	// [related]: https://docs.aws.amazon.com/connect/latest/adminguide/chat-persistence.html#relatedcontactid
 	RelatedContactId *string
 
+	// The timestamp when ringing started for a campaign call.
+	RingStartTimestamp *time.Time
+
 	// Latest routing criteria on the contact.
 	RoutingCriteria *RoutingCriteria
 
@@ -1119,6 +1548,10 @@ type Contact struct {
 	// Tags associated with the contact. This contains both Amazon Web Services
 	// generated and user-defined tags.
 	Tags map[string]string
+
+	// If this contact was created using a task template, this contains information
+	// about the task template.
+	TaskTemplateInfo *TaskTemplateInfoV2
 
 	// Total pause count for a contact.
 	TotalPauseCount *int32
@@ -1174,6 +1607,9 @@ type ContactDataRequest struct {
 
 	// Endpoint of the customer for which contact will be initiated.
 	CustomerEndpoint *Endpoint
+
+	// Information about the outbound strategy.
+	OutboundStrategy *OutboundStrategy
 
 	// The identifier of the queue associated with the Amazon Connect instance in
 	// which contacts that are created will be queued.
@@ -1300,6 +1736,37 @@ type ContactFlow struct {
 	noSmithyDocumentSerde
 }
 
+// A list of conditions which would be applied together with an AND condition.
+type ContactFlowAttributeAndCondition struct {
+
+	//  Contact flow type condition.
+	ContactFlowTypeCondition *ContactFlowTypeCondition
+
+	//  Tag-based conditions for contact flow filtering.
+	TagConditions []TagCondition
+
+	noSmithyDocumentSerde
+}
+
+// Filter for contact flow attributes with multiple condition types.
+type ContactFlowAttributeFilter struct {
+
+	//  A list of conditions which would be applied together with a AND condition.
+	AndCondition *ContactFlowAttributeAndCondition
+
+	//  Contact flow type condition within attribute filter.
+	ContactFlowTypeCondition *ContactFlowTypeCondition
+
+	//  A list of conditions which would be applied together with an OR condition.
+	OrConditions []ContactFlowAttributeAndCondition
+
+	// A leaf node condition which can be used to specify a tag condition, for
+	// example, HAVE BPO = 123 .
+	TagCondition *TagCondition
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about a flow module.
 type ContactFlowModule struct {
 
@@ -1314,11 +1781,20 @@ type ContactFlowModule struct {
 	// The description of the flow module.
 	Description *string
 
+	// The external invocation configuration for the flow module
+	ExternalInvocationConfiguration *ExternalInvocationConfiguration
+
+	// Hash of the module content for integrity verification.
+	FlowModuleContentSha256 *string
+
 	// The identifier of the flow module.
 	Id *string
 
 	// The name of the flow module.
 	Name *string
+
+	// The configuration settings for the flow module.
+	Settings *string
 
 	// The type of flow module.
 	State ContactFlowModuleState
@@ -1329,6 +1805,66 @@ type ContactFlowModule struct {
 	// The tags used to organize, track, or control access for this resource. For
 	// example, { "Tags": {"key1":"value1", "key2":"value2"} }.
 	Tags map[string]string
+
+	// The version of the flow module.
+	Version *int64
+
+	// Description of the version.
+	VersionDescription *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about an alias.
+type ContactFlowModuleAliasInfo struct {
+
+	// The identifier of the alias.
+	AliasId *string
+
+	// The Amazon Resource Name (ARN) of the flow module.
+	ContactFlowModuleArn *string
+
+	// The identifier of the flow module.
+	ContactFlowModuleId *string
+
+	// The description of the alias.
+	Description *string
+
+	// The Amazon Web Services Region where this resource was last modified.
+	LastModifiedRegion *string
+
+	// The timestamp when this resource was last modified.
+	LastModifiedTime *time.Time
+
+	// The name of the alias.
+	Name *string
+
+	// The version of the flow module.
+	Version *int64
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about an alias.
+type ContactFlowModuleAliasSummary struct {
+
+	// The description of the alias.
+	AliasDescription *string
+
+	// The identifier of the alias.
+	AliasId *string
+
+	// The name of the alias.
+	AliasName *string
+
+	// The Amazon Resource Name (ARN) of the flow module alias.
+	Arn *string
+
+	// The timestamp when this resource was last modified.
+	LastModifiedTime *time.Time
+
+	// The version of the flow module.
+	Version *int64
 
 	noSmithyDocumentSerde
 }
@@ -1386,6 +1922,21 @@ type ContactFlowModuleSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about a version.
+type ContactFlowModuleVersionSummary struct {
+
+	// The Amazon Resource Name (ARN) of the flow module version.
+	Arn *string
+
+	// The version of the flow module.
+	Version *int64
+
+	// The description of the flow module version.
+	VersionDescription *string
+
+	noSmithyDocumentSerde
+}
+
 // The search criteria to be used to return flows.
 type ContactFlowSearchCriteria struct {
 
@@ -1412,6 +1963,9 @@ type ContactFlowSearchCriteria struct {
 
 // Filters to be applied to search results.
 type ContactFlowSearchFilter struct {
+
+	//  Flow attribute filter for contact flow search operations.
+	FlowAttributeFilter *ContactFlowAttributeFilter
 
 	// An object that can be used to specify Tag conditions inside the SearchFilter .
 	// This accepts an OR of AND (List of List) input where:
@@ -1452,6 +2006,15 @@ type ContactFlowSummary struct {
 	noSmithyDocumentSerde
 }
 
+// The contact flow type condition.
+type ContactFlowTypeCondition struct {
+
+	//  Contact flow type of the contact flow type condition.
+	ContactFlowType ContactFlowType
+
+	noSmithyDocumentSerde
+}
+
 // A summary of a flow version's metadata.
 type ContactFlowVersionSummary struct {
 
@@ -1467,6 +2030,62 @@ type ContactFlowVersionSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Contains the details of a metric to be retrieved for a contact. Use this object
+// to specify which contact level metrics you want to include in your
+// GetContactMetrics request.
+type ContactMetricInfo struct {
+
+	// The name of the metric to retrieve. Supported values are POSITION_IN_QUEUE
+	// (returns the contact's current position in the queue) and ESTIMATED_WAIT_TIME
+	// (returns the predicted wait time in seconds).
+	//
+	// This member is required.
+	Name ContactMetricName
+
+	noSmithyDocumentSerde
+}
+
+// Contains the result of a requested metric for the contact. This object is
+// returned as part of the GetContactMetrics response and includes both the metric
+// name and its calculated value.
+type ContactMetricResult struct {
+
+	// The name of the metric that was retrieved. This corresponds to the metric name
+	// specified in the request, such as POSITION_IN_QUEUE or ESTIMATED_WAIT_TIME.
+	//
+	// This member is required.
+	Name ContactMetricName
+
+	// The calculated value for the requested metric. This object contains the numeric
+	// result based on the contact's current state in the queue.
+	//
+	// This member is required.
+	Value ContactMetricValue
+
+	noSmithyDocumentSerde
+}
+
+// Contains the numeric value of a contact metric result.
+//
+// The following types satisfy this interface:
+//
+//	ContactMetricValueMemberNumber
+type ContactMetricValue interface {
+	isContactMetricValue()
+}
+
+// The numeric value of the metric result. For POSITION_IN_QUEUE, this represents
+// the contact's current position in the queue (e.g., 3.00 means third in line).
+// For ESTIMATED_WAIT_TIME, this represents the predicted wait time in seconds
+// (e.g., 120.00 means approximately 2 minutes).
+type ContactMetricValueMemberNumber struct {
+	Value float64
+
+	noSmithyDocumentSerde
+}
+
+func (*ContactMetricValueMemberNumber) isContactMetricValue() {}
+
 // Information of returned contact.
 type ContactSearchSummary struct {
 
@@ -1481,6 +2100,9 @@ type ContactSearchSummary struct {
 
 	// The timestamp when the customer endpoint disconnected from Amazon Connect.
 	DisconnectTimestamp *time.Time
+
+	// Additional routing information for contacts created in ACGR instances.
+	GlobalResiliencyMetadata *GlobalResiliencyMetadata
 
 	// The identifier of the contact summary.
 	Id *string
@@ -1501,6 +2123,9 @@ type ContactSearchSummary struct {
 	// started listening to a contact.
 	InitiationTimestamp *time.Time
 
+	// Indicates name of the contact.
+	Name *string
+
 	// If this contact is not the first contact, this is the ID of the previous
 	// contact.
 	PreviousContactId *string
@@ -1508,12 +2133,19 @@ type ContactSearchSummary struct {
 	// If this contact was queued, this contains information about the queue.
 	QueueInfo *ContactSearchSummaryQueueInfo
 
+	// Latest routing criteria on the contact.
+	RoutingCriteria *RoutingCriteria
+
 	// The timestamp, in Unix epoch time format, at which to start running the inbound
 	// flow.
 	ScheduledTimestamp *time.Time
 
 	// Set of segment attributes for a contact.
 	SegmentAttributes map[string]ContactSearchSummarySegmentAttributeValue
+
+	// Tags associated with the contact. This contains both Amazon Web Services
+	// generated and user-defined tags.
+	Tags map[string]string
 
 	noSmithyDocumentSerde
 }
@@ -1547,6 +2179,9 @@ type ContactSearchSummaryQueueInfo struct {
 // string, and its corresponding value is the actual string value of the segment
 // attribute.
 type ContactSearchSummarySegmentAttributeValue struct {
+
+	// The key and value of a segment attribute.
+	ValueMap map[string]SegmentAttributeValue
 
 	// The value of a segment attribute represented as a string.
 	ValueString *string
@@ -1711,12 +2346,20 @@ type CrossChannelBehavior struct {
 // Contains information about a real-time metric. For a description of each
 // metric, see [Metrics definitions]in the Amazon Connect Administrator Guide.
 //
+// Only one of either the Name or MetricId is required.
+//
 // [Metrics definitions]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html
 type CurrentMetric struct {
+
+	// Out of the box current metrics or custom metrics can be referenced via this
+	// field. This field is a valid AWS Connect Arn or a UUID.
+	MetricId *string
 
 	// The name of the metric.
 	Name CurrentMetricName
 
+	// The Unit parameter is not supported for custom metrics.
+	//
 	// The unit for the metric.
 	Unit Unit
 
@@ -1800,6 +2443,381 @@ type CustomerVoiceActivity struct {
 	noSmithyDocumentSerde
 }
 
+// Represents a data table in Amazon Connect. A data table is a JSON-like data
+// structure where attributes and values are dynamically set by customers.
+// Customers can reference table values within call flows, applications, views, and
+// workspaces to pinpoint dynamic configuration that changes their contact center's
+// behavior in a predetermined and safe way.
+type DataTable struct {
+
+	// The Amazon Resource Name (ARN) for the data table. Does not include version
+	// aliases.
+	//
+	// This member is required.
+	Arn *string
+
+	// The unique identifier for the data table. Does not include version aliases.
+	//
+	// This member is required.
+	Id *string
+
+	// The timestamp when the data table or any of its properties were last modified.
+	//
+	// This member is required.
+	LastModifiedTime *time.Time
+
+	// The human-readable name of the data table. Must be unique within the instance
+	// and conform to Connect naming standards.
+	//
+	// This member is required.
+	Name *string
+
+	// The IANA timezone identifier used when resolving time based dynamic values.
+	// Required even if no time slices are specified.
+	//
+	// This member is required.
+	TimeZone *string
+
+	// The timestamp when the data table was created.
+	CreatedTime *time.Time
+
+	// An optional description of the data table's purpose and contents.
+	Description *string
+
+	// The Amazon Web Services Region where the data table was last modified, used for
+	// region replication.
+	LastModifiedRegion *string
+
+	// The lock version information used for optimistic locking and table versioning.
+	// Changes with each update to prevent concurrent modification conflicts.
+	LockVersion *DataTableLockVersion
+
+	// The current status of the data table. One of PUBLISHED or SAVED.
+	Status DataTableStatus
+
+	// Key-value pairs for attribute based access control (TBAC or ABAC) and
+	// organization.
+	Tags map[string]string
+
+	// The data level that concurrent value edits are locked on. One of DATA_TABLE,
+	// PRIMARY_VALUE, ATTRIBUTE, VALUE, and NONE. Determines how concurrent edits are
+	// handled when multiple users attempt to modify values simultaneously.
+	ValueLockLevel DataTableLockLevel
+
+	// A unique identifier and alias for customer managed versions (not $LATEST or
+	// $SAVED).
+	Version *string
+
+	// A description of the customer managed version.
+	VersionDescription *string
+
+	noSmithyDocumentSerde
+}
+
+// A data table access control configuration.
+type DataTableAccessControlConfiguration struct {
+
+	// The configuration's primary attribute access control configuration.
+	PrimaryAttributeAccessControlConfiguration *PrimaryAttributeAccessControlConfigurationItem
+
+	noSmithyDocumentSerde
+}
+
+// Represents an attribute (column) in a data table. Attributes define the schema
+// and validation rules for values that can be stored in the table. They specify
+// the data type, constraints, and whether the attribute is used as a primary key
+// for record identification.
+type DataTableAttribute struct {
+
+	// The human-readable name of the attribute. Must be unique within the data table
+	// and conform to Connect naming standards.
+	//
+	// This member is required.
+	Name *string
+
+	// The type of value allowed for this attribute. Must be one of TEXT, TEXT_LIST,
+	// NUMBER, NUMBER_LIST, or BOOLEAN. Determines how values are validated and
+	// processed.
+	//
+	// This member is required.
+	ValueType DataTableAttributeValueType
+
+	// The unique identifier for the attribute within the data table.
+	AttributeId *string
+
+	// The Amazon Resource Name (ARN) of the data table that contains this attribute.
+	DataTableArn *string
+
+	// The unique identifier of the data table that contains this attribute.
+	DataTableId *string
+
+	// An optional description explaining the purpose and usage of this attribute.
+	Description *string
+
+	// The Amazon Web Services Region where this attribute was last modified, used for
+	// region replication.
+	LastModifiedRegion *string
+
+	// The timestamp when this attribute was last modified.
+	LastModifiedTime *time.Time
+
+	// The lock version for this attribute, used for optimistic locking to prevent
+	// concurrent modification conflicts.
+	LockVersion *DataTableLockVersion
+
+	// Boolean indicating whether this attribute is used as a primary key for record
+	// identification. Primary attributes must have unique value combinations and
+	// cannot contain expressions.
+	Primary bool
+
+	// The validation rules applied to values of this attribute. Based on JSON Schema
+	// Draft 2020-12 with additional Connect-specific validations for data integrity.
+	Validation *Validation
+
+	// The version identifier for this attribute, used for versioning and change
+	// tracking.
+	Version *string
+
+	noSmithyDocumentSerde
+}
+
+// A data table delete value identifier.
+type DataTableDeleteValueIdentifier struct {
+
+	// The identifier's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The identifier's lock version.
+	//
+	// This member is required.
+	LockVersion *DataTableLockVersion
+
+	// The identifier's primary values.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A data table evaluated value.
+type DataTableEvaluatedValue struct {
+
+	// The value's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The value's error.
+	//
+	// This member is required.
+	Error bool
+
+	// The value's evaluated value.
+	//
+	// This member is required.
+	EvaluatedValue *string
+
+	// The value's found.
+	//
+	// This member is required.
+	Found bool
+
+	// The value's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValue
+
+	// The value's record ID.
+	//
+	// This member is required.
+	RecordId *string
+
+	// The value's value type.
+	//
+	// This member is required.
+	ValueType DataTableAttributeValueType
+
+	noSmithyDocumentSerde
+}
+
+// Contains lock version information for different levels of a data table
+// hierarchy. Used for optimistic locking to prevent concurrent modification
+// conflicts. Each component has its own lock version that changes when that
+// component is modified.
+type DataTableLockVersion struct {
+
+	// The lock version for a specific attribute. When the ValueLockLevel is
+	// ATTRIBUTE, this version changes when any value for the attribute changes. For
+	// other lock levels, it only changes when the attribute's properties are directly
+	// updated.
+	Attribute *string
+
+	// The lock version for the data table itself. Used for optimistic locking and
+	// table versioning. Changes with each update to the table's metadata or structure.
+	DataTable *string
+
+	// The lock version for a specific set of primary values (record). This includes
+	// the default record even if the table does not have any primary attributes. Used
+	// for record-level locking.
+	PrimaryValues *string
+
+	// The lock version for a specific value. Changes each time the individual value
+	// is modified. Used for the finest-grained locking control.
+	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// A data table search criteria.
+type DataTableSearchCriteria struct {
+
+	// The criteria's and conditions.
+	AndConditions []DataTableSearchCriteria
+
+	// The criteria's or conditions.
+	OrConditions []DataTableSearchCriteria
+
+	// A leaf node condition which can be used to specify a string condition.
+	StringCondition *StringCondition
+
+	noSmithyDocumentSerde
+}
+
+// A data table search filter.
+type DataTableSearchFilter struct {
+
+	// An object that can be used to specify Tag conditions inside the SearchFilter .
+	// This accepts an OR or AND (List of List) input where:
+	//
+	//   - The top level list specifies conditions that need to be applied with OR
+	//   operator.
+	//
+	//   - The inner list specifies conditions that need to be applied with AND
+	//   operator.
+	AttributeFilter *ControlPlaneAttributeFilter
+
+	noSmithyDocumentSerde
+}
+
+// A data table summary.
+type DataTableSummary struct {
+
+	// The summary's ARN.
+	Arn *string
+
+	// The summary's ID.
+	Id *string
+
+	// The summary's last modified region.
+	LastModifiedRegion *string
+
+	// The summary's last modified time.
+	LastModifiedTime *time.Time
+
+	// The summary's name.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// A data table value.
+type DataTableValue struct {
+
+	// The value's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The value's value.
+	//
+	// This member is required.
+	Value *string
+
+	// The value's last modified region.
+	LastModifiedRegion *string
+
+	// The value's last modified time.
+	LastModifiedTime *time.Time
+
+	// The value's lock version.
+	LockVersion *DataTableLockVersion
+
+	// The value's primary values.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A data table value evaluation set.
+type DataTableValueEvaluationSet struct {
+
+	// The set's attribute names.
+	//
+	// This member is required.
+	AttributeNames []string
+
+	// The set's primary values.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A data table value identifier.
+type DataTableValueIdentifier struct {
+
+	// The identifier's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The identifier's primary values.
+	PrimaryValues []PrimaryValue
+
+	noSmithyDocumentSerde
+}
+
+// A data table value summary.
+type DataTableValueSummary struct {
+
+	// The summary's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The summary's primary values.
+	//
+	// This member is required.
+	PrimaryValues []PrimaryValueResponse
+
+	// The summary's value.
+	//
+	// This member is required.
+	Value *string
+
+	// The summary's value type.
+	//
+	// This member is required.
+	ValueType DataTableAttributeValueType
+
+	// The summary's attribute ID.
+	AttributeId *string
+
+	// The summary's last modified region.
+	LastModifiedRegion *string
+
+	// The summary's last modified time.
+	LastModifiedTime *time.Time
+
+	// The summary's lock version.
+	LockVersion *DataTableLockVersion
+
+	// The summary's record ID.
+	RecordId *string
+
+	noSmithyDocumentSerde
+}
+
 // An object to specify the hours of operation override date condition.
 type DateCondition struct {
 
@@ -1824,6 +2842,42 @@ type DateReference struct {
 
 	// A valid date.
 	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// A datetime search condition for Search APIs.
+type DateTimeCondition struct {
+
+	// Datetime property comparison type.
+	ComparisonType DateTimeComparisonType
+
+	// A name of the datetime property to be searched
+	FieldName *string
+
+	// A maximum value of the property.
+	MaxValue *string
+
+	// A minimum value of the property.
+	MinValue *string
+
+	noSmithyDocumentSerde
+}
+
+// A decimal search condition for Search APIs.
+type DecimalCondition struct {
+
+	// The type of comparison to be made when evaluating the decimal condition.
+	ComparisonType DecimalComparisonType
+
+	// A name of the decimal property to be searched.
+	FieldName *string
+
+	// A maximum value of the decimal property.
+	MaxValue *float64
+
+	// A minimum value of the decimal property.
+	MinValue *float64
 
 	noSmithyDocumentSerde
 }
@@ -1878,6 +2932,9 @@ type DeviceInfo struct {
 // Contains information about the dimensions for a set of metrics.
 type Dimensions struct {
 
+	// Information about the agent status assigned to the user.
+	AgentStatus *AgentStatusIdentifier
+
 	// The channel used for grouping and filters.
 	Channel Channel
 
@@ -1889,6 +2946,12 @@ type Dimensions struct {
 
 	// The expression of a step in a routing criteria.
 	RoutingStepExpression *string
+
+	// The subtype of the channel used for the contact.
+	Subtype *string
+
+	// The testing and simulation type
+	ValidationTestType *string
 
 	noSmithyDocumentSerde
 }
@@ -1954,10 +3017,24 @@ type EffectiveHoursOfOperations struct {
 	noSmithyDocumentSerde
 }
 
-// Contains information about a source or destination email address
+// Information about the hours of operation overrides which contribute to
+// effective hours of operations.
+type EffectiveOverrideHours struct {
+
+	// The date that the hours of operation override applies to.
+	Date *string
+
+	// Information about the hours of operation overrides that apply to a specific
+	// date.
+	OverrideHours []OverrideHour
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a source or destination email address.
 type EmailAddressInfo struct {
 
-	// The email address with the instance, in [^\s@]+@[^\s@]+\.[^\s@]+ format.
+	// The email address, including the domain.
 	//
 	// This member is required.
 	EmailAddress *string
@@ -1971,13 +3048,18 @@ type EmailAddressInfo struct {
 // Contains information about an email address for a contact center.
 type EmailAddressMetadata struct {
 
+	// A list of alias configurations for this email address, showing which email
+	// addresses forward to this primary address. Each configuration contains the email
+	// address ID of an alias that forwards emails to this address.
+	AliasConfigurations []AliasConfiguration
+
 	// The description of the email address.
 	Description *string
 
 	// The display name of email address.
 	DisplayName *string
 
-	// The email address with the instance, in [^\s@]+@[^\s@]+\.[^\s@]+ format.
+	// The email address, including the domain.
 	EmailAddress *string
 
 	// The Amazon Resource Name (ARN) of the email address.
@@ -2051,17 +3133,9 @@ type EmailMessageReference struct {
 type EmailRecipient struct {
 
 	// Address of the email recipient.
-	//
-	// Type: String
-	//
-	// Length Constraints: Minimum length of 1. Maximum length of 256.
 	Address *string
 
 	// Display name of the email recipient.
-	//
-	// Type: String
-	//
-	// Length Constraints: Minimum length of 1. Maximum length of 256.
 	DisplayName *string
 
 	noSmithyDocumentSerde
@@ -2196,6 +3270,9 @@ type Evaluation struct {
 	// This member is required.
 	Status EvaluationStatus
 
+	// Type of the evaluation.
+	EvaluationType EvaluationType
+
 	// A map of item (section or question) identifiers to score value.
 	Scores map[string]EvaluationScore
 
@@ -2206,17 +3283,62 @@ type Evaluation struct {
 	noSmithyDocumentSerde
 }
 
+// Information about the evaluation acknowledgement.
+type EvaluationAcknowledgement struct {
+
+	// The agent who acknowledged the evaluation.
+	//
+	// This member is required.
+	AcknowledgedBy *string
+
+	// When the agent acknowledged the evaluation.
+	//
+	// This member is required.
+	AcknowledgedTime *time.Time
+
+	// A comment from the agent when they confirmed they acknowledged the evaluation.
+	AcknowledgerComment *string
+
+	noSmithyDocumentSerde
+}
+
+// Summary information about an evaluation acknowledgement.
+type EvaluationAcknowledgementSummary struct {
+
+	// The agent who acknowledged the evaluation.
+	AcknowledgedBy *string
+
+	// The time when an agent acknowledged the evaluation.
+	AcknowledgedTime *time.Time
+
+	// A comment from the agent when they confirmed they acknowledged the evaluation.
+	AcknowledgerComment *string
+
+	noSmithyDocumentSerde
+}
+
 // Information about answer data for a contact evaluation. Answer data must be
 // either string, numeric, or not applicable.
 //
 // The following types satisfy this interface:
 //
+//	EvaluationAnswerDataMemberDateTimeValue
 //	EvaluationAnswerDataMemberNotApplicable
 //	EvaluationAnswerDataMemberNumericValue
 //	EvaluationAnswerDataMemberStringValue
+//	EvaluationAnswerDataMemberStringValues
 type EvaluationAnswerData interface {
 	isEvaluationAnswerData()
 }
+
+// Date and time value provided as an answer to an evaluation question.
+type EvaluationAnswerDataMemberDateTimeValue struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationAnswerDataMemberDateTimeValue) isEvaluationAnswerData() {}
 
 // The flag to mark the question as not applicable.
 type EvaluationAnswerDataMemberNotApplicable struct {
@@ -2245,6 +3367,15 @@ type EvaluationAnswerDataMemberStringValue struct {
 
 func (*EvaluationAnswerDataMemberStringValue) isEvaluationAnswerData() {}
 
+// String values provided as answers to evaluation questions.
+type EvaluationAnswerDataMemberStringValues struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationAnswerDataMemberStringValues) isEvaluationAnswerData() {}
+
 // Information about input answers for a contact evaluation.
 type EvaluationAnswerInput struct {
 
@@ -2257,11 +3388,54 @@ type EvaluationAnswerInput struct {
 // Information about output answers for a contact evaluation.
 type EvaluationAnswerOutput struct {
 
+	// Automation suggested answers for the questions.
+	SuggestedAnswers []EvaluationSuggestedAnswer
+
 	// The system suggested value for an answer in a contact evaluation.
 	SystemSuggestedValue EvaluationAnswerData
 
 	// The value for an answer in a contact evaluation.
 	Value EvaluationAnswerData
+
+	noSmithyDocumentSerde
+}
+
+// The Contact Lens category used by evaluation automation.
+type EvaluationAutomationRuleCategory struct {
+
+	// A category label.
+	//
+	// This member is required.
+	Category *string
+
+	// An automation condition for a Contact Lens category.
+	//
+	// This member is required.
+	Condition QuestionRuleCategoryAutomationCondition
+
+	// A point of interest in a contact transcript that indicates match of condition.
+	PointsOfInterest []EvaluationTranscriptPointOfInterest
+
+	noSmithyDocumentSerde
+}
+
+// Analysis details providing explanation for Contact Lens automation decision.
+type EvaluationContactLensAnswerAnalysisDetails struct {
+
+	// A list of match rule categories.
+	MatchedRuleCategories []EvaluationAutomationRuleCategory
+
+	noSmithyDocumentSerde
+}
+
+// Information about a contact participant in the evaluation.
+type EvaluationContactParticipant struct {
+
+	// The identifier for the contact participant.
+	ContactParticipantId *string
+
+	// The role of the contact participant.
+	ContactParticipantRole ContactParticipantRole
 
 	noSmithyDocumentSerde
 }
@@ -2325,8 +3499,17 @@ type EvaluationForm struct {
 	// This member is required.
 	Title *string
 
+	// The automatic evaluation configuration of an evaluation form.
+	AutoEvaluationConfiguration *EvaluationFormAutoEvaluationConfiguration
+
 	// The description of the evaluation form.
 	Description *string
+
+	// Configuration for language settings of this evaluation form.
+	LanguageConfiguration *EvaluationFormLanguageConfiguration
+
+	// Configuration for evaluation review settings of this evaluation form.
+	ReviewConfiguration *EvaluationReviewConfiguration
 
 	// A scoring strategy of the evaluation form.
 	ScoringStrategy *EvaluationFormScoringStrategy
@@ -2334,6 +3517,20 @@ type EvaluationForm struct {
 	// The tags used to organize, track, or control access for this resource. For
 	// example, { "Tags": {"key1":"value1", "key2":"value2"} }.
 	Tags map[string]string
+
+	// Configuration that specifies the target for this evaluation form.
+	TargetConfiguration *EvaluationFormTargetConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The automatic evaluation configuration of an evaluation form.
+type EvaluationFormAutoEvaluationConfiguration struct {
+
+	// When automated evaluation is enabled.
+	//
+	// This member is required.
+	Enabled bool
 
 	noSmithyDocumentSerde
 }
@@ -2367,11 +3564,23 @@ type EvaluationFormContent struct {
 	// This member is required.
 	Title *string
 
+	// The configuration of the automated evaluation.
+	AutoEvaluationConfiguration *EvaluationFormAutoEvaluationConfiguration
+
 	// The description of the evaluation form.
 	Description *string
 
+	// Configuration for language settings of this evaluation form content.
+	LanguageConfiguration *EvaluationFormLanguageConfiguration
+
+	// Configuration for evaluation review settings of this evaluation form content.
+	ReviewConfiguration *EvaluationReviewConfiguration
+
 	// A scoring strategy of the evaluation form.
 	ScoringStrategy *EvaluationFormScoringStrategy
+
+	// Configuration that specifies the target for this evaluation form content.
+	TargetConfiguration *EvaluationFormTargetConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -2405,13 +3614,212 @@ type EvaluationFormItemMemberSection struct {
 
 func (*EvaluationFormItemMemberSection) isEvaluationFormItem() {}
 
+// A condition for item enablement.
+type EvaluationFormItemEnablementCondition struct {
+
+	// Operands of the enablement condition.
+	//
+	// This member is required.
+	Operands []EvaluationFormItemEnablementConditionOperand
+
+	// The operator to be used to be applied to operands if more than one provided.
+	Operator EvaluationFormItemEnablementOperator
+
+	noSmithyDocumentSerde
+}
+
+// An operand of the enablement condition.
+//
+// The following types satisfy this interface:
+//
+//	EvaluationFormItemEnablementConditionOperandMemberCondition
+//	EvaluationFormItemEnablementConditionOperandMemberExpression
+type EvaluationFormItemEnablementConditionOperand interface {
+	isEvaluationFormItemEnablementConditionOperand()
+}
+
+// A condition for item enablement.
+type EvaluationFormItemEnablementConditionOperandMemberCondition struct {
+	Value EvaluationFormItemEnablementCondition
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationFormItemEnablementConditionOperandMemberCondition) isEvaluationFormItemEnablementConditionOperand() {
+}
+
+// An expression of the enablement condition.
+type EvaluationFormItemEnablementConditionOperandMemberExpression struct {
+	Value EvaluationFormItemEnablementExpression
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationFormItemEnablementConditionOperandMemberExpression) isEvaluationFormItemEnablementConditionOperand() {
+}
+
+// An item enablement configuration.
+type EvaluationFormItemEnablementConfiguration struct {
+
+	// An enablement action that if condition is satisfied.
+	//
+	// This member is required.
+	Action EvaluationFormItemEnablementAction
+
+	// A condition for item enablement configuration.
+	//
+	// This member is required.
+	Condition *EvaluationFormItemEnablementCondition
+
+	// An enablement action that if condition is not satisfied.
+	DefaultAction EvaluationFormItemEnablementAction
+
+	noSmithyDocumentSerde
+}
+
+// An expression that defines a basic building block of conditional enablement.
+type EvaluationFormItemEnablementExpression struct {
+
+	// A comparator to be used against list of values.
+	//
+	// This member is required.
+	Comparator EvaluationFormItemSourceValuesComparator
+
+	// A source item of enablement expression.
+	//
+	// This member is required.
+	Source *EvaluationFormItemEnablementSource
+
+	// A list of values from source item.
+	//
+	// This member is required.
+	Values []EvaluationFormItemEnablementSourceValue
+
+	noSmithyDocumentSerde
+}
+
+// An enablement expression source item.
+type EvaluationFormItemEnablementSource struct {
+
+	// A type of source item.
+	//
+	// This member is required.
+	Type EvaluationFormItemEnablementSourceType
+
+	// A referenceId of the source item.
+	RefId *string
+
+	noSmithyDocumentSerde
+}
+
+// An enablement expression source value.
+type EvaluationFormItemEnablementSourceValue struct {
+
+	// A type of source item value.
+	//
+	// This member is required.
+	Type EvaluationFormItemEnablementSourceValueType
+
+	// A referenceId of the source value.
+	RefId *string
+
+	noSmithyDocumentSerde
+}
+
+// Language configuration for an evaluation form.
+type EvaluationFormLanguageConfiguration struct {
+
+	// The language for the evaluation form.
+	FormLanguage EvaluationFormLanguageCode
+
+	noSmithyDocumentSerde
+}
+
+// Automation configuration for multi-select questions.
+type EvaluationFormMultiSelectQuestionAutomation struct {
+
+	// A question automation answer.
+	AnswerSource *EvaluationFormQuestionAutomationAnswerSource
+
+	// Reference IDs of default options.
+	DefaultOptionRefIds []string
+
+	// Automation options for the multi-select question.
+	Options []EvaluationFormMultiSelectQuestionAutomationOption
+
+	noSmithyDocumentSerde
+}
+
+// An automation option for a multi-select question.
+//
+// The following types satisfy this interface:
+//
+//	EvaluationFormMultiSelectQuestionAutomationOptionMemberRuleCategory
+type EvaluationFormMultiSelectQuestionAutomationOption interface {
+	isEvaluationFormMultiSelectQuestionAutomationOption()
+}
+
+// Rule category configuration for this automation option.
+type EvaluationFormMultiSelectQuestionAutomationOptionMemberRuleCategory struct {
+	Value MultiSelectQuestionRuleCategoryAutomation
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationFormMultiSelectQuestionAutomationOptionMemberRuleCategory) isEvaluationFormMultiSelectQuestionAutomationOption() {
+}
+
+// An option for a multi-select question in an evaluation form.
+type EvaluationFormMultiSelectQuestionOption struct {
+
+	// Reference identifier for this option.
+	//
+	// This member is required.
+	RefId *string
+
+	// Display text for this option.
+	//
+	// This member is required.
+	Text *string
+
+	noSmithyDocumentSerde
+}
+
+// Properties for a multi-select question in an evaluation form.
+type EvaluationFormMultiSelectQuestionProperties struct {
+
+	// Options available for this multi-select question.
+	//
+	// This member is required.
+	Options []EvaluationFormMultiSelectQuestionOption
+
+	// Automation configuration for this multi-select question.
+	Automation *EvaluationFormMultiSelectQuestionAutomation
+
+	// Display format for the multi-select question.
+	DisplayAs EvaluationFormMultiSelectQuestionDisplayMode
+
+	noSmithyDocumentSerde
+}
+
 // Information about the automation configuration in numeric questions.
 //
 // The following types satisfy this interface:
 //
+//	EvaluationFormNumericQuestionAutomationMemberAnswerSource
 //	EvaluationFormNumericQuestionAutomationMemberPropertyValue
 type EvaluationFormNumericQuestionAutomation interface {
 	isEvaluationFormNumericQuestionAutomation()
+}
+
+// A source of automation answer for numeric question.
+type EvaluationFormNumericQuestionAutomationMemberAnswerSource struct {
+	Value EvaluationFormQuestionAutomationAnswerSource
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationFormNumericQuestionAutomationMemberAnswerSource) isEvaluationFormNumericQuestionAutomation() {
 }
 
 // The property value of the automation.
@@ -2440,6 +3848,9 @@ type EvaluationFormNumericQuestionOption struct {
 	// The flag to mark the option as automatic fail. If an automatic fail answer is
 	// provided, the overall evaluation gets a score of 0.
 	AutomaticFail bool
+
+	// A configuration for automatic fail.
+	AutomaticFailConfiguration *AutomaticFailConfiguration
 
 	// The score assigned to answer values within the range option.
 	Score int32
@@ -2488,6 +3899,9 @@ type EvaluationFormQuestion struct {
 	// This member is required.
 	Title *string
 
+	// A question conditional enablement.
+	Enablement *EvaluationFormItemEnablementConfiguration
+
 	// The instructions of the section.
 	Instructions *string
 
@@ -2504,16 +3918,39 @@ type EvaluationFormQuestion struct {
 	noSmithyDocumentSerde
 }
 
+// A question automation answer.
+type EvaluationFormQuestionAutomationAnswerSource struct {
+
+	// The automation answer source type.
+	//
+	// This member is required.
+	SourceType EvaluationFormQuestionAutomationAnswerSourceType
+
+	noSmithyDocumentSerde
+}
+
 // Information about properties for a question in an evaluation form. The question
 // type properties must be either for a numeric question or a single select
 // question.
 //
 // The following types satisfy this interface:
 //
+//	EvaluationFormQuestionTypePropertiesMemberMultiSelect
 //	EvaluationFormQuestionTypePropertiesMemberNumeric
 //	EvaluationFormQuestionTypePropertiesMemberSingleSelect
+//	EvaluationFormQuestionTypePropertiesMemberText
 type EvaluationFormQuestionTypeProperties interface {
 	isEvaluationFormQuestionTypeProperties()
+}
+
+// Properties for multi-select question types.
+type EvaluationFormQuestionTypePropertiesMemberMultiSelect struct {
+	Value EvaluationFormMultiSelectQuestionProperties
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationFormQuestionTypePropertiesMemberMultiSelect) isEvaluationFormQuestionTypeProperties() {
 }
 
 // The properties of the numeric question.
@@ -2535,6 +3972,15 @@ type EvaluationFormQuestionTypePropertiesMemberSingleSelect struct {
 func (*EvaluationFormQuestionTypePropertiesMemberSingleSelect) isEvaluationFormQuestionTypeProperties() {
 }
 
+// The properties of the text question.
+type EvaluationFormQuestionTypePropertiesMemberText struct {
+	Value EvaluationFormTextQuestionProperties
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationFormQuestionTypePropertiesMemberText) isEvaluationFormQuestionTypeProperties() {}
+
 // Information about scoring strategy for an evaluation form.
 type EvaluationFormScoringStrategy struct {
 
@@ -2547,6 +3993,124 @@ type EvaluationFormScoringStrategy struct {
 	//
 	// This member is required.
 	Status EvaluationFormScoringStatus
+
+	noSmithyDocumentSerde
+}
+
+// The search criteria to be used to return evaluation forms.
+type EvaluationFormSearchCriteria struct {
+
+	// A list of conditions which would be applied together with an AND condition.
+	AndConditions []EvaluationFormSearchCriteria
+
+	// Boolean search condition.
+	BooleanCondition *BooleanCondition
+
+	// Datetime search condition.
+	DateTimeCondition *DateTimeCondition
+
+	// A leaf node condition which can be used to specify a numeric condition.
+	//
+	// The currently supported value for FieldName is limit .
+	NumberCondition *NumberCondition
+
+	// A list of conditions which would be applied together with an OR condition.
+	OrConditions []EvaluationFormSearchCriteria
+
+	// A leaf node condition which can be used to specify a string condition.
+	StringCondition *StringCondition
+
+	noSmithyDocumentSerde
+}
+
+// Filters to be applied to search results.
+type EvaluationFormSearchFilter struct {
+
+	// An object that can be used to specify Tag conditions inside the SearchFilter .
+	// This accepts an OR or AND (List of List) input where:
+	//
+	//   - The top level list specifies conditions that need to be applied with OR
+	//   operator.
+	//
+	//   - The inner list specifies conditions that need to be applied with AND
+	//   operator.
+	AttributeFilter *ControlPlaneAttributeFilter
+
+	noSmithyDocumentSerde
+}
+
+// Information about the returned evaluation forms.
+type EvaluationFormSearchSummary struct {
+
+	// Who created the evaluation form.
+	//
+	// This member is required.
+	CreatedBy *string
+
+	// When the evaluation form was created.
+	//
+	// This member is required.
+	CreatedTime *time.Time
+
+	// The Amazon Resource Name (ARN) for the evaluation form resource.
+	//
+	// This member is required.
+	EvaluationFormArn *string
+
+	// The unique identifier for the evaluation form.
+	//
+	// This member is required.
+	EvaluationFormId *string
+
+	// Who changed the evaluation form.
+	//
+	// This member is required.
+	LastModifiedBy *string
+
+	// When the evaluation form was last changed.
+	//
+	// This member is required.
+	LastModifiedTime *time.Time
+
+	// Latest version of the evaluation form.
+	//
+	// This member is required.
+	LatestVersion *int32
+
+	// The status of the evaluation form.
+	//
+	// This member is required.
+	Status EvaluationFormVersionStatus
+
+	// The title of the evaluation form.
+	//
+	// This member is required.
+	Title *string
+
+	// Active version of the evaluation form.
+	ActiveVersion *int32
+
+	// Whether automated evaluation is enabled.
+	AutoEvaluationEnabled bool
+
+	// The contact interaction type for this evaluation form.
+	ContactInteractionType ContactInteractionType
+
+	// The description of the evaluation form.
+	Description *string
+
+	// The language of the evaluation form.
+	EvaluationFormLanguage EvaluationFormLanguageCode
+
+	// The ID of user who last activated evaluation form.
+	LastActivatedBy *string
+
+	// When the evaluation format was last activated.
+	LastActivatedTime *time.Time
+
+	// The tags used to organize, track, or control access for this resource. For
+	// example, { "Tags": {"key1":"value1", "key2":"value2"} }.
+	Tags map[string]string
 
 	noSmithyDocumentSerde
 }
@@ -2587,14 +4151,15 @@ type EvaluationFormSection struct {
 // the default option is applied.
 type EvaluationFormSingleSelectQuestionAutomation struct {
 
-	// The automation options of the single select question.
-	//
-	// This member is required.
-	Options []EvaluationFormSingleSelectQuestionAutomationOption
+	// Automation answer source.
+	AnswerSource *EvaluationFormQuestionAutomationAnswerSource
 
 	// The identifier of the default answer option, when none of the automation
 	// options match the criteria.
 	DefaultOptionRefId *string
+
+	// The automation options of the single select question.
+	Options []EvaluationFormSingleSelectQuestionAutomationOption
 
 	noSmithyDocumentSerde
 }
@@ -2635,6 +4200,9 @@ type EvaluationFormSingleSelectQuestionOption struct {
 	// The flag to mark the option as automatic fail. If an automatic fail answer is
 	// provided, the overall evaluation gets a score of 0.
 	AutomaticFail bool
+
+	// Whether automatic fail is configured on a single select question.
+	AutomaticFailConfiguration *AutomaticFailConfiguration
 
 	// The score assigned to the answer option.
 	Score int32
@@ -2715,6 +4283,35 @@ type EvaluationFormSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration that specifies the target for an evaluation form.
+type EvaluationFormTargetConfiguration struct {
+
+	// The contact interaction type for this evaluation form.
+	//
+	// This member is required.
+	ContactInteractionType ContactInteractionType
+
+	noSmithyDocumentSerde
+}
+
+// Information about the automation configuration in text questions.
+type EvaluationFormTextQuestionAutomation struct {
+
+	// Automation answer source.
+	AnswerSource *EvaluationFormQuestionAutomationAnswerSource
+
+	noSmithyDocumentSerde
+}
+
+// Information about properties for a text question in an evaluation form.
+type EvaluationFormTextQuestionProperties struct {
+
+	// The automation properties of the text question.
+	Automation *EvaluationFormTextQuestionAutomation
+
+	noSmithyDocumentSerde
+}
+
 // Summary information about an evaluation form.
 type EvaluationFormVersionSummary struct {
 
@@ -2766,6 +4363,18 @@ type EvaluationFormVersionSummary struct {
 	noSmithyDocumentSerde
 }
 
+// An analysis for a generative AI answer to the question.
+type EvaluationGenAIAnswerAnalysisDetails struct {
+
+	// Generative AI automation answer justification.
+	Justification *string
+
+	// Generative AI automation answer analysis points of interest.
+	PointsOfInterest []EvaluationTranscriptPointOfInterest
+
+	noSmithyDocumentSerde
+}
+
 // Metadata information about a contact evaluation.
 type EvaluationMetadata struct {
 
@@ -2779,8 +4388,26 @@ type EvaluationMetadata struct {
 	// This member is required.
 	EvaluatorArn *string
 
+	// Information related to evaluation acknowledgement.
+	Acknowledgement *EvaluationAcknowledgement
+
+	// Information related to automated evaluation.
+	AutoEvaluation *AutoEvaluationDetails
+
+	// The calibration session ID that this evaluation belongs to.
+	CalibrationSessionId *string
+
 	// The identifier of the agent who performed the contact.
 	ContactAgentId *string
+
+	// Information about a contact participant in this evaluation.
+	ContactParticipant *EvaluationContactParticipant
+
+	// Information about reviews of this evaluation.
+	Review *EvaluationReviewMetadata
+
+	// Identifier of the sampling job.
+	SamplingJobId *string
 
 	// The overall score of the contact evaluation.
 	Score *EvaluationScore
@@ -2802,8 +4429,130 @@ type EvaluationNote struct {
 	noSmithyDocumentSerde
 }
 
+// Detailed analysis results of the automated answer to the evaluation question.
+//
+// The following types satisfy this interface:
+//
+//	EvaluationQuestionAnswerAnalysisDetailsMemberContactLens
+//	EvaluationQuestionAnswerAnalysisDetailsMemberGenAI
+type EvaluationQuestionAnswerAnalysisDetails interface {
+	isEvaluationQuestionAnswerAnalysisDetails()
+}
+
+// Analysis results from the Contact Lens automation for the question.
+type EvaluationQuestionAnswerAnalysisDetailsMemberContactLens struct {
+	Value EvaluationContactLensAnswerAnalysisDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationQuestionAnswerAnalysisDetailsMemberContactLens) isEvaluationQuestionAnswerAnalysisDetails() {
+}
+
+// Analysis results from the generative AI automation for the question.
+type EvaluationQuestionAnswerAnalysisDetailsMemberGenAI struct {
+	Value EvaluationGenAIAnswerAnalysisDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluationQuestionAnswerAnalysisDetailsMemberGenAI) isEvaluationQuestionAnswerAnalysisDetails() {
+}
+
+// Details of the input data used for automated question processing.
+type EvaluationQuestionInputDetails struct {
+
+	// Transcript type.
+	TranscriptType EvaluationTranscriptType
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for evaluation reviews.
+type EvaluationReviewConfiguration struct {
+
+	// List of recipients who should be notified when a review is requested.
+	//
+	// This member is required.
+	ReviewNotificationRecipients []EvaluationReviewNotificationRecipient
+
+	// Number of days during which a request for review can be submitted for
+	// evaluations created from this form.
+	EligibilityDays int32
+
+	noSmithyDocumentSerde
+}
+
+// Metadata information about an evaluation review.
+type EvaluationReviewMetadata struct {
+
+	// The user who created the evaluation review.
+	//
+	// This member is required.
+	CreatedBy *string
+
+	// The timestamp when the evaluation review was created.
+	//
+	// This member is required.
+	CreatedTime *time.Time
+
+	// Comments provided when requesting the evaluation review.
+	//
+	// This member is required.
+	ReviewRequestComments []EvaluationReviewRequestComment
+
+	// The unique identifier for the evaluation review.
+	ReviewId *string
+
+	noSmithyDocumentSerde
+}
+
+// Information about a recipient who should be notified when an evaluation review
+// is requested.
+type EvaluationReviewNotificationRecipient struct {
+
+	// The type of notification recipient.
+	//
+	// This member is required.
+	Type EvaluationReviewNotificationRecipientType
+
+	// The value associated with the notification recipient type.
+	//
+	// This member is required.
+	Value *EvaluationReviewNotificationRecipientValue
+
+	noSmithyDocumentSerde
+}
+
+// The value information for an evaluation review notification recipient.
+type EvaluationReviewNotificationRecipientValue struct {
+
+	// The user identifier for the notification recipient.
+	UserId *string
+
+	noSmithyDocumentSerde
+}
+
+// A comment provided when requesting an evaluation review.
+type EvaluationReviewRequestComment struct {
+
+	// The text content of the review request comment.
+	Comment *string
+
+	// The user who created the review request comment.
+	CreatedBy *string
+
+	// The timestamp when the review request comment was created.
+	CreatedTime *time.Time
+
+	noSmithyDocumentSerde
+}
+
 // Information about scores of a contact evaluation item (section or question).
 type EvaluationScore struct {
+
+	// Weight applied to this evaluation score.
+	AppliedWeight *float64
 
 	// The flag that marks the item as automatic fail. If the item or a child item
 	// gets an automatic fail answer, this flag will be true.
@@ -2814,6 +4563,201 @@ type EvaluationScore struct {
 
 	// The score percentage for an item in a contact evaluation.
 	Percentage float64
+
+	noSmithyDocumentSerde
+}
+
+// The search criteria to be used to return evaluations.
+type EvaluationSearchCriteria struct {
+
+	// A list of conditions which would be applied together with an AND condition.
+	AndConditions []EvaluationSearchCriteria
+
+	// The boolean condition search criteria for searching evaluations.
+	BooleanCondition *BooleanCondition
+
+	// The datetime condition search criteria for searching evaluations.
+	DateTimeCondition *DateTimeCondition
+
+	// The decimal condition search criteria for searching evaluations.
+	DecimalCondition *DecimalCondition
+
+	// A leaf node condition which can be used to specify a numeric condition.
+	//
+	// The currently supported value for FieldName is limit .
+	NumberCondition *NumberCondition
+
+	// A list of conditions which would be applied together with an OR condition.
+	OrConditions []EvaluationSearchCriteria
+
+	// A leaf node condition which can be used to specify a string condition.
+	StringCondition *StringCondition
+
+	noSmithyDocumentSerde
+}
+
+// Filters to be applied to search results.
+type EvaluationSearchFilter struct {
+
+	// An object that can be used to specify Tag conditions inside the SearchFilter .
+	// This accepts an OR or AND (List of List) input where:
+	//
+	//   - The top level list specifies conditions that need to be applied with OR
+	//   operator.
+	//
+	//   - The inner list specifies conditions that need to be applied with AND
+	//   operator.
+	AttributeFilter *ControlPlaneAttributeFilter
+
+	noSmithyDocumentSerde
+}
+
+// Metadata information about an evaluation search.
+type EvaluationSearchMetadata struct {
+
+	// The identifier of the contact in this instance of Amazon Connect.
+	//
+	// This member is required.
+	ContactId *string
+
+	// The Amazon Resource Name (ARN) of the person who evaluated the contact.
+	//
+	// This member is required.
+	EvaluatorArn *string
+
+	// The agent who acknowledged the evaluation.
+	AcknowledgedBy *string
+
+	// When the evaluation was acknowledged by the agent.
+	AcknowledgedTime *time.Time
+
+	// The comment from the agent when they acknowledged the evaluation.
+	AcknowledgerComment *string
+
+	// Whether auto-evaluation is enabled.
+	AutoEvaluationEnabled bool
+
+	// The status of the contact auto evaluation.
+	AutoEvaluationStatus AutoEvaluationStatus
+
+	// The calibration session ID that this evaluation belongs to.
+	CalibrationSessionId *string
+
+	// The unique ID of the agent who handled the contact.
+	ContactAgentId *string
+
+	// Identifier for a contact participant in the evaluation.
+	ContactParticipantId *string
+
+	// Role of a contact participant in the evaluation.
+	ContactParticipantRole ContactParticipantRole
+
+	// Identifier for the review.
+	ReviewId *string
+
+	// Identifier of the sampling job.
+	SamplingJobId *string
+
+	// The flag that marks the item as automatic fail. If the item or a child item
+	// gets an automatic fail answer, this flag is true.
+	ScoreAutomaticFail bool
+
+	// The flag to mark the item as not applicable for scoring.
+	ScoreNotApplicable bool
+
+	// The total evaluation score expressed as a percentage.
+	ScorePercentage float64
+
+	noSmithyDocumentSerde
+}
+
+// Summary of evaluation obtained from the search operation.
+type EvaluationSearchSummary struct {
+
+	// The date and time when the evaluation was created, in UTC time.
+	//
+	// This member is required.
+	CreatedTime *time.Time
+
+	// The Amazon Resource Name (ARN) for the contact evaluation resource.
+	//
+	// This member is required.
+	EvaluationArn *string
+
+	// A version of the evaluation form.
+	//
+	// This member is required.
+	EvaluationFormVersion *int32
+
+	// A unique identifier for the contact evaluation.
+	//
+	// This member is required.
+	EvaluationId *string
+
+	// The date and time when the evaluation was modified last time, in UTC time.
+	//
+	// This member is required.
+	LastModifiedTime *time.Time
+
+	// Summary information about the evaluation search.
+	//
+	// This member is required.
+	Metadata *EvaluationSearchMetadata
+
+	// The status of the evaluation.
+	//
+	// This member is required.
+	Status EvaluationStatus
+
+	// The unique identifier for the evaluation form.
+	EvaluationFormId *string
+
+	// Title of the evaluation form.
+	EvaluationFormTitle *string
+
+	// Type of the evaluation.
+	EvaluationType EvaluationType
+
+	// The tags used to organize, track, or control access for this resource. For
+	// example, { "Tags": {"key1":"value1", "key2":"value2"} }.
+	Tags map[string]string
+
+	noSmithyDocumentSerde
+}
+
+// The information about the suggested answer for the question.
+type EvaluationSuggestedAnswer struct {
+
+	// Type of analysis used to provide suggested answer.
+	//
+	// This member is required.
+	AnalysisType EvaluationQuestionAnswerAnalysisType
+
+	// The status of the suggested answer. D
+	//
+	// This member is required.
+	Status EvaluationSuggestedAnswerStatus
+
+	// Detailed analysis results.
+	AnalysisDetails EvaluationQuestionAnswerAnalysisDetails
+
+	// Details about the input used to question automation.
+	Input *EvaluationQuestionInputDetails
+
+	// Information about answer data for a contact evaluation. Answer data must be
+	// either string, numeric, or not applicable.
+	Value EvaluationAnswerData
+
+	noSmithyDocumentSerde
+}
+
+// The milliseconds offset for transcript reference in suggested answer.
+type EvaluationSuggestedAnswerTranscriptMillisecondOffsets struct {
+
+	// Offset in milliseconds from the beginning of the transcript.
+	//
+	// This member is required.
+	BeginOffsetMillis int32
 
 	noSmithyDocumentSerde
 }
@@ -2861,11 +4805,59 @@ type EvaluationSummary struct {
 	// This member is required.
 	Status EvaluationStatus
 
+	// Information related to evaluation acknowledgement.
+	Acknowledgement *EvaluationAcknowledgementSummary
+
+	// Whether automated evaluation is enabled.
+	AutoEvaluationEnabled bool
+
+	// The status of the contact auto evaluation.
+	AutoEvaluationStatus AutoEvaluationStatus
+
+	// The calibration session ID that this evaluation belongs to.
+	CalibrationSessionId *string
+
+	// Information about a contact participant in the evaluation.
+	ContactParticipant *EvaluationContactParticipant
+
+	// Type of the evaluation.
+	EvaluationType EvaluationType
+
 	// The overall score of the contact evaluation.
 	Score *EvaluationScore
 
 	noSmithyDocumentSerde
 }
+
+// Information about the point of interest in transcript provided to evaluation.
+type EvaluationTranscriptPointOfInterest struct {
+
+	// Offset in milliseconds from the beginning of transcript.
+	MillisecondOffsets *EvaluationSuggestedAnswerTranscriptMillisecondOffsets
+
+	// Segment of transcript.
+	TranscriptSegment *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents the entity that performed the action on the evaluation.
+//
+// The following types satisfy this interface:
+//
+//	EvaluatorUserUnionMemberConnectUserArn
+type EvaluatorUserUnion interface {
+	isEvaluatorUserUnion()
+}
+
+// Represents the Amazon Connect ARN of the user.
+type EvaluatorUserUnionMemberConnectUserArn struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*EvaluatorUserUnionMemberConnectUserArn) isEvaluatorUserUnion() {}
 
 // The EventBridge action definition.
 type EventBridgeActionDefinition struct {
@@ -2874,6 +4866,24 @@ type EventBridgeActionDefinition struct {
 	//
 	// This member is required.
 	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a test case execution record.
+type ExecutionRecord struct {
+
+	// The identifier of the execution record.
+	ObservationId *string
+
+	// The details of the executed record.
+	Record *string
+
+	// The status of the action execution.
+	Status ExecutionRecordStatus
+
+	// The timestamp when the action was executed.
+	Timestamp *time.Time
 
 	noSmithyDocumentSerde
 }
@@ -2904,6 +4914,31 @@ type Expression struct {
 
 	// List of routing expressions which will be OR-ed together.
 	OrExpression []Expression
+
+	noSmithyDocumentSerde
+}
+
+// The external invocation configuration for the flow module
+type ExternalInvocationConfiguration struct {
+
+	// Enable external invocation.
+	Enabled bool
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a resource that failed to be associated with a
+// workspace in a batch operation.
+type FailedBatchAssociationSummary struct {
+
+	// The error code indicating why the association failed.
+	ErrorCode *string
+
+	// An error message describing why the association failed.
+	ErrorMessage *string
+
+	// The Amazon Resource Name (ARN) of the resource that failed to be associated.
+	ResourceArn *string
 
 	noSmithyDocumentSerde
 }
@@ -2961,6 +4996,9 @@ type FieldValueUnion struct {
 // Contains the filter to apply when retrieving metrics.
 type Filters struct {
 
+	// A list of up to 50 agent status IDs or ARNs.
+	AgentStatuses []string
+
 	// The channel to use to filter the metrics.
 	Channels []Channel
 
@@ -2975,6 +5013,12 @@ type Filters struct {
 	// A list of expressions as a filter, in which an expression is an object of a
 	// step in a routing criteria.
 	RoutingStepExpressions []string
+
+	// A list of up to 10 subtypes can be provided.
+	Subtypes []string
+
+	// A list of up to 10 validationTestTypes can be provided.
+	ValidationTestTypes []string
 
 	noSmithyDocumentSerde
 }
@@ -2994,6 +5038,29 @@ type FilterV2 struct {
 	// key of QUEUE , you would add queue IDs or ARNs in FilterValues .
 	FilterValues []string
 
+	//  System defined filtering condition. For example, the NOT_EXISTS
+	// StringCondition returns documents where the field specified by FilterKey does
+	// not exist in the document.
+	//
+	// When the NOT_EXISTS StringCondition is added to a FilterV2 object, FilterValues
+	// must be null or empty.
+	StringCondition *FilterV2StringCondition
+
+	noSmithyDocumentSerde
+}
+
+//	System defined filtering condition. For example, the NOT_EXISTS
+//
+// StringCondition returns documents where the field specified by FilterKey does
+// not exist in the document.
+//
+// When the NOT_EXISTS StringCondition is added to a FilterV2 object, FilterValues
+// must be null or empty.
+type FilterV2StringCondition struct {
+
+	//  The string condition.
+	Comparison FilterV2StringConditionComparisonOperator
+
 	noSmithyDocumentSerde
 }
 
@@ -3008,6 +5075,66 @@ type FlowAssociationSummary struct {
 
 	// The type of resource association.
 	ResourceType ListFlowAssociationResourceType
+
+	noSmithyDocumentSerde
+}
+
+// A list of Flow Modules an AI Agent can invoke as a tool
+type FlowModule struct {
+
+	//  If of Flow Modules invocable as tool
+	FlowModuleId *string
+
+	//  Only Type we support is MCP.
+	Type FlowModuleType
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for quick connect.
+type FlowQuickConnectConfig struct {
+
+	//  The contact flow ID for the quick connect configuration.
+	//
+	// This member is required.
+	ContactFlowId *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains font family configuration for workspace themes.
+type FontFamily struct {
+
+	// The default font family to use in the workspace theme.
+	Default WorkspaceFontFamily
+
+	noSmithyDocumentSerde
+}
+
+// Information about the global resiliency configuration for the contact,
+// including traffic distribution details.
+type GlobalResiliencyMetadata struct {
+
+	// The current AWS region in which the contact is active. This indicates where the
+	// contact is being processed in real-time.
+	ActiveRegion *string
+
+	// The AWS region where the contact was originally created and initiated. This may
+	// differ from the ActiveRegion if the contact has been transferred across regions.
+	OriginRegion *string
+
+	// The identifier of the traffic distribution group.
+	TrafficDistributionGroupId *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains granular access control configuration for security profiles, including
+// data table access permissions.
+type GranularAccessControlConfiguration struct {
+
+	// The access control configuration for data tables.
+	DataTableAccessControlConfiguration *DataTableAccessControlConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -3226,13 +5353,192 @@ type HierarchyStructureUpdate struct {
 	noSmithyDocumentSerde
 }
 
-// Contains information about a historical metric. For a description of each
-// metric, see [Metrics definitions]in the Amazon Connect Administrator Guide.
-//
-// [Metrics definitions]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html
+// Contains information about a historical metric.
 type HistoricalMetric struct {
 
-	// The name of the metric.
+	// The name of the metric. Following is a list of each supported metric mapped to
+	// the UI name, linked to a detailed description in the Amazon Connect
+	// Administrator Guide.
+	//
+	// ABANDON_TIME Unit: SECONDS
+	//
+	// Statistic: AVG
+	//
+	// UI name: [Average queue abandon time]
+	//
+	// AFTER_CONTACT_WORK_TIME Unit: SECONDS
+	//
+	// Statistic: AVG
+	//
+	// UI name: [After contact work time]
+	//
+	// API_CONTACTS_HANDLED Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [API contacts handled]
+	//
+	// AVG_HOLD_TIME Unit: SECONDS
+	//
+	// Statistic: AVG
+	//
+	// UI name: [Average customer hold time]
+	//
+	// CALLBACK_CONTACTS_HANDLED Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Callback contacts handled]
+	//
+	// CONTACTS_ABANDONED Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts abandoned]
+	//
+	// CONTACTS_AGENT_HUNG_UP_FIRST Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts agent hung up first]
+	//
+	// CONTACTS_CONSULTED Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts consulted]
+	//
+	// CONTACTS_HANDLED Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts handled]
+	//
+	// CONTACTS_HANDLED_INCOMING Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts handled incoming]
+	//
+	// CONTACTS_HANDLED_OUTBOUND Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts handled outbound]
+	//
+	// CONTACTS_HOLD_ABANDONS Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts hold disconnect]
+	//
+	// CONTACTS_MISSED Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [AGENT_NON_RESPONSE]
+	//
+	// CONTACTS_QUEUED Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts queued]
+	//
+	// CONTACTS_TRANSFERRED_IN Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts transferred in]
+	//
+	// CONTACTS_TRANSFERRED_IN_FROM_QUEUE Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts transferred out queue]
+	//
+	// CONTACTS_TRANSFERRED_OUT Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts transferred out]
+	//
+	// CONTACTS_TRANSFERRED_OUT_FROM_QUEUE Unit: COUNT
+	//
+	// Statistic: SUM
+	//
+	// UI name: [Contacts transferred out queue]
+	//
+	// HANDLE_TIME Unit: SECONDS
+	//
+	// Statistic: AVG
+	//
+	// UI name: [Average handle time]
+	//
+	// INTERACTION_AND_HOLD_TIME Unit: SECONDS
+	//
+	// Statistic: AVG
+	//
+	// UI name: [Average agent interaction and customer hold time]
+	//
+	// INTERACTION_TIME Unit: SECONDS
+	//
+	// Statistic: AVG
+	//
+	// UI name: [Average agent interaction time]
+	//
+	// OCCUPANCY Unit: PERCENT
+	//
+	// Statistic: AVG
+	//
+	// UI name: [Occupancy]
+	//
+	// QUEUE_ANSWER_TIME Unit: SECONDS
+	//
+	// Statistic: AVG
+	//
+	// UI name: [Average queue answer time]
+	//
+	// QUEUED_TIME Unit: SECONDS
+	//
+	// Statistic: MAX
+	//
+	// UI name: [Minimum flow time]
+	//
+	// SERVICE_LEVEL You can include up to 20 SERVICE_LEVEL metrics in a request.
+	//
+	// Unit: PERCENT
+	//
+	// Statistic: AVG
+	//
+	// Threshold: For ThresholdValue , enter any whole number from 1 to 604800
+	// (inclusive), in seconds. For Comparison , you must enter LT (for "Less than").
+	//
+	// UI name: [Service level X]
+	//
+	// [AGENT_NON_RESPONSE]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#agent-non-response
+	// [Contacts agent hung up first]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-agent-hung-up-first
+	// [Contacts hold disconnect]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-hold-disconnect
+	// [Average queue abandon time]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#average-queue-abandon-time
+	// [Contacts consulted]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-consulted
+	// [API contacts handled]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#api-contacts-handled
+	// [Contacts transferred out]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-transferred-out
+	// [Average queue answer time]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html##average-queue-answer-time
+	// [Average agent interaction and customer hold time]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#average-agent-interaction-and-customer-hold-time
+	// [Contacts handled outbound]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-handled-outbound
+	// [Average handle time]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#average-handle-time
+	// [Average customer hold time]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#average-customer-hold-time
+	// [Callback contacts handled]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#callback-contacts-handled
+	// [Service level X]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#service-level
+	// [Contacts transferred in]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-transferred-in
+	// [Contacts abandoned]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-abandoned
+	// [After contact work time]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#after-contact-work-time
+	// [Contacts queued]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-queued
+	// [Occupancy]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#occupancy
+	// [Contacts handled incoming]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-handled-incoming
+	// [Minimum flow time]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#minimum-flow-time
+	// [Contacts transferred out queue]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-transferred-out-queue
+	// [Contacts handled]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#contacts-handled
+	// [Average agent interaction time]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html#aaverage-agent-interaction-time
 	Name HistoricalMetricName
 
 	// The statistic for the metric.
@@ -3295,6 +5601,9 @@ type HoursOfOperation struct {
 	// The name for the hours of operation.
 	Name *string
 
+	// Information about parent hours of operations.
+	ParentHoursOfOperations []HoursOfOperationsIdentifier
+
 	// The tags used to organize, track, or control access for this resource. For
 	// example, { "Tags": {"key1":"value1", "key2":"value2"} }.
 	Tags map[string]string
@@ -3339,7 +5648,7 @@ type HoursOfOperationOverride struct {
 	// The date from which the hours of operation override would be effective.
 	EffectiveFrom *string
 
-	// The date till which the hours of operation override would be effective.
+	// The date until the hours of operation override is effective.
 	EffectiveTill *string
 
 	// The Amazon Resource Name (ARN) for the hours of operation.
@@ -3353,6 +5662,12 @@ type HoursOfOperationOverride struct {
 
 	// The name of the hours of operation override.
 	Name *string
+
+	// Whether the override will be defined as a standard or as a recurring event.
+	OverrideType OverrideType
+
+	// Configuration for a recurring event.
+	RecurrenceConfig *RecurrenceConfig
 
 	noSmithyDocumentSerde
 }
@@ -3423,6 +5738,25 @@ type HoursOfOperationSearchFilter struct {
 	noSmithyDocumentSerde
 }
 
+// Identifier for a hours of operations resource: ARN, ID, Name
+type HoursOfOperationsIdentifier struct {
+
+	// Unique identifier of the hours of operation.
+	//
+	// This member is required.
+	Id *string
+
+	// Name of the hours of operation
+	//
+	// This member is required.
+	Name *string
+
+	// Amazon Resource Name (ARN) of the hours of operations.
+	Arn *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains summary information about hours of operation for a contact center.
 type HoursOfOperationSummary struct {
 
@@ -3460,13 +5794,39 @@ type HoursOfOperationTimeSlice struct {
 	noSmithyDocumentSerde
 }
 
-// The additional TO CC recipients information of inbound email.
+// Contains logo image configuration for workspace themes.
+type ImagesLogo struct {
+
+	// The default logo image displayed in the workspace.
+	Default *string
+
+	// The favicon image displayed in the browser tab.
+	Favicon *string
+
+	noSmithyDocumentSerde
+}
+
+// Information about the additional TO and CC recipients of an inbound email
+// contact.
+//
+// You can include up to 50 email addresses in total, distributed across [DestinationEmailAddress],
+// ToAddresses , and CcAddresses . This total must include one required
+// DestinationEmailAddress . You can then specify up to 49 addresses allocated
+// across ToAddresses and CcAddresses as needed.
+//
+// [DestinationEmailAddress]: https://docs.aws.amazon.com/connect/latest/APIReference/API_StartEmailContact.html#API_StartEmailContact_RequestBody
 type InboundAdditionalRecipients struct {
 
-	// The additional recipients information present in cc list.
+	// The additional recipients information present in cc list. You must have 1
+	// required recipient ( DestinationEmailAddress ). You can then specify up to 49
+	// additional recipients (across ToAddresses and CcAddresses ), for a total of 50
+	// recipients.
 	CcAddresses []EmailAddressInfo
 
-	// The additional recipients information present in to list.
+	// The additional recipients information present in to list. You must have 1
+	// required recipient ( DestinationEmailAddress ). You can then specify up to 49
+	// additional recipients (across ToAddresses and CcAddresses ), for a total of 50
+	// recipients.
 	ToAddresses []EmailAddressInfo
 
 	noSmithyDocumentSerde
@@ -3506,6 +5866,19 @@ type InboundRawMessage struct {
 
 	// Headers present in inbound email.
 	Headers map[string]string
+
+	noSmithyDocumentSerde
+}
+
+// Custom metadata that is associated to predefined attributes to control behavior
+// in upstream services, such as controlling how a predefined attribute should be
+// displayed in the Amazon Connect admin website.
+type InputPredefinedAttributeConfiguration struct {
+
+	// When this parameter is set to true, Amazon Connect enforces strict validation
+	// on the specific values, if the values are predefined in attributes. The contact
+	// will store only valid and predefined values for the predefined attribute key.
+	EnableValueValidationOnAssociation bool
 
 	noSmithyDocumentSerde
 }
@@ -3903,6 +6276,19 @@ type MediaConcurrency struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about a media asset used in a workspace.
+type MediaItem struct {
+
+	// The source URL or data for the media asset.
+	Source *string
+
+	// The type of media. Valid values are: IMAGE_LOGO_FAVICON and
+	// IMAGE_LOGO_HORIZONTAL .
+	Type MediaType
+
+	noSmithyDocumentSerde
+}
+
 // A set of endpoints used by clients to connect to the media service group for an
 // Amazon Chime SDK meeting.
 type MediaPlacement struct {
@@ -3955,7 +6341,8 @@ type MeetingFeaturesConfiguration struct {
 // Contains the name, thresholds, and metric filters.
 type MetricDataV2 struct {
 
-	// The metric name, thresholds, and metric filters of the returned metric.
+	// The metric name or metricId, thresholds, and metric filters of the returned
+	// metric.
 	Metric *MetricV2
 
 	// The corresponding value of the metric returned in the response.
@@ -4056,18 +6443,60 @@ type MetricResultV2 struct {
 }
 
 // Contains information about the metric.
+//
+// Only one of either the Name or MetricId is required.
 type MetricV2 struct {
 
 	// Contains the filters to be used when returning data.
 	MetricFilters []MetricFilterV2
 
+	// Historical metrics or custom metrics can be referenced via this field. This
+	// field is a valid Amazon Connect Arn or a UUID
+	MetricId *string
+
 	// The name of the metric.
-	//
-	// This parameter is required. The following Required = No is incorrect.
 	Name *string
 
 	// Contains information about the threshold for service level metrics.
 	Threshold []ThresholdV2
+
+	noSmithyDocumentSerde
+}
+
+// Automation rule for multi-select questions based on rule categories.
+type MultiSelectQuestionRuleCategoryAutomation struct {
+
+	// The category name for this automation rule.
+	//
+	// This member is required.
+	Category *string
+
+	// The condition for this automation rule.
+	//
+	// This member is required.
+	Condition MultiSelectQuestionRuleCategoryAutomationCondition
+
+	// Reference IDs of options for this automation rule.
+	//
+	// This member is required.
+	OptionRefIds []string
+
+	noSmithyDocumentSerde
+}
+
+// The search criteria based on the contact name
+type NameCriteria struct {
+
+	// The match type combining name search criteria using multiple search texts in a
+	// name criteria.
+	//
+	// This member is required.
+	MatchType SearchContactsMatchType
+
+	// The words or phrases used to match the contact name.
+	//
+	// This member is required.
+	SearchText []string
 
 	noSmithyDocumentSerde
 }
@@ -4103,6 +6532,36 @@ type NewSessionDetails struct {
 
 	noSmithyDocumentSerde
 }
+
+// Entry representing the next contact in a sequence.
+type NextContactEntry struct {
+
+	//  Metadata for the next contact entry.
+	NextContactMetadata NextContactMetadata
+
+	//  The type of the next contact entry.
+	Type NextContactType
+
+	noSmithyDocumentSerde
+}
+
+//	Metadata information for next contact.
+//
+// The following types satisfy this interface:
+//
+//	NextContactMetadataMemberQuickConnectContactData
+type NextContactMetadata interface {
+	isNextContactMetadata()
+}
+
+// Quick connect contact data for the next contact metadata.
+type NextContactMetadataMemberQuickConnectContactData struct {
+	Value QuickConnectContactData
+
+	noSmithyDocumentSerde
+}
+
+func (*NextContactMetadataMemberQuickConnectContactData) isNextContactMetadata() {}
 
 // The type of notification recipient.
 type NotificationRecipientType struct {
@@ -4175,6 +6634,21 @@ type NumericQuestionPropertyValueAutomation struct {
 	noSmithyDocumentSerde
 }
 
+// Contains summary statistics about a test case execution.
+type ObservationSummary struct {
+
+	// The number of observations that failed during execution.
+	ObservationsFailed *int32
+
+	// The number of observations that passed during execution.
+	ObservationsPassed *int32
+
+	// The total number of observations in the test case.
+	TotalObservations *int32
+
+	noSmithyDocumentSerde
+}
+
 // Information about the hours of operations with the effective override applied.
 type OperationalHour struct {
 
@@ -4187,10 +6661,14 @@ type OperationalHour struct {
 	noSmithyDocumentSerde
 }
 
-// The additional recipients information of outbound email.
+// Information about the additional recipients of outbound email.
 type OutboundAdditionalRecipients struct {
 
-	// The additional CC email address recipients information.
+	// Information about the additional CC email address recipients. Email recipients
+	// are limited to 50 total addresses: 1 required recipient in the [DestinationEmailAddress]field and up to
+	// 49 recipients in the 'CcEmailAddresses' field.
+	//
+	// [DestinationEmailAddress]: https://docs.aws.amazon.com/connect/latest/APIReference/API_SendOutboundEmail.html#API_SendOutboundEmail_RequestBody
 	CcEmailAddresses []EmailAddressInfo
 
 	noSmithyDocumentSerde
@@ -4211,7 +6689,7 @@ type OutboundCallerConfig struct {
 	noSmithyDocumentSerde
 }
 
-// The outbound email address Id.
+// The outbound email address ID.
 type OutboundEmailConfig struct {
 
 	// The identifier of the email address.
@@ -4258,6 +6736,49 @@ type OutboundRawMessage struct {
 	noSmithyDocumentSerde
 }
 
+// Information about the outbound strategy.
+type OutboundStrategy struct {
+
+	// Type of the outbound strategy.
+	//
+	// This member is required.
+	Type OutboundStrategyType
+
+	// Config of the outbound strategy.
+	Config *OutboundStrategyConfig
+
+	noSmithyDocumentSerde
+}
+
+// The config of the outbound strategy.
+type OutboundStrategyConfig struct {
+
+	// The config of agent first outbound strategy.
+	AgentFirst *AgentFirst
+
+	noSmithyDocumentSerde
+}
+
+// Information about hours of operation override
+type OverrideHour struct {
+
+	// The start time or end time for an hours of operation override.
+	End *OverrideTimeSlice
+
+	// Indicates whether the status is open or closed during the override period. This
+	// status determines how the override modifies the base hours of operation
+	// schedule.
+	OperationalStatus OperationalStatus
+
+	// Unique identifier name for the override.
+	OverrideName *string
+
+	// The start time or end time for an hours of operation override.
+	Start *OverrideTimeSlice
+
+	noSmithyDocumentSerde
+}
+
 // The start time or end time for an hours of operation override.
 type OverrideTimeSlice struct {
 
@@ -4270,6 +6791,90 @@ type OverrideTimeSlice struct {
 	//
 	// This member is required.
 	Minutes *int32
+
+	noSmithyDocumentSerde
+}
+
+// Contains color configuration for canvas elements in a workspace theme.
+type PaletteCanvas struct {
+
+	// The background color for active elements.
+	ActiveBackground *string
+
+	// The background color for container elements.
+	ContainerBackground *string
+
+	// The background color for page elements.
+	PageBackground *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains color configuration for header elements in a workspace theme.
+type PaletteHeader struct {
+
+	// The background color of the header.
+	Background *string
+
+	// Whether to invert the colors of action buttons in the header.
+	InvertActionsColors bool
+
+	// The text color in the header.
+	Text *string
+
+	// The text color when hovering over header elements.
+	TextHover *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains color configuration for navigation elements in a workspace theme.
+type PaletteNavigation struct {
+
+	// The background color of the navigation area.
+	Background *string
+
+	// Whether to invert the colors of action buttons in the navigation area.
+	InvertActionsColors bool
+
+	// The text color in the navigation area.
+	Text *string
+
+	// The text color for active navigation items.
+	TextActive *string
+
+	// The background color for active navigation items.
+	TextBackgroundActive *string
+
+	// The background color when hovering over navigation text.
+	TextBackgroundHover *string
+
+	// The text color when hovering over navigation items.
+	TextHover *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains primary color configuration for a workspace theme.
+type PalettePrimary struct {
+
+	// The primary color used for active states.
+	Active *string
+
+	// The text color that contrasts with the primary color for readability.
+	ContrastText *string
+
+	// The default primary color used throughout the workspace.
+	Default *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains configuration for the parent hours of operation.
+type ParentHoursOfOperationConfig struct {
+
+	// The identifier for the hours of operation.
+	HoursOfOperationId *string
 
 	noSmithyDocumentSerde
 }
@@ -4292,6 +6897,15 @@ type ParticipantCapabilities struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration of the participant.
+type ParticipantConfiguration struct {
+
+	//  The mode in which responses should be sent to the participant.
+	ResponseMode ResponseMode
+
+	noSmithyDocumentSerde
+}
+
 // The customer's details.
 type ParticipantDetails struct {
 
@@ -4309,8 +6923,50 @@ type ParticipantDetailsToAdd struct {
 	// The display name of the participant.
 	DisplayName *string
 
+	// The configuration for the allowed video and screen sharing capabilities for
+	// participants present over the call. For more information, see [Set up in-app, web, video calling, and screen sharing capabilities]in the Amazon
+	// Connect Administrator Guide.
+	//
+	// [Set up in-app, web, video calling, and screen sharing capabilities]: https://docs.aws.amazon.com/connect/latest/adminguide/inapp-calling.html
+	ParticipantCapabilities *ParticipantCapabilities
+
 	// The role of the participant being added.
 	ParticipantRole ParticipantRole
+
+	noSmithyDocumentSerde
+}
+
+// Information about a participant's interactions in a contact.
+type ParticipantMetrics struct {
+
+	// A boolean flag indicating whether the chat conversation was abandoned by a
+	// Participant.
+	ConversationAbandon *bool
+
+	// Timestamp of last chat message by Participant.
+	LastMessageTimestamp *time.Time
+
+	// Maximum chat response time by Participant.
+	MaxResponseTimeInMillis *int64
+
+	// Number of chat characters sent by Participant.
+	MessageLengthInChars *int32
+
+	// Number of chat messages sent by Participant.
+	MessagesSent *int32
+
+	// Number of chat messages sent by Participant.
+	NumResponses *int32
+
+	// The Participant's ID.
+	ParticipantId *string
+
+	// Information about the conversation participant. Following are the participant
+	// types: [Agent, Customer, Supervisor].
+	ParticipantType ParticipantType
+
+	// Total chat response time by Participant.
+	TotalResponseTimeInMillis *int64
 
 	noSmithyDocumentSerde
 }
@@ -4424,6 +7080,45 @@ type PersistentChat struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration settings for persistent connection for a specific channel.
+type PersistentConnectionConfig struct {
+
+	// Configuration settings for persistent connection. Only VOICE is supported for
+	// this data type.
+	//
+	// This member is required.
+	Channel Channel
+
+	// Indicates whether persistent connection is enabled. When enabled, the agent's
+	// connection is maintained after a call ends, enabling subsequent calls to connect
+	// faster.
+	//
+	// This member is required.
+	PersistentConnection *bool
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for phone type and phone number.
+type PhoneNumberConfig struct {
+
+	// The channel for this phone number configuration. Only VOICE is supported for
+	// this data type.
+	//
+	// This member is required.
+	Channel Channel
+
+	// The phone type. Valid values: SOFT_PHONE, DESK_PHONE.
+	//
+	// This member is required.
+	PhoneType PhoneType
+
+	// The phone number for the user's desk phone.
+	PhoneNumber *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about a phone number for a quick connect.
 type PhoneNumberQuickConnectConfig struct {
 
@@ -4487,8 +7182,25 @@ type PhoneNumberSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Countdown timer configuration after the agent accepted the contact.
+type PostAcceptTimeoutConfig struct {
+
+	// Duration in seconds for the countdown timer after the agent accepted the
+	// contact.
+	//
+	// This member is required.
+	DurationInSeconds *int32
+
+	noSmithyDocumentSerde
+}
+
 // Information about a predefined attribute.
 type PredefinedAttribute struct {
+
+	// Custom metadata that is associated to predefined attributes to control behavior
+	// in upstream services, such as controlling how a predefined attribute should be
+	// displayed in the Amazon Connect admin website.
+	AttributeConfiguration *PredefinedAttributeConfiguration
 
 	// Last modified region.
 	LastModifiedRegion *string
@@ -4499,8 +7211,29 @@ type PredefinedAttribute struct {
 	// The name of the predefined attribute.
 	Name *string
 
+	// Values that enable you to categorize your predefined attributes. You can use
+	// them in custom UI elements across the Amazon Connect admin website.
+	Purposes []string
+
 	// The values of the predefined attribute.
 	Values PredefinedAttributeValues
+
+	noSmithyDocumentSerde
+}
+
+// Custom metadata that is associated to predefined attributes to control behavior
+// in upstream services, such as controlling how a predefined attribute should be
+// displayed in the Amazon Connect admin website.
+type PredefinedAttributeConfiguration struct {
+
+	// When this parameter is set to true, Amazon Connect enforces strict validation
+	// on the specific values, if the values are predefined in attributes. The contact
+	// will store only valid and predefined values for teh predefined attribute key.
+	EnableValueValidationOnAssociation bool
+
+	// A boolean flag used to indicate whether a predefined attribute should be
+	// displayed in the Amazon Connect admin website.
+	IsReadOnly bool
 
 	noSmithyDocumentSerde
 }
@@ -4552,6 +7285,98 @@ type PredefinedAttributeValuesMemberStringList struct {
 }
 
 func (*PredefinedAttributeValuesMemberStringList) isPredefinedAttributeValues() {}
+
+// Information about agent-first preview mode outbound strategy configuration.
+type Preview struct {
+
+	// The actions the agent can perform after accepting the preview outbound contact.
+	//
+	// This member is required.
+	AllowedUserActions []AllowedUserAction
+
+	// Countdown timer configuration after the agent accepted the preview outbound
+	// contact.
+	//
+	// This member is required.
+	PostAcceptTimeoutConfig *PostAcceptTimeoutConfig
+
+	noSmithyDocumentSerde
+}
+
+// A primary attribute access control configuration item.
+type PrimaryAttributeAccessControlConfigurationItem struct {
+
+	// The item's primary attribute values.
+	PrimaryAttributeValues []PrimaryAttributeValue
+
+	noSmithyDocumentSerde
+}
+
+// A primary attribute value.
+type PrimaryAttributeValue struct {
+
+	// The value's access type.
+	AccessType AccessType
+
+	// The value's attribute name.
+	AttributeName *string
+
+	// The value's values.
+	Values []string
+
+	noSmithyDocumentSerde
+}
+
+// A primary attribute value filter.
+type PrimaryAttributeValueFilter struct {
+
+	// The filter's attribute name.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The filter's values.
+	//
+	// This member is required.
+	Values []string
+
+	noSmithyDocumentSerde
+}
+
+// Represents a primary key value used to identify a specific record in a data
+// table. Primary values are used in combination to create unique record
+// identifiers when a table has multiple primary attributes.
+type PrimaryValue struct {
+
+	// The name of the primary attribute that this value belongs to.
+	//
+	// This member is required.
+	AttributeName *string
+
+	// The actual value for the primary attribute. Must be provided as a string
+	// regardless of the attribute's value type. Primary values cannot be expressions
+	// and must be explicitly specified.
+	//
+	// This member is required.
+	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// A primary value response.
+type PrimaryValueResponse struct {
+
+	// The value's attribute ID.
+	AttributeId *string
+
+	// The value's attribute name.
+	AttributeName *string
+
+	// The value's value.
+	Value *string
+
+	noSmithyDocumentSerde
+}
 
 // Information about a problem detail.
 type ProblemDetail struct {
@@ -4874,6 +7699,9 @@ type QuickConnectConfig struct {
 	// This member is required.
 	QuickConnectType QuickConnectType
 
+	//  Flow configuration for quick connect setup.
+	FlowConfig *FlowQuickConnectConfig
+
 	// The phone configuration. This is required only if QuickConnectType is
 	// PHONE_NUMBER.
 	PhoneConfig *PhoneNumberQuickConnectConfig
@@ -4883,6 +7711,27 @@ type QuickConnectConfig struct {
 
 	// The user configuration. This is required only if QuickConnectType is USER.
 	UserConfig *UserQuickConnectConfig
+
+	noSmithyDocumentSerde
+}
+
+// Contact data associated with quick connect operations.
+type QuickConnectContactData struct {
+
+	//  The contact ID for quick connect contact data.
+	ContactId *string
+
+	//  Timestamp when the quick connect contact was initiated.
+	InitiationTimestamp *time.Time
+
+	//  The quick connect ID.
+	QuickConnectId *string
+
+	//  The name of the quick connect.
+	QuickConnectName *string
+
+	//  The type of the quick connect.
+	QuickConnectType QuickConnectType
 
 	noSmithyDocumentSerde
 }
@@ -5396,6 +8245,96 @@ type RecordingInfo struct {
 	// Where the recording/transcript is stored.
 	StorageType StorageType
 
+	//  The location, in Amazon S3, for the unprocessed transcript if any media
+	// processing was performed.
+	UnprocessedTranscriptLocation *string
+
+	noSmithyDocumentSerde
+}
+
+// A record primary value.
+type RecordPrimaryValue struct {
+
+	// The value's last modified region.
+	LastModifiedRegion *string
+
+	// The value's last modified time.
+	LastModifiedTime *time.Time
+
+	// The value's primary values.
+	PrimaryValues []PrimaryValueResponse
+
+	// The value's record ID.
+	RecordId *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the recurrence configuration for overrides. This configuration uses a
+// recurrence pattern to specify when and how frequently an event should repeat.
+type RecurrenceConfig struct {
+
+	// The recurrence pattern that defines how the event repeats. Example: Frequency,
+	// Interval, ByMonth, ByMonthDay, ByWeekdayOccurrence
+	//
+	// This member is required.
+	RecurrencePattern *RecurrencePattern
+
+	noSmithyDocumentSerde
+}
+
+// Specifies the detailed pattern for event recurrence. Use this to define complex
+// scheduling rules such as "every 2nd Tuesday of the month" or "every 3 months on
+// the 15th".
+type RecurrencePattern struct {
+
+	// Defines how often the pattern repeats. This is the base unit for the recurrence
+	// schedule and works in conjunction with the Interval field to determine the exact
+	// repetition sequence.
+	//
+	// This member is required.
+	Frequency RecurrenceFrequency
+
+	// Specifies the number of frequency units between each occurrence. Must be a
+	// positive integer.
+	//
+	// Examples: To repeat every week, set Interval=1 with WEEKLY frequency. To repeat
+	// every two months, set Interval=2 with MONTHLY frequency.
+	//
+	// This member is required.
+	Interval *int32
+
+	// Specifies which month the event should occur in (1-12, where 1=January,
+	// 12=December). Used with YEARLY frequency to schedule events in specific month.
+	//
+	// Note: It does not accept multiple values in the same list
+	ByMonth []int32
+
+	// Specifies which day of the month the event should occur on (1-31). Used with
+	// MONTHLY or YEARLY frequency to schedule events on specific date within a month.
+	//
+	// Examples: [15] for events on the 15th of each month, [-1] for events on the
+	// last day of month.
+	//
+	// Note: It does not accept multiple values in the same list. If a specified day
+	// doesn't exist in a particular month (e.g., day 31 in February), the event will
+	// be skipped for that month. This field cannot be used simultaneously with
+	// ByWeekdayOccurrence as they represent different scheduling approaches (specific
+	// dates vs. relative weekday positions).
+	ByMonthDay []int32
+
+	// Specifies which occurrence of a weekday within the month the event should occur
+	// on. Must be used with MONTHLY or YEARLY frequency.
+	//
+	// Example: 2 corresponds to second occurrence of the weekday in the month. -1
+	// corresponds to last occurrence of the weekday in the month
+	//
+	// The weekday itself is specified separately in the HoursOfOperationConfig.
+	// Example: To schedule the recurring event for the 2nd Thursday of April every
+	// year, set ByWeekdayOccurrence=[2], Day=THURSDAY, ByMonth=[4], Frequency: YEARLY
+	// and INTERVAL=1.
+	ByWeekdayOccurrence []int32
+
 	noSmithyDocumentSerde
 }
 
@@ -5433,6 +8372,7 @@ type Reference struct {
 //	ReferenceSummaryMemberDate
 //	ReferenceSummaryMemberEmail
 //	ReferenceSummaryMemberEmailMessage
+//	ReferenceSummaryMemberEmailMessagePlainText
 //	ReferenceSummaryMemberNumber
 //	ReferenceSummaryMemberString
 //	ReferenceSummaryMemberUrl
@@ -5477,6 +8417,16 @@ type ReferenceSummaryMemberEmailMessage struct {
 }
 
 func (*ReferenceSummaryMemberEmailMessage) isReferenceSummary() {}
+
+// Information about the reference when the referenceType is EMAIL_MESSAGE .
+// Otherwise, null.
+type ReferenceSummaryMemberEmailMessagePlainText struct {
+	Value EmailMessageReference
+
+	noSmithyDocumentSerde
+}
+
+func (*ReferenceSummaryMemberEmailMessagePlainText) isReferenceSummary() {}
 
 // Information about a reference when the referenceType is NUMBER . Otherwise, null.
 type ReferenceSummaryMemberNumber struct {
@@ -5604,8 +8554,8 @@ type RoutingCriteria struct {
 type RoutingCriteriaInput struct {
 
 	// When Amazon Connect does not find an available agent meeting the requirements
-	// in a step for  a given step duration, the routing criteria will move on to the
-	// next step sequentially until a  join is completed with an agent. When all steps
+	// in a step for a given step duration, the routing criteria will move on to the
+	// next step sequentially until a join is completed with an agent. When all steps
 	// are exhausted, the contact will be offered to any agent in the queue.
 	Steps []RoutingCriteriaInputStep
 
@@ -5626,11 +8576,11 @@ type RoutingCriteriaInputStep struct {
 }
 
 // Specify whether this routing criteria step should apply for only a limited
-// amount of time,  or if it should never expire.
+// amount of time, or if it should never expire.
 type RoutingCriteriaInputStepExpiry struct {
 
 	// The number of seconds that the contact will be routed only to agents matching
-	// this routing  step, if expiry was configured for this routing step.
+	// this routing step, if expiry was configured for this routing step.
 	DurationInSeconds *int32
 
 	noSmithyDocumentSerde
@@ -5642,6 +8592,9 @@ type RoutingProfile struct {
 	// Whether agents with this routing profile will have their routing order
 	// calculated based on time since their last inbound contact or longest idle time.
 	AgentAvailabilityTimer AgentAvailabilityTimer
+
+	// The IDs of the associated manual assignment queues.
+	AssociatedManualAssignmentQueueIds []string
 
 	// The IDs of the associated queue.
 	AssociatedQueueIds []string
@@ -5674,6 +8627,9 @@ type RoutingProfile struct {
 	// The name of the routing profile.
 	Name *string
 
+	// The number of associated manual assignment queues in routing profile.
+	NumberOfAssociatedManualAssignmentQueues *int64
+
 	// The number of associated queues in routing profile.
 	NumberOfAssociatedQueues *int64
 
@@ -5689,6 +8645,47 @@ type RoutingProfile struct {
 	// The tags used to organize, track, or control access for this resource. For
 	// example, { "Tags": {"key1":"value1", "key2":"value2"} }.
 	Tags map[string]string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the queue and channel for manual assignment
+// behaviour can be enabled.
+type RoutingProfileManualAssignmentQueueConfig struct {
+
+	// Contains the channel and queue identifier for a routing profile.
+	//
+	// This member is required.
+	QueueReference *RoutingProfileQueueReference
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about a routing profile manual assignment queue.
+type RoutingProfileManualAssignmentQueueConfigSummary struct {
+
+	// The channels this queue supports. Valid Values: CHAT | TASK | EMAIL
+	//
+	// VOICE is not supported. The information shown below is incorrect. We're working
+	// to correct it.
+	//
+	// This member is required.
+	Channel Channel
+
+	// The Amazon Resource Name (ARN) of the queue.
+	//
+	// This member is required.
+	QueueArn *string
+
+	// The identifier for the queue.
+	//
+	// This member is required.
+	QueueId *string
+
+	// The name of the queue.
+	//
+	// This member is required.
+	QueueName *string
 
 	noSmithyDocumentSerde
 }
@@ -6052,6 +9049,18 @@ type S3Config struct {
 	noSmithyDocumentSerde
 }
 
+// The agent criteria to search for preferred agents on the routing criteria.
+type SearchableAgentCriteriaStep struct {
+
+	// The identifiers of agents used in preferred agents matching.
+	AgentIds []string
+
+	// The match type combining multiple agent criteria steps.
+	MatchType SearchContactsMatchType
+
+	noSmithyDocumentSerde
+}
+
 // A structure that defines search criteria based on user-defined contact
 // attributes that are configured for contact search.
 type SearchableContactAttributes struct {
@@ -6082,6 +9091,24 @@ type SearchableContactAttributesCriteria struct {
 	//
 	// This member is required.
 	Values []string
+
+	noSmithyDocumentSerde
+}
+
+// Routing criteria of the contact to match on.
+type SearchableRoutingCriteria struct {
+
+	// The list of Routing criteria steps of the contact routing.
+	Steps []SearchableRoutingCriteriaStep
+
+	noSmithyDocumentSerde
+}
+
+// Routing criteria of the contact to match on.
+type SearchableRoutingCriteriaStep struct {
+
+	// Agent matching the routing step of the routing criteria
+	AgentCriteria *SearchableAgentCriteriaStep
 
 	noSmithyDocumentSerde
 }
@@ -6118,6 +9145,38 @@ type SearchableSegmentAttributesCriteria struct {
 	noSmithyDocumentSerde
 }
 
+// Time range that you additionally want to filter on.
+//
+// This is different from the [SearchContactsTimeRange] data type.
+//
+// [SearchContactsTimeRange]: https://docs.aws.amazon.com/connect/latest/APIReference/API_SearchContactsTimeRange.html
+type SearchContactsAdditionalTimeRange struct {
+
+	// List of criteria of the time range to additionally filter on.
+	//
+	// This member is required.
+	Criteria []SearchContactsAdditionalTimeRangeCriteria
+
+	// The match type combining multiple time range filters.
+	//
+	// This member is required.
+	MatchType SearchContactsMatchType
+
+	noSmithyDocumentSerde
+}
+
+// The criteria of the time range to additionally filter on.
+type SearchContactsAdditionalTimeRangeCriteria struct {
+
+	// A structure of time range that you want to search results.
+	TimeRange *SearchContactsTimeRange
+
+	// List of the timestamp conditions.
+	TimestampCondition *SearchContactsTimestampCondition
+
+	noSmithyDocumentSerde
+}
+
 // A structure of time range that you want to search results.
 type SearchContactsTimeRange struct {
 
@@ -6139,8 +9198,31 @@ type SearchContactsTimeRange struct {
 	noSmithyDocumentSerde
 }
 
+// The timestamp condition indicating which contact timestamp should be used and
+// how it should be filtered. It is not an actual timestamp value.
+type SearchContactsTimestampCondition struct {
+
+	// Condition of the timestamp on the contact.
+	//
+	// This member is required.
+	ConditionType SearchContactsTimeRangeConditionType
+
+	// Type of the timestamps to use for the filter.
+	//
+	// This member is required.
+	Type SearchContactsTimeRangeType
+
+	noSmithyDocumentSerde
+}
+
 // A structure of search criteria to be used to return contacts.
 type SearchCriteria struct {
+
+	// The list of active regions for contacts in ACGR instances.
+	ActiveRegions []string
+
+	// Additional TimeRange used to filter contacts.
+	AdditionalTimeRange *SearchContactsAdditionalTimeRange
 
 	// The agent hierarchy groups of the agent at the time of handling the contact.
 	AgentHierarchyGroups *AgentHierarchyGroups
@@ -6154,11 +9236,25 @@ type SearchCriteria struct {
 	// Search criteria based on analysis outputs from Amazon Connect Contact Lens.
 	ContactAnalysis *ContactAnalysis
 
+	// An object that can be used to specify Tag conditions inside the SearchFilter .
+	// This accepts an OR of AND (List of List) input where:
+	//
+	//   - Top level list specifies conditions that need to be applied with OR operator
+	//
+	//   - Inner list specifies conditions that need to be applied with AND operator.
+	ContactTags *ControlPlaneTagFilter
+
 	// The list of initiation methods associated with contacts.
 	InitiationMethods []ContactInitiationMethod
 
+	// Name of the contact.
+	Name *NameCriteria
+
 	// The list of queue IDs associated with contacts.
 	QueueIds []string
+
+	// Routing criteria for the contact.
+	RoutingCriteria *SearchableRoutingCriteria
 
 	// The search criteria based on user-defined contact attributes that have been
 	// configured for contact search. For more information, see [Search by custom contact attributes]in the Amazon Connect
@@ -6211,6 +9307,10 @@ type SecurityProfile struct {
 	// The description of the security profile.
 	Description *string
 
+	// The granular access control configuration for the security profile, including
+	// data table permissions.
+	GranularAccessControlConfiguration *GranularAccessControlConfiguration
+
 	// The list of resources that a security profile applies hierarchy restrictions to
 	// in Amazon Connect. Following are acceptable ResourceNames: User .
 	HierarchyRestrictedResources []string
@@ -6237,6 +9337,15 @@ type SecurityProfile struct {
 	// The tags used to organize, track, or control access for this resource. For
 	// example, { "Tags": {"key1":"value1", "key2":"value2"} }.
 	Tags map[string]string
+
+	noSmithyDocumentSerde
+}
+
+// Security profile items.
+type SecurityProfileItem struct {
+
+	//  Id of a security profile item.
+	Id *string
 
 	noSmithyDocumentSerde
 }
@@ -6324,8 +9433,16 @@ type SecurityProfileSummary struct {
 // valueString and the value is a string.
 type SegmentAttributeValue struct {
 
+	// The value of a segment attribute that has to be a valid ARN. This is only
+	// supported for system-defined attributes, not for user-defined attributes.
+	ValueArn *string
+
 	// The value of a segment attribute.
 	ValueInteger *int32
+
+	// The value of a segment attribute. This is only supported for system-defined
+	// attributes, not for user-defined attributes.
+	ValueList []SegmentAttributeValue
 
 	// The value of a segment attribute.
 	ValueMap map[string]SegmentAttributeValue
@@ -6361,6 +9478,9 @@ type SendNotificationActionDefinition struct {
 	//
 	// This member is required.
 	Recipient *NotificationRecipientType
+
+	// Recipients to exclude from notification.
+	Exclusion *NotificationRecipientType
 
 	// The subject of the email if the delivery method is EMAIL . Supports variable
 	// injection. For more information, see [JSONPath reference]in the Amazon Connect Administrators Guide.
@@ -6539,6 +9659,16 @@ type SubmitAutoEvaluationActionDefinition struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about a resource that was successfully associated with a
+// workspace in a batch operation.
+type SuccessfulBatchAssociationSummary struct {
+
+	// The Amazon Resource Name (ARN) of the resource that was successfully associated.
+	ResourceArn *string
+
+	noSmithyDocumentSerde
+}
+
 // Request for which contact was successfully created.
 type SuccessfulRequest struct {
 
@@ -6626,6 +9756,22 @@ type TaskActionDefinition struct {
 	noSmithyDocumentSerde
 }
 
+// Information about the task attachment files.
+type TaskAttachment struct {
+
+	// A case-sensitive name of the attached file being uploaded.
+	//
+	// This member is required.
+	FileName *string
+
+	// The pre-signed URLs for the S3 bucket where the task attachment is stored.
+	//
+	// This member is required.
+	S3Url *string
+
+	noSmithyDocumentSerde
+}
+
 // Describes constraints that apply to the template fields.
 type TaskTemplateConstraints struct {
 
@@ -6686,6 +9832,18 @@ type TaskTemplateField struct {
 type TaskTemplateFieldIdentifier struct {
 
 	// The name of the task template field.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// Information about the task template used to create this contact.
+type TaskTemplateInfoV2 struct {
+
+	// The Amazon Resource Name (ARN) of the task template used to create this contact.
+	Arn *string
+
+	// The name of the task template used to create this contact.
 	Name *string
 
 	noSmithyDocumentSerde
@@ -6767,6 +9925,138 @@ type TemplatedMessageConfig struct {
 	//
 	// This member is required.
 	TemplateAttributes *TemplateAttributes
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a test case.
+type TestCase struct {
+
+	// The Amazon Resource Name (ARN) of the test case.
+	Arn *string
+
+	// The JSON string that represents the content of the test.
+	Content *string
+
+	// The description of the test case.
+	Description *string
+
+	// Defines the starting point for the test, including channel type and parameters.
+	EntryPoint *TestCaseEntryPoint
+
+	// The identifier of the test case.
+	Id *string
+
+	// Defines the test attributes for precise data representation.
+	InitializationData *string
+
+	// The region in which the test case was last modified.
+	LastModifiedRegion *string
+
+	// The time at which the test case was last modified.
+	LastModifiedTime *time.Time
+
+	// The name of the test case.
+	Name *string
+
+	// Indicates the test status as either SAVED or PUBLISHED.
+	Status TestCaseStatus
+
+	// The tags used to organize, track, or control access for this resource.
+	Tags map[string]string
+
+	// The SHA256 hash of the test case content.
+	TestCaseSha256 *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the starting point for a test case.
+type TestCaseEntryPoint struct {
+
+	// The type of entry point.
+	Type TestCaseEntryPointType
+
+	// Parameters for voice call entry point.
+	VoiceCallEntryPointParameters *VoiceCallEntryPointParameters
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a test case execution.
+type TestCaseExecution struct {
+
+	// The timestamp when the test case execution ended.
+	EndTime *time.Time
+
+	// The timestamp when the test case execution started.
+	StartTime *time.Time
+
+	// The tags used to organize, track, or control access for this resource.
+	Tags map[string]string
+
+	// The identifier of the test case execution.
+	TestCaseExecutionId *string
+
+	// The status of the test case execution.
+	TestCaseExecutionStatus TestCaseExecutionStatus
+
+	// The identifier of the test case.
+	TestCaseId *string
+
+	noSmithyDocumentSerde
+}
+
+// The search criteria to be used to return test cases.
+type TestCaseSearchCriteria struct {
+
+	// A list of conditions which would be applied together with an AND condition.
+	AndConditions []TestCaseSearchCriteria
+
+	// A list of conditions which would be applied together with an OR condition.
+	OrConditions []TestCaseSearchCriteria
+
+	// The status of the test case.
+	StatusCondition TestCaseStatus
+
+	// A leaf node condition which can be used to specify a string condition.
+	StringCondition *StringCondition
+
+	noSmithyDocumentSerde
+}
+
+// Filters to be applied to search results.
+type TestCaseSearchFilter struct {
+
+	// An object that can be used to specify Tag conditions inside the SearchFilter.
+	// This accepts an OR of AND (List of List) input where: Top level list specifies
+	// conditions that need to be applied with OR operator. Inner list specifies
+	// conditions that need to be applied with AND operator.
+	TagFilter *ControlPlaneTagFilter
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about a test case.
+type TestCaseSummary struct {
+
+	// The Amazon Resource Name (ARN) of the test case.
+	Arn *string
+
+	// The identifier of the test case.
+	Id *string
+
+	// The region in which the test case was last modified.
+	LastModifiedRegion *string
+
+	// The time at which the test case was last modified.
+	LastModifiedTime *time.Time
+
+	// The name of the test case.
+	Name *string
+
+	// The status of the test case.
+	Status TestCaseStatus
 
 	noSmithyDocumentSerde
 }
@@ -7031,8 +10321,15 @@ type UseCase struct {
 // Contains information about a user account for an Amazon Connect instance.
 type User struct {
 
+	// The list of after contact work (ACW) timeout configuration settings for each
+	// channel.
+	AfterContactWorkConfigs []AfterContactWorkConfigPerChannel
+
 	// The Amazon Resource Name (ARN) of the user account.
 	Arn *string
+
+	// The list of auto-accept configuration settings for each channel.
+	AutoAcceptConfigs []AutoAcceptConfig
 
 	// The identifier of the user account in the directory used for identity
 	// management.
@@ -7053,8 +10350,14 @@ type User struct {
 	// The timestamp when this resource was last modified.
 	LastModifiedTime *time.Time
 
+	// The list of persistent connection configuration settings for each channel.
+	PersistentConnectionConfigs []PersistentConnectionConfig
+
 	// Information about the phone configuration for the user.
 	PhoneConfig *UserPhoneConfig
+
+	// The list of phone number configuration settings for each channel.
+	PhoneNumberConfigs []PhoneNumberConfig
 
 	// The identifier of the routing profile for the user.
 	RoutingProfileId *string
@@ -7067,6 +10370,9 @@ type User struct {
 
 	// The user name assigned to the user account.
 	Username *string
+
+	// The list of voice enhancement configuration settings for each channel.
+	VoiceEnhancementConfigs []VoiceEnhancementConfig
 
 	noSmithyDocumentSerde
 }
@@ -7145,8 +10451,8 @@ type UserHierarchyGroupSearchCriteria struct {
 
 	// A leaf node condition which can be used to specify a string condition.
 	//
-	// The currently supported values for FieldName are name ,   parentId , levelId ,
-	// and resourceID .
+	// The currently supported values for FieldName are name , parentId , levelId , and
+	// resourceID .
 	StringCondition *StringCondition
 
 	noSmithyDocumentSerde
@@ -7233,11 +10539,6 @@ type UserInfo struct {
 // Contains information about the phone configuration settings for a user.
 type UserPhoneConfig struct {
 
-	// The phone type.
-	//
-	// This member is required.
-	PhoneType PhoneType
-
 	// The After Call Work (ACW) timeout setting, in seconds. This parameter has a
 	// minimum value of 0 and a maximum value of 2,000,000 seconds (24 days). Enter 0
 	// if you don't want to allocate a specific amount of ACW time. It essentially
@@ -7253,6 +10554,12 @@ type UserPhoneConfig struct {
 
 	// The phone number for the user's desk phone.
 	DeskPhoneNumber *string
+
+	// The persistent connection setting for the user.
+	PersistentConnection *bool
+
+	// The phone type.
+	PhoneType PhoneType
 
 	noSmithyDocumentSerde
 }
@@ -7348,7 +10655,7 @@ type UserSearchCriteria struct {
 	// A leaf node condition which can be used to specify a string condition.
 	//
 	// The currently supported values for FieldName are Username , FirstName , LastName
-	// , RoutingProfileId , SecurityProfileId , ResourceId .
+	// , RoutingProfileId , SecurityProfileId , resourceId .
 	StringCondition *StringCondition
 
 	noSmithyDocumentSerde
@@ -7388,8 +10695,15 @@ type UserSearchFilter struct {
 // Information about the returned users.
 type UserSearchSummary struct {
 
+	// The list of after contact work (ACW) timeout configuration settings for each
+	// channel.
+	AfterContactWorkConfigs []AfterContactWorkConfigPerChannel
+
 	// The Amazon Resource Name (ARN) of the user.
 	Arn *string
+
+	// The list of auto-accept configuration settings for each channel.
+	AutoAcceptConfigs []AutoAcceptConfig
 
 	// The directory identifier of the user.
 	DirectoryUserId *string
@@ -7403,8 +10717,14 @@ type UserSearchSummary struct {
 	// The user's first name and last name.
 	IdentityInfo *UserIdentityInfoLite
 
+	// The list of persistent connection configuration settings for each channel.
+	PersistentConnectionConfigs []PersistentConnectionConfig
+
 	// Contains information about the phone configuration settings for a user.
 	PhoneConfig *UserPhoneConfig
+
+	// The list of phone number configuration settings for each channel.
+	PhoneNumberConfigs []PhoneNumberConfig
 
 	// The identifier of the user's routing profile.
 	RoutingProfileId *string
@@ -7418,6 +10738,9 @@ type UserSearchSummary struct {
 
 	// The name of the user.
 	Username *string
+
+	// The list of voice enhancement configuration settings for each channel.
+	VoiceEnhancementConfigs []VoiceEnhancementConfig
 
 	noSmithyDocumentSerde
 }
@@ -7439,6 +10762,85 @@ type UserSummary struct {
 
 	// The Amazon Connect user name of the user account.
 	Username *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines validation rules for data table attribute values. Based on JSON Schema
+// Draft 2020-12 with additional Connect-specific validations. Validation rules
+// ensure data integrity and consistency across the data table.
+type Validation struct {
+
+	// Defines enumeration constraints for attribute values. Can specify a list of
+	// allowed values and whether custom values are permitted beyond the enumerated
+	// list.
+	Enum *ValidationEnum
+
+	// The largest exclusive numeric value for NUMBER value type. Can be provided
+	// alongside Maximum where both operate independently. Must be greater than
+	// ExclusiveMinimum and Minimum. Applies to NUMBER and values within NUMBER_LIST.
+	ExclusiveMaximum float64
+
+	// The smallest exclusive numeric value for NUMBER value type. Can be provided
+	// alongside Minimum where both operate independently. Must be less than
+	// ExclusiveMaximum and Maximum. Applies to NUMBER and values within NUMBER_LIST.
+	ExclusiveMinimum float64
+
+	// Boolean that defaults to false. Applies to text lists and text primary
+	// attributes. When true, enforces case-insensitive uniqueness for primary
+	// attributes and allows case-insensitive lookups.
+	IgnoreCase bool
+
+	// The maximum number of characters a text value can contain. Applies to TEXT
+	// value type and values within a TEXT_LIST. Must be greater than or equal to
+	// MinLength.
+	MaxLength int32
+
+	// The maximum number of values in a list. Must be an integer greater than or
+	// equal to 0 and greater than or equal to MinValues. Applies to all list types.
+	MaxValues int32
+
+	// The largest inclusive numeric value for NUMBER value type. Can be provided
+	// alongside ExclusiveMaximum where both operate independently. Must be greater
+	// than or equal to Minimum and greater than ExclusiveMinimum. Applies to NUMBER
+	// and values within NUMBER_LIST.
+	Maximum float64
+
+	// The minimum number of characters a text value can contain. Applies to TEXT
+	// value type and values within a TEXT_LIST. Must be less than or equal to
+	// MaxLength.
+	MinLength int32
+
+	// The minimum number of values in a list. Must be an integer greater than or
+	// equal to 0 and less than or equal to MaxValues. Applies to all list types.
+	MinValues int32
+
+	// The smallest inclusive numeric value for NUMBER value type. Cannot be provided
+	// when ExclusiveMinimum is also provided. Must be less than or equal to Maximum
+	// and less than ExclusiveMaximum. Applies to NUMBER and values within NUMBER_LIST.
+	Minimum float64
+
+	// Specifies that numeric values must be multiples of this number. Must be greater
+	// than 0. The result of dividing a value by this multiple must result in an
+	// integer. Applies to NUMBER and values within NUMBER_LIST.
+	MultipleOf float64
+
+	noSmithyDocumentSerde
+}
+
+// Defines enumeration validation for attribute values. Allows specifying a list
+// of permitted values and whether custom values beyond the enumerated list are
+// allowed.
+type ValidationEnum struct {
+
+	// Boolean that defaults to false. When true, only values specified in the enum
+	// list are allowed. When false, custom values beyond the enumerated list are
+	// permitted.
+	Strict bool
+
+	// A list of predefined values that are allowed for this attribute. These values
+	// are always permitted regardless of the Strict setting.
+	Values []string
 
 	noSmithyDocumentSerde
 }
@@ -7517,6 +10919,43 @@ type ViewInputContent struct {
 
 	// The view template representing the structure of the view.
 	Template *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the search criteria for filtering views.
+type ViewSearchCriteria struct {
+
+	// A list of conditions that must all be satisfied.
+	AndConditions []ViewSearchCriteria
+
+	// A list of conditions to be met, where at least one condition must be satisfied.
+	OrConditions []ViewSearchCriteria
+
+	// A leaf node condition which can be used to specify a string condition.
+	StringCondition *StringCondition
+
+	// A condition that filters views by their status.
+	ViewStatusCondition ViewStatus
+
+	// A condition that filters views by their type.
+	ViewTypeCondition ViewType
+
+	noSmithyDocumentSerde
+}
+
+// Defines filters to apply when searching for views, such as tag-based filters.
+type ViewSearchFilter struct {
+
+	// An object that can be used to specify Tag conditions inside the SearchFilter .
+	// This accepts an OR or AND (List of List) input where:
+	//
+	//   - The top level list specifies conditions that need to be applied with OR
+	//   operator.
+	//
+	//   - The inner list specifies conditions that need to be applied with AND
+	//   operator.
+	AttributeFilter *ControlPlaneAttributeFilter
 
 	noSmithyDocumentSerde
 }
@@ -7669,6 +11108,38 @@ type VocabularySummary struct {
 	noSmithyDocumentSerde
 }
 
+// Parameters for initiating a voice call test.
+type VoiceCallEntryPointParameters struct {
+
+	// The destination phone number for the test.
+	DestinationPhoneNumber *string
+
+	// The flow identifier for the test.
+	FlowId *string
+
+	// The source phone number for the test.
+	SourcePhoneNumber *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for voice enhancement.
+type VoiceEnhancementConfig struct {
+
+	// The channel for this voice enhancement configuration. Only VOICE is supported
+	// for this data type.
+	//
+	// This member is required.
+	Channel Channel
+
+	// The voice enhancement mode.
+	//
+	// This member is required.
+	VoiceEnhancementMode VoiceEnhancementMode
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about the recording configuration settings.
 type VoiceRecordingConfiguration struct {
 
@@ -7686,8 +11157,283 @@ type VoiceRecordingConfiguration struct {
 // Information about Amazon Connect Wisdom.
 type WisdomInfo struct {
 
+	// The array of AI agents involved in the contact.
+	AiAgents []AiAgentInfo
+
 	// The Amazon Resource Name (ARN) of the Wisdom session.
 	SessionArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a workspace, which defines the user experience by
+// mapping views to pages.
+type Workspace struct {
+
+	// The Amazon Resource Name (ARN) of the workspace.
+	//
+	// This member is required.
+	Arn *string
+
+	// The unique identifier of the workspace.
+	//
+	// This member is required.
+	Id *string
+
+	// The timestamp when the workspace was last modified.
+	//
+	// This member is required.
+	LastModifiedTime *time.Time
+
+	// The name of the workspace.
+	//
+	// This member is required.
+	Name *string
+
+	// The description of the workspace.
+	Description *string
+
+	// The Amazon Web Services Region where the workspace was last modified.
+	LastModifiedRegion *string
+
+	// The tags used to organize, track, or control access for the workspace.
+	Tags map[string]string
+
+	// The theme configuration for the workspace, including colors and styling.
+	Theme *WorkspaceTheme
+
+	// The title displayed for the workspace.
+	Title *string
+
+	// Controls who can access the workspace. Valid values are: ALL (all users),
+	// ASSIGNED (only assigned users and routing profiles), and NONE (not visible).
+	Visibility Visibility
+
+	noSmithyDocumentSerde
+}
+
+// Defines the search criteria for filtering workspace associations.
+type WorkspaceAssociationSearchCriteria struct {
+
+	// A list of conditions that must all be satisfied.
+	AndConditions []WorkspaceAssociationSearchCriteria
+
+	// A list of conditions to be met, where at least one condition must be satisfied.
+	OrConditions []WorkspaceAssociationSearchCriteria
+
+	// A leaf node condition which can be used to specify a string condition.
+	StringCondition *StringCondition
+
+	noSmithyDocumentSerde
+}
+
+// Defines filters to apply when searching for workspace associations, such as
+// tag-based filters.
+type WorkspaceAssociationSearchFilter struct {
+
+	// An object that can be used to specify Tag conditions inside the SearchFilter .
+	// This accepts an OR or AND (List of List) input where:
+	//
+	//   - The top level list specifies conditions that need to be applied with OR
+	//   operator.
+	//
+	//   - The inner list specifies conditions that need to be applied with AND
+	//   operator.
+	AttributeFilter *ControlPlaneAttributeFilter
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about a workspace association with a user or
+// routing profile.
+type WorkspaceAssociationSearchSummary struct {
+
+	// The Amazon Resource Name (ARN) of the associated resource.
+	ResourceArn *string
+
+	// The identifier of the associated resource (user or routing profile).
+	ResourceId *string
+
+	// The name of the associated resource.
+	ResourceName *string
+
+	// The type of resource associated with the workspace. Valid values are: USER and
+	// ROUTING_PROFILE .
+	ResourceType *string
+
+	// The Amazon Resource Name (ARN) of the workspace.
+	WorkspaceArn *string
+
+	// The identifier of the workspace.
+	WorkspaceId *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a page configuration in a workspace, including the
+// view assigned to the page.
+type WorkspacePage struct {
+
+	// A JSON string containing input parameters passed to the view when the page is
+	// rendered.
+	InputData *string
+
+	// The page identifier. System pages include HOME and AGENT_EXPERIENCE .
+	Page *string
+
+	// The Amazon Resource Name (ARN) of the view associated with this page.
+	ResourceArn *string
+
+	// The URL-friendly identifier for the page.
+	Slug *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the search criteria for filtering workspaces.
+type WorkspaceSearchCriteria struct {
+
+	// A list of conditions that must all be satisfied.
+	AndConditions []WorkspaceSearchCriteria
+
+	// A list of conditions to be met, where at least one condition must be satisfied.
+	OrConditions []WorkspaceSearchCriteria
+
+	// A leaf node condition which can be used to specify a string condition.
+	StringCondition *StringCondition
+
+	noSmithyDocumentSerde
+}
+
+// Defines filters to apply when searching for workspaces, such as tag-based
+// filters.
+type WorkspaceSearchFilter struct {
+
+	// An object that can be used to specify Tag conditions inside the SearchFilter .
+	// This accepts an OR or AND (List of List) input where:
+	//
+	//   - The top level list specifies conditions that need to be applied with OR
+	//   operator.
+	//
+	//   - The inner list specifies conditions that need to be applied with AND
+	//   operator.
+	AttributeFilter *ControlPlaneAttributeFilter
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about a workspace returned from a search operation.
+type WorkspaceSearchSummary struct {
+
+	// The Amazon Resource Name (ARN) of the workspace.
+	Arn *string
+
+	// The timestamp when the workspace was created.
+	CreatedAt *time.Time
+
+	// The description of the workspace.
+	Description *string
+
+	// The unique identifier of the workspace.
+	Id *string
+
+	// The name of the workspace.
+	Name *string
+
+	// The tags associated with the workspace.
+	Tags map[string]string
+
+	// The title displayed for the workspace.
+	Title *string
+
+	// The visibility setting of the workspace.
+	Visibility Visibility
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about a workspace.
+type WorkspaceSummary struct {
+
+	// The Amazon Resource Name (ARN) of the workspace.
+	Arn *string
+
+	// The unique identifier of the workspace.
+	Id *string
+
+	// The Amazon Web Services Region where the workspace was last modified.
+	LastModifiedRegion *string
+
+	// The timestamp when the workspace was last modified.
+	LastModifiedTime *time.Time
+
+	// The name of the workspace.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains theme configuration for a workspace, supporting both light and dark
+// modes.
+type WorkspaceTheme struct {
+
+	// The theme configuration for dark mode.
+	Dark *WorkspaceThemeConfig
+
+	// The theme configuration for light mode.
+	Light *WorkspaceThemeConfig
+
+	noSmithyDocumentSerde
+}
+
+// Contains detailed theme configuration for a workspace, including colors,
+// images, and typography.
+type WorkspaceThemeConfig struct {
+
+	// The image assets used in the workspace theme.
+	Images *WorkspaceThemeImages
+
+	// The color palette configuration for the workspace theme.
+	Palette *WorkspaceThemePalette
+
+	// The typography configuration for the workspace theme.
+	Typography *WorkspaceThemeTypography
+
+	noSmithyDocumentSerde
+}
+
+// Contains image configuration for a workspace theme.
+type WorkspaceThemeImages struct {
+
+	// The logo images used in the workspace.
+	Logo *ImagesLogo
+
+	noSmithyDocumentSerde
+}
+
+// Contains color palette configuration for different areas of a workspace.
+type WorkspaceThemePalette struct {
+
+	// The color configuration for the canvas area.
+	Canvas *PaletteCanvas
+
+	// The color configuration for the header area.
+	Header *PaletteHeader
+
+	// The color configuration for the navigation area.
+	Navigation *PaletteNavigation
+
+	// The primary color configuration used throughout the workspace.
+	Primary *PalettePrimary
+
+	noSmithyDocumentSerde
+}
+
+// Contains typography configuration for a workspace theme.
+type WorkspaceThemeTypography struct {
+
+	// The font family configuration for text in the workspace.
+	FontFamily *FontFamily
 
 	noSmithyDocumentSerde
 }
@@ -7703,13 +11449,19 @@ type UnknownUnionMember struct {
 	noSmithyDocumentSerde
 }
 
+func (*UnknownUnionMember) isContactMetricValue()                                 {}
 func (*UnknownUnionMember) isCreatedByInfo()                                      {}
 func (*UnknownUnionMember) isEvaluationAnswerData()                               {}
 func (*UnknownUnionMember) isEvaluationFormItem()                                 {}
+func (*UnknownUnionMember) isEvaluationFormItemEnablementConditionOperand()       {}
+func (*UnknownUnionMember) isEvaluationFormMultiSelectQuestionAutomationOption()  {}
 func (*UnknownUnionMember) isEvaluationFormNumericQuestionAutomation()            {}
 func (*UnknownUnionMember) isEvaluationFormQuestionTypeProperties()               {}
 func (*UnknownUnionMember) isEvaluationFormSingleSelectQuestionAutomationOption() {}
+func (*UnknownUnionMember) isEvaluationQuestionAnswerAnalysisDetails()            {}
+func (*UnknownUnionMember) isEvaluatorUserUnion()                                 {}
 func (*UnknownUnionMember) isInvalidRequestExceptionReason()                      {}
+func (*UnknownUnionMember) isNextContactMetadata()                                {}
 func (*UnknownUnionMember) isParticipantTimerValue()                              {}
 func (*UnknownUnionMember) isPredefinedAttributeValues()                          {}
 func (*UnknownUnionMember) isRealtimeContactAnalysisSegment()                     {}

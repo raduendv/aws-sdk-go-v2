@@ -59,6 +59,12 @@ type StartFlowFlushInput struct {
 	// MinimumFlowAgeInSeconds . You provide this for start commands.
 	MinimumFlowAgeInSeconds *int32
 
+	// The Amazon Resource Name (ARN) of a VPC endpoint association.
+	VpcEndpointAssociationArn *string
+
+	// A unique identifier for the primary endpoint associated with a firewall.
+	VpcEndpointId *string
+
 	noSmithyDocumentSerde
 }
 
@@ -173,16 +179,13 @@ func (c *Client) addOperationStartFlowFlushMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -63,6 +63,10 @@ type CreateInputInput struct {
 	// creation.
 	RoleArn *string
 
+	// This is the collection of settings that are used during the creation of a
+	// MediaConnect router input.
+	RouterSettings *types.RouterSettings
+
 	// SDI Sources for this Input.
 	SdiSources []string
 
@@ -196,16 +200,13 @@ func (c *Client) addOperationCreateInputMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

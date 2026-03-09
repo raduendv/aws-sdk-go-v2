@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Container
+//
 // Retrieves the resource capacity settings for a fleet location. The data
 // returned includes the current capacity (number of EC2 instances) and some
 // scaling settings for the requested fleet location. For a managed container
@@ -27,15 +29,15 @@ import (
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift fleets]
+// [Setting up Amazon GameLift Servers fleets]
 //
-// [Amazon GameLift service locations]for managed hosting
+// [Amazon GameLift Servers service locations]for managed hosting
 //
 // [GameLift metrics for fleets]
 //
-// [Amazon GameLift service locations]: https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-regions.html
-// [Setting up Amazon GameLift fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
+// [Amazon GameLift Servers service locations]: https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-regions.html
 // [GameLift metrics for fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/monitoring-cloudwatch.html#gamelift-metrics-fleet
+// [Setting up Amazon GameLift Servers fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 func (c *Client) DescribeFleetLocationCapacity(ctx context.Context, params *DescribeFleetLocationCapacityInput, optFns ...func(*Options)) (*DescribeFleetLocationCapacityOutput, error) {
 	if params == nil {
 		params = &DescribeFleetLocationCapacityInput{}
@@ -169,16 +171,13 @@ func (c *Client) addOperationDescribeFleetLocationCapacityMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

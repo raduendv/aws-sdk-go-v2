@@ -22,16 +22,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpAssociateMemberToFarm struct {
 }
@@ -6182,6 +6173,11 @@ func awsRestjson1_deserializeOpDocumentGetFleetOutput(v **GetFleetOutput, value 
 				sv.FleetId = ptr.String(jtv)
 			}
 
+		case "hostConfiguration":
+			if err := awsRestjson1_deserializeDocumentHostConfiguration(&sv.HostConfiguration, value); err != nil {
+				return err
+			}
+
 		case "maxWorkerCount":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -6224,6 +6220,15 @@ func awsRestjson1_deserializeOpDocumentGetFleetOutput(v **GetFleetOutput, value 
 					return fmt.Errorf("expected FleetStatus to be of type string, got %T instead", value)
 				}
 				sv.Status = types.FleetStatus(jtv)
+			}
+
+		case "statusMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.StatusMessage = ptr.String(jtv)
 			}
 
 		case "targetWorkerCount":
@@ -6613,6 +6618,19 @@ func awsRestjson1_deserializeOpDocumentGetJobOutput(v **GetJobOutput, value inte
 					return fmt.Errorf("expected JobTargetTaskRunStatus to be of type string, got %T instead", value)
 				}
 				sv.TargetTaskRunStatus = types.JobTargetTaskRunStatus(jtv)
+			}
+
+		case "taskFailureRetryCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TaskFailureRetryCount to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TaskFailureRetryCount = ptr.Int32(int32(i64))
 			}
 
 		case "taskRunStatus":
@@ -8861,6 +8879,11 @@ func awsRestjson1_deserializeOpDocumentGetSessionActionOutput(v **GetSessionActi
 				sv.EndedAt = ptr.Time(t)
 			}
 
+		case "manifests":
+			if err := awsRestjson1_deserializeDocumentTaskRunManifestPropertiesListResponse(&sv.Manifests, value); err != nil {
+				return err
+			}
+
 		case "processExitCode":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -9133,7 +9156,7 @@ func awsRestjson1_deserializeOpDocumentGetSessionsStatisticsAggregationOutput(v 
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -9435,6 +9458,19 @@ func awsRestjson1_deserializeOpDocumentGetStepOutput(v **GetStepOutput, value in
 					return fmt.Errorf("expected StepTargetTaskRunStatus to be of type string, got %T instead", value)
 				}
 				sv.TargetTaskRunStatus = types.StepTargetTaskRunStatus(jtv)
+			}
+
+		case "taskFailureRetryCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TaskFailureRetryCount to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TaskFailureRetryCount = ptr.Int32(int32(i64))
 			}
 
 		case "taskRunStatus":
@@ -10590,7 +10626,7 @@ func awsRestjson1_deserializeOpDocumentListAvailableMeteredProductsOutput(v **Li
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -10763,7 +10799,7 @@ func awsRestjson1_deserializeOpDocumentListBudgetsOutput(v **ListBudgetsOutput, 
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -10936,7 +10972,7 @@ func awsRestjson1_deserializeOpDocumentListFarmMembersOutput(v **ListFarmMembers
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -11106,7 +11142,7 @@ func awsRestjson1_deserializeOpDocumentListFarmsOutput(v **ListFarmsOutput, valu
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -11279,7 +11315,7 @@ func awsRestjson1_deserializeOpDocumentListFleetMembersOutput(v **ListFleetMembe
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -11452,7 +11488,7 @@ func awsRestjson1_deserializeOpDocumentListFleetsOutput(v **ListFleetsOutput, va
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -11625,7 +11661,7 @@ func awsRestjson1_deserializeOpDocumentListJobMembersOutput(v **ListJobMembersOu
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -11798,7 +11834,7 @@ func awsRestjson1_deserializeOpDocumentListJobParameterDefinitionsOutput(v **Lis
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -11971,7 +12007,7 @@ func awsRestjson1_deserializeOpDocumentListJobsOutput(v **ListJobsOutput, value 
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -12144,7 +12180,7 @@ func awsRestjson1_deserializeOpDocumentListLicenseEndpointsOutput(v **ListLicens
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -12317,7 +12353,7 @@ func awsRestjson1_deserializeOpDocumentListLimitsOutput(v **ListLimitsOutput, va
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -12490,7 +12526,7 @@ func awsRestjson1_deserializeOpDocumentListMeteredProductsOutput(v **ListMetered
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -12660,7 +12696,7 @@ func awsRestjson1_deserializeOpDocumentListMonitorsOutput(v **ListMonitorsOutput
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -12833,7 +12869,7 @@ func awsRestjson1_deserializeOpDocumentListQueueEnvironmentsOutput(v **ListQueue
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -12998,7 +13034,7 @@ func awsRestjson1_deserializeOpDocumentListQueueFleetAssociationsOutput(v **List
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -13168,7 +13204,7 @@ func awsRestjson1_deserializeOpDocumentListQueueLimitAssociationsOutput(v **List
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -13346,7 +13382,7 @@ func awsRestjson1_deserializeOpDocumentListQueueMembersOutput(v **ListQueueMembe
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -13514,7 +13550,7 @@ func awsRestjson1_deserializeOpDocumentListQueuesOutput(v **ListQueuesOutput, va
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -13687,7 +13723,7 @@ func awsRestjson1_deserializeOpDocumentListSessionActionsOutput(v **ListSessionA
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -13860,7 +13896,7 @@ func awsRestjson1_deserializeOpDocumentListSessionsOutput(v **ListSessionsOutput
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -14033,7 +14069,7 @@ func awsRestjson1_deserializeOpDocumentListSessionsForWorkerOutput(v **ListSessi
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -14211,7 +14247,7 @@ func awsRestjson1_deserializeOpDocumentListStepConsumersOutput(v **ListStepConsu
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -14384,7 +14420,7 @@ func awsRestjson1_deserializeOpDocumentListStepDependenciesOutput(v **ListStepDe
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -14552,7 +14588,7 @@ func awsRestjson1_deserializeOpDocumentListStepsOutput(v **ListStepsOutput, valu
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -14725,7 +14761,7 @@ func awsRestjson1_deserializeOpDocumentListStorageProfilesOutput(v **ListStorage
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -14898,7 +14934,7 @@ func awsRestjson1_deserializeOpDocumentListStorageProfilesForQueueOutput(v **Lis
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -15235,7 +15271,7 @@ func awsRestjson1_deserializeOpDocumentListTasksOutput(v **ListTasksOutput, valu
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -15408,7 +15444,7 @@ func awsRestjson1_deserializeOpDocumentListWorkersOutput(v **ListWorkersOutput, 
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+					return fmt.Errorf("expected NextToken to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
 			}
@@ -18229,6 +18265,11 @@ func awsRestjson1_deserializeOpDocumentUpdateWorkerOutput(v **UpdateWorkerOutput
 
 	for key, value := range shape {
 		switch key {
+		case "hostConfiguration":
+			if err := awsRestjson1_deserializeDocumentHostConfiguration(&sv.HostConfiguration, value); err != nil {
+				return err
+			}
+
 		case "log":
 			if err := awsRestjson1_deserializeDocumentLogConfiguration(&sv.Log, value); err != nil {
 				return err
@@ -21922,6 +21963,15 @@ func awsRestjson1_deserializeDocumentFleetSummary(v **types.FleetSummary, value 
 				sv.Status = types.FleetStatus(jtv)
 			}
 
+		case "statusMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.StatusMessage = ptr.String(jtv)
+			}
+
 		case "targetWorkerCount":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -22046,6 +22096,59 @@ loop:
 		}
 	}
 	*v = uv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentHostConfiguration(v **types.HostConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.HostConfiguration
+	if *v == nil {
+		sv = &types.HostConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "scriptBody":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected HostConfigurationScript to be of type string, got %T instead", value)
+				}
+				sv.ScriptBody = ptr.String(jtv)
+			}
+
+		case "scriptTimeoutSeconds":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected HostConfigurationScriptTimeoutSeconds to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.ScriptTimeoutSeconds = ptr.Int32(int32(i64))
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
 	return nil
 }
 
@@ -23235,6 +23338,19 @@ func awsRestjson1_deserializeDocumentJobSearchSummary(v **types.JobSearchSummary
 				sv.TargetTaskRunStatus = types.JobTargetTaskRunStatus(jtv)
 			}
 
+		case "taskFailureRetryCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TaskFailureRetryCount to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TaskFailureRetryCount = ptr.Int32(int32(i64))
+			}
+
 		case "taskRunStatus":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -23247,6 +23363,28 @@ func awsRestjson1_deserializeDocumentJobSearchSummary(v **types.JobSearchSummary
 		case "taskRunStatusCounts":
 			if err := awsRestjson1_deserializeDocumentTaskRunStatusCounts(&sv.TaskRunStatusCounts, value); err != nil {
 				return err
+			}
+
+		case "updatedAt":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UpdatedAt to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.UpdatedAt = ptr.Time(t)
+			}
+
+		case "updatedBy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UpdatedBy to be of type string, got %T instead", value)
+				}
+				sv.UpdatedBy = ptr.String(jtv)
 			}
 
 		default:
@@ -23466,6 +23604,19 @@ func awsRestjson1_deserializeDocumentJobSummary(v **types.JobSummary, value inte
 					return fmt.Errorf("expected JobTargetTaskRunStatus to be of type string, got %T instead", value)
 				}
 				sv.TargetTaskRunStatus = types.JobTargetTaskRunStatus(jtv)
+			}
+
+		case "taskFailureRetryCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TaskFailureRetryCount to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TaskFailureRetryCount = ptr.Int32(int32(i64))
 			}
 
 		case "taskRunStatus":
@@ -25591,6 +25742,20 @@ func awsRestjson1_deserializeDocumentServiceManagedEc2FleetConfiguration(v **typ
 				return err
 			}
 
+		case "storageProfileId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected StorageProfileId to be of type string, got %T instead", value)
+				}
+				sv.StorageProfileId = ptr.String(jtv)
+			}
+
+		case "vpcConfiguration":
+			if err := awsRestjson1_deserializeDocumentVpcConfiguration(&sv.VpcConfiguration, value); err != nil {
+				return err
+			}
+
 		default:
 			_, _ = key, value
 
@@ -26067,6 +26232,11 @@ func awsRestjson1_deserializeDocumentSessionActionSummary(v **types.SessionActio
 					return err
 				}
 				sv.EndedAt = ptr.Time(t)
+			}
+
+		case "manifests":
+			if err := awsRestjson1_deserializeDocumentTaskRunManifestPropertiesListResponse(&sv.Manifests, value); err != nil {
+				return err
 			}
 
 		case "progressPercent":
@@ -27250,6 +27420,11 @@ func awsRestjson1_deserializeDocumentStepParameter(v **types.StepParameter, valu
 
 	for key, value := range shape {
 		switch key {
+		case "chunks":
+			if err := awsRestjson1_deserializeDocumentStepParameterChunks(&sv.Chunks, value); err != nil {
+				return err
+			}
+
 		case "name":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -27266,6 +27441,72 @@ func awsRestjson1_deserializeDocumentStepParameter(v **types.StepParameter, valu
 					return fmt.Errorf("expected StepParameterType to be of type string, got %T instead", value)
 				}
 				sv.Type = types.StepParameterType(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentStepParameterChunks(v **types.StepParameterChunks, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.StepParameterChunks
+	if *v == nil {
+		sv = &types.StepParameterChunks{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "defaultTaskCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected DefaultTaskCount to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DefaultTaskCount = ptr.Int32(int32(i64))
+			}
+
+		case "rangeConstraint":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected RangeConstraint to be of type string, got %T instead", value)
+				}
+				sv.RangeConstraint = types.RangeConstraint(jtv)
+			}
+
+		case "targetRuntimeSeconds":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TargetRuntimeSeconds to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TargetRuntimeSeconds = ptr.Int32(int32(i64))
 			}
 
 		default:
@@ -27421,6 +27662,15 @@ func awsRestjson1_deserializeDocumentStepSearchSummary(v **types.StepSearchSumma
 				sv.CreatedAt = ptr.Time(t)
 			}
 
+		case "createdBy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CreatedBy to be of type string, got %T instead", value)
+				}
+				sv.CreatedBy = ptr.String(jtv)
+			}
+
 		case "endedAt":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -27515,6 +27765,19 @@ func awsRestjson1_deserializeDocumentStepSearchSummary(v **types.StepSearchSumma
 				sv.TargetTaskRunStatus = types.StepTargetTaskRunStatus(jtv)
 			}
 
+		case "taskFailureRetryCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TaskFailureRetryCount to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TaskFailureRetryCount = ptr.Int32(int32(i64))
+			}
+
 		case "taskRunStatus":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -27527,6 +27790,28 @@ func awsRestjson1_deserializeDocumentStepSearchSummary(v **types.StepSearchSumma
 		case "taskRunStatusCounts":
 			if err := awsRestjson1_deserializeDocumentTaskRunStatusCounts(&sv.TaskRunStatusCounts, value); err != nil {
 				return err
+			}
+
+		case "updatedAt":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UpdatedAt to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.UpdatedAt = ptr.Time(t)
+			}
+
+		case "updatedBy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UpdatedBy to be of type string, got %T instead", value)
+				}
+				sv.UpdatedBy = ptr.String(jtv)
 			}
 
 		default:
@@ -27690,6 +27975,19 @@ func awsRestjson1_deserializeDocumentStepSummary(v **types.StepSummary, value in
 					return fmt.Errorf("expected StepTargetTaskRunStatus to be of type string, got %T instead", value)
 				}
 				sv.TargetTaskRunStatus = types.StepTargetTaskRunStatus(jtv)
+			}
+
+		case "taskFailureRetryCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected TaskFailureRetryCount to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TaskFailureRetryCount = ptr.Int32(int32(i64))
 			}
 
 		case "taskRunStatus":
@@ -28035,6 +28333,18 @@ loop:
 			continue
 		}
 		switch key {
+		case "chunkInt":
+			var mv string
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				mv = jtv
+			}
+			uv = &types.TaskParameterValueMemberChunkInt{Value: mv}
+			break loop
+
 		case "float":
 			var mv string
 			if value != nil {
@@ -28090,6 +28400,89 @@ loop:
 		}
 	}
 	*v = uv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentTaskRunManifestPropertiesListResponse(v *[]types.TaskRunManifestPropertiesResponse, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.TaskRunManifestPropertiesResponse
+	if *v == nil {
+		cv = []types.TaskRunManifestPropertiesResponse{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.TaskRunManifestPropertiesResponse
+		destAddr := &col
+		if err := awsRestjson1_deserializeDocumentTaskRunManifestPropertiesResponse(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentTaskRunManifestPropertiesResponse(v **types.TaskRunManifestPropertiesResponse, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.TaskRunManifestPropertiesResponse
+	if *v == nil {
+		sv = &types.TaskRunManifestPropertiesResponse{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "outputManifestHash":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.OutputManifestHash = ptr.String(jtv)
+			}
+
+		case "outputManifestPath":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.OutputManifestPath = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
 	return nil
 }
 
@@ -28169,6 +28562,11 @@ func awsRestjson1_deserializeDocumentTaskRunSessionActionDefinitionSummary(v **t
 
 	for key, value := range shape {
 		switch key {
+		case "parameters":
+			if err := awsRestjson1_deserializeDocumentTaskParameters(&sv.Parameters, value); err != nil {
+				return err
+			}
+
 		case "stepId":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -28327,6 +28725,15 @@ func awsRestjson1_deserializeDocumentTaskSearchSummary(v **types.TaskSearchSumma
 				sv.JobId = ptr.String(jtv)
 			}
 
+		case "latestSessionActionId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SessionActionId to be of type string, got %T instead", value)
+				}
+				sv.LatestSessionActionId = ptr.String(jtv)
+			}
+
 		case "parameters":
 			if err := awsRestjson1_deserializeDocumentTaskParameters(&sv.Parameters, value); err != nil {
 				return err
@@ -28388,6 +28795,28 @@ func awsRestjson1_deserializeDocumentTaskSearchSummary(v **types.TaskSearchSumma
 					return fmt.Errorf("expected TaskId to be of type string, got %T instead", value)
 				}
 				sv.TaskId = ptr.String(jtv)
+			}
+
+		case "updatedAt":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UpdatedAt to be of type string, got %T instead", value)
+				}
+				t, err := smithytime.ParseDateTime(jtv)
+				if err != nil {
+					return err
+				}
+				sv.UpdatedAt = ptr.Time(t)
+			}
+
+		case "updatedBy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UpdatedBy to be of type string, got %T instead", value)
+				}
+				sv.UpdatedBy = ptr.String(jtv)
 			}
 
 		default:
@@ -28902,6 +29331,78 @@ func awsRestjson1_deserializeDocumentVCpuCountRange(v **types.VCpuCountRange, va
 		}
 	}
 	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentVpcConfiguration(v **types.VpcConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.VpcConfiguration
+	if *v == nil {
+		sv = &types.VpcConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "resourceConfigurationArns":
+			if err := awsRestjson1_deserializeDocumentVpcResourceConfigurationArns(&sv.ResourceConfigurationArns, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentVpcResourceConfigurationArns(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected VpcResourceConfigurationArn to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
 	return nil
 }
 

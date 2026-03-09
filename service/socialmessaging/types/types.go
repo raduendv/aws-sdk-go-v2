@@ -7,6 +7,79 @@ import (
 	"time"
 )
 
+// Configuration options for customizing the body content of a template from
+// Meta's library.
+type LibraryTemplateBodyInputs struct {
+
+	// When true, includes a contact number in the template body.
+	AddContactNumber *bool
+
+	// When true, includes a "learn more" link in the template body.
+	AddLearnMoreLink *bool
+
+	// When true, includes security recommendations in the template body.
+	AddSecurityRecommendation *bool
+
+	// When true, includes a package tracking link in the template body.
+	AddTrackPackageLink *bool
+
+	// The number of minutes until a verification code or OTP expires.
+	CodeExpirationMinutes *int32
+
+	noSmithyDocumentSerde
+}
+
+// Configuration options for customizing buttons in a template from Meta's library.
+type LibraryTemplateButtonInput struct {
+
+	// The type of one-time password for OTP buttons.
+	OtpType *string
+
+	// The phone number in E.164 format for CALL-type buttons.
+	PhoneNumber *string
+
+	// List of supported applications for this button type.
+	SupportedApps []map[string]string
+
+	// The type of button (for example, QUICK_REPLY, CALL, or URL).
+	Type *string
+
+	// The URL with dynamic parameters for URL-type buttons.
+	Url map[string]string
+
+	// When true, indicates acceptance of zero-tap terms for the button.
+	ZeroTapTermsAccepted *bool
+
+	noSmithyDocumentSerde
+}
+
+// Defines a button in a template from Meta's library.
+type LibraryTemplateButtonList struct {
+
+	// The type of one-time password for OTP buttons.
+	OtpType *string
+
+	// The phone number in E.164 format for CALL-type buttons.
+	PhoneNumber *string
+
+	// List of supported applications for this button type.
+	SupportedApps []map[string]string
+
+	// The text displayed on the button (maximum 40 characters).
+	Text *string
+
+	// The type of button (for example, QUICK_REPLY, CALL, or URL).
+	Type *string
+
+	// The URL for URL-type buttons.
+	Url *string
+
+	// When true, indicates acceptance of zero-tap terms for the button.
+	ZeroTapTermsAccepted *bool
+
+	noSmithyDocumentSerde
+}
+
 // The details of your linked WhatsApp Business Account.
 type LinkedWhatsAppBusinessAccount struct {
 
@@ -115,6 +188,78 @@ type LinkedWhatsAppBusinessAccountSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Represents a template from Meta's library with customization options.
+type MetaLibraryTemplate struct {
+
+	// The name of the template in Meta's library.
+	//
+	// This member is required.
+	LibraryTemplateName *string
+
+	// The category of the template (for example, UTILITY or MARKETING).
+	//
+	// This member is required.
+	TemplateCategory *string
+
+	// The language code for the template (for example, en_US).
+	//
+	// This member is required.
+	TemplateLanguage *string
+
+	// The name to assign to the template.
+	//
+	// This member is required.
+	TemplateName *string
+
+	// Body text customizations for the template.
+	LibraryTemplateBodyInputs *LibraryTemplateBodyInputs
+
+	// Button customizations for the template.
+	LibraryTemplateButtonInputs []LibraryTemplateButtonInput
+
+	noSmithyDocumentSerde
+}
+
+// Defines the complete structure and content of a template in Meta's library.
+type MetaLibraryTemplateDefinition struct {
+
+	// The body text of the template.
+	TemplateBody *string
+
+	// Example parameter values for the template body, used to demonstrate how dynamic
+	// content appears in the template.
+	TemplateBodyExampleParams []string
+
+	// The buttons included in the template.
+	TemplateButtons []LibraryTemplateButtonList
+
+	// The category of the template (for example, UTILITY or MARKETING).
+	TemplateCategory *string
+
+	// The header text of the template.
+	TemplateHeader *string
+
+	// The ID of the template in Meta's library.
+	TemplateId *string
+
+	// The industries the template is designed for.
+	TemplateIndustry []string
+
+	// The language code for the template (for example, en_US).
+	TemplateLanguage *string
+
+	// The name of the template.
+	TemplateName *string
+
+	// The topic or subject matter of the template.
+	TemplateTopic *string
+
+	// The intended use case for the template.
+	TemplateUseCase *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains information for the S3 bucket that contains media files.
 type S3File struct {
 
@@ -123,7 +268,14 @@ type S3File struct {
 	// This member is required.
 	BucketName *string
 
-	// The object key of the media file.
+	// The S3 key prefix that defines the storage location of your media files. The
+	// prefix works like a folder path in S3, and is combined with the WhatsApp mediaId
+	// to create the final file path.
+	//
+	// For example, if a media file's WhatsApp mediaId is 123.ogg , and the key is
+	// audio/example.ogg , the final file path is audio/example.ogg123.ogg .
+	//
+	// For the same mediaId, a key of audio/ results in the file path audio/123.ogg .
 	//
 	// This member is required.
 	Key *string
@@ -169,15 +321,40 @@ type Tag struct {
 	noSmithyDocumentSerde
 }
 
+// Provides a summary of a WhatsApp message template's key attributes.
+type TemplateSummary struct {
+
+	// The numeric ID assigned to the template by Meta.
+	MetaTemplateId *string
+
+	// The category of the template (for example, UTILITY or MARKETING).
+	TemplateCategory *string
+
+	// The language code of the template (for example, en_US).
+	TemplateLanguage *string
+
+	// The name of the template.
+	TemplateName *string
+
+	// The quality score assigned to the template by Meta.
+	TemplateQualityScore *string
+
+	// The current status of the template (for example, APPROVED, PENDING, or
+	// REJECTED).
+	TemplateStatus *string
+
+	noSmithyDocumentSerde
+}
+
 // The registration details for a linked phone number.
 type WabaPhoneNumberSetupFinalization struct {
 
 	// The unique identifier of the originating phone number associated with the
 	// media. Phone number identifiers are formatted as
-	// phone-number-id-01234567890123456789012345678901 . Use [GetLinkedWhatsAppBusinessAccount] to find a phone
-	// number's id.
+	// phone-number-id-01234567890123456789012345678901 . Use the [GetLinkedWhatsAppBusinessAccount] API action to find
+	// a phone number's id.
 	//
-	// [GetLinkedWhatsAppBusinessAccount]: https://docs.aws.amazon.com/social-messaging/latest/APIReference/API_GetLinkedWhatsAppBusinessAccountPhoneNumber.html
+	// [GetLinkedWhatsAppBusinessAccount]: https://docs.aws.amazon.com/social-messaging/latest/APIReference/API_GetLinkedWhatsAppBusinessAccount.html
 	//
 	// This member is required.
 	Id *string
@@ -307,6 +484,10 @@ type WhatsAppPhoneNumberDetail struct {
 	// This member is required.
 	QualityRating *string
 
+	// The geographic region where the WhatsApp phone number's data is stored and
+	// processed.
+	DataLocalizationRegion *string
+
 	noSmithyDocumentSerde
 }
 
@@ -349,6 +530,10 @@ type WhatsAppPhoneNumberSummary struct {
 	// This member is required.
 	QualityRating *string
 
+	// The geographic region where the WhatsApp phone number's data is stored and
+	// processed.
+	DataLocalizationRegion *string
+
 	noSmithyDocumentSerde
 }
 
@@ -387,6 +572,9 @@ type WhatsAppSignupCallback struct {
 	//
 	// This member is required.
 	AccessToken *string
+
+	// The URL where WhatsApp will send callback notifications for this account.
+	CallbackUrl *string
 
 	noSmithyDocumentSerde
 }

@@ -10,7 +10,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Stops a multipart upload.
+// Stops a multipart read set upload into a sequence store and returns a response
+// with no body if the operation is successful. To confirm that a multipart read
+// set upload has been stopped, use the ListMultipartReadSetUploads API operation
+// to view all active multipart read set uploads.
 func (c *Client) AbortMultipartReadSetUpload(ctx context.Context, params *AbortMultipartReadSetUploadInput, optFns ...func(*Options)) (*AbortMultipartReadSetUploadOutput, error) {
 	if params == nil {
 		params = &AbortMultipartReadSetUploadInput{}
@@ -139,16 +142,13 @@ func (c *Client) addOperationAbortMultipartReadSetUploadMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

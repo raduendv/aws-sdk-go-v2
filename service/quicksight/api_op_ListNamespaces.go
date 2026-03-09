@@ -30,7 +30,7 @@ func (c *Client) ListNamespaces(ctx context.Context, params *ListNamespacesInput
 
 type ListNamespacesInput struct {
 
-	// The ID for the Amazon Web Services account that contains the Amazon QuickSight
+	// The ID for the Amazon Web Services account that contains the Quick Sight
 	// namespaces that you want to list.
 	//
 	// This member is required.
@@ -166,16 +166,13 @@ func (c *Client) addOperationListNamespacesMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

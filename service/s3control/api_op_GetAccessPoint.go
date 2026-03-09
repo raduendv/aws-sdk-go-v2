@@ -106,6 +106,12 @@ type GetAccessPointOutput struct {
 	// The date and time when the specified access point was created.
 	CreationDate *time.Time
 
+	// The unique identifier for the data source of the access point.
+	DataSourceId *string
+
+	// The type of the data source that the access point is attached to.
+	DataSourceType *string
+
 	// The VPC endpoint for the access point.
 	Endpoints map[string]string
 
@@ -250,16 +256,13 @@ func (c *Client) addOperationGetAccessPointMiddlewares(stack *middleware.Stack, 
 	if err = s3controlcust.AddDisableHostPrefixMiddleware(stack); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -15,7 +15,9 @@ import (
 	"time"
 )
 
-// Retrieves information about an asset model.
+// Retrieves information about an asset model. This includes details about the
+// asset model's properties, hierarchies, composite models, and any interface
+// relationships if the asset model implements interfaces.
 func (c *Client) DescribeAssetModel(ctx context.Context, params *DescribeAssetModelInput, optFns ...func(*Options)) (*DescribeAssetModelOutput, error) {
 	if params == nil {
 		params = &DescribeAssetModelInput{}
@@ -147,6 +149,10 @@ type DescribeAssetModelOutput struct {
 	// [Optimistic locking for asset model writes]: https://docs.aws.amazon.com/iot-sitewise/latest/userguide/opt-locking-for-model.html
 	ETag *string
 
+	// A list of interface details that describe the interfaces implemented by this
+	// asset model, including interface asset model IDs and property mappings.
+	InterfaceDetails []types.InterfaceRelationship
+
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
 
@@ -244,16 +250,13 @@ func (c *Client) addOperationDescribeAssetModelMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

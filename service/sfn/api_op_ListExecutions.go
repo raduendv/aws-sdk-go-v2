@@ -103,6 +103,14 @@ type ListExecutionsInput struct {
 
 	// If specified, only list the executions whose current execution status matches
 	// the given filter.
+	//
+	// If you provide a PENDING_REDRIVE statusFilter, you must specify mapRunArn . For
+	// more information, see [Child workflow execution redrive behaviour]in the Step Functions Developer Guide.
+	//
+	// If you provide a stateMachineArn and a PENDING_REDRIVE statusFilter, the API
+	// returns a validation exception.
+	//
+	// [Child workflow execution redrive behaviour]: https://docs.aws.amazon.com/step-functions/latest/dg/redrive-map-run.html#redrive-child-workflow-behavior
 	StatusFilter types.ExecutionStatus
 
 	noSmithyDocumentSerde
@@ -213,16 +221,13 @@ func (c *Client) addOperationListExecutionsMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

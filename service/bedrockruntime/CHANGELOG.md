@@ -1,3 +1,170 @@
+# v1.49.0 (2026-02-04)
+
+* **Feature**: Added support for structured outputs to Converse and ConverseStream APIs.
+
+# v1.48.0 (2026-01-20)
+
+* **Feature**: Added support for extended prompt caching with one hour TTL.
+
+# v1.47.2 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.47.1 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.47.0 (2025-12-02)
+
+* **Feature**: Adds support for Audio Blocks and Streaming Image Output plus new Stop Reasons of malformed_model_output and malformed_tool_use.
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.46.0 (2025-11-26)
+
+* **Feature**: Bedrock Runtime Reserved Service Support
+
+# v1.45.1 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.45.0 (2025-11-21)
+
+* **Feature**: Add support to automatically enforce safeguards across accounts within an AWS Organization.
+
+# v1.44.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.44.0 (2025-11-19)
+
+* **Feature**: This release includes support for Search Results.
+
+# v1.43.0 (2025-11-18)
+
+* **Feature**: Amazon Bedrock Runtime Service Tier Support Launch
+
+# v1.42.4 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.42.3 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.42.2 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.42.1 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.42.0 (2025-10-29)
+
+* **Feature**: Add support for system tool and web citation response.
+
+# v1.41.2 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.41.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.41.0 (2025-09-29)
+
+* **Feature**: New stop reason for Converse and ConverseStream
+
+# v1.40.3 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.40.2 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.40.1 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.40.0 (2025-09-08)
+
+* **Feature**: Emit user-agent business metrics for use of env-based bearer tokens.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.39.0 (2025-08-29)
+
+* **Feature**: Fixed stop sequence limit for converse API.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.38.0 (2025-08-28)
+
+* **Feature**: Remove incorrect endpoint tests
+
+# v1.37.2 (2025-08-27)
+
+* **Bug Fix**: Ensure document.Interface values with maps serialize keys in a stable order. This should improve prompt cache hit rates with various inputs.
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.37.1 (2025-08-21)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.37.0 (2025-08-20)
+
+* **Feature**: Launch CountTokens API to allow token counting
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.36.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.35.0 (2025-08-07)
+
+* **Feature**: Support configurable bearer token through the environment via AWS_BEARER_TOKEN_BEDROCK.
+
+# v1.34.0 (2025-08-05)
+
+* **Feature**: This release adds support for Automated Reasoning checks output models for the Amazon Bedrock Guardrails ApplyGuardrail API.
+
+# v1.33.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.32.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.32.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.31.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.31.0 (2025-06-30)
+
+* **Feature**: Add API Key and document citations support for Bedrock Runtime APIs
+
+# v1.30.2 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.30.1 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
 # v1.30.0 (2025-04-25)
 
 * **Feature**: You can now reference images and documents stored in Amazon S3 when using InvokeModel and Converse APIs with Amazon Nova Lite and Nova Pro. This enables direct integration of S3-stored multimedia assets in your model requests without manual downloading or base64 encoding.

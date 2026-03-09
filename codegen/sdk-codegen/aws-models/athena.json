@@ -159,7 +159,13 @@
                     "target": "com.amazonaws.athena#GetQueryRuntimeStatistics"
                 },
                 {
+                    "target": "com.amazonaws.athena#GetResourceDashboard"
+                },
+                {
                     "target": "com.amazonaws.athena#GetSession"
+                },
+                {
+                    "target": "com.amazonaws.athena#GetSessionEndpoint"
                 },
                 {
                     "target": "com.amazonaws.athena#GetSessionStatus"
@@ -291,27 +297,27 @@
                             "builtIn": "AWS::Region",
                             "required": false,
                             "documentation": "The AWS region used to dispatch the request.",
-                            "type": "String"
+                            "type": "string"
                         },
                         "UseDualStack": {
                             "builtIn": "AWS::UseDualStack",
                             "required": true,
                             "default": false,
                             "documentation": "When true, use the dual-stack endpoint. If the configured endpoint does not support dual-stack, dispatching the request MAY return an error.",
-                            "type": "Boolean"
+                            "type": "boolean"
                         },
                         "UseFIPS": {
                             "builtIn": "AWS::UseFIPS",
                             "required": true,
                             "default": false,
                             "documentation": "When true, send this request to the FIPS-compliant regional endpoint. If the configured endpoint does not have a FIPS compliant endpoint, dispatching the request will return an error.",
-                            "type": "Boolean"
+                            "type": "boolean"
                         },
                         "Endpoint": {
                             "builtIn": "SDK::Endpoint",
                             "required": false,
                             "documentation": "Override the endpoint used to send this request",
-                            "type": "String"
+                            "type": "string"
                         }
                     },
                     "rules": [
@@ -1095,17 +1101,6 @@
                             }
                         },
                         {
-                            "documentation": "For region us-iso-east-1 with FIPS enabled and DualStack enabled",
-                            "expect": {
-                                "error": "FIPS and DualStack are enabled, but this partition does not support one or both"
-                            },
-                            "params": {
-                                "Region": "us-iso-east-1",
-                                "UseFIPS": true,
-                                "UseDualStack": true
-                            }
-                        },
-                        {
                             "documentation": "For region us-iso-east-1 with FIPS enabled and DualStack disabled",
                             "expect": {
                                 "endpoint": {
@@ -1116,17 +1111,6 @@
                                 "Region": "us-iso-east-1",
                                 "UseFIPS": true,
                                 "UseDualStack": false
-                            }
-                        },
-                        {
-                            "documentation": "For region us-iso-east-1 with FIPS disabled and DualStack enabled",
-                            "expect": {
-                                "error": "DualStack is enabled but this partition does not support DualStack"
-                            },
-                            "params": {
-                                "Region": "us-iso-east-1",
-                                "UseFIPS": false,
-                                "UseDualStack": true
                             }
                         },
                         {
@@ -1143,17 +1127,6 @@
                             }
                         },
                         {
-                            "documentation": "For region us-isob-east-1 with FIPS enabled and DualStack enabled",
-                            "expect": {
-                                "error": "FIPS and DualStack are enabled, but this partition does not support one or both"
-                            },
-                            "params": {
-                                "Region": "us-isob-east-1",
-                                "UseFIPS": true,
-                                "UseDualStack": true
-                            }
-                        },
-                        {
                             "documentation": "For region us-isob-east-1 with FIPS enabled and DualStack disabled",
                             "expect": {
                                 "endpoint": {
@@ -1164,17 +1137,6 @@
                                 "Region": "us-isob-east-1",
                                 "UseFIPS": true,
                                 "UseDualStack": false
-                            }
-                        },
-                        {
-                            "documentation": "For region us-isob-east-1 with FIPS disabled and DualStack enabled",
-                            "expect": {
-                                "error": "DualStack is enabled but this partition does not support DualStack"
-                            },
-                            "params": {
-                                "Region": "us-isob-east-1",
-                                "UseFIPS": false,
-                                "UseDualStack": true
                             }
                         },
                         {
@@ -2008,6 +1970,32 @@
                 "smithy.api#pattern": "^[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*$"
             }
         },
+        "com.amazonaws.athena#Classification": {
+            "type": "structure",
+            "members": {
+                "Name": {
+                    "target": "com.amazonaws.athena#NameString",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The name of the configuration classification.</p>"
+                    }
+                },
+                "Properties": {
+                    "target": "com.amazonaws.athena#ParametersMap",
+                    "traits": {
+                        "smithy.api#documentation": "<p>A set of properties specified within a configuration classification.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>A classification refers to a set of specific configurations.</p>"
+            }
+        },
+        "com.amazonaws.athena#ClassificationList": {
+            "type": "list",
+            "member": {
+                "target": "com.amazonaws.athena#Classification"
+            }
+        },
         "com.amazonaws.athena#ClientRequestToken": {
             "type": "string",
             "traits": {
@@ -2016,6 +2004,39 @@
                     "max": 36
                 },
                 "smithy.api#pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            }
+        },
+        "com.amazonaws.athena#CloudWatchLoggingConfiguration": {
+            "type": "structure",
+            "members": {
+                "Enabled": {
+                    "target": "com.amazonaws.athena#BoxedBoolean",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Enables CloudWatch logging.</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "LogGroup": {
+                    "target": "com.amazonaws.athena#LogGroupName",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The name of the log group in Amazon CloudWatch Logs where you want to publish \n            your logs.</p>"
+                    }
+                },
+                "LogStreamNamePrefix": {
+                    "target": "com.amazonaws.athena#LogStreamNamePrefix",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Prefix for the CloudWatch log stream name.</p>"
+                    }
+                },
+                "LogTypes": {
+                    "target": "com.amazonaws.athena#LogTypesMap",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The types of logs that you want to publish to CloudWatch.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>Configuration settings for delivering logs to Amazon CloudWatch log groups.</p>"
             }
         },
         "com.amazonaws.athena#CodeBlock": {
@@ -2379,7 +2400,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Creates (registers) a data catalog with the specified name and properties. Catalogs\n            created are visible to all users of the same Amazon Web Services account.</p>\n         <p>This API operation creates the following resources.</p>\n         <ul>\n            <li>\n               <p>CFN Stack Name with a maximum length of 128 characters and prefix\n                        <code>athenafederatedcatalog-CATALOG_NAME_SANITIZED</code> with length 23\n                    characters.</p>\n            </li>\n            <li>\n               <p>Lambda Function Name with a maximum length of 64 characters and prefix\n                        <code>athenafederatedcatalog_CATALOG_NAME_SANITIZED</code> with length 23\n                    characters.</p>\n            </li>\n            <li>\n               <p>Glue Connection Name with a maximum length of 255 characters and a prefix\n                        <code>athenafederatedcatalog_CATALOG_NAME_SANITIZED</code> with length 23\n                    characters.  </p>\n            </li>\n         </ul>"
+                "smithy.api#documentation": "<p>Creates (registers) a data catalog with the specified name and properties. Catalogs\n            created are visible to all users of the same Amazon Web Services account.</p>\n         <p>For a <code>FEDERATED</code> catalog, this API operation creates the following\n            resources.</p>\n         <ul>\n            <li>\n               <p>CFN Stack Name with a maximum length of 128 characters and prefix\n                        <code>athenafederatedcatalog-CATALOG_NAME_SANITIZED</code> with length 23\n                    characters.</p>\n            </li>\n            <li>\n               <p>Lambda Function Name with a maximum length of 64 characters and prefix\n                        <code>athenafederatedcatalog_CATALOG_NAME_SANITIZED</code> with length 23\n                    characters.</p>\n            </li>\n            <li>\n               <p>Glue Connection Name with a maximum length of 255 characters and a prefix\n                        <code>athenafederatedcatalog_CATALOG_NAME_SANITIZED</code> with length 23\n                    characters.  </p>\n            </li>\n         </ul>"
             }
         },
         "com.amazonaws.athena#CreateDataCatalogInput": {
@@ -2395,7 +2416,7 @@
                 "Type": {
                     "target": "com.amazonaws.athena#DataCatalogType",
                     "traits": {
-                        "smithy.api#documentation": "<p>The type of data catalog to create: <code>LAMBDA</code> for a federated catalog,\n                <code>GLUE</code> for an Glue Data Catalog, and <code>HIVE</code> for an\n            external Apache Hive metastore. <code>FEDERATED</code> is a federated catalog for which\n                Athena creates the connection and the Lambda function for\n            you based on the parameters that you pass.</p>",
+                        "smithy.api#documentation": "<p>The type of data catalog to create: <code>LAMBDA</code> for a federated catalog,\n                <code>GLUE</code> for an Glue Data Catalog, and <code>HIVE</code> for an\n            external Apache Hive metastore. <code>FEDERATED</code> is a federated catalog for which\n                Athena creates the connection and the Lambda function for\n            you based on the parameters that you pass.</p>\n         <p>For <code>FEDERATED</code> type, we do not support IAM identity center.</p>",
                         "smithy.api#required": {}
                     }
                 },
@@ -3332,6 +3353,9 @@
                 }
             }
         },
+        "com.amazonaws.athena#DpuCount": {
+            "type": "double"
+        },
         "com.amazonaws.athena#EncryptionConfiguration": {
             "type": "structure",
             "members": {
@@ -3388,8 +3412,9 @@
                 "MaxConcurrentDpus": {
                     "target": "com.amazonaws.athena#MaxConcurrentDpus",
                     "traits": {
-                        "smithy.api#documentation": "<p>The maximum number of DPUs that can run concurrently.</p>",
-                        "smithy.api#required": {}
+                        "smithy.api#addedDefault": {},
+                        "smithy.api#default": 20,
+                        "smithy.api#documentation": "<p>The maximum number of DPUs that can run concurrently.</p>"
                     }
                 },
                 "DefaultExecutorDpuSize": {
@@ -3409,10 +3434,16 @@
                     "traits": {
                         "smithy.api#documentation": "<p>Specifies custom jar files and Spark properties for use cases like cluster encryption,\n            table formats, and general Spark tuning.</p>"
                     }
+                },
+                "Classifications": {
+                    "target": "com.amazonaws.athena#ClassificationList",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The configuration classifications that can be specified for the engine.</p>"
+                    }
                 }
             },
             "traits": {
-                "smithy.api#documentation": "<p>Contains data processing unit (DPU) configuration settings and parameter mappings for\n            a notebook engine.</p>"
+                "smithy.api#documentation": "<p>The engine configuration for the workgroup, which includes the minimum/maximum number of Data Processing Units (DPU) that queries should use when\n            running in provisioned capacity. If not specified, Athena uses default values (Default value for min is 4 and for max is Minimum of 124 and allocated DPUs).</p>\n         <p>To specify DPU values for PC queries the WG containing EngineConfiguration should have the following values:\n        The name of the Classifications should be <code>athena-query-engine-properties</code>, with the only allowed properties as <code>max-dpu-count</code> and <code>min-dpu-count</code>.</p>"
             }
         },
         "com.amazonaws.athena#EngineVersion": {
@@ -4380,6 +4411,12 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The maximum number of results (rows) to return in this request.</p>"
                     }
+                },
+                "QueryResultType": {
+                    "target": "com.amazonaws.athena#QueryResultType",
+                    "traits": {
+                        "smithy.api#documentation": "<p> When you set this to <code>DATA_ROWS</code> or empty, <code>GetQueryResults</code>\n            returns the query results in rows. If set to <code>DATA_MANIFEST</code>, it returns the\n            manifest file in rows. Only the query types <code>CREATE TABLE AS SELECT</code>,\n                <code>UNLOAD</code>, and <code>INSERT</code> can generate a manifest file. If you\n            use <code>DATA_MANIFEST</code> for other query types, the query will fail. </p>"
+                    }
                 }
             },
             "traits": {
@@ -4429,7 +4466,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Returns query execution runtime statistics related to a single execution of a query if\n            you have access to the workgroup in which the query ran. Statistics from the\n                <code>Timeline</code> section of the response object are available as soon as <a>QueryExecutionStatus$State</a> is in a SUCCEEDED or FAILED state. The\n            remaining non-timeline statistics in the response (like stage-level input and output row\n            count and data size) are updated asynchronously and may not be available immediately\n            after a query completes. The non-timeline statistics are also not included when a query\n            has row-level filters defined in Lake Formation.</p>"
+                "smithy.api#documentation": "<p>Returns query execution runtime statistics related to a single execution of a query if\n            you have access to the workgroup in which the query ran. Statistics from the\n                <code>Timeline</code> section of the response object are available as soon as <a>QueryExecutionStatus$State</a> is in a SUCCEEDED or FAILED state. The\n            remaining non-timeline statistics in the response (like stage-level input and output row\n            count and data size) are updated asynchronously and may not be available immediately\n            after a query completes or, in some cases, may not be returned. The non-timeline\n            statistics are also not included when a query has row-level filters defined in Lake Formation.</p>"
             }
         },
         "com.amazonaws.athena#GetQueryRuntimeStatisticsInput": {
@@ -4461,6 +4498,59 @@
                 "smithy.api#output": {}
             }
         },
+        "com.amazonaws.athena#GetResourceDashboard": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.athena#GetResourceDashboardRequest"
+            },
+            "output": {
+                "target": "com.amazonaws.athena#GetResourceDashboardResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.athena#InternalServerException"
+                },
+                {
+                    "target": "com.amazonaws.athena#InvalidRequestException"
+                },
+                {
+                    "target": "com.amazonaws.athena#ResourceNotFoundException"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Gets the Live UI/Persistence UI for a session.</p>"
+            }
+        },
+        "com.amazonaws.athena#GetResourceDashboardRequest": {
+            "type": "structure",
+            "members": {
+                "ResourceARN": {
+                    "target": "com.amazonaws.athena#AmazonResourceName",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The The Amazon Resource Name (ARN) for a session.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.athena#GetResourceDashboardResponse": {
+            "type": "structure",
+            "members": {
+                "Url": {
+                    "target": "com.amazonaws.athena#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The Live UI/Persistence UI url for a session.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
         "com.amazonaws.athena#GetSession": {
             "type": "operation",
             "input": {
@@ -4482,6 +4572,73 @@
             ],
             "traits": {
                 "smithy.api#documentation": "<p>Gets the full details of a previously created session, including the session status\n            and configuration.</p>"
+            }
+        },
+        "com.amazonaws.athena#GetSessionEndpoint": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.athena#GetSessionEndpointRequest"
+            },
+            "output": {
+                "target": "com.amazonaws.athena#GetSessionEndpointResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.athena#InternalServerException"
+                },
+                {
+                    "target": "com.amazonaws.athena#InvalidRequestException"
+                },
+                {
+                    "target": "com.amazonaws.athena#ResourceNotFoundException"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Gets a connection endpoint and authentication token for a given session Id.</p>"
+            }
+        },
+        "com.amazonaws.athena#GetSessionEndpointRequest": {
+            "type": "structure",
+            "members": {
+                "SessionId": {
+                    "target": "com.amazonaws.athena#SessionId",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The session ID.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.athena#GetSessionEndpointResponse": {
+            "type": "structure",
+            "members": {
+                "EndpointUrl": {
+                    "target": "com.amazonaws.athena#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The endpoint for connecting to the session.</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "AuthToken": {
+                    "target": "com.amazonaws.athena#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Authentication token for the connection</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "AuthTokenExpirationTime": {
+                    "target": "com.amazonaws.athena#Timestamp",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Expiration time of the auth token.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "com.amazonaws.athena#GetSessionRequest": {
@@ -4537,6 +4694,9 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The notebook version.</p>"
                     }
+                },
+                "MonitoringConfiguration": {
+                    "target": "com.amazonaws.athena#MonitoringConfiguration"
                 },
                 "SessionConfiguration": {
                     "target": "com.amazonaws.athena#SessionConfiguration",
@@ -6139,8 +6299,133 @@
                 "smithy.api#output": {}
             }
         },
+        "com.amazonaws.athena#LogGroupName": {
+            "type": "string",
+            "traits": {
+                "smithy.api#length": {
+                    "min": 1,
+                    "max": 512
+                },
+                "smithy.api#pattern": "^[a-zA-Z0-9._/-]+$"
+            }
+        },
+        "com.amazonaws.athena#LogStreamNamePrefix": {
+            "type": "string",
+            "traits": {
+                "smithy.api#length": {
+                    "min": 1,
+                    "max": 512
+                },
+                "smithy.api#pattern": "^[^:*]*$"
+            }
+        },
+        "com.amazonaws.athena#LogTypeKey": {
+            "type": "string"
+        },
+        "com.amazonaws.athena#LogTypeValue": {
+            "type": "string"
+        },
+        "com.amazonaws.athena#LogTypeValuesList": {
+            "type": "list",
+            "member": {
+                "target": "com.amazonaws.athena#LogTypeValue"
+            }
+        },
+        "com.amazonaws.athena#LogTypesMap": {
+            "type": "map",
+            "key": {
+                "target": "com.amazonaws.athena#LogTypeKey"
+            },
+            "value": {
+                "target": "com.amazonaws.athena#LogTypeValuesList"
+            }
+        },
         "com.amazonaws.athena#Long": {
             "type": "long"
+        },
+        "com.amazonaws.athena#ManagedLoggingConfiguration": {
+            "type": "structure",
+            "members": {
+                "Enabled": {
+                    "target": "com.amazonaws.athena#BoxedBoolean",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Enables mamanged log persistence.</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "KmsKey": {
+                    "target": "com.amazonaws.athena#KmsKey",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The KMS key ARN to encrypt the logs stored in managed log persistence.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>Configuration settings for delivering logs to Amazon S3 buckets.</p>"
+            }
+        },
+        "com.amazonaws.athena#ManagedQueryResultsConfiguration": {
+            "type": "structure",
+            "members": {
+                "Enabled": {
+                    "target": "com.amazonaws.athena#Boolean",
+                    "traits": {
+                        "smithy.api#default": false,
+                        "smithy.api#documentation": "<p>If set to true, allows you to store query results in Athena owned storage. If set to\n            false, workgroup member stores query results in location specified under\n                <code>ResultConfiguration$OutputLocation</code>. The default is false. A workgroup\n            cannot have the <code>ResultConfiguration$OutputLocation</code> parameter when you set\n            this field to true. </p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "EncryptionConfiguration": {
+                    "target": "com.amazonaws.athena#ManagedQueryResultsEncryptionConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>If you encrypt query and calculation results in Athena owned storage, this field\n            indicates the encryption option (for example, SSE_KMS or CSE_KMS) and key\n            information.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>\n            The configuration for storing results in Athena owned storage, which includes whether this feature is enabled; whether encryption configuration, if any, is used for encrypting query results. \n        </p>"
+            }
+        },
+        "com.amazonaws.athena#ManagedQueryResultsConfigurationUpdates": {
+            "type": "structure",
+            "members": {
+                "Enabled": {
+                    "target": "com.amazonaws.athena#BoxedBoolean",
+                    "traits": {
+                        "smithy.api#documentation": "<p>If set to true, specifies that Athena manages query results in Athena owned\n            storage.</p>"
+                    }
+                },
+                "EncryptionConfiguration": {
+                    "target": "com.amazonaws.athena#ManagedQueryResultsEncryptionConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>If you encrypt query and calculation results in Athena owned storage, this field\n            indicates the encryption option (for example, SSE_KMS or CSE_KMS) and key\n            information.</p>"
+                    }
+                },
+                "RemoveEncryptionConfiguration": {
+                    "target": "com.amazonaws.athena#BoxedBoolean",
+                    "traits": {
+                        "smithy.api#documentation": "<p>If set to true, it removes workgroup from Athena owned storage. The existing query\n            results are cleaned up after 24hrs. You must provide query results in location specified\n            under <code>ResultConfiguration$OutputLocation</code>.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>Updates the configuration for managed query results.</p>"
+            }
+        },
+        "com.amazonaws.athena#ManagedQueryResultsEncryptionConfiguration": {
+            "type": "structure",
+            "members": {
+                "KmsKey": {
+                    "target": "com.amazonaws.athena#KmsKey",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN of an KMS key for encrypting managed query results.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>If you encrypt query and calculation results in Athena owned storage, this field\n            indicates the encryption option (for example, SSE_KMS or CSE_KMS) and key\n            information.</p>"
+            }
         },
         "com.amazonaws.athena#MaxApplicationDPUSizesCount": {
             "type": "integer",
@@ -6304,6 +6589,32 @@
             "traits": {
                 "smithy.api#documentation": "<p>An exception that Athena received when it called a custom metastore.\n            Occurs if the error is not caused by user input (<code>InvalidRequestException</code>)\n            or from the Athena platform (<code>InternalServerException</code>). For\n            example, if a user-created Lambda function is missing permissions, the\n                Lambda\n            <code>4XX</code> exception is returned in a <code>MetadataException</code>.</p>",
                 "smithy.api#error": "client"
+            }
+        },
+        "com.amazonaws.athena#MonitoringConfiguration": {
+            "type": "structure",
+            "members": {
+                "CloudWatchLoggingConfiguration": {
+                    "target": "com.amazonaws.athena#CloudWatchLoggingConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Configuration settings for delivering logs to Amazon CloudWatch log groups.\n        </p>"
+                    }
+                },
+                "ManagedLoggingConfiguration": {
+                    "target": "com.amazonaws.athena#ManagedLoggingConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Configuration settings for managed log persistence.\n        </p>"
+                    }
+                },
+                "S3LoggingConfiguration": {
+                    "target": "com.amazonaws.athena#S3LoggingConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Configuration settings for delivering logs to Amazon S3 buckets.\n        </p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>Contains the configuration settings for managed log persistence, delivering logs to Amazon S3 buckets, \n            Amazon CloudWatch log groups etc.</p>"
             }
         },
         "com.amazonaws.athena#NameString": {
@@ -6690,7 +7001,13 @@
                 "StatementType": {
                     "target": "com.amazonaws.athena#StatementType",
                     "traits": {
-                        "smithy.api#documentation": "<p>The type of query statement that was run. <code>DDL</code> indicates DDL query\n            statements. <code>DML</code> indicates DML (Data Manipulation Language) query\n            statements, such as <code>CREATE TABLE AS SELECT</code>. <code>UTILITY</code> indicates\n            query statements other than DDL and DML, such as <code>SHOW CREATE TABLE</code>, or\n                <code>DESCRIBE TABLE</code>.</p>"
+                        "smithy.api#documentation": "<p>The type of query statement that was run. <code>DDL</code> indicates DDL query\n            statements. <code>DML</code> indicates DML (Data Manipulation Language) query\n            statements, such as <code>CREATE TABLE AS SELECT</code>. <code>UTILITY</code> indicates\n            query statements other than DDL and DML, such as <code>SHOW CREATE TABLE</code>,\n                <code>EXPLAIN</code>, <code>DESCRIBE</code>, or <code>SHOW TABLES</code>.</p>"
+                    }
+                },
+                "ManagedQueryResultsConfiguration": {
+                    "target": "com.amazonaws.athena#ManagedQueryResultsConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p> The configuration for storing results in Athena owned storage, which includes whether\n            this feature is enabled; whether encryption configuration, if any, is used for\n            encrypting query results. </p>"
                     }
                 },
                 "ResultConfiguration": {
@@ -6897,6 +7214,12 @@
                     "traits": {
                         "smithy.api#documentation": "<p>Contains information about whether previous query results were reused for the\n            query.</p>"
                     }
+                },
+                "DpuCount": {
+                    "target": "com.amazonaws.athena#DpuCount",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The number of Data Processing Units (DPUs) that Athena used to run the query.</p>"
+                    }
                 }
             },
             "traits": {
@@ -6909,7 +7232,7 @@
                 "State": {
                     "target": "com.amazonaws.athena#QueryExecutionState",
                     "traits": {
-                        "smithy.api#documentation": "<p>The state of query execution. <code>QUEUED</code> indicates that the query has been\n            submitted to the service, and Athena will execute the query as soon as\n            resources are available. <code>RUNNING</code> indicates that the query is in execution\n            phase. <code>SUCCEEDED</code> indicates that the query completed without errors.\n                <code>FAILED</code> indicates that the query experienced an error and did not\n            complete processing. <code>CANCELLED</code> indicates that a user input interrupted\n            query execution.</p>\n         <note>\n            <p>Athena automatically retries your queries in cases of certain\n                transient errors. As a result, you may see the query state transition from\n                    <code>RUNNING</code> or <code>FAILED</code> to <code>QUEUED</code>. </p>\n         </note>"
+                        "smithy.api#documentation": "<p>The state of query execution. <code>QUEUED</code> indicates that the query has been\n            submitted to the service, and Athena will execute the query as soon as\n            resources are available. <code>RUNNING</code> indicates that the query is in execution\n            phase. <code>SUCCEEDED</code> indicates that the query completed without errors.\n                <code>FAILED</code> indicates that the query experienced an error and did not\n            complete processing. <code>CANCELLED</code> indicates that a user input interrupted\n            query execution.</p>\n         <note>\n            <p>For queries that experience certain transient errors, the state transitions from\n                    <code>RUNNING</code> back to <code>QUEUED</code>. The <code>FAILED</code> state\n                is always terminal with no automatic retry. </p>\n         </note>"
                     }
                 },
                 "StateChangeReason": {
@@ -6939,6 +7262,23 @@
             },
             "traits": {
                 "smithy.api#documentation": "<p>The completion date, current state, submission time, and state change reason (if\n            applicable) for the query execution.</p>"
+            }
+        },
+        "com.amazonaws.athena#QueryResultType": {
+            "type": "enum",
+            "members": {
+                "DATA_MANIFEST": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "DATA_MANIFEST"
+                    }
+                },
+                "DATA_ROWS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "DATA_ROWS"
+                    }
+                }
             }
         },
         "com.amazonaws.athena#QueryResultsS3AccessGrantsConfiguration": {
@@ -7416,6 +7756,43 @@
                 }
             }
         },
+        "com.amazonaws.athena#S3LoggingConfiguration": {
+            "type": "structure",
+            "members": {
+                "Enabled": {
+                    "target": "com.amazonaws.athena#BoxedBoolean",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Enables S3 log delivery.</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "KmsKey": {
+                    "target": "com.amazonaws.athena#KmsKey",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The KMS key ARN to encrypt the logs published to the given Amazon S3 destination.</p>"
+                    }
+                },
+                "LogLocation": {
+                    "target": "com.amazonaws.athena#S3OutputLocation",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The Amazon S3 destination URI for log publishing.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>Configuration settings for delivering logs to Amazon S3 buckets.</p>"
+            }
+        },
+        "com.amazonaws.athena#S3OutputLocation": {
+            "type": "string",
+            "traits": {
+                "smithy.api#length": {
+                    "min": 0,
+                    "max": 1024
+                },
+                "smithy.api#pattern": "^s3://[a-z0-9][a-z0-9\\-]*[a-z0-9](/.*)?$"
+            }
+        },
         "com.amazonaws.athena#S3Uri": {
             "type": "string",
             "traits": {
@@ -7455,6 +7832,12 @@
                 },
                 "IdleTimeoutSeconds": {
                     "target": "com.amazonaws.athena#Long",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The idle timeout in seconds for the session.</p>"
+                    }
+                },
+                "SessionIdleTimeoutInMinutes": {
+                    "target": "com.amazonaws.athena#SessionIdleTimeoutInMinutes",
                     "traits": {
                         "smithy.api#documentation": "<p>The idle timeout in seconds for the session.</p>"
                     }
@@ -7698,7 +8081,7 @@
                     "target": "com.amazonaws.athena#CalculationConfiguration",
                     "traits": {
                         "smithy.api#deprecated": {
-                            "message": "Kepler Post GA Tasks : https://sim.amazon.com/issues/ATHENA-39828"
+                            "message": "Structure is deprecated."
                         },
                         "smithy.api#documentation": "<p>Contains configuration information for the calculation.</p>"
                     }
@@ -7810,6 +8193,12 @@
                     "traits": {
                         "smithy.api#documentation": "<p>Specifies the query result reuse behavior for the query.</p>"
                     }
+                },
+                "EngineConfiguration": {
+                    "target": "com.amazonaws.athena#EngineConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The engine configuration for the workgroup, which includes the minimum/maximum number of Data Processing Units (DPU) that queries should use when\n            running in provisioned capacity. If not specified, Athena uses default values (Default value for min is 4 and for max is Minimum of 124 and allocated DPUs).</p>\n         <p>To specify minimum and maximum DPU values for Capacity Reservations queries, the workgroup containing <code>EngineConfiguration</code> should have the following values: The name of\n            the <code>Classifications</code> should be <code>athena-query-engine-properties</code>, with the only allowed properties as <code>max-dpu-count</code> and <code>min-dpu-count</code>.</p>"
+                    }
                 }
             },
             "traits": {
@@ -7882,6 +8271,18 @@
                         "smithy.api#required": {}
                     }
                 },
+                "ExecutionRole": {
+                    "target": "com.amazonaws.athena#RoleArn",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN of the execution role used to access user resources for Spark sessions and\n            Identity Center enabled workgroups. This property applies only to Spark enabled\n            workgroups and Identity Center enabled workgroups.</p>"
+                    }
+                },
+                "MonitoringConfiguration": {
+                    "target": "com.amazonaws.athena#MonitoringConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Contains the configuration settings for managed log persistence, delivering logs to Amazon S3 buckets, \n            Amazon CloudWatch log groups etc.</p>"
+                    }
+                },
                 "NotebookVersion": {
                     "target": "com.amazonaws.athena#NameString",
                     "traits": {
@@ -7898,6 +8299,18 @@
                     "target": "com.amazonaws.athena#IdempotencyToken",
                     "traits": {
                         "smithy.api#documentation": "<p>A unique case-sensitive string used to ensure the request to create the session is\n            idempotent (executes only once). If another <code>StartSessionRequest</code> is\n            received, the same response is returned and another session is not created. If a\n            parameter has changed, an error is returned.</p>\n         <important>\n            <p>This token is listed as not required because Amazon Web Services SDKs (for example\n                the Amazon Web Services SDK for Java) auto-generate the token for users. If you are\n                not using the Amazon Web Services SDK or the Amazon Web Services CLI, you must provide\n                this token or the action will fail.</p>\n         </important>"
+                    }
+                },
+                "Tags": {
+                    "target": "com.amazonaws.athena#TagList",
+                    "traits": {
+                        "smithy.api#documentation": "<p>A list of comma separated tags to add to the session that is created.</p>"
+                    }
+                },
+                "CopyWorkGroupTags": {
+                    "target": "com.amazonaws.athena#BoxedBoolean",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Copies the tags from the Workgroup to the Session when.</p>"
                     }
                 }
             },
@@ -8241,7 +8654,7 @@
             "type": "integer",
             "traits": {
                 "smithy.api#range": {
-                    "min": 24
+                    "min": 4
                 }
             }
         },
@@ -8977,10 +9390,16 @@
                         "smithy.api#documentation": "<p>The configuration for the workgroup, which includes the location in Amazon S3\n            where query and calculation results are stored and the encryption option, if any, used\n            for query and calculation results. To run the query, you must specify the query results\n            location using one of the ways: either in the workgroup using this setting, or for\n            individual queries (client-side), using <a>ResultConfiguration$OutputLocation</a>. If none of them is set, Athena issues an error that no output location is provided.</p>"
                     }
                 },
+                "ManagedQueryResultsConfiguration": {
+                    "target": "com.amazonaws.athena#ManagedQueryResultsConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p> The configuration for storing results in Athena owned storage, which includes whether\n            this feature is enabled; whether encryption configuration, if any, is used for\n            encrypting query results. </p>"
+                    }
+                },
                 "EnforceWorkGroupConfiguration": {
                     "target": "com.amazonaws.athena#BoxedBoolean",
                     "traits": {
-                        "smithy.api#documentation": "<p>If set to \"true\", the settings for the workgroup override client-side settings. If set\n            to \"false\", client-side settings are used. For more information, see <a href=\"https://docs.aws.amazon.com/athena/latest/ug/workgroups-settings-override.html\">Workgroup Settings Override Client-Side Settings</a>.</p>"
+                        "smithy.api#documentation": "<p>If set to \"true\", the settings for the workgroup override client-side settings. If set\n            to \"false\", client-side settings are used. This property is not required for Apache\n            Spark enabled workgroups. For more information, see <a href=\"https://docs.aws.amazon.com/athena/latest/ug/workgroups-settings-override.html\">Workgroup Settings Override\n                Client-Side Settings</a>.</p>"
                     }
                 },
                 "PublishCloudWatchMetricsEnabled": {
@@ -9018,6 +9437,15 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The ARN of the execution role used to access user resources for Spark sessions and\n                IAM Identity Center enabled workgroups. This property applies only to Spark enabled\n            workgroups and IAM Identity Center enabled workgroups. The property is required for\n                IAM Identity Center enabled workgroups.</p>"
                     }
+                },
+                "MonitoringConfiguration": {
+                    "target": "com.amazonaws.athena#MonitoringConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Contains the configuration settings for managed log persistence, delivering logs to Amazon S3 buckets, \n            Amazon CloudWatch log groups etc.</p>"
+                    }
+                },
+                "EngineConfiguration": {
+                    "target": "com.amazonaws.athena#EngineConfiguration"
                 },
                 "CustomerContentEncryptionConfiguration": {
                     "target": "com.amazonaws.athena#CustomerContentEncryptionConfiguration",
@@ -9061,6 +9489,12 @@
                     "target": "com.amazonaws.athena#ResultConfigurationUpdates",
                     "traits": {
                         "smithy.api#documentation": "<p>The result configuration information about the queries in this workgroup that will be\n            updated. Includes the updated results location and an updated option for encrypting\n            query results.</p>"
+                    }
+                },
+                "ManagedQueryResultsConfigurationUpdates": {
+                    "target": "com.amazonaws.athena#ManagedQueryResultsConfigurationUpdates",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Updates configuration information for managed query results in the workgroup.</p>"
                     }
                 },
                 "PublishCloudWatchMetricsEnabled": {
@@ -9125,6 +9559,15 @@
                     "traits": {
                         "smithy.api#documentation": "<p>Specifies whether Amazon S3 access grants are enabled for query\n            results.</p>"
                     }
+                },
+                "MonitoringConfiguration": {
+                    "target": "com.amazonaws.athena#MonitoringConfiguration",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Contains the configuration settings for managed log persistence, delivering logs to Amazon S3 buckets, \n            Amazon CloudWatch log groups etc.</p>"
+                    }
+                },
+                "EngineConfiguration": {
+                    "target": "com.amazonaws.athena#EngineConfiguration"
                 }
             },
             "traits": {

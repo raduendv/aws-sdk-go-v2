@@ -84,6 +84,14 @@ type CreatePolicyStoreInput struct {
 	// current policy store.
 	Description *string
 
+	// Specifies the encryption settings used to encrypt the policy store and their
+	// child resources. Allows for the ability to use a customer owned KMS key for
+	// encryption of data.
+	//
+	// This is an optional field to be used when providing a customer-managed KMS key
+	// for encryption.
+	EncryptionSettings types.EncryptionSettings
+
 	// The list of key-value pairs to associate with the policy store.
 	Tags map[string]string
 
@@ -209,16 +217,13 @@ func (c *Client) addOperationCreatePolicyStoreMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

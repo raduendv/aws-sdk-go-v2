@@ -12,9 +12,11 @@ import (
 )
 
 // Lists all applications associated with the instance of IAM Identity Center.
-// When listing applications for an instance in the management account, member
-// accounts must use the applicationAccount parameter to filter the list to only
-// applications created from that account.
+// When listing applications for an organization instance in the management
+// account, member accounts must use the applicationAccount parameter to filter
+// the list to only applications created from that account. When listing
+// applications for an account instance in the same member account, a filter is not
+// required.
 func (c *Client) ListApplications(ctx context.Context, params *ListApplicationsInput, optFns ...func(*Options)) (*ListApplicationsOutput, error) {
 	if params == nil {
 		params = &ListApplicationsInput{}
@@ -166,16 +168,13 @@ func (c *Client) addOperationListApplicationsMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

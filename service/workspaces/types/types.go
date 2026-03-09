@@ -7,6 +7,33 @@ import (
 	"time"
 )
 
+// Describes the access type and endpoint for a WorkSpace.
+type AccessEndpoint struct {
+
+	// Indicates the type of access endpoint.
+	AccessEndpointType AccessEndpointType
+
+	// Indicates the VPC endpoint to use for access.
+	VpcEndpointId *string
+
+	noSmithyDocumentSerde
+}
+
+// Describes the access endpoint configuration for a WorkSpace.
+type AccessEndpointConfig struct {
+
+	// Indicates a list of access endpoints associated with this directory.
+	//
+	// This member is required.
+	AccessEndpoints []AccessEndpoint
+
+	// Indicates a list of protocols that fallback to using the public Internet when
+	// streaming over a VPC endpoint is not available.
+	InternetFallbackProtocols []InternetFallbackProtocol
+
+	noSmithyDocumentSerde
+}
+
 // Information about about the account link.
 type AccountLink struct {
 
@@ -360,6 +387,19 @@ type ConnectionAliasPermission struct {
 	noSmithyDocumentSerde
 }
 
+// Describes in-depth details about the error. These details include the possible
+// causes of the error and troubleshooting information.
+type CustomWorkspaceImageImportErrorDetails struct {
+
+	// The error code that is returned for the image import.
+	ErrorCode *string
+
+	// The text of the error message that is returned for the image import.
+	ErrorMessage *string
+
+	noSmithyDocumentSerde
+}
+
 // Describes the data replication settings.
 type DataReplicationSettings struct {
 
@@ -496,9 +536,6 @@ type DefaultWorkspaceCreationProperties struct {
 	//
 	// [WorkSpace Maintenance]: https://docs.aws.amazon.com/workspaces/latest/adminguide/workspace-maintenance.html
 	EnableMaintenanceMode *bool
-
-	// Specifies whether the directory is enabled for Amazon WorkDocs.
-	EnableWorkDocs *bool
 
 	// Indicates the IAM role ARN of the instance.
 	InstanceIamRoleArn *string
@@ -688,6 +725,45 @@ type ImageResourceAssociation struct {
 
 	noSmithyDocumentSerde
 }
+
+// Describes the image import source.
+//
+// The following types satisfy this interface:
+//
+//	ImageSourceIdentifierMemberEc2ImageId
+//	ImageSourceIdentifierMemberEc2ImportTaskId
+//	ImageSourceIdentifierMemberImageBuildVersionArn
+type ImageSourceIdentifier interface {
+	isImageSourceIdentifier()
+}
+
+// The identifier of the EC2 image.
+type ImageSourceIdentifierMemberEc2ImageId struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*ImageSourceIdentifierMemberEc2ImageId) isImageSourceIdentifier() {}
+
+// The EC2 import task ID to import the image from the Amazon EC2 VM import
+// process.
+type ImageSourceIdentifierMemberEc2ImportTaskId struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*ImageSourceIdentifierMemberEc2ImportTaskId) isImageSourceIdentifier() {}
+
+// The ARN of the EC2 Image Builder image.
+type ImageSourceIdentifierMemberImageBuildVersionArn struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*ImageSourceIdentifierMemberImageBuildVersionArn) isImageSourceIdentifier() {}
 
 // The client branding attributes for iOS device types. These attributes are
 // displayed on the iOS client login screen only.
@@ -1249,6 +1325,9 @@ type Workspace struct {
 	// The IP address of the WorkSpace.
 	IpAddress *string
 
+	// The IPv6 address of the WorkSpace.
+	Ipv6Address *string
+
 	// The modification states of the WorkSpace.
 	ModificationStates []ModificationState
 
@@ -1340,6 +1419,9 @@ type Workspace struct {
 //
 // [Amazon WorkSpaces Client Network Requirements]: https://docs.aws.amazon.com/workspaces/latest/adminguide/workspaces-network-requirements.html
 type WorkspaceAccessProperties struct {
+
+	// Specifies the configuration for accessing the WorkSpace.
+	AccessEndpointConfig *AccessEndpointConfig
 
 	// Indicates whether users can use Android and Android-compatible Chrome OS
 	// devices to access their WorkSpaces.
@@ -1512,23 +1594,6 @@ type WorkspaceCreationProperties struct {
 	// [WorkSpace Maintenance]: https://docs.aws.amazon.com/workspaces/latest/adminguide/workspace-maintenance.html
 	EnableMaintenanceMode *bool
 
-	// Indicates whether Amazon WorkDocs is enabled for your WorkSpaces.
-	//
-	// If WorkDocs is already enabled for a WorkSpaces directory and you disable it,
-	// new WorkSpaces launched in the directory will not have WorkDocs enabled.
-	// However, WorkDocs remains enabled for any existing WorkSpaces, unless you either
-	// disable users' access to WorkDocs or you delete the WorkDocs site. To disable
-	// users' access to WorkDocs, see [Disabling Users]in the Amazon WorkDocs Administration Guide. To
-	// delete a WorkDocs site, see [Deleting a Site]in the Amazon WorkDocs Administration Guide.
-	//
-	// If you enable WorkDocs on a directory that already has existing WorkSpaces, the
-	// existing WorkSpaces and any new WorkSpaces that are launched in the directory
-	// will have WorkDocs enabled.
-	//
-	// [Deleting a Site]: https://docs.aws.amazon.com/workdocs/latest/adminguide/manage-sites.html
-	// [Disabling Users]: https://docs.aws.amazon.com/workdocs/latest/adminguide/inactive-user.html
-	EnableWorkDocs *bool
-
 	// Indicates the IAM role ARN of the instance.
 	InstanceIamRoleArn *string
 
@@ -1566,6 +1631,9 @@ type WorkspaceDirectory struct {
 
 	// The IP addresses of the DNS servers for the directory.
 	DnsIpAddresses []string
+
+	// The IPv6 addresses of the DNS servers for the directory.
+	DnsIpv6Addresses []string
 
 	// Endpoint encryption mode that allows you to configure the specified directory
 	// between Standard TLS and FIPS 140-2 validated mode.
@@ -1781,6 +1849,9 @@ type WorkspaceRequest struct {
 	// This member is required.
 	UserName *string
 
+	// The IPv6 address for the WorkSpace.
+	Ipv6Address *string
+
 	// Indicates whether the data stored on the root volume is encrypted.
 	RootVolumeEncryptionEnabled *bool
 
@@ -1885,10 +1956,15 @@ type WorkspacesPool struct {
 	// This member is required.
 	PoolId *string
 
-	// The name of the pool,
+	// The name of the pool.
 	//
 	// This member is required.
 	PoolName *string
+
+	// The running mode of the pool.
+	//
+	// This member is required.
+	RunningMode PoolsRunningMode
 
 	// The current state of the pool.
 	//
@@ -1967,3 +2043,14 @@ type WorkspacesPoolSession struct {
 }
 
 type noSmithyDocumentSerde = smithydocument.NoSerde
+
+// UnknownUnionMember is returned when a union member is returned over the wire,
+// but has an unknown tag.
+type UnknownUnionMember struct {
+	Tag   string
+	Value []byte
+
+	noSmithyDocumentSerde
+}
+
+func (*UnknownUnionMember) isImageSourceIdentifier() {}

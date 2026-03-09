@@ -12,6 +12,8 @@ import (
 )
 
 // Retrieves information about a dataset.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) DescribeDataset(ctx context.Context, params *DescribeDatasetInput, optFns ...func(*Options)) (*DescribeDatasetOutput, error) {
 	if params == nil {
 		params = &DescribeDatasetInput{}
@@ -32,6 +34,8 @@ type DescribeDatasetInput struct {
 	// The name of the dataset whose information is retrieved.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	DatasetName *string
 
 	noSmithyDocumentSerde
@@ -40,6 +44,8 @@ type DescribeDatasetInput struct {
 type DescribeDatasetOutput struct {
 
 	// An object that contains information about the dataset.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Dataset *types.Dataset
 
 	// Metadata pertaining to the operation's result.
@@ -136,16 +142,13 @@ func (c *Client) addOperationDescribeDatasetMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

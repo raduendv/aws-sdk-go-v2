@@ -12,7 +12,8 @@ import (
 	"time"
 )
 
-// Gets information about a sequence store.
+// Retrieves metadata for a sequence store using its ID and returns it in JSON
+// format.
 func (c *Client) GetSequenceStore(ctx context.Context, params *GetSequenceStoreInput, optFns ...func(*Options)) (*GetSequenceStoreOutput, error) {
 	if params == nil {
 		params = &GetSequenceStoreInput{}
@@ -184,16 +185,13 @@ func (c *Client) addOperationGetSequenceStoreMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

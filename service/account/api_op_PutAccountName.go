@@ -43,7 +43,7 @@ type PutAccountNameInput struct {
 	// To use this parameter, the caller must be an identity in the [organization's management account] or a delegated
 	// administrator account, and the specified account ID must be a member account in
 	// the same organization. The organization must have [all features enabled], and the organization must
-	// have [trusted access]enabled for the Account Management service, and optionally a [delegated admin] account
+	// have [trusted access]enabled for the Account Management service, and optionally a [delegated administrator] account
 	// assigned.
 	//
 	// The management account can't specify its own AccountId ; it must call the
@@ -54,9 +54,9 @@ type PutAccountNameInput struct {
 	// belonging to the account whose contacts you wish to retrieve or modify.
 	//
 	// [organization's management account]: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_getting-started_concepts.html#account
+	// [delegated administrator]: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_getting-started_concepts.html#delegated-admin
 	// [all features enabled]: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_support-all-features.html
-	// [delegated admin]: https://docs.aws.amazon.com/organizations/latest/userguide/using-orgs-delegated-admin.html
-	// [trusted access]: https://docs.aws.amazon.com/organizations/latest/userguide/using-orgs-trusted-access.html
+	// [trusted access]: https://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-account.html
 	AccountId *string
 
 	noSmithyDocumentSerde
@@ -157,16 +157,13 @@ func (c *Client) addOperationPutAccountNameMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

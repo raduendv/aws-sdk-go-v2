@@ -29,11 +29,8 @@ type ApplicationSummary struct {
 	// A human-readable label for the application. You can edit this value.
 	Description *string
 
-	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the application resource. Format example:
-	// ARN- arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6 or
-	// ID- a-9ZY8X7Wv6 .
-	//
-	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
+	// An ID that uniquely identifies the application resource. Example ID: a-9ZY8X7Wv6
+	// .
 	Id *string
 
 	// A timestamp that indicates when this resource was last updated. Timestamps are
@@ -53,6 +50,8 @@ type ApplicationSummary struct {
 	//
 	//   - Microsoft Windows Server 2022 Base ( Type=WINDOWS, Version=2022 )
 	//
+	//   - Proton 9.0-2 ( Type=PROTON, Version=20250516 )
+	//
 	//   - Proton 8.0-5 ( Type=PROTON, Version=20241007 )
 	//
 	//   - Proton 8.0-2c ( Type=PROTON, Version=20230704 )
@@ -70,8 +69,8 @@ type ApplicationSummary struct {
 	//
 	//   - READY : The application is ready to deploy in a stream group.
 	//
-	//   - ERROR : An error occurred when setting up the application. See StatusReason
-	//   for more information.
+	//   - ERROR : An error occurred when setting up the application. For more
+	//   information about the error, call GetApplication and refer to StatusReason .
 	//
 	//   - DELETING : Amazon GameLift Streams is in the process of deleting the
 	//   application.
@@ -84,14 +83,14 @@ type ApplicationSummary struct {
 // hosts.
 type DefaultApplication struct {
 
-	// An [Amazon Resource Name (ARN)] that uniquely identifies the application resource. Format example:
-	// arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6 .
+	// An [Amazon Resource Name (ARN)] that uniquely identifies the application resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:application/a-9ZY8X7Wv6 .
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	Arn *string
 
-	// An ID that uniquely identifies the application resource. For example:
-	// a-9ZY8X7Wv6 .
+	// An ID that uniquely identifies the application resource. Example ID: a-9ZY8X7Wv6
+	// .
 	Id *string
 
 	noSmithyDocumentSerde
@@ -105,13 +104,14 @@ type ExportFilesMetadata struct {
 	// file name based on the stream session metadata. Alternatively, you can provide a
 	// custom file name with a .zip file extension.
 	//
-	// Example 1: If you provide an S3 URI called s3://MyBucket/MyGame_Session1.zip ,
-	// then Amazon GameLift Streams will save the files at that location.
+	// Example 1: If you provide an S3 URI called
+	// s3://amzn-s3-demo-destination-bucket/MyGame_Session1.zip , then Amazon GameLift
+	// Streams will save the files at that location.
 	//
 	// Example 2: If you provide an S3 URI called
-	// s3://MyBucket/MyGameSessions_ExportedFiles/ , then Amazon GameLift Streams will
-	// save the files at
-	// s3://MyBucket/MyGameSessions_ExportedFiles/YYYYMMDD-HHMMSS-appId-sg-Id-sessionId.zip
+	// s3://amzn-s3-demo-destination-bucket/MyGameSessions_ExportedFiles/ , then Amazon
+	// GameLift Streams will save the files at
+	// s3://amzn-s3-demo-destination-bucket/MyGameSessions_ExportedFiles/YYYYMMDD-HHMMSS-appId-sg-Id-sessionId.zip
 	// or another similar name.
 	OutputUri *string
 
@@ -137,24 +137,44 @@ type ExportFilesMetadata struct {
 type LocationConfiguration struct {
 
 	//  A location's name. For example, us-east-1 . For a complete list of locations
-	// that Amazon GameLift Streams supports, refer to [Regions and quotas]in the Amazon GameLift Streams
+	// that Amazon GameLift Streams supports, refer to [Regions, quotas, and limitations]in the Amazon GameLift Streams
 	// Developer Guide.
 	//
-	// [Regions and quotas]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
+	// [Regions, quotas, and limitations]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
 	//
 	// This member is required.
 	LocationName *string
 
-	//  The streaming capacity that is allocated and ready to handle stream requests
-	// without delay. You pay for this capacity whether it's in use or not. Best for
-	// quickest time from streaming request to streaming session.
+	// This setting, if non-zero, indicates minimum streaming capacity which is
+	// allocated to you and is never released back to the service. You pay for this
+	// base level of capacity at all times, whether used or idle.
 	AlwaysOnCapacity *int32
 
-	//  The streaming capacity that Amazon GameLift Streams can allocate in response
-	// to stream requests, and then de-allocate when the session has terminated. This
+	// This indicates the maximum capacity that the service can allocate for you.
+	// Newly created streams may take a few minutes to start. Capacity is released back
+	// to the service when idle. You pay for capacity that is allocated to you until it
+	// is released.
+	MaximumCapacity *int32
+
+	// This field is deprecated. Use MaximumCapacity instead. This parameter cannot be
+	// used with MaximumCapacity or TargetIdleCapacity in the same location
+	// configuration.
+	//
+	// The streaming capacity that Amazon GameLift Streams can allocate in response to
+	// stream requests, and then de-allocate when the session has terminated. This
 	// offers a cost control measure at the expense of a greater startup time
-	// (typically under 5 minutes).
+	// (typically under 5 minutes). Default is 0 when creating a stream group or adding
+	// a location.
+	//
+	// Deprecated: This input field is deprecated in favor of explicit MaximumCapacity
+	// values.
 	OnDemandCapacity *int32
+
+	// This indicates idle capacity which the service pre-allocates and holds for you
+	// in anticipation of future activity. This helps to insulate your users from
+	// capacity-allocation delays. You pay for capacity which is held in this
+	// intentional idle state.
+	TargetIdleCapacity *int32
 
 	noSmithyDocumentSerde
 }
@@ -162,38 +182,55 @@ type LocationConfiguration struct {
 // Represents a location and its corresponding stream capacity and status.
 type LocationState struct {
 
-	// This value is the number of compute resources that a stream group has
-	// provisioned and is ready to stream. It includes resources that are currently
-	// streaming and resources that are idle and ready to respond to stream requests.
+	// This value is the stream capacity that Amazon GameLift Streams has provisioned
+	// in a stream group that can respond immediately to stream requests. It includes
+	// resources that are currently streaming and resources that are idle and ready to
+	// respond to stream requests. When target-idle capacity is configured, the idle
+	// resources include the capacity buffer maintained beyond ongoing sessions. You
+	// pay for this capacity whether it's in use or not. After making changes to
+	// capacity, it can take a few minutes for the allocated capacity count to reflect
+	// the change while compute resources are allocated or deallocated. Similarly, when
+	// allocated on-demand capacity is no longer needed, it can take a few minutes for
+	// Amazon GameLift Streams to spin down the allocated capacity.
 	AllocatedCapacity *int32
 
-	//  The streaming capacity that is allocated and ready to handle stream requests
-	// without delay. You pay for this capacity whether it's in use or not. Best for
-	// quickest time from streaming request to streaming session.
+	// This setting, if non-zero, indicates minimum streaming capacity which is
+	// allocated to you and is never released back to the service. You pay for this
+	// base level of capacity at all times, whether used or idle.
 	AlwaysOnCapacity *int32
 
 	// This value is the amount of allocated capacity that is not currently streaming.
-	// It represents the stream group's availability to respond to new stream requests,
-	// but not including on-demand capacity.
+	// It represents the stream group's ability to respond immediately to new stream
+	// requests with near-instant startup time.
 	IdleCapacity *int32
 
 	//  A location's name. For example, us-east-1 . For a complete list of locations
-	// that Amazon GameLift Streams supports, refer to [Regions and quotas]in the Amazon GameLift Streams
+	// that Amazon GameLift Streams supports, refer to [Regions, quotas, and limitations]in the Amazon GameLift Streams
 	// Developer Guide.
 	//
-	// [Regions and quotas]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
+	// [Regions, quotas, and limitations]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
 	LocationName *string
 
-	//  The streaming capacity that Amazon GameLift Streams can allocate in response
-	// to stream requests, and then de-allocate when the session has terminated. This
+	// This indicates the maximum capacity that the service can allocate for you.
+	// Newly created streams may take a few minutes to start. Capacity is released back
+	// to the service when idle. You pay for capacity that is allocated to you until it
+	// is released.
+	MaximumCapacity *int32
+
+	// The streaming capacity that Amazon GameLift Streams can allocate in response to
+	// stream requests, and then de-allocate when the session has terminated. This
 	// offers a cost control measure at the expense of a greater startup time
-	// (typically under 5 minutes).
+	// (typically under 5 minutes). Default is 0 when creating a stream group or adding
+	// a location.
 	OnDemandCapacity *int32
 
-	// This value is the total number of compute resources that you request for a
-	// stream group. This includes resources that Amazon GameLift Streams has either
-	// already provisioned or is working to provision. You request capacity for each
-	// location in a stream group.
+	// This value is the always-on capacity that you most recently requested for a
+	// stream group. You request capacity separately for each location in a stream
+	// group. In response to an increase in requested capacity, Amazon GameLift Streams
+	// attempts to provision compute resources to make the stream group's allocated
+	// capacity meet requested capacity. When always-on capacity is decreased, it can
+	// take a few minutes to deprovision allocated capacity to match the requested
+	// capacity.
 	RequestedCapacity *int32
 
 	// This value is set of locations, including their name, current status, and
@@ -201,19 +238,36 @@ type LocationState struct {
 	//
 	// A location can be in one of the following states:
 	//
-	//   - ACTIVATING: Amazon GameLift Streams is preparing the location. You cannot
+	//   - ACTIVATING : Amazon GameLift Streams is preparing the location. You cannot
 	//   stream from, scale the capacity of, or remove this location yet.
 	//
-	//   - ACTIVE: The location is provisioned with initial capacity. You can now
+	//   - ACTIVE : The location is provisioned with initial capacity. You can now
 	//   stream from, scale the capacity of, or remove this location.
 	//
-	//   - ERROR: Amazon GameLift Streams failed to set up this location. The
-	//   StatusReason field describes the error. You can remove this location and try to
-	//   add it again.
+	//   - ERROR : Amazon GameLift Streams failed to set up this location. The
+	//   StatusReason field describes the error. You can remove this location and try
+	//   to add it again.
 	//
-	//   - REMOVING: Amazon GameLift Streams is working to remove this location. It
-	//   releases all provisioned capacity for this location in this stream group.
+	//   - REMOVING : Amazon GameLift Streams is working to remove this location. This
+	//   will release all provisioned capacity for this location in this stream group.
 	Status StreamGroupLocationStatus
+
+	// This indicates idle capacity which the service pre-allocates and holds for you
+	// in anticipation of future activity. This helps to insulate your users from
+	// capacity-allocation delays. You pay for capacity which is held in this
+	// intentional idle state.
+	TargetIdleCapacity *int32
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for sharing the stream session's performance stats with
+// the client
+type PerformanceStatsConfiguration struct {
+
+	// Performance stats for the session are streamed to the client when set to true .
+	// Defaults to false .
+	SharedWithClient *bool
 
 	noSmithyDocumentSerde
 }
@@ -224,10 +278,10 @@ type LocationState struct {
 type ReplicationStatus struct {
 
 	//  A location's name. For example, us-east-1 . For a complete list of locations
-	// that Amazon GameLift Streams supports, refer to [Regions and quotas]in the Amazon GameLift Streams
+	// that Amazon GameLift Streams supports, refer to [Regions, quotas, and limitations]in the Amazon GameLift Streams
 	// Developer Guide.
 	//
-	// [Regions and quotas]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
+	// [Regions, quotas, and limitations]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
 	Location *string
 
 	// The current status of the replication process.
@@ -248,6 +302,8 @@ type ReplicationStatus struct {
 //   - For Windows applications
 //
 //   - Microsoft Windows Server 2022 Base ( Type=WINDOWS, Version=2022 )
+//
+//   - Proton 9.0-2 ( Type=PROTON, Version=20250516 )
 //
 //   - Proton 8.0-5 ( Type=PROTON, Version=20241007 )
 //
@@ -274,9 +330,8 @@ type RuntimeEnvironment struct {
 // [GetStreamGroup]: https://docs.aws.amazon.com/gameliftstreams/latest/apireference/API_GetStreamGroup.html
 type StreamGroupSummary struct {
 
-	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource. Format example:
-	// ARN- arn:aws:gameliftstreams:us-west-2:123456789012:streamgroup/sg-1AB2C3De4 or
-	// ID- sg-1AB2C3De4 .
+	// An [Amazon Resource Name (ARN)] that uniquely identifies the stream group resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
@@ -294,11 +349,14 @@ type StreamGroupSummary struct {
 	// A descriptive label for the stream group.
 	Description *string
 
-	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource. Format example:
-	// ARN- arn:aws:gameliftstreams:us-west-2:123456789012:streamgroup/sg-1AB2C3De4 or
-	// ID- sg-1AB2C3De4 .
-	//
-	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
+	// The time at which this stream group expires. Timestamps are expressed using in
+	// ISO8601 format, such as: 2022-12-27T22:29:40+00:00 (UTC). After this time, you
+	// will no longer be able to update this stream group or use it to start stream
+	// sessions. Only Get and Delete operations will work on an expired stream group.
+	ExpiresAt *time.Time
+
+	// An ID that uniquely identifies the stream group resource. Example ID:
+	// sg-1AB2C3De4 .
 	Id *string
 
 	// A timestamp that indicates when this resource was last updated. Timestamps are
@@ -316,11 +374,16 @@ type StreamGroupSummary struct {
 	//   error state. Verify the details of individual locations and remove any locations
 	//   which are in error.
 	//
-	//   - ERROR : An error occurred when the stream group deployed. See StatusReason
-	//   for more information.
-	//
 	//   - DELETING : Amazon GameLift Streams is in the process of deleting the stream
 	//   group.
+	//
+	//   - ERROR : An error occurred when the stream group deployed. See StatusReason
+	//   (returned by CreateStreamGroup , GetStreamGroup , and UpdateStreamGroup ) for
+	//   more information.
+	//
+	//   - EXPIRED : The stream group is expired and can no longer host streams. This
+	//   typically occurs when a stream group is 365 days old, as indicated by the value
+	//   of ExpiresAt . Create a new stream group to resume streaming capabilities.
 	//
 	//   - UPDATING_LOCATIONS : One or more locations in the stream group are in the
 	//   process of updating (either activating or deleting).
@@ -330,10 +393,94 @@ type StreamGroupSummary struct {
 	//
 	// A stream class can be one of the following:
 	//
+	//   - gen6n_pro_win2022 (NVIDIA, pro) Supports applications with extremely high 3D
+	//   scene complexity which require maximum resources. Runs applications on Microsoft
+	//   Windows Server 2022 Base and supports DirectX 12. Compatible with Unreal Engine
+	//   versions up through 5.6, 32 and 64-bit applications, and anti-cheat technology.
+	//   Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 16 vCPUs, 64 GB RAM, 24 GB VRAM
+	//
+	//   - Tenancy: Supports 1 concurrent stream session
+	//
+	//   - gen6n_pro (NVIDIA, pro) Supports applications with extremely high 3D scene
+	//   complexity which require maximum resources. Uses dedicated NVIDIA L4 Tensor Core
+	//   GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 16 vCPUs, 64 GB RAM, 24 GB VRAM
+	//
+	//   - Tenancy: Supports 1 concurrent stream session
+	//
+	//   - gen6n_ultra_win2022 (NVIDIA, ultra) Supports applications with high 3D scene
+	//   complexity. Runs applications on Microsoft Windows Server 2022 Base and supports
+	//   DirectX 12. Compatible with Unreal Engine versions up through 5.6, 32 and 64-bit
+	//   applications, and anti-cheat technology. Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 8 vCPUs, 32 GB RAM, 24 GB VRAM
+	//
+	//   - Tenancy: Supports 1 concurrent stream session
+	//
+	//   - gen6n_ultra (NVIDIA, ultra) Supports applications with high 3D scene
+	//   complexity. Uses dedicated NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 8 vCPUs, 32 GB RAM, 24 GB VRAM
+	//
+	//   - Tenancy: Supports 1 concurrent stream session
+	//
+	//   - gen6n_high (NVIDIA, high) Supports applications with moderate to high 3D
+	//   scene complexity. Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 4 vCPUs, 16 GB RAM, 12 GB VRAM
+	//
+	//   - Tenancy: Supports up to 2 concurrent stream sessions
+	//
+	//   - gen6n_medium (NVIDIA, medium) Supports applications with moderate 3D scene
+	//   complexity. Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 2 vCPUs, 8 GB RAM, 6 GB VRAM
+	//
+	//   - Tenancy: Supports up to 4 concurrent stream sessions
+	//
+	//   - gen6n_small (NVIDIA, small) Supports applications with lightweight 3D scene
+	//   complexity and low CPU usage. Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 1 vCPUs, 4 GB RAM, 2 GB VRAM
+	//
+	//   - Tenancy: Supports up to 12 concurrent stream sessions
+	//
 	//   - gen5n_win2022 (NVIDIA, ultra) Supports applications with extremely high 3D
 	//   scene complexity. Runs applications on Microsoft Windows Server 2022 Base and
-	//   supports DirectX 12. Compatible with Unreal Engine versions up through 5.4, 32
-	//   and 64-bit applications, and anti-cheat technology. Uses NVIDIA A10G Tensor GPU.
+	//   supports DirectX 12. Compatible with Unreal Engine versions up through 5.6, 32
+	//   and 64-bit applications, and anti-cheat technology. Uses NVIDIA A10G Tensor Core
+	//   GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -344,7 +491,7 @@ type StreamGroupSummary struct {
 	//   - Tenancy: Supports 1 concurrent stream session
 	//
 	//   - gen5n_high (NVIDIA, high) Supports applications with moderate to high 3D
-	//   scene complexity. Uses NVIDIA A10G Tensor GPU.
+	//   scene complexity. Uses NVIDIA A10G Tensor Core GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -355,7 +502,7 @@ type StreamGroupSummary struct {
 	//   - Tenancy: Supports up to 2 concurrent stream sessions
 	//
 	//   - gen5n_ultra (NVIDIA, ultra) Supports applications with extremely high 3D
-	//   scene complexity. Uses dedicated NVIDIA A10G Tensor GPU.
+	//   scene complexity. Uses dedicated NVIDIA A10G Tensor Core GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -367,8 +514,9 @@ type StreamGroupSummary struct {
 	//
 	//   - gen4n_win2022 (NVIDIA, ultra) Supports applications with extremely high 3D
 	//   scene complexity. Runs applications on Microsoft Windows Server 2022 Base and
-	//   supports DirectX 12. Compatible with Unreal Engine versions up through 5.4, 32
-	//   and 64-bit applications, and anti-cheat technology. Uses NVIDIA T4 Tensor GPU.
+	//   supports DirectX 12. Compatible with Unreal Engine versions up through 5.6, 32
+	//   and 64-bit applications, and anti-cheat technology. Uses NVIDIA T4 Tensor Core
+	//   GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -379,7 +527,7 @@ type StreamGroupSummary struct {
 	//   - Tenancy: Supports 1 concurrent stream session
 	//
 	//   - gen4n_high (NVIDIA, high) Supports applications with moderate to high 3D
-	//   scene complexity. Uses NVIDIA T4 Tensor GPU.
+	//   scene complexity. Uses NVIDIA T4 Tensor Core GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -390,7 +538,7 @@ type StreamGroupSummary struct {
 	//   - Tenancy: Supports up to 2 concurrent stream sessions
 	//
 	//   - gen4n_ultra (NVIDIA, ultra) Supports applications with high 3D scene
-	//   complexity. Uses dedicated NVIDIA T4 Tensor GPU.
+	//   complexity. Uses dedicated NVIDIA T4 Tensor Core GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -404,21 +552,21 @@ type StreamGroupSummary struct {
 	noSmithyDocumentSerde
 }
 
-// Describes a Amazon GameLift Streams stream session. To retrieve additional
+// Describes an Amazon GameLift Streams stream session. To retrieve additional
 // details for the stream session, call [GetStreamSession].
 //
 // [GetStreamSession]: https://docs.aws.amazon.com/gameliftstreams/latest/apireference/API_GetStreamSession.html
 type StreamSessionSummary struct {
 
-	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the application resource. Format example:
-	// ARN- arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6 or
-	// ID- a-9ZY8X7Wv6 .
+	// An [Amazon Resource Name (ARN)] that uniquely identifies the application resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:application/a-9ZY8X7Wv6 .
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	ApplicationArn *string
 
-	// An [Amazon Resource Name (ARN)] that uniquely identifies the stream session resource. Format example:
-	// 1AB2C3De4 . .
+	// An [Amazon Resource Name (ARN)] that uniquely identifies the stream session resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamsession/sg-1AB2C3De4/ABC123def4567
+	// .
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	Arn *string
@@ -434,38 +582,92 @@ type StreamSessionSummary struct {
 	// expressed using in ISO8601 format, such as: 2022-12-27T22:29:40+00:00 (UTC).
 	LastUpdatedAt *time.Time
 
-	// The location where Amazon GameLift Streams is hosting the stream session.
+	// The location where Amazon GameLift Streams hosts and streams your application.
+	// For example, us-east-1 . For a complete list of locations that Amazon GameLift
+	// Streams supports, refer to [Regions, quotas, and limitations]in the Amazon GameLift Streams Developer Guide.
 	//
-	// A location's name. For example, us-east-1 . For a complete list of locations
-	// that Amazon GameLift Streams supports, refer to [Regions and quotas]in the Amazon GameLift Streams
-	// Developer Guide.
-	//
-	// [Regions and quotas]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
+	// [Regions, quotas, and limitations]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
 	Location *string
 
 	// The data transfer protocol in use with the stream session.
 	Protocol Protocol
 
-	// The current status of the stream session resource. Possible statuses include
-	// the following:
+	// The current status of the stream session resource.
 	//
 	//   - ACTIVATING : The stream session is starting and preparing to stream.
 	//
-	//   - ACTIVE : The stream session is ready to accept client connections.
+	//   - ACTIVE : The stream session is ready and waiting for a client connection. A
+	//   client has ConnectionTimeoutSeconds (specified in StartStreamSession ) from
+	//   when the session reaches ACTIVE state to establish a connection. If no client
+	//   connects within this timeframe, the session automatically terminates.
 	//
-	//   - CONNECTED : The stream session has a connected client.
+	//   - CONNECTED : The stream session has a connected client. A session will
+	//   automatically terminate if there is no user input for 60 minutes, or if the
+	//   maximum length of a session specified by SessionLengthSeconds in
+	//   StartStreamSession is exceeded.
 	//
-	//   - PENDING_CLIENT_RECONNECTION : A client has recently disconnected, and the
-	//   stream session is waiting for the client to reconnect. After a short time, if
-	//   the client doesn't reconnect, the stream session status transitions to
-	//   TERMINATED .
+	//   - ERROR : The stream session failed to activate. See StatusReason (returned by
+	//   GetStreamSession and StartStreamSession ) for more information.
+	//
+	//   - PENDING_CLIENT_RECONNECTION : A client has recently disconnected and the
+	//   stream session is waiting for the client to reconnect. A client has
+	//   ConnectionTimeoutSeconds (specified in StartStreamSession ) from when the
+	//   session reaches PENDING_CLIENT_RECONNECTION state to re-establish a
+	//   connection. If no client connects within this timeframe, the session
+	//   automatically terminates.
+	//
+	//   - RECONNECTING : A client has initiated a reconnect to a session that was in
+	//   PENDING_CLIENT_RECONNECTION state.
 	//
 	//   - TERMINATING : The stream session is ending.
 	//
 	//   - TERMINATED : The stream session has ended.
-	//
-	//   - ERROR : The stream session failed to activate.
 	Status StreamSessionStatus
+
+	// A short description of the reason the stream session is in ERROR status or
+	// TERMINATED status.
+	//
+	// ERROR status reasons:
+	//
+	//   - applicationLogS3DestinationError : Could not write the application log to
+	//   the Amazon S3 bucket that is configured for the streaming application. Make sure
+	//   the bucket still exists.
+	//
+	//   - internalError : An internal service error occurred. Start a new stream
+	//   session to continue streaming.
+	//
+	//   - invalidSignalRequest : The WebRTC signal request that was sent is not valid.
+	//   When starting or reconnecting to a stream session, use generateSignalRequest
+	//   in the Amazon GameLift Streams Web SDK to generate a new signal request.
+	//
+	//   - placementTimeout : Amazon GameLift Streams could not find available stream
+	//   capacity to start a stream session. Increase the stream capacity in the stream
+	//   group or wait until capacity becomes available.
+	//
+	// TERMINATED status reasons:
+	//
+	//   - apiTerminated : The stream session was terminated by an API call to [TerminateStreamSession].
+	//
+	//   - applicationExit : The streaming application exited or crashed. The stream
+	//   session was terminated because the application is no longer running.
+	//
+	//   - connectionTimeout : The stream session was terminated because the client
+	//   failed to connect within the connection timeout period specified by
+	//   ConnectionTimeoutSeconds .
+	//
+	//   - idleTimeout : The stream session was terminated because it exceeded the idle
+	//   timeout period of 60 minutes with no user input activity.
+	//
+	//   - maxSessionLengthTimeout : The stream session was terminated because it
+	//   exceeded the maximum session length timeout period specified by
+	//   SessionLengthSeconds .
+	//
+	//   - reconnectionTimeout : The stream session was terminated because the client
+	//   failed to reconnect within the reconnection timeout period specified by
+	//   ConnectionTimeoutSeconds after losing connection.
+	//
+	// [TerminateStreamSession]: https://docs.aws.amazon.com/gameliftstreams/latest/apireference/API_TerminateStreamSession.html
+	StatusReason StreamSessionStatusReason
 
 	//  An opaque, unique identifier for an end-user, defined by the developer.
 	UserId *string

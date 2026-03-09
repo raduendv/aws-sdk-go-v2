@@ -11,7 +11,7 @@ import (
 )
 
 // Removes the association of the specified tags from a resource. For more
-// information on tags see [Tags]in the AWS End User Messaging SMS User Guide.
+// information on tags see [Tags]in the End User Messaging SMS User Guide.
 //
 // [Tags]: https://docs.aws.amazon.com/sms-voice/latest/userguide/phone-numbers-tags.html
 func (c *Client) UntagResource(ctx context.Context, params *UntagResourceInput, optFns ...func(*Options)) (*UntagResourceOutput, error) {
@@ -139,16 +139,13 @@ func (c *Client) addOperationUntagResourceMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

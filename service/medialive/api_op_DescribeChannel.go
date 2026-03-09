@@ -61,6 +61,9 @@ type DescribeChannelOutput struct {
 	// Requested engine version for this channel.
 	ChannelEngineVersion *types.ChannelEngineVersionResponse
 
+	// A list of IDs for all the Input Security Groups attached to the channel.
+	ChannelSecurityGroups []string
+
 	// A list of destinations of the channel. For UDP outputs, there is one
 	// destination per output. For other types (HLS, for example), there is one
 	// destination per packager.
@@ -80,6 +83,9 @@ type DescribeChannelOutput struct {
 
 	// Specification of network and file inputs for this channel
 	InputSpecification *types.InputSpecification
+
+	// Linked Channel Settings for this channel.
+	LinkedChannelSettings *types.DescribeLinkedChannelSettings
 
 	// The log level being written to CloudWatch Logs.
 	LogLevel types.LogLevel
@@ -202,16 +208,13 @@ func (c *Client) addOperationDescribeChannelMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

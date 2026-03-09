@@ -57,6 +57,20 @@ type FailoverGlobalClusterInput struct {
 	// This member is required.
 	TargetDbClusterIdentifier *string
 
+	// Specifies whether to allow data loss for this global database cluster
+	// operation. Allowing data loss triggers a global failover operation.
+	//
+	// If you don't specify AllowDataLoss , the global database cluster operation
+	// defaults to a switchover.
+	//
+	// Constraints:Can't be specified together with the Switchover parameter.
+	AllowDataLoss *bool
+
+	// Specifies whether to switch over this global database cluster.
+	//
+	// Constraints:Can't be specified together with the AllowDataLoss parameter.
+	Switchover *bool
+
 	noSmithyDocumentSerde
 }
 
@@ -161,16 +175,13 @@ func (c *Client) addOperationFailoverGlobalClusterMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

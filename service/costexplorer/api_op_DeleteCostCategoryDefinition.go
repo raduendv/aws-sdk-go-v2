@@ -10,8 +10,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes a Cost Category. Expenses from this month going forward will no longer
-// be categorized with this Cost Category.
+// Deletes a cost category. Expenses from this month going forward will no longer
+// be categorized with this cost category.
 func (c *Client) DeleteCostCategoryDefinition(ctx context.Context, params *DeleteCostCategoryDefinitionInput, optFns ...func(*Options)) (*DeleteCostCategoryDefinitionOutput, error) {
 	if params == nil {
 		params = &DeleteCostCategoryDefinitionInput{}
@@ -29,7 +29,7 @@ func (c *Client) DeleteCostCategoryDefinition(ctx context.Context, params *Delet
 
 type DeleteCostCategoryDefinitionInput struct {
 
-	// The unique identifier for your Cost Category.
+	// The unique identifier for your cost category.
 	//
 	// This member is required.
 	CostCategoryArn *string
@@ -39,11 +39,11 @@ type DeleteCostCategoryDefinitionInput struct {
 
 type DeleteCostCategoryDefinitionOutput struct {
 
-	// The unique identifier for your Cost Category.
+	// The unique identifier for your cost category.
 	CostCategoryArn *string
 
-	// The effective end date of the Cost Category as a result of deleting it. No
-	// costs after this date is categorized by the deleted Cost Category.
+	// The effective end date of the cost category as a result of deleting it. No
+	// costs after this date is categorized by the deleted cost category.
 	EffectiveEnd *string
 
 	// Metadata pertaining to the operation's result.
@@ -140,16 +140,13 @@ func (c *Client) addOperationDeleteCostCategoryDefinitionMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -53,6 +53,9 @@ type UpdateJobInput struct {
 	// The unique token which the server uses to recognize retries of the same request.
 	ClientToken *string
 
+	// The updated job description.
+	Description *string
+
 	// The status of a job in its lifecycle. When you change the status of the job to
 	// ARCHIVED , the job can't be scheduled or archived.
 	//
@@ -79,7 +82,10 @@ type UpdateJobInput struct {
 	// The maximum number of workers that can process tasks in the job.
 	MaxWorkerCount *int32
 
-	// The job priority to update.
+	// The updated job name.
+	Name *string
+
+	// The updated job priority.
 	Priority *int32
 
 	// The task status to update the job's tasks to.
@@ -189,16 +195,13 @@ func (c *Client) addOperationUpdateJobMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

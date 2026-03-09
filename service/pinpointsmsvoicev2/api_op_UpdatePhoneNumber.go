@@ -38,8 +38,8 @@ type UpdatePhoneNumberInput struct {
 	// The unique identifier of the phone number. Valid values for this field can be
 	// either the PhoneNumberId or PhoneNumberArn.
 	//
-	// If you are using a shared AWS End User Messaging SMS and Voice resource then
-	// you must use the full Amazon Resource Name(ARN).
+	// If you are using a shared End User Messaging SMS resource then you must use the
+	// full Amazon Resource Name(ARN).
 	//
 	// This member is required.
 	PhoneNumberId *string
@@ -48,16 +48,20 @@ type UpdatePhoneNumberInput struct {
 	// deleted.
 	DeletionProtectionEnabled *bool
 
-	// The OptOutList to add the phone number to. Valid values for this field can be
-	// either the OutOutListName or OutOutListArn.
+	// By default this is set to false. When set to true the international sending of
+	// phone number is Enabled.
+	InternationalSendingEnabled *bool
+
+	// The OptOutList to add the phone number to. You can use either the opt out list
+	// name or the opt out list ARN.
 	OptOutListName *string
 
-	// By default this is set to false. When an end recipient sends a message that
-	// begins with HELP or STOP to one of your dedicated numbers, AWS End User
-	// Messaging SMS and Voice automatically replies with a customizable message and
-	// adds the end recipient to the OptOutList. When set to true you're responsible
-	// for responding to HELP and STOP requests. You're also responsible for tracking
-	// and honoring opt-out requests.
+	// By default this is set to false. When set to false and an end recipient sends a
+	// message that begins with HELP or STOP to one of your dedicated numbers, End User
+	// Messaging SMS automatically replies with a customizable message and adds the end
+	// recipient to the OptOutList. When set to true you're responsible for responding
+	// to HELP and STOP requests. You're also responsible for tracking and honoring
+	// opt-out requests.
 	SelfManagedOptOutsEnabled *bool
 
 	// The Amazon Resource Name (ARN) of the two way channel.
@@ -83,6 +87,9 @@ type UpdatePhoneNumberOutput struct {
 
 	// When set to true the phone number can't be deleted.
 	DeletionProtectionEnabled bool
+
+	// When set to true the international sending of phone number is Enabled.
+	InternationalSendingEnabled bool
 
 	// The two-character code, in ISO 3166-1 alpha-2 format, for the country or
 	// region.
@@ -228,16 +235,13 @@ func (c *Client) addOperationUpdatePhoneNumberMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

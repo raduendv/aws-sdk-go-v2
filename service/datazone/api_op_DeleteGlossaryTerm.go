@@ -11,6 +11,17 @@ import (
 )
 
 // Deletes a business glossary term in Amazon DataZone.
+//
+// Prerequisites:
+//
+//   - Glossary term must exist and be active.
+//
+//   - The term must not be linked to other assets or child terms.
+//
+//   - Caller must have delete permissions in the domain/glossary.
+//
+//   - Ensure all associations (such as to assets or parent terms) are removed
+//     before deletion.
 func (c *Client) DeleteGlossaryTerm(ctx context.Context, params *DeleteGlossaryTermInput, optFns ...func(*Options)) (*DeleteGlossaryTermOutput, error) {
 	if params == nil {
 		params = &DeleteGlossaryTermInput{}
@@ -137,16 +148,13 @@ func (c *Client) addOperationDeleteGlossaryTermMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

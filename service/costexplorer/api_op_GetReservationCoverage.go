@@ -15,7 +15,7 @@ import (
 // how much of your Amazon Elastic Compute Cloud, Amazon ElastiCache, Amazon
 // Relational Database Service, or Amazon Redshift usage is covered by a
 // reservation. An organization's management account can see the coverage of the
-// associated member accounts. This supports dimensions, Cost Categories, and
+// associated member accounts. This supports dimensions, cost categories, and
 // nested expressions. For any time period, you can filter data about reservation
 // usage by the following dimensions:
 //
@@ -303,16 +303,13 @@ func (c *Client) addOperationGetReservationCoverageMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

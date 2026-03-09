@@ -122,6 +122,19 @@ type UpdateWebACLInput struct {
 	// This member is required.
 	VisibilityConfig *types.VisibilityConfig
 
+	// Configures the ability for the WAF console to store and retrieve application
+	// attributes. Application attributes help WAF give recommendations for protection
+	// packs.
+	//
+	// When using UpdateWebACL , ApplicationConfig follows these rules:
+	//
+	//   - If you omit ApplicationConfig from the request, all existing entries in the
+	//   web ACL are retained.
+	//
+	//   - If you include ApplicationConfig , entries must match the existing values
+	//   exactly. Any attempt to modify existing entries will result in an error.
+	ApplicationConfig *types.ApplicationConfig
+
 	// Specifies custom configurations for the associations between the web ACL and
 	// protected resources.
 	//
@@ -176,6 +189,13 @@ type UpdateWebACLInput struct {
 
 	// A description of the web ACL that helps with identification.
 	Description *string
+
+	// Specifies the type of DDoS protection to apply to web request data for a web
+	// ACL. For most scenarios, it is recommended to use the default protection level,
+	// ACTIVE_UNDER_DDOS . If a web ACL is associated with multiple Application Load
+	// Balancers, the changes you make to DDoS protection in that web ACL will apply to
+	// all associated Application Load Balancers.
+	OnSourceDDoSProtectionConfig *types.OnSourceDDoSProtectionConfig
 
 	// The Rule statements used to identify the web requests that you want to manage. Each
 	// rule includes one top-level statement that WAF uses to identify matching web
@@ -299,16 +319,13 @@ func (c *Client) addOperationUpdateWebACLMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

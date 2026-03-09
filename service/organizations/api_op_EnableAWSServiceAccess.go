@@ -28,10 +28,8 @@ import (
 // For more information about enabling services to integrate with Organizations,
 // see [Using Organizations with other Amazon Web Services services]in the Organizations User Guide.
 //
-// You can only call this operation from the organization's management account and
-// only if the organization has [enabled all features].
+// You can only call this operation from the management account.
 //
-// [enabled all features]: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_support-all-features.html
 // [Using Organizations with other Amazon Web Services services]: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_services.html
 // [service-linked role]: https://docs.aws.amazon.com/IAM/latest/UserGuide/using-service-linked-roles.html
 func (c *Client) EnableAWSServiceAccess(ctx context.Context, params *EnableAWSServiceAccessInput, optFns ...func(*Options)) (*EnableAWSServiceAccessOutput, error) {
@@ -156,16 +154,13 @@ func (c *Client) addOperationEnableAWSServiceAccessMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -2,6 +2,29 @@
 
 package types
 
+type AgreementStatus string
+
+// Enum values for AgreementStatus
+const (
+	AgreementStatusAvailable    AgreementStatus = "AVAILABLE"
+	AgreementStatusPending      AgreementStatus = "PENDING"
+	AgreementStatusNotAvailable AgreementStatus = "NOT_AVAILABLE"
+	AgreementStatusError        AgreementStatus = "ERROR"
+)
+
+// Values returns all known values for AgreementStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AgreementStatus) Values() []AgreementStatus {
+	return []AgreementStatus{
+		"AVAILABLE",
+		"PENDING",
+		"NOT_AVAILABLE",
+		"ERROR",
+	}
+}
+
 type ApplicationType string
 
 // Enum values for ApplicationType
@@ -18,6 +41,286 @@ func (ApplicationType) Values() []ApplicationType {
 	return []ApplicationType{
 		"ModelEvaluation",
 		"RagEvaluation",
+	}
+}
+
+type AttributeType string
+
+// Enum values for AttributeType
+const (
+	AttributeTypeString     AttributeType = "STRING"
+	AttributeTypeNumber     AttributeType = "NUMBER"
+	AttributeTypeBoolean    AttributeType = "BOOLEAN"
+	AttributeTypeStringList AttributeType = "STRING_LIST"
+)
+
+// Values returns all known values for AttributeType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AttributeType) Values() []AttributeType {
+	return []AttributeType{
+		"STRING",
+		"NUMBER",
+		"BOOLEAN",
+		"STRING_LIST",
+	}
+}
+
+type AuthorizationStatus string
+
+// Enum values for AuthorizationStatus
+const (
+	AuthorizationStatusAuthorized    AuthorizationStatus = "AUTHORIZED"
+	AuthorizationStatusNotAuthorized AuthorizationStatus = "NOT_AUTHORIZED"
+)
+
+// Values returns all known values for AuthorizationStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AuthorizationStatus) Values() []AuthorizationStatus {
+	return []AuthorizationStatus{
+		"AUTHORIZED",
+		"NOT_AUTHORIZED",
+	}
+}
+
+type AutomatedReasoningCheckLogicWarningType string
+
+// Enum values for AutomatedReasoningCheckLogicWarningType
+const (
+	AutomatedReasoningCheckLogicWarningTypeAlwaysTrue  AutomatedReasoningCheckLogicWarningType = "ALWAYS_TRUE"
+	AutomatedReasoningCheckLogicWarningTypeAlwaysFalse AutomatedReasoningCheckLogicWarningType = "ALWAYS_FALSE"
+)
+
+// Values returns all known values for AutomatedReasoningCheckLogicWarningType.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningCheckLogicWarningType) Values() []AutomatedReasoningCheckLogicWarningType {
+	return []AutomatedReasoningCheckLogicWarningType{
+		"ALWAYS_TRUE",
+		"ALWAYS_FALSE",
+	}
+}
+
+type AutomatedReasoningCheckResult string
+
+// Enum values for AutomatedReasoningCheckResult
+const (
+	AutomatedReasoningCheckResultValid                AutomatedReasoningCheckResult = "VALID"
+	AutomatedReasoningCheckResultInvalid              AutomatedReasoningCheckResult = "INVALID"
+	AutomatedReasoningCheckResultSatisfiable          AutomatedReasoningCheckResult = "SATISFIABLE"
+	AutomatedReasoningCheckResultImpossible           AutomatedReasoningCheckResult = "IMPOSSIBLE"
+	AutomatedReasoningCheckResultTranslationAmbiguous AutomatedReasoningCheckResult = "TRANSLATION_AMBIGUOUS"
+	AutomatedReasoningCheckResultTooComplex           AutomatedReasoningCheckResult = "TOO_COMPLEX"
+	AutomatedReasoningCheckResultNoTranslation        AutomatedReasoningCheckResult = "NO_TRANSLATION"
+)
+
+// Values returns all known values for AutomatedReasoningCheckResult. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningCheckResult) Values() []AutomatedReasoningCheckResult {
+	return []AutomatedReasoningCheckResult{
+		"VALID",
+		"INVALID",
+		"SATISFIABLE",
+		"IMPOSSIBLE",
+		"TRANSLATION_AMBIGUOUS",
+		"TOO_COMPLEX",
+		"NO_TRANSLATION",
+	}
+}
+
+type AutomatedReasoningPolicyAnnotationStatus string
+
+// Enum values for AutomatedReasoningPolicyAnnotationStatus
+const (
+	AutomatedReasoningPolicyAnnotationStatusApplied AutomatedReasoningPolicyAnnotationStatus = "APPLIED"
+	AutomatedReasoningPolicyAnnotationStatusFailed  AutomatedReasoningPolicyAnnotationStatus = "FAILED"
+)
+
+// Values returns all known values for AutomatedReasoningPolicyAnnotationStatus.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningPolicyAnnotationStatus) Values() []AutomatedReasoningPolicyAnnotationStatus {
+	return []AutomatedReasoningPolicyAnnotationStatus{
+		"APPLIED",
+		"FAILED",
+	}
+}
+
+type AutomatedReasoningPolicyBuildDocumentContentType string
+
+// Enum values for AutomatedReasoningPolicyBuildDocumentContentType
+const (
+	AutomatedReasoningPolicyBuildDocumentContentTypePdf  AutomatedReasoningPolicyBuildDocumentContentType = "pdf"
+	AutomatedReasoningPolicyBuildDocumentContentTypeText AutomatedReasoningPolicyBuildDocumentContentType = "txt"
+)
+
+// Values returns all known values for
+// AutomatedReasoningPolicyBuildDocumentContentType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningPolicyBuildDocumentContentType) Values() []AutomatedReasoningPolicyBuildDocumentContentType {
+	return []AutomatedReasoningPolicyBuildDocumentContentType{
+		"pdf",
+		"txt",
+	}
+}
+
+type AutomatedReasoningPolicyBuildMessageType string
+
+// Enum values for AutomatedReasoningPolicyBuildMessageType
+const (
+	AutomatedReasoningPolicyBuildMessageTypeInfo    AutomatedReasoningPolicyBuildMessageType = "INFO"
+	AutomatedReasoningPolicyBuildMessageTypeWarning AutomatedReasoningPolicyBuildMessageType = "WARNING"
+	AutomatedReasoningPolicyBuildMessageTypeError   AutomatedReasoningPolicyBuildMessageType = "ERROR"
+)
+
+// Values returns all known values for AutomatedReasoningPolicyBuildMessageType.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningPolicyBuildMessageType) Values() []AutomatedReasoningPolicyBuildMessageType {
+	return []AutomatedReasoningPolicyBuildMessageType{
+		"INFO",
+		"WARNING",
+		"ERROR",
+	}
+}
+
+type AutomatedReasoningPolicyBuildResultAssetType string
+
+// Enum values for AutomatedReasoningPolicyBuildResultAssetType
+const (
+	AutomatedReasoningPolicyBuildResultAssetTypeBuildLog           AutomatedReasoningPolicyBuildResultAssetType = "BUILD_LOG"
+	AutomatedReasoningPolicyBuildResultAssetTypeQualityReport      AutomatedReasoningPolicyBuildResultAssetType = "QUALITY_REPORT"
+	AutomatedReasoningPolicyBuildResultAssetTypePolicyDefinition   AutomatedReasoningPolicyBuildResultAssetType = "POLICY_DEFINITION"
+	AutomatedReasoningPolicyBuildResultAssetTypeGeneratedTestCases AutomatedReasoningPolicyBuildResultAssetType = "GENERATED_TEST_CASES"
+	AutomatedReasoningPolicyBuildResultAssetTypePolicyScenarios    AutomatedReasoningPolicyBuildResultAssetType = "POLICY_SCENARIOS"
+)
+
+// Values returns all known values for
+// AutomatedReasoningPolicyBuildResultAssetType. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningPolicyBuildResultAssetType) Values() []AutomatedReasoningPolicyBuildResultAssetType {
+	return []AutomatedReasoningPolicyBuildResultAssetType{
+		"BUILD_LOG",
+		"QUALITY_REPORT",
+		"POLICY_DEFINITION",
+		"GENERATED_TEST_CASES",
+		"POLICY_SCENARIOS",
+	}
+}
+
+type AutomatedReasoningPolicyBuildWorkflowStatus string
+
+// Enum values for AutomatedReasoningPolicyBuildWorkflowStatus
+const (
+	AutomatedReasoningPolicyBuildWorkflowStatusScheduled       AutomatedReasoningPolicyBuildWorkflowStatus = "SCHEDULED"
+	AutomatedReasoningPolicyBuildWorkflowStatusCancelRequested AutomatedReasoningPolicyBuildWorkflowStatus = "CANCEL_REQUESTED"
+	AutomatedReasoningPolicyBuildWorkflowStatusPreprocessing   AutomatedReasoningPolicyBuildWorkflowStatus = "PREPROCESSING"
+	AutomatedReasoningPolicyBuildWorkflowStatusBuilding        AutomatedReasoningPolicyBuildWorkflowStatus = "BUILDING"
+	AutomatedReasoningPolicyBuildWorkflowStatusTesting         AutomatedReasoningPolicyBuildWorkflowStatus = "TESTING"
+	AutomatedReasoningPolicyBuildWorkflowStatusCompleted       AutomatedReasoningPolicyBuildWorkflowStatus = "COMPLETED"
+	AutomatedReasoningPolicyBuildWorkflowStatusFailed          AutomatedReasoningPolicyBuildWorkflowStatus = "FAILED"
+	AutomatedReasoningPolicyBuildWorkflowStatusCancelled       AutomatedReasoningPolicyBuildWorkflowStatus = "CANCELLED"
+)
+
+// Values returns all known values for
+// AutomatedReasoningPolicyBuildWorkflowStatus. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningPolicyBuildWorkflowStatus) Values() []AutomatedReasoningPolicyBuildWorkflowStatus {
+	return []AutomatedReasoningPolicyBuildWorkflowStatus{
+		"SCHEDULED",
+		"CANCEL_REQUESTED",
+		"PREPROCESSING",
+		"BUILDING",
+		"TESTING",
+		"COMPLETED",
+		"FAILED",
+		"CANCELLED",
+	}
+}
+
+type AutomatedReasoningPolicyBuildWorkflowType string
+
+// Enum values for AutomatedReasoningPolicyBuildWorkflowType
+const (
+	AutomatedReasoningPolicyBuildWorkflowTypeIngestContent AutomatedReasoningPolicyBuildWorkflowType = "INGEST_CONTENT"
+	AutomatedReasoningPolicyBuildWorkflowTypeRefinePolicy  AutomatedReasoningPolicyBuildWorkflowType = "REFINE_POLICY"
+	AutomatedReasoningPolicyBuildWorkflowTypeImportPolicy  AutomatedReasoningPolicyBuildWorkflowType = "IMPORT_POLICY"
+)
+
+// Values returns all known values for AutomatedReasoningPolicyBuildWorkflowType.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningPolicyBuildWorkflowType) Values() []AutomatedReasoningPolicyBuildWorkflowType {
+	return []AutomatedReasoningPolicyBuildWorkflowType{
+		"INGEST_CONTENT",
+		"REFINE_POLICY",
+		"IMPORT_POLICY",
+	}
+}
+
+type AutomatedReasoningPolicyTestRunResult string
+
+// Enum values for AutomatedReasoningPolicyTestRunResult
+const (
+	AutomatedReasoningPolicyTestRunResultPassed AutomatedReasoningPolicyTestRunResult = "PASSED"
+	AutomatedReasoningPolicyTestRunResultFailed AutomatedReasoningPolicyTestRunResult = "FAILED"
+)
+
+// Values returns all known values for AutomatedReasoningPolicyTestRunResult. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningPolicyTestRunResult) Values() []AutomatedReasoningPolicyTestRunResult {
+	return []AutomatedReasoningPolicyTestRunResult{
+		"PASSED",
+		"FAILED",
+	}
+}
+
+type AutomatedReasoningPolicyTestRunStatus string
+
+// Enum values for AutomatedReasoningPolicyTestRunStatus
+const (
+	AutomatedReasoningPolicyTestRunStatusNotStarted AutomatedReasoningPolicyTestRunStatus = "NOT_STARTED"
+	AutomatedReasoningPolicyTestRunStatusScheduled  AutomatedReasoningPolicyTestRunStatus = "SCHEDULED"
+	AutomatedReasoningPolicyTestRunStatusInProgress AutomatedReasoningPolicyTestRunStatus = "IN_PROGRESS"
+	AutomatedReasoningPolicyTestRunStatusCompleted  AutomatedReasoningPolicyTestRunStatus = "COMPLETED"
+	AutomatedReasoningPolicyTestRunStatusFailed     AutomatedReasoningPolicyTestRunStatus = "FAILED"
+)
+
+// Values returns all known values for AutomatedReasoningPolicyTestRunStatus. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomatedReasoningPolicyTestRunStatus) Values() []AutomatedReasoningPolicyTestRunStatus {
+	return []AutomatedReasoningPolicyTestRunStatus{
+		"NOT_STARTED",
+		"SCHEDULED",
+		"IN_PROGRESS",
+		"COMPLETED",
+		"FAILED",
 	}
 }
 
@@ -40,13 +343,33 @@ func (CommitmentDuration) Values() []CommitmentDuration {
 	}
 }
 
+type ConfigurationOwner string
+
+// Enum values for ConfigurationOwner
+const (
+	// Configuration owned by the account
+	ConfigurationOwnerAccount ConfigurationOwner = "ACCOUNT"
+)
+
+// Values returns all known values for ConfigurationOwner. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConfigurationOwner) Values() []ConfigurationOwner {
+	return []ConfigurationOwner{
+		"ACCOUNT",
+	}
+}
+
 type CustomizationType string
 
 // Enum values for CustomizationType
 const (
-	CustomizationTypeFineTuning           CustomizationType = "FINE_TUNING"
-	CustomizationTypeContinuedPreTraining CustomizationType = "CONTINUED_PRE_TRAINING"
-	CustomizationTypeDistillation         CustomizationType = "DISTILLATION"
+	CustomizationTypeFineTuning              CustomizationType = "FINE_TUNING"
+	CustomizationTypeContinuedPreTraining    CustomizationType = "CONTINUED_PRE_TRAINING"
+	CustomizationTypeDistillation            CustomizationType = "DISTILLATION"
+	CustomizationTypeReinforcementFineTuning CustomizationType = "REINFORCEMENT_FINE_TUNING"
+	CustomizationTypeImported                CustomizationType = "IMPORTED"
 )
 
 // Values returns all known values for CustomizationType. Note that this can be
@@ -58,6 +381,70 @@ func (CustomizationType) Values() []CustomizationType {
 		"FINE_TUNING",
 		"CONTINUED_PRE_TRAINING",
 		"DISTILLATION",
+		"REINFORCEMENT_FINE_TUNING",
+		"IMPORTED",
+	}
+}
+
+type CustomModelDeploymentStatus string
+
+// Enum values for CustomModelDeploymentStatus
+const (
+	CustomModelDeploymentStatusCreating CustomModelDeploymentStatus = "Creating"
+	CustomModelDeploymentStatusActive   CustomModelDeploymentStatus = "Active"
+	CustomModelDeploymentStatusFailed   CustomModelDeploymentStatus = "Failed"
+)
+
+// Values returns all known values for CustomModelDeploymentStatus. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CustomModelDeploymentStatus) Values() []CustomModelDeploymentStatus {
+	return []CustomModelDeploymentStatus{
+		"Creating",
+		"Active",
+		"Failed",
+	}
+}
+
+type CustomModelDeploymentUpdateStatus string
+
+// Enum values for CustomModelDeploymentUpdateStatus
+const (
+	CustomModelDeploymentUpdateStatusUpdating        CustomModelDeploymentUpdateStatus = "Updating"
+	CustomModelDeploymentUpdateStatusUpdateCompleted CustomModelDeploymentUpdateStatus = "UpdateCompleted"
+	CustomModelDeploymentUpdateStatusUpdateFailed    CustomModelDeploymentUpdateStatus = "UpdateFailed"
+)
+
+// Values returns all known values for CustomModelDeploymentUpdateStatus. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CustomModelDeploymentUpdateStatus) Values() []CustomModelDeploymentUpdateStatus {
+	return []CustomModelDeploymentUpdateStatus{
+		"Updating",
+		"UpdateCompleted",
+		"UpdateFailed",
+	}
+}
+
+type EntitlementAvailability string
+
+// Enum values for EntitlementAvailability
+const (
+	EntitlementAvailabilityAvailable    EntitlementAvailability = "AVAILABLE"
+	EntitlementAvailabilityNotAvailable EntitlementAvailability = "NOT_AVAILABLE"
+)
+
+// Values returns all known values for EntitlementAvailability. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EntitlementAvailability) Values() []EntitlementAvailability {
+	return []EntitlementAvailability{
+		"AVAILABLE",
+		"NOT_AVAILABLE",
 	}
 }
 
@@ -213,6 +600,26 @@ func (GuardrailContentFilterAction) Values() []GuardrailContentFilterAction {
 	return []GuardrailContentFilterAction{
 		"BLOCK",
 		"NONE",
+	}
+}
+
+type GuardrailContentFiltersTierName string
+
+// Enum values for GuardrailContentFiltersTierName
+const (
+	GuardrailContentFiltersTierNameClassic  GuardrailContentFiltersTierName = "CLASSIC"
+	GuardrailContentFiltersTierNameStandard GuardrailContentFiltersTierName = "STANDARD"
+)
+
+// Values returns all known values for GuardrailContentFiltersTierName. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GuardrailContentFiltersTierName) Values() []GuardrailContentFiltersTierName {
+	return []GuardrailContentFiltersTierName{
+		"CLASSIC",
+		"STANDARD",
 	}
 }
 
@@ -487,6 +894,25 @@ func (GuardrailTopicAction) Values() []GuardrailTopicAction {
 	}
 }
 
+type GuardrailTopicsTierName string
+
+// Enum values for GuardrailTopicsTierName
+const (
+	GuardrailTopicsTierNameClassic  GuardrailTopicsTierName = "CLASSIC"
+	GuardrailTopicsTierNameStandard GuardrailTopicsTierName = "STANDARD"
+)
+
+// Values returns all known values for GuardrailTopicsTierName. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GuardrailTopicsTierName) Values() []GuardrailTopicsTierName {
+	return []GuardrailTopicsTierName{
+		"CLASSIC",
+		"STANDARD",
+	}
+}
+
 type GuardrailTopicType string
 
 // Enum values for GuardrailTopicType
@@ -575,6 +1001,25 @@ func (InferenceType) Values() []InferenceType {
 	return []InferenceType{
 		"ON_DEMAND",
 		"PROVISIONED",
+	}
+}
+
+type InputTags string
+
+// Enum values for InputTags
+const (
+	InputTagsHonor  InputTags = "HONOR"
+	InputTagsIgnore InputTags = "IGNORE"
+)
+
+// Values returns all known values for InputTags. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (InputTags) Values() []InputTags {
+	return []InputTags{
+		"HONOR",
+		"IGNORE",
 	}
 }
 
@@ -749,6 +1194,46 @@ func (ModelModality) Values() []ModelModality {
 	}
 }
 
+type ModelStatus string
+
+// Enum values for ModelStatus
+const (
+	ModelStatusActive   ModelStatus = "Active"
+	ModelStatusCreating ModelStatus = "Creating"
+	ModelStatusFailed   ModelStatus = "Failed"
+)
+
+// Values returns all known values for ModelStatus. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ModelStatus) Values() []ModelStatus {
+	return []ModelStatus{
+		"Active",
+		"Creating",
+		"Failed",
+	}
+}
+
+type OfferType string
+
+// Enum values for OfferType
+const (
+	OfferTypeAll    OfferType = "ALL"
+	OfferTypePublic OfferType = "PUBLIC"
+)
+
+// Values returns all known values for OfferType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OfferType) Values() []OfferType {
+	return []OfferType{
+		"ALL",
+		"PUBLIC",
+	}
+}
+
 type PerformanceConfigLatency string
 
 // Enum values for PerformanceConfigLatency
@@ -841,6 +1326,66 @@ const (
 func (QueryTransformationType) Values() []QueryTransformationType {
 	return []QueryTransformationType{
 		"QUERY_DECOMPOSITION",
+	}
+}
+
+type ReasoningEffort string
+
+// Enum values for ReasoningEffort
+const (
+	ReasoningEffortLow    ReasoningEffort = "low"
+	ReasoningEffortMedium ReasoningEffort = "medium"
+	ReasoningEffortHigh   ReasoningEffort = "high"
+)
+
+// Values returns all known values for ReasoningEffort. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ReasoningEffort) Values() []ReasoningEffort {
+	return []ReasoningEffort{
+		"low",
+		"medium",
+		"high",
+	}
+}
+
+type RegionAvailability string
+
+// Enum values for RegionAvailability
+const (
+	RegionAvailabilityAvailable    RegionAvailability = "AVAILABLE"
+	RegionAvailabilityNotAvailable RegionAvailability = "NOT_AVAILABLE"
+)
+
+// Values returns all known values for RegionAvailability. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RegionAvailability) Values() []RegionAvailability {
+	return []RegionAvailability{
+		"AVAILABLE",
+		"NOT_AVAILABLE",
+	}
+}
+
+type RerankingMetadataSelectionMode string
+
+// Enum values for RerankingMetadataSelectionMode
+const (
+	RerankingMetadataSelectionModeSelective RerankingMetadataSelectionMode = "SELECTIVE"
+	RerankingMetadataSelectionModeAll       RerankingMetadataSelectionMode = "ALL"
+)
+
+// Values returns all known values for RerankingMetadataSelectionMode. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RerankingMetadataSelectionMode) Values() []RerankingMetadataSelectionMode {
+	return []RerankingMetadataSelectionMode{
+		"SELECTIVE",
+		"ALL",
 	}
 }
 
@@ -985,5 +1530,23 @@ func (Status) Values() []Status {
 	return []Status{
 		"REGISTERED",
 		"INCOMPATIBLE_ENDPOINT",
+	}
+}
+
+type VectorSearchRerankingConfigurationType string
+
+// Enum values for VectorSearchRerankingConfigurationType
+const (
+	VectorSearchRerankingConfigurationTypeBedrockRerankingModel VectorSearchRerankingConfigurationType = "BEDROCK_RERANKING_MODEL"
+)
+
+// Values returns all known values for VectorSearchRerankingConfigurationType.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (VectorSearchRerankingConfigurationType) Values() []VectorSearchRerankingConfigurationType {
+	return []VectorSearchRerankingConfigurationType{
+		"BEDROCK_RERANKING_MODEL",
 	}
 }

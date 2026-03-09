@@ -42,6 +42,10 @@ type ListPrivacyBudgetsInput struct {
 	// This member is required.
 	PrivacyBudgetType types.PrivacyBudgetType
 
+	// The Amazon Resource Name (ARN) of the access budget resource to filter privacy
+	// budgets by.
+	AccessBudgetResourceArn *string
+
 	// The maximum number of results that are returned for an API request call. The
 	// service chooses a default number if you don't set one. The service might return
 	// a `nextToken` even if the `maxResults` value has not been met.
@@ -159,16 +163,13 @@ func (c *Client) addOperationListPrivacyBudgetsMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

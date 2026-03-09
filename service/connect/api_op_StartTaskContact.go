@@ -81,6 +81,10 @@ type StartTaskContactInput struct {
 	// This member is required.
 	Name *string
 
+	// List of S3 presigned URLs of task attachments and their file name. You can have
+	// a maximum of 5 attachments per task.
+	Attachments []types.TaskAttachment
+
 	// A custom key-value pair using an attribute map. The attributes are standard
 	// Amazon Connect attributes, and can be accessed in flows just like any other
 	// contact attributes.
@@ -274,16 +278,13 @@ func (c *Client) addOperationStartTaskContactMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

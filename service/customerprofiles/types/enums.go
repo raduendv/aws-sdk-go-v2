@@ -2,6 +2,39 @@
 
 package types
 
+type ActionType string
+
+// Enum values for ActionType
+const (
+	ActionTypeAddedProfileKey   ActionType = "ADDED_PROFILE_KEY"
+	ActionTypeDeletedProfileKey ActionType = "DELETED_PROFILE_KEY"
+	ActionTypeCreated           ActionType = "CREATED"
+	ActionTypeUpdated           ActionType = "UPDATED"
+	ActionTypeIngested          ActionType = "INGESTED"
+	ActionTypeDeletedByCustomer ActionType = "DELETED_BY_CUSTOMER"
+	ActionTypeExpired           ActionType = "EXPIRED"
+	ActionTypeMerged            ActionType = "MERGED"
+	ActionTypeDeletedByMerge    ActionType = "DELETED_BY_MERGE"
+)
+
+// Values returns all known values for ActionType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ActionType) Values() []ActionType {
+	return []ActionType{
+		"ADDED_PROFILE_KEY",
+		"DELETED_PROFILE_KEY",
+		"CREATED",
+		"UPDATED",
+		"INGESTED",
+		"DELETED_BY_CUSTOMER",
+		"EXPIRED",
+		"MERGED",
+		"DELETED_BY_MERGE",
+	}
+}
+
 type AttributeDimensionType string
 
 // Enum values for AttributeDimensionType
@@ -127,6 +160,54 @@ func (ConflictResolvingModel) Values() []ConflictResolvingModel {
 	return []ConflictResolvingModel{
 		"RECENCY",
 		"SOURCE",
+	}
+}
+
+type ContactType string
+
+// Enum values for ContactType
+const (
+	ContactTypePhoneNumber          ContactType = "PhoneNumber"
+	ContactTypeMobilePhoneNumber    ContactType = "MobilePhoneNumber"
+	ContactTypeHomePhoneNumber      ContactType = "HomePhoneNumber"
+	ContactTypeBusinessPhoneNumber  ContactType = "BusinessPhoneNumber"
+	ContactTypeEmailAddress         ContactType = "EmailAddress"
+	ContactTypePersonalEmailAddress ContactType = "PersonalEmailAddress"
+	ContactTypeBusinessEmailAddress ContactType = "BusinessEmailAddress"
+)
+
+// Values returns all known values for ContactType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContactType) Values() []ContactType {
+	return []ContactType{
+		"PhoneNumber",
+		"MobilePhoneNumber",
+		"HomePhoneNumber",
+		"BusinessPhoneNumber",
+		"EmailAddress",
+		"PersonalEmailAddress",
+		"BusinessEmailAddress",
+	}
+}
+
+type ContentType string
+
+// Enum values for ContentType
+const (
+	ContentTypeString ContentType = "STRING"
+	ContentTypeNumber ContentType = "NUMBER"
+)
+
+// Values returns all known values for ContentType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContentType) Values() []ContentType {
+	return []ContentType{
+		"STRING",
+		"NUMBER",
 	}
 }
 
@@ -273,6 +354,25 @@ func (EventTriggerLogicalOperator) Values() []EventTriggerLogicalOperator {
 		"ANY",
 		"ALL",
 		"NONE",
+	}
+}
+
+type FeatureType string
+
+// Enum values for FeatureType
+const (
+	FeatureTypeTextual     FeatureType = "TEXTUAL"
+	FeatureTypeCategorical FeatureType = "CATEGORICAL"
+)
+
+// Values returns all known values for FeatureType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (FeatureType) Values() []FeatureType {
+	return []FeatureType{
+		"TEXTUAL",
+		"CATEGORICAL",
 	}
 }
 
@@ -464,6 +564,23 @@ func (JobScheduleDayOfTheWeek) Values() []JobScheduleDayOfTheWeek {
 		"THURSDAY",
 		"FRIDAY",
 		"SATURDAY",
+	}
+}
+
+type LayoutType string
+
+// Enum values for LayoutType
+const (
+	LayoutTypeProfileExplorer LayoutType = "PROFILE_EXPLORER"
+)
+
+// Values returns all known values for LayoutType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (LayoutType) Values() []LayoutType {
+	return []LayoutType{
+		"PROFILE_EXPLORER",
 	}
 }
 
@@ -662,6 +779,44 @@ func (PeriodUnit) Values() []PeriodUnit {
 	}
 }
 
+type ProfileType string
+
+// Enum values for ProfileType
+const (
+	ProfileTypeAccountProfile ProfileType = "ACCOUNT_PROFILE"
+	ProfileTypeProfile        ProfileType = "PROFILE"
+)
+
+// Values returns all known values for ProfileType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProfileType) Values() []ProfileType {
+	return []ProfileType{
+		"ACCOUNT_PROFILE",
+		"PROFILE",
+	}
+}
+
+type ProfileTypeDimensionType string
+
+// Enum values for ProfileTypeDimensionType
+const (
+	ProfileTypeDimensionTypeInclusive ProfileTypeDimensionType = "INCLUSIVE"
+	ProfileTypeDimensionTypeExclusive ProfileTypeDimensionType = "EXCLUSIVE"
+)
+
+// Values returns all known values for ProfileTypeDimensionType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProfileTypeDimensionType) Values() []ProfileTypeDimensionType {
+	return []ProfileTypeDimensionType{
+		"INCLUSIVE",
+		"EXCLUSIVE",
+	}
+}
+
 type QueryResult string
 
 // Enum values for QueryResult
@@ -695,6 +850,85 @@ const (
 func (RangeUnit) Values() []RangeUnit {
 	return []RangeUnit{
 		"DAYS",
+	}
+}
+
+type ReadinessStatus string
+
+// Enum values for ReadinessStatus
+const (
+	ReadinessStatusPreparing  ReadinessStatus = "PREPARING"
+	ReadinessStatusInProgress ReadinessStatus = "IN_PROGRESS"
+	ReadinessStatusCompleted  ReadinessStatus = "COMPLETED"
+	ReadinessStatusFailed     ReadinessStatus = "FAILED"
+)
+
+// Values returns all known values for ReadinessStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ReadinessStatus) Values() []ReadinessStatus {
+	return []ReadinessStatus{
+		"PREPARING",
+		"IN_PROGRESS",
+		"COMPLETED",
+		"FAILED",
+	}
+}
+
+type RecommenderRecipeName string
+
+// Enum values for RecommenderRecipeName
+const (
+	RecommenderRecipeNameRecommendedForYou     RecommenderRecipeName = "recommended-for-you"
+	RecommenderRecipeNameSimilarItems          RecommenderRecipeName = "similar-items"
+	RecommenderRecipeNameFrequentlyPairedItems RecommenderRecipeName = "frequently-paired-items"
+	RecommenderRecipeNamePopularItems          RecommenderRecipeName = "popular-items"
+	RecommenderRecipeNameTrendingNow           RecommenderRecipeName = "trending-now"
+)
+
+// Values returns all known values for RecommenderRecipeName. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RecommenderRecipeName) Values() []RecommenderRecipeName {
+	return []RecommenderRecipeName{
+		"recommended-for-you",
+		"similar-items",
+		"frequently-paired-items",
+		"popular-items",
+		"trending-now",
+	}
+}
+
+type RecommenderStatus string
+
+// Enum values for RecommenderStatus
+const (
+	RecommenderStatusPending    RecommenderStatus = "PENDING"
+	RecommenderStatusInProgress RecommenderStatus = "IN_PROGRESS"
+	RecommenderStatusActive     RecommenderStatus = "ACTIVE"
+	RecommenderStatusFailed     RecommenderStatus = "FAILED"
+	RecommenderStatusStopping   RecommenderStatus = "STOPPING"
+	RecommenderStatusInactive   RecommenderStatus = "INACTIVE"
+	RecommenderStatusStarting   RecommenderStatus = "STARTING"
+	RecommenderStatusDeleting   RecommenderStatus = "DELETING"
+)
+
+// Values returns all known values for RecommenderStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RecommenderStatus) Values() []RecommenderStatus {
+	return []RecommenderStatus{
+		"PENDING",
+		"IN_PROGRESS",
+		"ACTIVE",
+		"FAILED",
+		"STOPPING",
+		"INACTIVE",
+		"STARTING",
+		"DELETING",
 	}
 }
 
@@ -831,6 +1065,25 @@ func (SalesforceConnectorOperator) Values() []SalesforceConnectorOperator {
 	}
 }
 
+type Scope string
+
+// Enum values for Scope
+const (
+	ScopeProfile Scope = "PROFILE"
+	ScopeDomain  Scope = "DOMAIN"
+)
+
+// Values returns all known values for Scope. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Scope) Values() []Scope {
+	return []Scope{
+		"PROFILE",
+		"DOMAIN",
+	}
+}
+
 type SegmentSnapshotStatus string
 
 // Enum values for SegmentSnapshotStatus
@@ -849,6 +1102,25 @@ func (SegmentSnapshotStatus) Values() []SegmentSnapshotStatus {
 		"COMPLETED",
 		"IN_PROGRESS",
 		"FAILED",
+	}
+}
+
+type SegmentType string
+
+// Enum values for SegmentType
+const (
+	SegmentTypeClassic  SegmentType = "CLASSIC"
+	SegmentTypeEnhanced SegmentType = "ENHANCED"
+)
+
+// Values returns all known values for SegmentType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SegmentType) Values() []SegmentType {
+	return []SegmentType{
+		"CLASSIC",
+		"ENHANCED",
 	}
 }
 
@@ -943,6 +1215,15 @@ const (
 	StandardIdentifierCase                StandardIdentifier = "CASE"
 	StandardIdentifierOrder               StandardIdentifier = "ORDER"
 	StandardIdentifierCommunicationRecord StandardIdentifier = "COMMUNICATION_RECORD"
+	StandardIdentifierAirPreference       StandardIdentifier = "AIR_PREFERENCE"
+	StandardIdentifierHotelPreference     StandardIdentifier = "HOTEL_PREFERENCE"
+	StandardIdentifierAirBooking          StandardIdentifier = "AIR_BOOKING"
+	StandardIdentifierAirSegment          StandardIdentifier = "AIR_SEGMENT"
+	StandardIdentifierHotelReservation    StandardIdentifier = "HOTEL_RESERVATION"
+	StandardIdentifierHotelStayRevenue    StandardIdentifier = "HOTEL_STAY_REVENUE"
+	StandardIdentifierLoyalty             StandardIdentifier = "LOYALTY"
+	StandardIdentifierLoyaltyTransaction  StandardIdentifier = "LOYALTY_TRANSACTION"
+	StandardIdentifierLoyaltyPromotion    StandardIdentifier = "LOYALTY_PROMOTION"
 	StandardIdentifierUnique              StandardIdentifier = "UNIQUE"
 	StandardIdentifierSecondary           StandardIdentifier = "SECONDARY"
 	StandardIdentifierLookupOnly          StandardIdentifier = "LOOKUP_ONLY"
@@ -960,6 +1241,15 @@ func (StandardIdentifier) Values() []StandardIdentifier {
 		"CASE",
 		"ORDER",
 		"COMMUNICATION_RECORD",
+		"AIR_PREFERENCE",
+		"HOTEL_PREFERENCE",
+		"AIR_BOOKING",
+		"AIR_SEGMENT",
+		"HOTEL_RESERVATION",
+		"HOTEL_STAY_REVENUE",
+		"LOYALTY",
+		"LOYALTY_TRANSACTION",
+		"LOYALTY_PROMOTION",
 		"UNIQUE",
 		"SECONDARY",
 		"LOOKUP_ONLY",
@@ -1027,6 +1317,25 @@ func (Status) Values() []Status {
 	}
 }
 
+type StatusReason string
+
+// Enum values for StatusReason
+const (
+	StatusReasonValidationFailure StatusReason = "VALIDATION_FAILURE"
+	StatusReasonInternalFailure   StatusReason = "INTERNAL_FAILURE"
+)
+
+// Values returns all known values for StatusReason. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (StatusReason) Values() []StatusReason {
+	return []StatusReason{
+		"VALIDATION_FAILURE",
+		"INTERNAL_FAILURE",
+	}
+}
+
 type StringDimensionType string
 
 // Enum values for StringDimensionType
@@ -1078,6 +1387,33 @@ func (TaskType) Values() []TaskType {
 		"Merge",
 		"Truncate",
 		"Validate",
+	}
+}
+
+type TrainingMetricName string
+
+// Enum values for TrainingMetricName
+const (
+	TrainingMetricNameHit        TrainingMetricName = "hit"
+	TrainingMetricNameCoverage   TrainingMetricName = "coverage"
+	TrainingMetricNameRecall     TrainingMetricName = "recall"
+	TrainingMetricNamePopularity TrainingMetricName = "popularity"
+	TrainingMetricNameFreshness  TrainingMetricName = "freshness"
+	TrainingMetricNameSimilarity TrainingMetricName = "similarity"
+)
+
+// Values returns all known values for TrainingMetricName. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TrainingMetricName) Values() []TrainingMetricName {
+	return []TrainingMetricName{
+		"hit",
+		"coverage",
+		"recall",
+		"popularity",
+		"freshness",
+		"similarity",
 	}
 }
 
@@ -1137,6 +1473,33 @@ const (
 func (Unit) Values() []Unit {
 	return []Unit{
 		"DAYS",
+	}
+}
+
+type UploadJobStatus string
+
+// Enum values for UploadJobStatus
+const (
+	UploadJobStatusCreated            UploadJobStatus = "CREATED"
+	UploadJobStatusInProgress         UploadJobStatus = "IN_PROGRESS"
+	UploadJobStatusPartiallySucceeded UploadJobStatus = "PARTIALLY_SUCCEEDED"
+	UploadJobStatusSucceeded          UploadJobStatus = "SUCCEEDED"
+	UploadJobStatusFailed             UploadJobStatus = "FAILED"
+	UploadJobStatusStopped            UploadJobStatus = "STOPPED"
+)
+
+// Values returns all known values for UploadJobStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (UploadJobStatus) Values() []UploadJobStatus {
+	return []UploadJobStatus{
+		"CREATED",
+		"IN_PROGRESS",
+		"PARTIALLY_SUCCEEDED",
+		"SUCCEEDED",
+		"FAILED",
+		"STOPPED",
 	}
 }
 

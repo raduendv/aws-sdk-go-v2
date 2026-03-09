@@ -9,7 +9,7 @@ import (
 
 // You don't have access to this item. The provided credentials couldn't be
 // validated. You might not be authorized to carry out the request. Make sure that
-// your account is authorized to use the Amazon QuickSight service, that your
+// your account is authorized to use the Amazon Quick Sight service, that your
 // policies have the correct permissions, and that you are using the correct
 // credentials.
 type AccessDeniedException struct {
@@ -96,7 +96,7 @@ func (e *ConflictException) ErrorCode() string {
 }
 func (e *ConflictException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
-// The customer managed key that is registered to your Amazon QuickSight account
+// The customer managed key that is registered to your Amazon Quick Sight account
 // is unavailable.
 type CustomerManagedKeyUnavailableException struct {
 	Message *string
@@ -128,7 +128,7 @@ func (e *CustomerManagedKeyUnavailableException) ErrorFault() smithy.ErrorFault 
 }
 
 // The domain specified isn't on the allow list. All domains for embedded
-// dashboards must be added to the approved list by an Amazon QuickSight admin.
+// dashboards must be added to the approved list by an Amazon Quick Suite admin.
 type DomainNotWhitelistedException struct {
 	Message *string
 
@@ -239,6 +239,37 @@ func (e *InternalServerException) ErrorCode() string {
 }
 func (e *InternalServerException) ErrorFault() smithy.ErrorFault { return smithy.FaultServer }
 
+// An exception thrown when an invalid parameter value is provided for dataset
+// operations.
+type InvalidDataSetParameterValueException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	RequestId *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *InvalidDataSetParameterValueException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *InvalidDataSetParameterValueException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *InvalidDataSetParameterValueException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "InvalidDataSetParameterValueException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *InvalidDataSetParameterValueException) ErrorFault() smithy.ErrorFault {
+	return smithy.FaultClient
+}
+
 // The NextToken value isn't valid.
 type InvalidNextTokenException struct {
 	Message *string
@@ -266,6 +297,34 @@ func (e *InvalidNextTokenException) ErrorCode() string {
 	return *e.ErrorCodeOverride
 }
 func (e *InvalidNextTokenException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
+
+// One or more parameter has a value that isn't valid.
+type InvalidParameterException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	RequestId *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *InvalidParameterException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *InvalidParameterException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *InvalidParameterException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "InvalidParameterException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *InvalidParameterException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
 // One or more parameters has a value that isn't valid.
 type InvalidParameterValueException struct {
@@ -558,10 +617,10 @@ func (e *ThrottlingException) ErrorCode() string {
 func (e *ThrottlingException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
 // This error indicates that you are calling an embedding operation in Amazon
-// QuickSight without the required pricing plan on your Amazon Web Services
-// account. Before you can use embedding for anonymous users, a QuickSight
-// administrator needs to add capacity pricing to Amazon QuickSight. You can do
-// this on the Manage Amazon QuickSight page.
+// Quick Sight without the required pricing plan on your Amazon Web Services
+// account. Before you can use embedding for anonymous users, a Quick Suite
+// administrator needs to add capacity pricing to Quick Sight. You can do this on
+// the Manage Quick Suite page.
 //
 // After capacity pricing is added, you can use the [GetDashboardEmbedUrl] API operation with the
 // --identity-type ANONYMOUS option.
@@ -594,10 +653,10 @@ func (e *UnsupportedPricingPlanException) ErrorCode() string {
 }
 func (e *UnsupportedPricingPlanException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
-// This error indicates that you are calling an operation on an Amazon QuickSight
+// This error indicates that you are calling an operation on an Amazon Quick Suite
 // subscription where the edition doesn't include support for that operation.
-// Amazon Amazon QuickSight currently has Standard Edition and Enterprise Edition.
-// Not every operation and capability is available in every edition.
+// Amazon Quick Suite currently has Standard Edition and Enterprise Edition. Not
+// every operation and capability is available in every edition.
 type UnsupportedUserEditionException struct {
 	Message *string
 

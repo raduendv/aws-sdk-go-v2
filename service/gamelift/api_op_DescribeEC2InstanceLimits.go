@@ -11,14 +11,16 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2
+//
 // Retrieves the instance limits and current utilization for an Amazon Web
 // Services Region or location. Instance limits control the number of instances,
 // per instance type, per location, that your Amazon Web Services account can use.
 // Learn more at [Amazon EC2 Instance Types]. The information returned includes the maximum number of
 // instances allowed and your account's current usage across all fleets. This
-// information can affect your ability to scale your Amazon GameLift fleets. You
-// can request a limit increase for your account by using the Service limits page
-// in the Amazon GameLift console.
+// information can affect your ability to scale your Amazon GameLift Servers
+// fleets. You can request a limit increase for your account by using the Service
+// limits page in the Amazon GameLift Servers console.
 //
 // Instance limits differ based on whether the instances are deployed in a fleet's
 // home Region or in a remote location. For remote locations, limits also differ
@@ -57,10 +59,10 @@ import (
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift fleets]
+// [Setting up Amazon GameLift Servers fleets]
 //
 // [Amazon EC2 Instance Types]: http://aws.amazon.com/ec2/instance-types/
-// [Setting up Amazon GameLift fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
+// [Setting up Amazon GameLift Servers fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 func (c *Client) DescribeEC2InstanceLimits(ctx context.Context, params *DescribeEC2InstanceLimitsInput, optFns ...func(*Options)) (*DescribeEC2InstanceLimitsOutput, error) {
 	if params == nil {
 		params = &DescribeEC2InstanceLimitsInput{}
@@ -78,10 +80,11 @@ func (c *Client) DescribeEC2InstanceLimits(ctx context.Context, params *Describe
 
 type DescribeEC2InstanceLimitsInput struct {
 
-	// Name of an Amazon EC2 instance type that is supported in Amazon GameLift. A
-	// fleet instance type determines the computing resources of each instance in the
-	// fleet, including CPU, memory, storage, and networking capacity. Do not specify a
-	// value for this parameter to retrieve limits for all instance types.
+	// Name of an Amazon EC2 instance type that is supported in Amazon GameLift
+	// Servers. A fleet instance type determines the computing resources of each
+	// instance in the fleet, including CPU, memory, storage, and networking capacity.
+	// Do not specify a value for this parameter to retrieve limits for all instance
+	// types.
 	EC2InstanceType types.EC2InstanceType
 
 	// The name of a remote location to request instance limits for, in the form of an
@@ -187,16 +190,13 @@ func (c *Client) addOperationDescribeEC2InstanceLimitsMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

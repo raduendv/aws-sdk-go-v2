@@ -152,6 +152,9 @@ var defaultPartitions = endpoints.Partitions{
 				Hostname: "notifications.ap-east-1.api.aws",
 			},
 			endpoints.EndpointKey{
+				Region: "ap-east-2",
+			}: endpoints.Endpoint{},
+			endpoints.EndpointKey{
 				Region: "ap-northeast-1",
 			}: endpoints.Endpoint{
 				Hostname: "notifications.ap-northeast-1.api.aws",
@@ -201,6 +204,9 @@ var defaultPartitions = endpoints.Partitions{
 			}: endpoints.Endpoint{
 				Hostname: "notifications.ap-southeast-5.api.aws",
 			},
+			endpoints.EndpointKey{
+				Region: "ap-southeast-6",
+			}: endpoints.Endpoint{},
 			endpoints.EndpointKey{
 				Region: "ap-southeast-7",
 			}: endpoints.Endpoint{
@@ -354,9 +360,23 @@ var defaultPartitions = endpoints.Partitions{
 		ID: "aws-eusc",
 		Defaults: map[endpoints.DefaultKey]endpoints.Endpoint{
 			{
+				Variant: endpoints.DualStackVariant,
+			}: {
+				Hostname:          "notifications.{region}.api.amazonwebservices.eu",
+				Protocols:         []string{"https"},
+				SignatureVersions: []string{"v4"},
+			},
+			{
 				Variant: endpoints.FIPSVariant,
 			}: {
 				Hostname:          "notifications-fips.{region}.amazonaws.eu",
+				Protocols:         []string{"https"},
+				SignatureVersions: []string{"v4"},
+			},
+			{
+				Variant: endpoints.FIPSVariant | endpoints.DualStackVariant,
+			}: {
+				Hostname:          "notifications-fips.{region}.api.amazonwebservices.eu",
 				Protocols:         []string{"https"},
 				SignatureVersions: []string{"v4"},
 			},
@@ -370,6 +390,11 @@ var defaultPartitions = endpoints.Partitions{
 		},
 		RegionRegex:    partitionRegexp.AwsEusc,
 		IsRegionalized: true,
+		Endpoints: endpoints.Endpoints{
+			endpoints.EndpointKey{
+				Region: "eusc-de-east-1",
+			}: endpoints.Endpoint{},
+		},
 	},
 	{
 		ID: "aws-iso",

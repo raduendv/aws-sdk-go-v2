@@ -37,7 +37,12 @@ func (c *Client) ListTagsForResource(ctx context.Context, params *ListTagsForRes
 type ListTagsForResourceInput struct {
 
 	// The Amazon Resource Name (ARN) of the Kinesis resource for which to list tags.
+	//
+	// This member is required.
 	ResourceARN *string
+
+	// Not Implemented. Reserved for future use.
+	StreamId *string
 
 	noSmithyDocumentSerde
 }
@@ -45,6 +50,7 @@ type ListTagsForResourceInput struct {
 func (in *ListTagsForResourceInput) bindEndpointParams(p *EndpointParameters) {
 
 	p.ResourceARN = in.ResourceARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("control")
 }
 
@@ -126,6 +132,9 @@ func (c *Client) addOperationListTagsForResourceMiddlewares(stack *middleware.St
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
+	if err = addOpListTagsForResourceValidationMiddleware(stack); err != nil {
+		return err
+	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opListTagsForResource(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -144,16 +153,13 @@ func (c *Client) addOperationListTagsForResourceMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

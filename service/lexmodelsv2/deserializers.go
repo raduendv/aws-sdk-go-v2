@@ -21,16 +21,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpBatchCreateCustomVocabularyItem struct {
 }
@@ -1618,6 +1609,25 @@ func awsRestjson1_deserializeOpDocumentCreateBotLocaleOutput(v **CreateBotLocale
 				}
 			}
 
+		case "speechDetectionSensitivity":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SpeechDetectionSensitivity to be of type string, got %T instead", value)
+				}
+				sv.SpeechDetectionSensitivity = types.SpeechDetectionSensitivity(jtv)
+			}
+
+		case "speechRecognitionSettings":
+			if err := awsRestjson1_deserializeDocumentSpeechRecognitionSettings(&sv.SpeechRecognitionSettings, value); err != nil {
+				return err
+			}
+
+		case "unifiedSpeechSettings":
+			if err := awsRestjson1_deserializeDocumentUnifiedSpeechSettings(&sv.UnifiedSpeechSettings, value); err != nil {
+				return err
+			}
+
 		case "voiceSettings":
 			if err := awsRestjson1_deserializeDocumentVoiceSettings(&sv.VoiceSettings, value); err != nil {
 				return err
@@ -2499,6 +2509,15 @@ func awsRestjson1_deserializeOpDocumentCreateIntentOutput(v **CreateIntentOutput
 		case "intentConfirmationSetting":
 			if err := awsRestjson1_deserializeDocumentIntentConfirmationSetting(&sv.IntentConfirmationSetting, value); err != nil {
 				return err
+			}
+
+		case "intentDisplayName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DisplayName to be of type string, got %T instead", value)
+				}
+				sv.IntentDisplayName = ptr.String(jtv)
 			}
 
 		case "intentId":
@@ -7098,6 +7117,25 @@ func awsRestjson1_deserializeOpDocumentDescribeBotLocaleOutput(v **DescribeBotLo
 				sv.SlotTypesCount = ptr.Int32(int32(i64))
 			}
 
+		case "speechDetectionSensitivity":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SpeechDetectionSensitivity to be of type string, got %T instead", value)
+				}
+				sv.SpeechDetectionSensitivity = types.SpeechDetectionSensitivity(jtv)
+			}
+
+		case "speechRecognitionSettings":
+			if err := awsRestjson1_deserializeDocumentSpeechRecognitionSettings(&sv.SpeechRecognitionSettings, value); err != nil {
+				return err
+			}
+
+		case "unifiedSpeechSettings":
+			if err := awsRestjson1_deserializeDocumentUnifiedSpeechSettings(&sv.UnifiedSpeechSettings, value); err != nil {
+				return err
+			}
+
 		case "voiceSettings":
 			if err := awsRestjson1_deserializeDocumentVoiceSettings(&sv.VoiceSettings, value); err != nil {
 				return err
@@ -9042,6 +9080,15 @@ func awsRestjson1_deserializeOpDocumentDescribeIntentOutput(v **DescribeIntentOu
 		case "intentConfirmationSetting":
 			if err := awsRestjson1_deserializeDocumentIntentConfirmationSetting(&sv.IntentConfirmationSetting, value); err != nil {
 				return err
+			}
+
+		case "intentDisplayName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DisplayName to be of type string, got %T instead", value)
+				}
+				sv.IntentDisplayName = ptr.String(jtv)
 			}
 
 		case "intentId":
@@ -19667,6 +19714,25 @@ func awsRestjson1_deserializeOpDocumentUpdateBotLocaleOutput(v **UpdateBotLocale
 				return err
 			}
 
+		case "speechDetectionSensitivity":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SpeechDetectionSensitivity to be of type string, got %T instead", value)
+				}
+				sv.SpeechDetectionSensitivity = types.SpeechDetectionSensitivity(jtv)
+			}
+
+		case "speechRecognitionSettings":
+			if err := awsRestjson1_deserializeDocumentSpeechRecognitionSettings(&sv.SpeechRecognitionSettings, value); err != nil {
+				return err
+			}
+
+		case "unifiedSpeechSettings":
+			if err := awsRestjson1_deserializeDocumentUnifiedSpeechSettings(&sv.UnifiedSpeechSettings, value); err != nil {
+				return err
+			}
+
 		case "voiceSettings":
 			if err := awsRestjson1_deserializeDocumentVoiceSettings(&sv.VoiceSettings, value); err != nil {
 				return err
@@ -20383,6 +20449,15 @@ func awsRestjson1_deserializeOpDocumentUpdateIntentOutput(v **UpdateIntentOutput
 		case "intentConfirmationSetting":
 			if err := awsRestjson1_deserializeDocumentIntentConfirmationSetting(&sv.IntentConfirmationSetting, value); err != nil {
 				return err
+			}
+
+		case "intentDisplayName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DisplayName to be of type string, got %T instead", value)
+				}
+				sv.IntentDisplayName = ptr.String(jtv)
 			}
 
 		case "intentId":
@@ -24969,6 +25044,25 @@ func awsRestjson1_deserializeDocumentBotLocaleImportSpecification(v **types.BotL
 				}
 			}
 
+		case "speechDetectionSensitivity":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SpeechDetectionSensitivity to be of type string, got %T instead", value)
+				}
+				sv.SpeechDetectionSensitivity = types.SpeechDetectionSensitivity(jtv)
+			}
+
+		case "speechRecognitionSettings":
+			if err := awsRestjson1_deserializeDocumentSpeechRecognitionSettings(&sv.SpeechRecognitionSettings, value); err != nil {
+				return err
+			}
+
+		case "unifiedSpeechSettings":
+			if err := awsRestjson1_deserializeDocumentUnifiedSpeechSettings(&sv.UnifiedSpeechSettings, value); err != nil {
+				return err
+			}
+
 		case "voiceSettings":
 			if err := awsRestjson1_deserializeDocumentVoiceSettings(&sv.VoiceSettings, value); err != nil {
 				return err
@@ -27549,6 +27643,55 @@ func awsRestjson1_deserializeDocumentDateRangeFilter(v **types.DateRangeFilter, 
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentDeepgramSpeechModelConfig(v **types.DeepgramSpeechModelConfig, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.DeepgramSpeechModelConfig
+	if *v == nil {
+		sv = &types.DeepgramSpeechModelConfig{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "apiTokenSecretArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SecretsManagerSecretArn to be of type string, got %T instead", value)
+				}
+				sv.ApiTokenSecretArn = ptr.String(jtv)
+			}
+
+		case "modelId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DeepgramModelId to be of type string, got %T instead", value)
+				}
+				sv.ModelId = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentDefaultConditionalBranch(v **types.DefaultConditionalBranch, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -29763,6 +29906,68 @@ func awsRestjson1_deserializeDocumentIntentConfirmationSetting(v **types.IntentC
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentIntentDisambiguationSettings(v **types.IntentDisambiguationSettings, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.IntentDisambiguationSettings
+	if *v == nil {
+		sv = &types.IntentDisambiguationSettings{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "customDisambiguationMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CustomDisambiguationMessage to be of type string, got %T instead", value)
+				}
+				sv.CustomDisambiguationMessage = ptr.String(jtv)
+			}
+
+		case "enabled":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Enabled to be of type *bool, got %T instead", value)
+				}
+				sv.Enabled = jtv
+			}
+
+		case "maxDisambiguationIntents":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected MaxDisambiguationIntents to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.MaxDisambiguationIntents = ptr.Int32(int32(i64))
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentIntentLevelSlotResolutionTestResultItem(v **types.IntentLevelSlotResolutionTestResultItem, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -30010,6 +30215,15 @@ func awsRestjson1_deserializeDocumentIntentSummary(v **types.IntentSummary, valu
 		case "inputContexts":
 			if err := awsRestjson1_deserializeDocumentInputContextsList(&sv.InputContexts, value); err != nil {
 				return err
+			}
+
+		case "intentDisplayName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DisplayName to be of type string, got %T instead", value)
+				}
+				sv.IntentDisplayName = ptr.String(jtv)
 			}
 
 		case "intentId":
@@ -30549,6 +30763,60 @@ func awsRestjson1_deserializeDocumentMultipleValuesSetting(v **types.MultipleVal
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.AllowMultipleValues = jtv
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentNluImprovementSpecification(v **types.NluImprovementSpecification, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.NluImprovementSpecification
+	if *v == nil {
+		sv = &types.NluImprovementSpecification{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "assistedNluMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AssistedNluMode to be of type string, got %T instead", value)
+				}
+				sv.AssistedNluMode = types.AssistedNluMode(jtv)
+			}
+
+		case "enabled":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Enabled to be of type *bool, got %T instead", value)
+				}
+				sv.Enabled = jtv
+			}
+
+		case "intentDisambiguationSettings":
+			if err := awsRestjson1_deserializeDocumentIntentDisambiguationSettings(&sv.IntentDisambiguationSettings, value); err != nil {
+				return err
 			}
 
 		default:
@@ -32113,6 +32381,11 @@ func awsRestjson1_deserializeDocumentRuntimeSettings(v **types.RuntimeSettings, 
 
 	for key, value := range shape {
 		switch key {
+		case "nluImprovement":
+			if err := awsRestjson1_deserializeDocumentNluImprovementSpecification(&sv.NluImprovement, value); err != nil {
+				return err
+			}
+
 		case "slotResolutionImprovement":
 			if err := awsRestjson1_deserializeDocumentSlotResolutionImprovementSpecification(&sv.SlotResolutionImprovement, value); err != nil {
 				return err
@@ -33976,6 +34249,136 @@ func awsRestjson1_deserializeDocumentSpecifications(v **types.Specifications, va
 		case "valueElicitationSetting":
 			if err := awsRestjson1_deserializeDocumentSubSlotValueElicitationSetting(&sv.ValueElicitationSetting, value); err != nil {
 				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentSpeechFoundationModel(v **types.SpeechFoundationModel, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.SpeechFoundationModel
+	if *v == nil {
+		sv = &types.SpeechFoundationModel{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "modelArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected BedrockModelArn to be of type string, got %T instead", value)
+				}
+				sv.ModelArn = ptr.String(jtv)
+			}
+
+		case "voiceId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected VoiceId to be of type string, got %T instead", value)
+				}
+				sv.VoiceId = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentSpeechModelConfig(v **types.SpeechModelConfig, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.SpeechModelConfig
+	if *v == nil {
+		sv = &types.SpeechModelConfig{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "deepgramConfig":
+			if err := awsRestjson1_deserializeDocumentDeepgramSpeechModelConfig(&sv.DeepgramConfig, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentSpeechRecognitionSettings(v **types.SpeechRecognitionSettings, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.SpeechRecognitionSettings
+	if *v == nil {
+		sv = &types.SpeechRecognitionSettings{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "speechModelConfig":
+			if err := awsRestjson1_deserializeDocumentSpeechModelConfig(&sv.SpeechModelConfig, value); err != nil {
+				return err
+			}
+
+		case "speechModelPreference":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SpeechModelPreference to be of type string, got %T instead", value)
+				}
+				sv.SpeechModelPreference = types.SpeechModelPreference(jtv)
 			}
 
 		default:
@@ -35918,6 +36321,42 @@ func awsRestjson1_deserializeDocumentTurnSpecification(v **types.TurnSpecificati
 
 		case "userTurn":
 			if err := awsRestjson1_deserializeDocumentUserTurnSpecification(&sv.UserTurn, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentUnifiedSpeechSettings(v **types.UnifiedSpeechSettings, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.UnifiedSpeechSettings
+	if *v == nil {
+		sv = &types.UnifiedSpeechSettings{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "speechFoundationModel":
+			if err := awsRestjson1_deserializeDocumentSpeechFoundationModel(&sv.SpeechFoundationModel, value); err != nil {
 				return err
 			}
 

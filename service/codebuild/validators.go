@@ -1081,6 +1081,21 @@ func validateCloudWatchLogsConfig(v *types.CloudWatchLogsConfig) error {
 	}
 }
 
+func validateDockerServer(v *types.DockerServer) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DockerServer"}
+	if len(v.ComputeType) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ComputeType"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateEnvironmentVariable(v *types.EnvironmentVariable) error {
 	if v == nil {
 		return nil
@@ -1296,6 +1311,11 @@ func validateProjectEnvironment(v *types.ProjectEnvironment) error {
 			invalidParams.AddNested("RegistryCredential", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.DockerServer != nil {
+		if err := validateDockerServer(v.DockerServer); err != nil {
+			invalidParams.AddNested("DockerServer", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -1389,6 +1409,21 @@ func validateProxyConfiguration(v *types.ProxyConfiguration) error {
 		if err := validateFleetProxyRules(v.OrderedProxyRules); err != nil {
 			invalidParams.AddNested("OrderedProxyRules", err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validatePullRequestBuildPolicy(v *types.PullRequestBuildPolicy) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "PullRequestBuildPolicy"}
+	if len(v.RequiresCommentApproval) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("RequiresCommentApproval"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1749,6 +1784,11 @@ func validateOpCreateWebhookInput(v *CreateWebhookInput) error {
 	if v.ScopeConfiguration != nil {
 		if err := validateScopeConfiguration(v.ScopeConfiguration); err != nil {
 			invalidParams.AddNested("ScopeConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.PullRequestBuildPolicy != nil {
+		if err := validatePullRequestBuildPolicy(v.PullRequestBuildPolicy); err != nil {
+			invalidParams.AddNested("PullRequestBuildPolicy", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -2382,6 +2422,11 @@ func validateOpUpdateWebhookInput(v *UpdateWebhookInput) error {
 	if v.FilterGroups != nil {
 		if err := validateFilterGroups(v.FilterGroups); err != nil {
 			invalidParams.AddNested("FilterGroups", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.PullRequestBuildPolicy != nil {
+		if err := validatePullRequestBuildPolicy(v.PullRequestBuildPolicy); err != nil {
+			invalidParams.AddNested("PullRequestBuildPolicy", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

@@ -19,16 +19,7 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpConfigureLogsForChannel struct {
 }
@@ -4012,6 +4003,11 @@ func awsRestjson1_deserializeOpDocumentGetPlaybackConfigurationOutput(v **GetPla
 				return err
 			}
 
+		case "AdDecisionServerConfiguration":
+			if err := awsRestjson1_deserializeDocumentAdDecisionServerConfiguration(&sv.AdDecisionServerConfiguration, value); err != nil {
+				return err
+			}
+
 		case "AdDecisionServerUrl":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -5849,6 +5845,11 @@ func awsRestjson1_deserializeOpDocumentPutPlaybackConfigurationOutput(v **PutPla
 		switch key {
 		case "AdConditioningConfiguration":
 			if err := awsRestjson1_deserializeDocumentAdConditioningConfiguration(&sv.AdConditioningConfiguration, value); err != nil {
+				return err
+			}
+
+		case "AdDecisionServerConfiguration":
+			if err := awsRestjson1_deserializeDocumentAdDecisionServerConfiguration(&sv.AdDecisionServerConfiguration, value); err != nil {
 				return err
 			}
 
@@ -8510,6 +8511,42 @@ func awsRestjson1_deserializeDocumentAdConditioningConfiguration(v **types.AdCon
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentAdDecisionServerConfiguration(v **types.AdDecisionServerConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.AdDecisionServerConfiguration
+	if *v == nil {
+		sv = &types.AdDecisionServerConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "HttpRequest":
+			if err := awsRestjson1_deserializeDocumentHttpRequest(&sv.HttpRequest, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentAdMarkerPassthrough(v **types.AdMarkerPassthrough, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -9761,6 +9798,69 @@ func awsRestjson1_deserializeDocumentHttpPackageConfigurations(v *[]types.HttpPa
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentHttpRequest(v **types.HttpRequest, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.HttpRequest
+	if *v == nil {
+		sv = &types.HttpRequest{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Body":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.Body = ptr.String(jtv)
+			}
+
+		case "CompressRequest":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CompressionMethod to be of type string, got %T instead", value)
+				}
+				sv.CompressRequest = types.CompressionMethod(jtv)
+			}
+
+		case "Headers":
+			if err := awsRestjson1_deserializeDocumentStringMap(&sv.Headers, value); err != nil {
+				return err
+			}
+
+		case "Method":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Method to be of type string, got %T instead", value)
+				}
+				sv.Method = types.Method(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentKeyValuePair(v **types.KeyValuePair, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -10193,6 +10293,11 @@ func awsRestjson1_deserializeDocumentPlaybackConfiguration(v **types.PlaybackCon
 				return err
 			}
 
+		case "AdDecisionServerConfiguration":
+			if err := awsRestjson1_deserializeDocumentAdDecisionServerConfiguration(&sv.AdDecisionServerConfiguration, value); err != nil {
+				return err
+			}
+
 		case "AdDecisionServerUrl":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -10478,6 +10583,11 @@ func awsRestjson1_deserializeDocumentPrefetchRetrieval(v **types.PrefetchRetriev
 				return err
 			}
 
+		case "TrafficShapingTpsConfiguration":
+			if err := awsRestjson1_deserializeDocumentTrafficShapingTpsConfiguration(&sv.TrafficShapingTpsConfiguration, value); err != nil {
+				return err
+			}
+
 		case "TrafficShapingType":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -10751,6 +10861,11 @@ func awsRestjson1_deserializeDocumentRecurringRetrieval(v **types.RecurringRetri
 
 		case "TrafficShapingRetrievalWindow":
 			if err := awsRestjson1_deserializeDocumentTrafficShapingRetrievalWindow(&sv.TrafficShapingRetrievalWindow, value); err != nil {
+				return err
+			}
+
+		case "TrafficShapingTpsConfiguration":
+			if err := awsRestjson1_deserializeDocumentTrafficShapingTpsConfiguration(&sv.TrafficShapingTpsConfiguration, value); err != nil {
 				return err
 			}
 
@@ -11595,6 +11710,42 @@ func awsRestjson1_deserializeDocumentSpliceInsertMessage(v **types.SpliceInsertM
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentStringMap(v *map[string]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var mv map[string]string
+	if *v == nil {
+		mv = map[string]string{}
+	} else {
+		mv = *v
+	}
+
+	for key, value := range shape {
+		var parsedVal string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+			}
+			parsedVal = jtv
+		}
+		mv[key] = parsedVal
+
+	}
+	*v = mv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentTimeShiftConfiguration(v **types.TimeShiftConfiguration, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -11708,6 +11859,63 @@ func awsRestjson1_deserializeDocumentTrafficShapingRetrievalWindow(v **types.Tra
 					return err
 				}
 				sv.RetrievalWindowDurationSeconds = ptr.Int32(int32(i64))
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentTrafficShapingTpsConfiguration(v **types.TrafficShapingTpsConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.TrafficShapingTpsConfiguration
+	if *v == nil {
+		sv = &types.TrafficShapingTpsConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "PeakConcurrentUsers":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.PeakConcurrentUsers = ptr.Int32(int32(i64))
+			}
+
+		case "PeakTps":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.PeakTps = ptr.Int32(int32(i64))
 			}
 
 		default:

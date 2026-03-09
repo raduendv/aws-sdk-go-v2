@@ -13,6 +13,34 @@ import (
 )
 
 // Creates an asset in Amazon DataZone catalog.
+//
+// Before creating assets, make sure that the following requirements are met:
+//
+//   - --domain-identifier must refer to an existing domain.
+//
+//   - --owning-project-identifier must be a valid project within the domain.
+//
+//   - Asset type must be created beforehand using create-asset-type , or be a
+//     supported system-defined type. For more information, see [create-asset-type].
+//
+//   - --type-revision (if used) must match a valid revision of the asset type.
+//
+//   - formsInput is required when it is associated as required in the asset-type .
+//     For more information, see [create-form-type].
+//
+//   - Form content must include all required fields as per the form schema (e.g.,
+//     bucketArn ).
+//
+// You must invoke the following pre-requisite commands before invoking this API:
+//
+// [CreateFormType]
+//
+// [CreateAssetType]
+//
+// [create-asset-type]: https://docs.aws.amazon.com/cli/latest/reference/datazone/create-asset-type.html
+// [create-form-type]: https://docs.aws.amazon.com/cli/latest/reference/datazone/create-form-type.html
+// [CreateFormType]: https://docs.aws.amazon.com/datazone/latest/APIReference/API_CreateFormType.html
+// [CreateAssetType]: https://docs.aws.amazon.com/datazone/latest/APIReference/API_CreateAssetType.html
 func (c *Client) CreateAsset(ctx context.Context, params *CreateAssetInput, optFns ...func(*Options)) (*CreateAssetOutput, error) {
 	if params == nil {
 		params = &CreateAssetInput{}
@@ -58,6 +86,9 @@ type CreateAssetInput struct {
 	Description *string
 
 	// The external identifier of the asset.
+	//
+	// If the value for the externalIdentifier parameter is specified, it must be a
+	// unique value.
 	ExternalIdentifier *string
 
 	// Metadata forms attached to the asset.
@@ -138,6 +169,9 @@ type CreateAssetOutput struct {
 
 	// The glossary terms that are attached to the created asset.
 	GlossaryTerms []string
+
+	// The glossary terms in a restricted glossary.
+	GovernedGlossaryTerms []string
 
 	// The latest data point that was imported into the time series form for the
 	// asset.
@@ -250,16 +284,13 @@ func (c *Client) addOperationCreateAssetMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -77,7 +77,16 @@ type CreateWorkflowInput struct {
 	// Describes the workflow.
 	Description *string
 
-	// The ID of the KMS key that is used to encrypt this workflow resource.
+	// Validates the required permissions for the operation and the request
+	// parameters, without actually making the request, and provides an error response.
+	// Upon a successful request, the error response is DryRunOperationException .
+	DryRun bool
+
+	// The Amazon Resource Name (ARN) that uniquely identifies the KMS key used to
+	// encrypt this workflow resource. This can be either the Key ARN or the Alias ARN.
+	// For more information, see [Key identifiers (KeyId)]in the Key Management Service Developer Guide.
+	//
+	// [Key identifiers (KeyId)]: https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id-key-ARN
 	KmsKeyId *string
 
 	// Tags that apply to the workflow resource.
@@ -99,6 +108,9 @@ type CreateWorkflowOutput struct {
 
 	// The client token that uniquely identifies the request.
 	ClientToken *string
+
+	// The resource ARNs with different wildcard variations of semantic versioning.
+	LatestVersionReferences *types.LatestVersionReferences
 
 	// The Amazon Resource Name (ARN) of the workflow resource that the request
 	// created.
@@ -201,16 +213,13 @@ func (c *Client) addOperationCreateWorkflowMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

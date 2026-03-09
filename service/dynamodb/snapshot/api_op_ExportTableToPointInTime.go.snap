@@ -1,14 +1,11 @@
 ExportTableToPointInTime
 	Initialize stack step
-		spanInitializeStart
 		RegisterServiceMetadata
 		OperationIdempotencyTokenAutoFill
 		legacyEndpointContextSetter
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		setOperationInput
 		ResolveEndpoint
 		OperationSerializer
@@ -19,11 +16,12 @@ ExportTableToPointInTime
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		DisableAcceptEncodingGzip
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

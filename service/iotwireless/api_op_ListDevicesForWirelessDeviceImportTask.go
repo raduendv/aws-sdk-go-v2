@@ -61,6 +61,12 @@ type ListDevicesForWirelessDeviceImportTaskOutput struct {
 	// additional results.
 	NextToken *string
 
+	// The integration status of the Device Location feature for Sidewalk devices.
+	Positioning types.PositioningConfigStatus
+
+	// The Sidewalk object containing Sidewalk-related device information.
+	Sidewalk *types.SidewalkListDevicesForImportInfo
+
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
 
@@ -155,16 +161,13 @@ func (c *Client) addOperationListDevicesForWirelessDeviceImportTaskMiddlewares(s
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

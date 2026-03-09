@@ -20,9 +20,8 @@ import (
 // including the list of services that currently work with Organizations, see [Using Organizations with other Amazon Web Services services]in
 // the Organizations User Guide.
 //
-// This operation can be called only from the organization's management account or
-// by a member account that is a delegated administrator for an Amazon Web Services
-// service.
+// You can only call this operation from the management account or a member
+// account that is a delegated administrator.
 //
 // [Using Organizations with other Amazon Web Services services]: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_services.html
 func (c *Client) ListAWSServiceAccessForOrganization(ctx context.Context, params *ListAWSServiceAccessForOrganizationInput, optFns ...func(*Options)) (*ListAWSServiceAccessForOrganizationOutput, error) {
@@ -42,15 +41,9 @@ func (c *Client) ListAWSServiceAccessForOrganization(ctx context.Context, params
 
 type ListAWSServiceAccessForOrganizationInput struct {
 
-	// The total number of results that you want included on each page of the
-	// response. If you do not include this parameter, it defaults to a value that is
-	// specific to the operation. If additional items exist beyond the maximum you
-	// specify, the NextToken response element is present and has a value (is not
-	// null). Include that value as the NextToken request parameter in the next call
-	// to the operation to get the next part of the results. Note that Organizations
-	// might return fewer results than the maximum even when there are more results
-	// available. You should check NextToken after every operation to ensure that you
-	// receive all of the results.
+	// The maximum number of items to return in the response. If more results exist
+	// than the specified MaxResults value, a token is included in the response so
+	// that you can retrieve the remaining results.
 	MaxResults *int32
 
 	// The parameter for receiving additional results if you receive a NextToken
@@ -166,16 +159,13 @@ func (c *Client) addOperationListAWSServiceAccessForOrganizationMiddlewares(stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -184,15 +174,9 @@ func (c *Client) addOperationListAWSServiceAccessForOrganizationMiddlewares(stac
 // ListAWSServiceAccessForOrganizationPaginatorOptions is the paginator options
 // for ListAWSServiceAccessForOrganization
 type ListAWSServiceAccessForOrganizationPaginatorOptions struct {
-	// The total number of results that you want included on each page of the
-	// response. If you do not include this parameter, it defaults to a value that is
-	// specific to the operation. If additional items exist beyond the maximum you
-	// specify, the NextToken response element is present and has a value (is not
-	// null). Include that value as the NextToken request parameter in the next call
-	// to the operation to get the next part of the results. Note that Organizations
-	// might return fewer results than the maximum even when there are more results
-	// available. You should check NextToken after every operation to ensure that you
-	// receive all of the results.
+	// The maximum number of items to return in the response. If more results exist
+	// than the specified MaxResults value, a token is included in the response so
+	// that you can retrieve the remaining results.
 	Limit int32
 
 	// Set to true if pagination should stop if the service returns a pagination token

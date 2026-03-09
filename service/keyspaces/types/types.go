@@ -186,6 +186,72 @@ type CapacitySpecificationSummary struct {
 	noSmithyDocumentSerde
 }
 
+// The settings for the CDC stream of a table. For more information about CDC
+// streams, see [Working with change data capture (CDC) streams in Amazon Keyspaces]in the Amazon Keyspaces Developer Guide.
+//
+// [Working with change data capture (CDC) streams in Amazon Keyspaces]: https://docs.aws.amazon.com/keyspaces/latest/devguide/cdc.html
+type CdcSpecification struct {
+
+	// The status of the CDC stream. You can enable or disable a stream for a table.
+	//
+	// This member is required.
+	Status CdcStatus
+
+	// Specifies that the stream inherits the tags from the table.
+	PropagateTags CdcPropagateTags
+
+	// The tags (key-value pairs) that you want to apply to the stream.
+	Tags []Tag
+
+	// The view type specifies the changes Amazon Keyspaces records for each changed
+	// row in the stream. After you create the stream, you can't make changes to this
+	// selection.
+	//
+	// The options are:
+	//
+	//   - NEW_AND_OLD_IMAGES - both versions of the row, before and after the change.
+	//   This is the default.
+	//
+	//   - NEW_IMAGE - the version of the row after the change.
+	//
+	//   - OLD_IMAGE - the version of the row before the change.
+	//
+	//   - KEYS_ONLY - the partition and clustering keys of the row that was changed.
+	ViewType ViewType
+
+	noSmithyDocumentSerde
+}
+
+// The settings of the CDC stream of the table. For more information about CDC
+// streams, see [Working with change data capture (CDC) streams in Amazon Keyspaces]in the Amazon Keyspaces Developer Guide.
+//
+// [Working with change data capture (CDC) streams in Amazon Keyspaces]: https://docs.aws.amazon.com/keyspaces/latest/devguide/cdc.html
+type CdcSpecificationSummary struct {
+
+	// The status of the CDC stream. Specifies if the table has a CDC stream.
+	//
+	// This member is required.
+	Status CdcStatus
+
+	// The view type specifies the changes Amazon Keyspaces records for each changed
+	// row in the stream. This setting can't be changed, after the stream has been
+	// created.
+	//
+	// The options are:
+	//
+	//   - NEW_AND_OLD_IMAGES - both versions of the row, before and after the change.
+	//   This is the default.
+	//
+	//   - NEW_IMAGE - the version of the row after the change.
+	//
+	//   - OLD_IMAGE - the version of the row before the change.
+	//
+	//   - KEYS_ONLY - the partition and clustering keys of the row that was changed.
+	ViewType ViewType
+
+	noSmithyDocumentSerde
+}
+
 // The client-side timestamp setting of the table.
 //
 // For more information, see [How it works: Amazon Keyspaces client-side timestamps] in the Amazon Keyspaces Developer Guide.
@@ -465,6 +531,10 @@ type ReplicaSpecificationSummary struct {
 	// Region.
 	Status TableStatus
 
+	// The warm throughput settings for this replica, including the current status and
+	// configured read and write capacity units.
+	WarmThroughputSpecification *WarmThroughputSpecificationSummary
+
 	noSmithyDocumentSerde
 }
 
@@ -648,6 +718,55 @@ type TimeToLive struct {
 	//
 	// This member is required.
 	Status TimeToLiveStatus
+
+	noSmithyDocumentSerde
+}
+
+// Specifies the warm throughput settings for a table. Pre-warming a table by
+// specifying warm throughput pre-provisions read and write capacity units to help
+// avoid capacity exceeded exceptions and reduce latency when your table starts
+// receiving traffic.
+//
+// For more information about pre-warming in Amazon Keyspaces, see [Pre-warm a table in Amazon Keyspaces] in the Amazon
+// Keyspaces Developer Guide.
+//
+// [Pre-warm a table in Amazon Keyspaces]: https://docs.aws.amazon.com/keyspaces/latest/devguide/warm-throughput.html
+type WarmThroughputSpecification struct {
+
+	// The number of read capacity units per second to pre-warm the table for read
+	// capacity throughput. The minimum value is 1.
+	ReadUnitsPerSecond *int64
+
+	// The number of write capacity units per second to pre-warm the table for write
+	// capacity throughput. The minimum value is 1.
+	WriteUnitsPerSecond *int64
+
+	noSmithyDocumentSerde
+}
+
+// Contains the current warm throughput settings for a table, including the
+// configured capacity units and the current status of the warm throughput
+// configuration.
+type WarmThroughputSpecificationSummary struct {
+
+	// The number of read capacity units per second currently configured for warm
+	// throughput.
+	//
+	// This member is required.
+	ReadUnitsPerSecond *int64
+
+	// The current status of the warm throughput configuration. Valid values are
+	// AVAILABLE when the configuration is active, and UPDATING when changes are being
+	// applied.
+	//
+	// This member is required.
+	Status WarmThroughputStatus
+
+	// The number of write capacity units per second currently configured for warm
+	// throughput.
+	//
+	// This member is required.
+	WriteUnitsPerSecond *int64
 
 	noSmithyDocumentSerde
 }

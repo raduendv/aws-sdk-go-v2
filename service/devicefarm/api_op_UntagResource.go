@@ -30,8 +30,8 @@ type UntagResourceInput struct {
 
 	// The Amazon Resource Name (ARN) of the resource or resources from which to
 	// delete tags. You can associate tags with the following Device Farm resources:
-	// PROJECT , RUN , NETWORK_PROFILE , INSTANCE_PROFILE , DEVICE_INSTANCE , SESSION ,
-	// DEVICE_POOL , DEVICE , and VPCE_CONFIGURATION .
+	// PROJECT , TESTGRID_PROJECT , RUN , NETWORK_PROFILE , INSTANCE_PROFILE ,
+	// DEVICE_INSTANCE , SESSION , DEVICE_POOL , DEVICE , and VPCE_CONFIGURATION .
 	//
 	// This member is required.
 	ResourceARN *string
@@ -139,16 +139,13 @@ func (c *Client) addOperationUntagResourceMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

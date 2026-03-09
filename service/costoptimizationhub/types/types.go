@@ -26,6 +26,27 @@ type AccountEnrollmentStatus struct {
 	noSmithyDocumentSerde
 }
 
+// Contains the details of an Aurora DB cluster storage.
+type AuroraDbClusterStorage struct {
+
+	// The Aurora DB cluster storage configuration used for recommendations.
+	Configuration *AuroraDbClusterStorageConfiguration
+
+	// Cost impact of the resource recommendation.
+	CostCalculation *ResourceCostCalculation
+
+	noSmithyDocumentSerde
+}
+
+// The Aurora DB cluster storage configuration used for recommendations.
+type AuroraDbClusterStorageConfiguration struct {
+
+	// The storage type to associate with the Aurora DB cluster.
+	StorageType *string
+
+	noSmithyDocumentSerde
+}
+
 // Describes the Amazon Elastic Block Store performance configuration of the
 // current and recommended resource configuration for a recommendation.
 type BlockStoragePerformanceConfiguration struct {
@@ -252,7 +273,7 @@ type Ec2InstanceSavingsPlansConfiguration struct {
 	// The hourly commitment for the Savings Plans type.
 	HourlyCommitment *string
 
-	// The instance family of the recommended Savings Plan.
+	// The instance family of the recommended Savings Plans.
 	InstanceFamily *string
 
 	// The payment option for the commitment.
@@ -353,6 +374,32 @@ type EcsServiceConfiguration struct {
 
 	// Details about the compute configuration.
 	Compute *ComputeConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// Contains cost efficiency metrics for a specific group over time. The group is
+// defined by the grouping dimension specified in the request, such as account ID,
+// Amazon Web Services Region.
+type EfficiencyMetricsByGroup struct {
+
+	// The value of the grouping dimension for this set of metrics. For example, if
+	// grouped by account ID, this field contains the account ID. If no grouping is
+	// specified, this field is empty.
+	Group *string
+
+	// An explanation of why efficiency metrics could not be calculated for this group
+	// when the metricsByTime field is null. Common reasons include insufficient or
+	// inconclusive cost and usage data during the specified time period. This field is
+	// null or empty when metrics are successfully calculated.
+	Message *string
+
+	// A list of time-series data points containing efficiency metrics for this group.
+	// Each data point includes an efficiency score, estimated savings, spending, and a
+	// timestamp corresponding to the specified granularity. This field is null when
+	// efficiency metrics cannot be calculated for the group, in which case the message
+	// field provides an explanation.
+	MetricsByTime []MetricsByTime
 
 	noSmithyDocumentSerde
 }
@@ -504,8 +551,9 @@ type LambdaFunctionConfiguration struct {
 
 // The MemoryDB reserved instances recommendation details.
 //
-// MemoryDB reserved instances are referred to as "MemoryDB reserved nodes" in
-// customer-facing documentation.
+// While the API reference uses "MemoryDB reserved instances", the user guide and
+// other documentation refer to them as "MemoryDB reserved nodes", as the terms are
+// used interchangeably.
 type MemoryDbReservedInstances struct {
 
 	// The MemoryDB reserved instances configuration used for recommendations.
@@ -519,8 +567,9 @@ type MemoryDbReservedInstances struct {
 
 // The MemoryDB reserved instances configuration used for recommendations.
 //
-// MemoryDB reserved instances are referred to as "MemoryDB reserved nodes" in
-// customer-facing documentation.
+// While the API reference uses "MemoryDB reserved instances", the user guide and
+// other documentation refer to them as "MemoryDB reserved nodes", as the terms are
+// used interchangeably.
 type MemoryDbReservedInstancesConfiguration struct {
 
 	// The account scope for which you want recommendations.
@@ -566,11 +615,61 @@ type MemoryDbReservedInstancesConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// Contains efficiency metrics for a specific point in time, including an
+// efficiency score, potential savings, optimizable spend, and timestamp.
+type MetricsByTime struct {
+
+	// The estimated savings amount for this time period, representing the potential
+	// cost reduction achieved through optimization recommendations.
+	Savings *float64
+
+	// The efficiency score for this time period. The score represents a measure of
+	// how effectively the cloud resources are being optimized, with higher scores
+	// indicating better optimization performance.
+	Score *float64
+
+	// The total spending amount for this time period.
+	Spend *float64
+
+	// The timestamp for this data point. The format depends on the granularity:
+	// YYYY-MM-DD for daily metrics, or YYYY-MM for monthly metrics.
+	Timestamp *string
+
+	noSmithyDocumentSerde
+}
+
 // The configuration for the EC2 Auto Scaling group with mixed instance types.
 type MixedInstanceConfiguration struct {
 
 	// The instance type of the configuration.
 	Type *string
+
+	noSmithyDocumentSerde
+}
+
+// The NAT Gateway recommendation details.
+type NatGateway struct {
+
+	// The NAT Gateway configuration used for recommendations.
+	Configuration *NatGatewayConfiguration
+
+	// Cost impact of the resource recommendation.
+	CostCalculation *ResourceCostCalculation
+
+	noSmithyDocumentSerde
+}
+
+// The NAT Gateway configuration used for recommendations.
+type NatGatewayConfiguration struct {
+
+	// The number of active connections through the NAT Gateway.
+	ActiveConnectionCount *int64
+
+	// The number of packets received from the destination through the NAT Gateway.
+	PacketsInFromDestination *int64
+
+	// The number of packets received from the source through the NAT Gateway.
+	PacketsInFromSource *int64
 
 	noSmithyDocumentSerde
 }
@@ -638,6 +737,22 @@ type OrderBy struct {
 
 	// The order that's used to sort the data.
 	Order Order
+
+	noSmithyDocumentSerde
+}
+
+// The preferred configuration for Reserved Instances and Savings Plans
+// commitment-based discounts, consisting of a payment option and a commitment
+// duration.
+type PreferredCommitment struct {
+
+	// The preferred upfront payment structure for commitments. If the value is null,
+	// it will default to AllUpfront (highest savings) where applicable.
+	PaymentOption PaymentOption
+
+	// The preferred length of the commitment period. If the value is null, it will
+	// default to ThreeYears (highest savings) where applicable.
+	Term Term
 
 	noSmithyDocumentSerde
 }
@@ -956,6 +1071,7 @@ type ResourceCostCalculation struct {
 //
 // The following types satisfy this interface:
 //
+//	ResourceDetailsMemberAuroraDbClusterStorage
 //	ResourceDetailsMemberComputeSavingsPlans
 //	ResourceDetailsMemberDynamoDbReservedCapacity
 //	ResourceDetailsMemberEbsVolume
@@ -967,6 +1083,7 @@ type ResourceCostCalculation struct {
 //	ResourceDetailsMemberElastiCacheReservedInstances
 //	ResourceDetailsMemberLambdaFunction
 //	ResourceDetailsMemberMemoryDbReservedInstances
+//	ResourceDetailsMemberNatGateway
 //	ResourceDetailsMemberOpenSearchReservedInstances
 //	ResourceDetailsMemberRdsDbInstance
 //	ResourceDetailsMemberRdsDbInstanceStorage
@@ -976,6 +1093,15 @@ type ResourceCostCalculation struct {
 type ResourceDetails interface {
 	isResourceDetails()
 }
+
+// The Aurora DB cluster storage recommendation details.
+type ResourceDetailsMemberAuroraDbClusterStorage struct {
+	Value AuroraDbClusterStorage
+
+	noSmithyDocumentSerde
+}
+
+func (*ResourceDetailsMemberAuroraDbClusterStorage) isResourceDetails() {}
 
 // The Compute Savings Plans recommendation details.
 type ResourceDetailsMemberComputeSavingsPlans struct {
@@ -1075,6 +1201,15 @@ type ResourceDetailsMemberMemoryDbReservedInstances struct {
 }
 
 func (*ResourceDetailsMemberMemoryDbReservedInstances) isResourceDetails() {}
+
+// The NAT Gateway recommendation details.
+type ResourceDetailsMemberNatGateway struct {
+	Value NatGateway
+
+	noSmithyDocumentSerde
+}
+
+func (*ResourceDetailsMemberNatGateway) isResourceDetails() {}
 
 // The OpenSearch reserved instances recommendation details.
 type ResourceDetailsMemberOpenSearchReservedInstances struct {
@@ -1189,20 +1324,20 @@ type SavingsPlansCostCalculation struct {
 	noSmithyDocumentSerde
 }
 
-// Pricing information about a Savings Plan.
+// Pricing information about a Savings Plans.
 type SavingsPlansPricing struct {
 
-	// Estimated monthly commitment for the Savings Plan.
+	// Estimated monthly commitment for the Savings Plans.
 	EstimatedMonthlyCommitment *float64
 
-	// Estimated On-Demand cost you will pay after buying the Savings Plan.
+	// Estimated On-Demand cost you will pay after buying the Savings Plans.
 	EstimatedOnDemandCost *float64
 
-	// The cost of paying for the recommended Savings Plan monthly.
+	// The cost of paying for the recommended Savings Plans monthly.
 	MonthlySavingsPlansEligibleCost *float64
 
 	// Estimated savings as a percentage of your overall costs after buying the
-	// Savings Plan.
+	// Savings Plans.
 	SavingsPercentage *float64
 
 	noSmithyDocumentSerde
@@ -1242,6 +1377,25 @@ type Tag struct {
 
 	// The value that's associated with the tag.
 	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a date range for retrieving efficiency metrics. The start date is
+// inclusive and the end date is exclusive.
+type TimePeriod struct {
+
+	// The end of the time period (exclusive). Specify the date in ISO 8601 format,
+	// such as 2024-12-31.
+	//
+	// This member is required.
+	End *string
+
+	// The beginning of the time period (inclusive). Specify the date in ISO 8601
+	// format, such as 2024-01-01.
+	//
+	// This member is required.
+	Start *string
 
 	noSmithyDocumentSerde
 }

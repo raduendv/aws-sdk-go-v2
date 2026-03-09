@@ -12,6 +12,8 @@ import (
 )
 
 // Modifies the configuration of an existing analyzer.
+//
+// This action is not supported for external access analyzers.
 func (c *Client) UpdateAnalyzer(ctx context.Context, params *UpdateAnalyzerInput, optFns ...func(*Options)) (*UpdateAnalyzerOutput, error) {
 	if params == nil {
 		params = &UpdateAnalyzerInput{}
@@ -141,16 +143,13 @@ func (c *Client) addOperationUpdateAnalyzerMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -38,23 +38,25 @@ type CreateImageRecipeInput struct {
 	// This member is required.
 	ClientToken *string
 
-	// The components included in the image recipe.
-	//
-	// This member is required.
-	Components []types.ComponentConfiguration
-
 	// The name of the image recipe.
 	//
 	// This member is required.
 	Name *string
 
-	// The base image of the image recipe. The value of the string can be the ARN of
-	// the base image or an AMI ID. The format for the ARN follows this example:
-	// arn:aws:imagebuilder:us-west-2:aws:image/windows-server-2016-english-full-base-x86/x.x.x
-	// . You can provide the specific version that you want to use, or you can use a
-	// wildcard in all of the fields. If you enter an AMI ID for the string value, you
-	// must have access to the AMI, and the AMI must be in the same Region in which you
-	// are using Image Builder.
+	// The base image for customizations specified in the image recipe. You can
+	// specify the parent image using one of the following options:
+	//
+	//   - AMI ID
+	//
+	//   - Image Builder image Amazon Resource Name (ARN)
+	//
+	//   - Amazon Web Services Systems Manager (SSM) Parameter Store Parameter,
+	//   prefixed by ssm: , followed by the parameter name or ARN.
+	//
+	//   - Amazon Web Services Marketplace product ID
+	//
+	// If you enter an AMI ID or an SSM parameter that contains the AMI ID, you must
+	// have access to the AMI, and the AMI must be in the source Region.
 	//
 	// This member is required.
 	ParentImage *string
@@ -79,8 +81,15 @@ type CreateImageRecipeInput struct {
 	// Specify additional settings and launch scripts for your build instances.
 	AdditionalInstanceConfiguration *types.AdditionalInstanceConfiguration
 
+	// Tags that are applied to the AMI that Image Builder creates during the Build
+	// phase prior to image distribution.
+	AmiTags map[string]string
+
 	// The block device mappings of the image recipe.
 	BlockDeviceMappings []types.InstanceBlockDeviceMapping
+
+	// The components included in the image recipe.
+	Components []types.ComponentConfiguration
 
 	// The description of the image recipe.
 	Description *string
@@ -102,6 +111,9 @@ type CreateImageRecipeOutput struct {
 	// The Amazon Resource Name (ARN) of the image recipe that was created by this
 	// request.
 	ImageRecipeArn *string
+
+	// The resource ARNs with different wildcard variations of semantic versioning.
+	LatestVersionReferences *types.LatestVersionReferences
 
 	// The request ID that uniquely identifies this request.
 	RequestId *string
@@ -203,16 +215,13 @@ func (c *Client) addOperationCreateImageRecipeMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

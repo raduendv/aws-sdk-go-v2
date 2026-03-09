@@ -78,8 +78,7 @@ type DescribeClusterSchedulerConfigOutput struct {
 	// ARN of the cluster where the cluster policy is applied.
 	ClusterArn *string
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	CreatedBy *types.UserContext
 
 	// Description of the cluster policy.
@@ -88,8 +87,7 @@ type DescribeClusterSchedulerConfigOutput struct {
 	// Failure reason of the cluster policy.
 	FailureReason *string
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	LastModifiedBy *types.UserContext
 
 	// Last modified time of the cluster policy.
@@ -99,6 +97,11 @@ type DescribeClusterSchedulerConfigOutput struct {
 	// fair-share allocation. This helps prioritize critical workloads and distributes
 	// idle compute across entities.
 	SchedulerConfig *types.SchedulerConfig
+
+	// Additional details about the status of the cluster policy. This field provides
+	// context when the policy is in a non-active state, such as during creation,
+	// updates, or if failures occur.
+	StatusDetails map[string]types.SchedulerResourceStatus
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -194,16 +197,13 @@ func (c *Client) addOperationDescribeClusterSchedulerConfigMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

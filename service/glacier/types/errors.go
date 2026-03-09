@@ -125,6 +125,37 @@ func (e *MissingParameterValueException) ErrorCode() string {
 }
 func (e *MissingParameterValueException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
+// Returned if the request was made by a customer with no Amazon Glacier storage.
+// The request is denied as the API is no longer supported for new customers.
+// Please use Amazon S3 Glacier storage classes instead.
+type NoLongerSupportedException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	Type *string
+	Code *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *NoLongerSupportedException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *NoLongerSupportedException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *NoLongerSupportedException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "NoLongerSupportedException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *NoLongerSupportedException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
+
 // Returned if a retrieval job would exceed the current data policy's retrieval
 // rate limit. For more information about data retrieval policies,
 type PolicyEnforcedException struct {
@@ -155,7 +186,7 @@ func (e *PolicyEnforcedException) ErrorCode() string {
 }
 func (e *PolicyEnforcedException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
-// Returned if, when uploading an archive, Amazon S3 Glacier times out while
+// Returned if, when uploading an archive, Amazon Glacier times out while
 // receiving the upload.
 type RequestTimeoutException struct {
 	Message *string

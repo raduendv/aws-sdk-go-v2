@@ -53,8 +53,19 @@ type CreateSessionInput struct {
 	// [Making retries safe with idempotent APIs]: http://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/
 	ClientToken *string
 
+	// The Amazon Resource Name (ARN) of the email contact in Amazon Connect. Used to
+	// retrieve email content and establish session context for AI-powered email
+	// assistance.
+	ContactArn *string
+
 	// The description.
 	Description *string
+
+	// The list of orchestrator configurations for the session being created.
+	OrchestratorConfigurationList []types.OrchestratorConfigurationEntry
+
+	// The list of orchestrator configurations to remove from the session.
+	RemoveOrchestratorConfigurationList *bool
 
 	// An object that can be used to specify Tag conditions.
 	TagFilter types.TagFilter
@@ -167,16 +178,13 @@ func (c *Client) addOperationCreateSessionMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

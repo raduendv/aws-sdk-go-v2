@@ -90,6 +90,11 @@ const (
 	ConflictExceptionReasonAutoshiftEnabled                   ConflictExceptionReason = "AutoShiftEnabled"
 	ConflictExceptionReasonPracticeConfigurationDoesNotExist  ConflictExceptionReason = "PracticeConfigurationDoesNotExist"
 	ConflictExceptionReasonZonalAutoshiftActive               ConflictExceptionReason = "ZonalAutoshiftActive"
+	ConflictExceptionReasonPracticeOutcomeAlarmsRed           ConflictExceptionReason = "PracticeOutcomeAlarmsRed"
+	ConflictExceptionReasonPracticeBlockingAlarmsRed          ConflictExceptionReason = "PracticeBlockingAlarmsRed"
+	ConflictExceptionReasonPracticeInBlockedDates             ConflictExceptionReason = "PracticeInBlockedDates"
+	ConflictExceptionReasonPracticeInBlockedWindows           ConflictExceptionReason = "PracticeInBlockedWindows"
+	ConflictExceptionReasonPracticeOutsideAllowedWindows      ConflictExceptionReason = "PracticeOutsideAllowedWindows"
 )
 
 // Values returns all known values for ConflictExceptionReason. Note that this can
@@ -105,6 +110,11 @@ func (ConflictExceptionReason) Values() []ConflictExceptionReason {
 		"AutoShiftEnabled",
 		"PracticeConfigurationDoesNotExist",
 		"ZonalAutoshiftActive",
+		"PracticeOutcomeAlarmsRed",
+		"PracticeBlockingAlarmsRed",
+		"PracticeInBlockedDates",
+		"PracticeInBlockedWindows",
+		"PracticeOutsideAllowedWindows",
 	}
 }
 
@@ -129,10 +139,11 @@ type PracticeRunOutcome string
 
 // Enum values for PracticeRunOutcome
 const (
-	PracticeRunOutcomeFailed      PracticeRunOutcome = "FAILED"
-	PracticeRunOutcomeInterrupted PracticeRunOutcome = "INTERRUPTED"
-	PracticeRunOutcomePending     PracticeRunOutcome = "PENDING"
-	PracticeRunOutcomeSucceeded   PracticeRunOutcome = "SUCCEEDED"
+	PracticeRunOutcomeFailed              PracticeRunOutcome = "FAILED"
+	PracticeRunOutcomeInterrupted         PracticeRunOutcome = "INTERRUPTED"
+	PracticeRunOutcomePending             PracticeRunOutcome = "PENDING"
+	PracticeRunOutcomeSucceeded           PracticeRunOutcome = "SUCCEEDED"
+	PracticeRunOutcomeCapacityCheckFailed PracticeRunOutcome = "CAPACITY_CHECK_FAILED"
 )
 
 // Values returns all known values for PracticeRunOutcome. Note that this can be
@@ -145,6 +156,7 @@ func (PracticeRunOutcome) Values() []PracticeRunOutcome {
 		"INTERRUPTED",
 		"PENDING",
 		"SUCCEEDED",
+		"CAPACITY_CHECK_FAILED",
 	}
 }
 
@@ -175,18 +187,21 @@ type ValidationExceptionReason string
 
 // Enum values for ValidationExceptionReason
 const (
-	ValidationExceptionReasonInvalidExpiresIn              ValidationExceptionReason = "InvalidExpiresIn"
-	ValidationExceptionReasonInvalidStatus                 ValidationExceptionReason = "InvalidStatus"
-	ValidationExceptionReasonMissingValue                  ValidationExceptionReason = "MissingValue"
-	ValidationExceptionReasonInvalidToken                  ValidationExceptionReason = "InvalidToken"
-	ValidationExceptionReasonInvalidResourceIdentifier     ValidationExceptionReason = "InvalidResourceIdentifier"
-	ValidationExceptionReasonInvalidAz                     ValidationExceptionReason = "InvalidAz"
-	ValidationExceptionReasonUnsupportedAz                 ValidationExceptionReason = "UnsupportedAz"
-	ValidationExceptionReasonInvalidAlarmCondition         ValidationExceptionReason = "InvalidAlarmCondition"
-	ValidationExceptionReasonInvalidConditionType          ValidationExceptionReason = "InvalidConditionType"
-	ValidationExceptionReasonInvalidPracticeBlocker        ValidationExceptionReason = "InvalidPracticeBlocker"
-	ValidationExceptionReasonFisExperimentUpdateNotAllowed ValidationExceptionReason = "FISExperimentUpdateNotAllowed"
-	ValidationExceptionReasonAutoshiftUpdateNotAllowed     ValidationExceptionReason = "AutoshiftUpdateNotAllowed"
+	ValidationExceptionReasonInvalidExpiresIn                   ValidationExceptionReason = "InvalidExpiresIn"
+	ValidationExceptionReasonInvalidStatus                      ValidationExceptionReason = "InvalidStatus"
+	ValidationExceptionReasonMissingValue                       ValidationExceptionReason = "MissingValue"
+	ValidationExceptionReasonInvalidToken                       ValidationExceptionReason = "InvalidToken"
+	ValidationExceptionReasonInvalidResourceIdentifier          ValidationExceptionReason = "InvalidResourceIdentifier"
+	ValidationExceptionReasonInvalidAz                          ValidationExceptionReason = "InvalidAz"
+	ValidationExceptionReasonUnsupportedAz                      ValidationExceptionReason = "UnsupportedAz"
+	ValidationExceptionReasonInvalidAlarmCondition              ValidationExceptionReason = "InvalidAlarmCondition"
+	ValidationExceptionReasonInvalidConditionType               ValidationExceptionReason = "InvalidConditionType"
+	ValidationExceptionReasonInvalidPracticeBlocker             ValidationExceptionReason = "InvalidPracticeBlocker"
+	ValidationExceptionReasonFisExperimentUpdateNotAllowed      ValidationExceptionReason = "FISExperimentUpdateNotAllowed"
+	ValidationExceptionReasonAutoshiftUpdateNotAllowed          ValidationExceptionReason = "AutoshiftUpdateNotAllowed"
+	ValidationExceptionReasonUnsupportedPracticeCancelShiftType ValidationExceptionReason = "UnsupportedPracticeCancelShiftType"
+	ValidationExceptionReasonInvalidPracticeAllowedWindow       ValidationExceptionReason = "InvalidPracticeAllowedWindow"
+	ValidationExceptionReasonConflictingPracticeWindows         ValidationExceptionReason = "InvalidPracticeWindows"
 )
 
 // Values returns all known values for ValidationExceptionReason. Note that this
@@ -207,6 +222,9 @@ func (ValidationExceptionReason) Values() []ValidationExceptionReason {
 		"InvalidPracticeBlocker",
 		"FISExperimentUpdateNotAllowed",
 		"AutoshiftUpdateNotAllowed",
+		"UnsupportedPracticeCancelShiftType",
+		"InvalidPracticeAllowedWindow",
+		"InvalidPracticeWindows",
 	}
 }
 

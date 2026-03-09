@@ -1,6 +1,5 @@
 CreateJob
 	Initialize stack step
-		spanInitializeStart
 		S3Shared:ARNLookup
 		S3Control:BackfillInput
 		RegisterServiceMetadata
@@ -8,9 +7,7 @@ CreateJob
 		legacyEndpointContextSetter
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		stashOperationInput
 		ResolveEndpoint
 		setArnFieldName
@@ -25,10 +22,11 @@ CreateJob
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

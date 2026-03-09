@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Null and empty headers are not sent over the wire.
+// Null headers are not sent over the wire, empty headers are serialized to ""
 func (c *Client) NullAndEmptyHeadersClient(ctx context.Context, params *NullAndEmptyHeadersClientInput, optFns ...func(*Options)) (*NullAndEmptyHeadersClientOutput, error) {
 	if params == nil {
 		params = &NullAndEmptyHeadersClientInput{}
@@ -134,16 +134,13 @@ func (c *Client) addOperationNullAndEmptyHeadersClientMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -18,7 +18,7 @@ import (
 // SMS throughput limits are measured in Message Parts per Second (MPS). Your MPS
 // limit depends on the destination country of your messages, as well as the type
 // of phone number (origination number) that you use to send the message. For more
-// information about MPS, see [Message Parts per Second (MPS) limits]in the AWS End User Messaging SMS User Guide.
+// information about MPS, see [Message Parts per Second (MPS) limits]in the End User Messaging SMS User Guide.
 //
 // [Message Parts per Second (MPS) limits]: https://docs.aws.amazon.com/sms-voice/latest/userguide/sms-limitations-mps.html
 func (c *Client) SendTextMessage(ctx context.Context, params *SendTextMessageInput, optFns ...func(*Options)) (*SendTextMessageOutput, error) {
@@ -73,7 +73,7 @@ type SendTextMessageInput struct {
 	//
 	// The Message Parts per Second (MPS) limit when using DryRun is five. If your
 	// origination identity has a lower MPS limit then the lower MPS limit is used. For
-	// more information about MPS limits, see [Message Parts per Second (MPS) limits]in the AWS End User Messaging SMS User
+	// more information about MPS limits, see [Message Parts per Second (MPS) limits]in the End User Messaging SMS User
 	// Guide..
 	//
 	// [Message Parts per Second (MPS) limits]: https://docs.aws.amazon.com/sms-voice/latest/userguide/sms-limitations-mps.html
@@ -103,8 +103,8 @@ type SendTextMessageInput struct {
 	// The origination identity of the message. This can be either the PhoneNumber,
 	// PhoneNumberId, PhoneNumberArn, SenderId, SenderIdArn, PoolId, or PoolArn.
 	//
-	// If you are using a shared AWS End User Messaging SMS and Voice resource then
-	// you must use the full Amazon Resource Name(ARN).
+	// If you are using a shared End User Messaging SMS resource then you must use the
+	// full Amazon Resource Name(ARN).
 	OriginationIdentity *string
 
 	// The unique identifier for the protect configuration.
@@ -217,16 +217,13 @@ func (c *Client) addOperationSendTextMessageMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

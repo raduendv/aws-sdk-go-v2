@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2
+//
 // Retrieves properties for a Realtime script.
 //
 // To request a script record, specify the script ID. If successful, an object
@@ -18,13 +20,13 @@ import (
 //
 // # Learn more
 //
-// [Amazon GameLift Amazon GameLift Realtime]
+// [Amazon GameLift Servers Amazon GameLift Servers Realtime]
 //
 // # Related actions
 //
 // [All APIs by task]
 //
-// [Amazon GameLift Amazon GameLift Realtime]: https://docs.aws.amazon.com/gamelift/latest/developerguide/realtime-intro.html
+// [Amazon GameLift Servers Amazon GameLift Servers Realtime]: https://docs.aws.amazon.com/gamelift/latest/developerguide/realtime-intro.html
 // [All APIs by task]: https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets
 func (c *Client) DescribeScript(ctx context.Context, params *DescribeScriptInput, optFns ...func(*Options)) (*DescribeScriptOutput, error) {
 	if params == nil {
@@ -151,16 +153,13 @@ func (c *Client) addOperationDescribeScriptMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

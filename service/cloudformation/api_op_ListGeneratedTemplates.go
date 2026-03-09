@@ -29,13 +29,14 @@ func (c *Client) ListGeneratedTemplates(ctx context.Context, params *ListGenerat
 
 type ListGeneratedTemplatesInput struct {
 
-	//  If the number of available results exceeds this maximum, the response includes
+	// If the number of available results exceeds this maximum, the response includes
 	// a NextToken value that you can use for the NextToken parameter to get the next
 	// set of results. By default the ListGeneratedTemplates API action will return at
 	// most 50 results in each response. The maximum value is 100.
 	MaxResults *int32
 
-	// A string that identifies the next page of resource scan results.
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	noSmithyDocumentSerde
@@ -143,16 +144,13 @@ func (c *Client) addOperationListGeneratedTemplatesMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -161,7 +159,7 @@ func (c *Client) addOperationListGeneratedTemplatesMiddlewares(stack *middleware
 // ListGeneratedTemplatesPaginatorOptions is the paginator options for
 // ListGeneratedTemplates
 type ListGeneratedTemplatesPaginatorOptions struct {
-	//  If the number of available results exceeds this maximum, the response includes
+	// If the number of available results exceeds this maximum, the response includes
 	// a NextToken value that you can use for the NextToken parameter to get the next
 	// set of results. By default the ListGeneratedTemplates API action will return at
 	// most 50 results in each response. The maximum value is 100.

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	awsmiddleware "github.com/aws/aws-sdk-go-v2/aws/middleware"
 	"github.com/aws/aws-sdk-go-v2/service/controltower/document"
+	"github.com/aws/aws-sdk-go-v2/service/controltower/types"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
@@ -36,20 +37,22 @@ type UpdateLandingZoneInput struct {
 	// This member is required.
 	LandingZoneIdentifier *string
 
+	// The landing zone version, for example, 3.2.
+	//
+	// This member is required.
+	Version *string
+
 	// The manifest file (JSON) is a text file that describes your Amazon Web Services
 	// resources. For an example, review [Launch your landing zone]. The example manifest file contains each of
 	// the available parameters. The schema for the landing zone's JSON manifest file
 	// is not published, by design.
 	//
 	// [Launch your landing zone]: https://docs.aws.amazon.com/controltower/latest/userguide/lz-api-launch
-	//
-	// This member is required.
 	Manifest document.Interface
 
-	// The landing zone version, for example, 3.2.
-	//
-	// This member is required.
-	Version *string
+	// Specifies the types of remediation actions to apply when updating the landing
+	// zone configuration.
+	RemediationTypes []types.RemediationType
 
 	noSmithyDocumentSerde
 }
@@ -157,16 +160,13 @@ func (c *Client) addOperationUpdateLandingZoneMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

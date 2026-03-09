@@ -58,6 +58,10 @@ type UpdateWorkerInput struct {
 
 type UpdateWorkerOutput struct {
 
+	// The script that runs as a worker is starting up that you can use to provide
+	// additional configuration for workers in your fleet.
+	HostConfiguration *types.HostConfiguration
+
 	// The worker log to update.
 	Log *types.LogConfiguration
 
@@ -158,16 +162,13 @@ func (c *Client) addOperationUpdateWorkerMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

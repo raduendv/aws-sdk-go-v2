@@ -13,6 +13,23 @@ import (
 )
 
 // Gets an Amazon DataZone asset.
+//
+// An asset is the fundamental building block in Amazon DataZone, representing any
+// data resource that needs to be cataloged and managed. It can take many forms,
+// from Amazon S3 buckets and database tables to dashboards and machine learning
+// models. Each asset contains comprehensive metadata about the resource, including
+// its location, schema, ownership, and lineage information. Assets are essential
+// for organizing and managing data resources across an organization, making them
+// discoverable and usable while maintaining proper governance.
+//
+// Before using the Amazon DataZone GetAsset command, ensure the following
+// prerequisites are met:
+//
+//   - Domain identifier must exist and be valid
+//
+//   - Asset identifier must exist
+//
+//   - User must have the required permissions to perform the action
 func (c *Client) GetAsset(ctx context.Context, params *GetAssetInput, optFns ...func(*Options)) (*GetAssetOutput, error) {
 	if params == nil {
 		params = &GetAssetInput{}
@@ -36,6 +53,10 @@ type GetAssetInput struct {
 	DomainIdentifier *string
 
 	// The ID of the Amazon DataZone asset.
+	//
+	// This parameter supports either the value of assetId or externalIdentifier as
+	// input. If you are passing the value of externalIdentifier , you must prefix this
+	// value with externalIdentifer%2F .
 	//
 	// This member is required.
 	Identifier *string
@@ -108,6 +129,9 @@ type GetAssetOutput struct {
 
 	// The business glossary terms attached to the asset.
 	GlossaryTerms []string
+
+	// The restricted glossary terms attached to an asset.
+	GovernedGlossaryTerms []string
 
 	// The latest data point that was imported into the time series form for the
 	// asset.
@@ -213,16 +237,13 @@ func (c *Client) addOperationGetAssetMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

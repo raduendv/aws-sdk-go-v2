@@ -20,6 +20,8 @@ import (
 // major or minor version of its template is created, if the version doesn’t
 // already exist. For more information, see [Template sync configurations]in the Proton User Guide.
 //
+// Deprecated: AWS Proton is not accepting new customers.
+//
 // [Template sync configurations]: https://docs.aws.amazon.com/proton/latest/userguide/ag-template-sync-configs.html
 func (c *Client) CreateTemplateSyncConfig(ctx context.Context, params *CreateTemplateSyncConfigInput, optFns ...func(*Options)) (*CreateTemplateSyncConfigOutput, error) {
 	if params == nil {
@@ -169,16 +171,13 @@ func (c *Client) addOperationCreateTemplateSyncConfigMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

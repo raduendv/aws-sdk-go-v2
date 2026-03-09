@@ -12,6 +12,8 @@ import (
 )
 
 // Retrieves a list of channels.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) ListChannels(ctx context.Context, params *ListChannelsInput, optFns ...func(*Options)) (*ListChannelsOutput, error) {
 	if params == nil {
 		params = &ListChannelsInput{}
@@ -32,9 +34,13 @@ type ListChannelsInput struct {
 	// The maximum number of results to return in this request.
 	//
 	// The default value is 100.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	MaxResults *int32
 
 	// The token for the next set of results.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	NextToken *string
 
 	noSmithyDocumentSerde
@@ -43,10 +49,14 @@ type ListChannelsInput struct {
 type ListChannelsOutput struct {
 
 	// A list of ChannelSummary objects.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	ChannelSummaries []types.ChannelSummary
 
 	// The token to retrieve the next set of results, or null if there are no more
 	// results.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	NextToken *string
 
 	// Metadata pertaining to the operation's result.
@@ -140,16 +150,13 @@ func (c *Client) addOperationListChannelsMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

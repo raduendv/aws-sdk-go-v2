@@ -12,6 +12,8 @@ import (
 )
 
 // Returns configuration details about all the launches in the specified project.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) ListLaunches(ctx context.Context, params *ListLaunchesInput, optFns ...func(*Options)) (*ListLaunchesOutput, error) {
 	if params == nil {
 		params = &ListLaunchesInput{}
@@ -32,17 +34,25 @@ type ListLaunchesInput struct {
 	// The name or ARN of the project to return the launch list from.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	// The maximum number of results to include in the response.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	MaxResults *int32
 
 	// The token to use when requesting the next set of results. You received this
 	// token from a previous ListLaunches operation.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	NextToken *string
 
 	// Use this optional parameter to limit the returned results to only the launches
 	// with the status that you specify here.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Status types.LaunchStatus
 
 	noSmithyDocumentSerde
@@ -52,10 +62,14 @@ type ListLaunchesOutput struct {
 
 	// An array of structures that contain the configuration details of the launches
 	// in the specified project.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Launches []types.Launch
 
 	// The token to use in a subsequent ListLaunches operation to return the next set
 	// of results.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	NextToken *string
 
 	// Metadata pertaining to the operation's result.
@@ -152,16 +166,13 @@ func (c *Client) addOperationListLaunchesMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -12,12 +12,11 @@ import (
 )
 
 // Creates a managed set of compute nodes. You associate a compute node group with
-// a cluster through 1 or more Amazon Web Services PCS queues or as part of the
-// login fleet. A compute node group includes the definition of the compute
-// properties and lifecycle management. Amazon Web Services PCS uses the
-// information you provide to this API action to launch compute nodes in your
-// account. You can only specify subnets in the same Amazon VPC as your cluster.
-// You receive billing charges for the compute nodes that Amazon Web Services PCS
+// a cluster through 1 or more PCS queues or as part of the login fleet. A compute
+// node group includes the definition of the compute properties and lifecycle
+// management. PCS uses the information you provide to this API action to launch
+// compute nodes in your account. You can only specify subnets in the same Amazon
+// VPC as your cluster. You receive billing charges for the compute nodes that PCS
 // launches in your account. You must already have a launch template before you
 // call this API. For more information, see [Launch an instance from a launch template]in the Amazon Elastic Compute Cloud
 // User Guide for Linux Instances.
@@ -50,29 +49,24 @@ type CreateComputeNodeGroupInput struct {
 	// This member is required.
 	ComputeNodeGroupName *string
 
-	// An Amazon EC2 launch template Amazon Web Services PCS uses to launch compute
-	// nodes.
+	// An Amazon EC2 launch template PCS uses to launch compute nodes.
 	//
 	// This member is required.
 	CustomLaunchTemplate *types.CustomLaunchTemplate
 
 	// The Amazon Resource Name (ARN) of the IAM instance profile used to pass an IAM
 	// role when launching EC2 instances. The role contained in your instance profile
-	// must have the pcs:RegisterComputeNodeGroupInstance permission. The resource
-	// identifier of the ARN must start with AWSPCS or it must have /aws-pcs/ in its
-	// path.
+	// must have the pcs:RegisterComputeNodeGroupInstance permission and the role name
+	// must start with AWSPCS or must have the path /aws-pcs/ . For more information,
+	// see [IAM instance profiles for PCS]in the PCS User Guide.
 	//
-	// Examples
-	//
-	//   - arn:aws:iam::111122223333:instance-profile/AWSPCS-example-role-1
-	//
-	//   - arn:aws:iam::111122223333:instance-profile/aws-pcs/example-role-2
+	// [IAM instance profiles for PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/security-instance-profiles.html
 	//
 	// This member is required.
 	IamInstanceProfileArn *string
 
-	// A list of EC2 instance configurations that Amazon Web Services PCS can
-	// provision in the compute node group.
+	// A list of EC2 instance configurations that PCS can provision in the compute
+	// node group.
 	//
 	// This member is required.
 	InstanceConfigs []types.InstanceConfig
@@ -88,9 +82,9 @@ type CreateComputeNodeGroupInput struct {
 	// This member is required.
 	SubnetIds []string
 
-	//  The ID of the Amazon Machine Image (AMI) that Amazon Web Services PCS uses to
-	// launch compute nodes (Amazon EC2 instances). If you don't provide this value,
-	// Amazon Web Services PCS uses the AMI ID specified in the custom launch template.
+	//  The ID of the Amazon Machine Image (AMI) that PCS uses to launch compute nodes
+	// (Amazon EC2 instances). If you don't provide this value, PCS uses the AMI ID
+	// specified in the custom launch template.
 	AmiId *string
 
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
@@ -101,12 +95,14 @@ type CreateComputeNodeGroupInput struct {
 	// specify a client token, the CLI and SDK automatically generate 1 for you.
 	ClientToken *string
 
-	// Specifies how EC2 instances are purchased on your behalf. Amazon Web Services
-	// PCS supports On-Demand and Spot instances. For more information, see [Instance purchasing options]in the
-	// Amazon Elastic Compute Cloud User Guide. If you don't provide this option, it
-	// defaults to On-Demand.
+	// Specifies how EC2 instances are purchased on your behalf. PCS supports
+	// On-Demand Instances, Spot Instances, and Amazon EC2 Capacity Blocks for ML. For
+	// more information, see [Amazon EC2 billing and purchasing options]in the Amazon Elastic Compute Cloud User Guide. For more
+	// information about PCS support for Capacity Blocks, see [Using Amazon EC2 Capacity Blocks for ML with PCS]in the PCS User Guide.
+	// If you don't provide this option, it defaults to On-Demand.
 	//
-	// [Instance purchasing options]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html
+	// [Using Amazon EC2 Capacity Blocks for ML with PCS]: https://docs.aws.amazon.com/pcs/latest/userguide/capacity-blocks.html
+	// [Amazon EC2 billing and purchasing options]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html
 	PurchaseOption types.PurchaseOption
 
 	// Additional options related to the Slurm scheduler.
@@ -225,16 +221,13 @@ func (c *Client) addOperationCreateComputeNodeGroupMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

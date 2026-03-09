@@ -132,10 +132,12 @@ type RelatedItemType string
 
 // Enum values for RelatedItemType
 const (
-	RelatedItemTypeContact RelatedItemType = "Contact"
-	RelatedItemTypeComment RelatedItemType = "Comment"
-	RelatedItemTypeFile    RelatedItemType = "File"
-	RelatedItemTypeSla     RelatedItemType = "Sla"
+	RelatedItemTypeContact     RelatedItemType = "Contact"
+	RelatedItemTypeComment     RelatedItemType = "Comment"
+	RelatedItemTypeFile        RelatedItemType = "File"
+	RelatedItemTypeSla         RelatedItemType = "Sla"
+	RelatedItemTypeConnectCase RelatedItemType = "ConnectCase"
+	RelatedItemTypeCustom      RelatedItemType = "Custom"
 )
 
 // Values returns all known values for RelatedItemType. Note that this can be
@@ -148,6 +150,8 @@ func (RelatedItemType) Values() []RelatedItemType {
 		"Comment",
 		"File",
 		"Sla",
+		"ConnectCase",
+		"Custom",
 	}
 }
 
@@ -155,7 +159,9 @@ type RuleType string
 
 // Enum values for RuleType
 const (
-	RuleTypeRequired RuleType = "Required"
+	RuleTypeRequired     RuleType = "Required"
+	RuleTypeHidden       RuleType = "Hidden"
+	RuleTypeFieldOptions RuleType = "FieldOptions"
 )
 
 // Values returns all known values for RuleType. Note that this can be expanded in
@@ -165,6 +171,28 @@ const (
 func (RuleType) Values() []RuleType {
 	return []RuleType{
 		"Required",
+		"Hidden",
+		"FieldOptions",
+	}
+}
+
+type SearchAllRelatedItemsSortProperty string
+
+// Enum values for SearchAllRelatedItemsSortProperty
+const (
+	SearchAllRelatedItemsSortPropertyAssociationTime SearchAllRelatedItemsSortProperty = "AssociationTime"
+	SearchAllRelatedItemsSortPropertyCaseId          SearchAllRelatedItemsSortProperty = "CaseId"
+)
+
+// Values returns all known values for SearchAllRelatedItemsSortProperty. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SearchAllRelatedItemsSortProperty) Values() []SearchAllRelatedItemsSortProperty {
+	return []SearchAllRelatedItemsSortProperty{
+		"AssociationTime",
+		"CaseId",
 	}
 }
 
@@ -205,6 +233,24 @@ const (
 func (SlaType) Values() []SlaType {
 	return []SlaType{
 		"CaseField",
+	}
+}
+
+type TagPropagationResourceType string
+
+// Enum values for TagPropagationResourceType
+const (
+	// Cases resources created within the domain
+	TagPropagationResourceTypeCases TagPropagationResourceType = "Cases"
+)
+
+// Values returns all known values for TagPropagationResourceType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TagPropagationResourceType) Values() []TagPropagationResourceType {
+	return []TagPropagationResourceType{
+		"Cases",
 	}
 }
 

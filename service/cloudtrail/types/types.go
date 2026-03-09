@@ -83,6 +83,22 @@ type AdvancedFieldSelector struct {
 	noSmithyDocumentSerde
 }
 
+// An object that contains configuration settings for aggregating events.
+type AggregationConfiguration struct {
+
+	// Specifies the event category for which aggregation should be performed.
+	//
+	// This member is required.
+	EventCategory EventCategoryAggregation
+
+	// A list of aggregation templates that can be used to configure event aggregation.
+	//
+	// This member is required.
+	Templates []Template
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about a returned CloudTrail channel.
 type Channel struct {
 
@@ -94,6 +110,24 @@ type Channel struct {
 	// the name of the Amazon Web Services service that created the channel and
 	// custom-suffix represents the suffix created by the Amazon Web Services service.
 	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// An object that contains information types to be included in CloudTrail enriched
+// events.
+type ContextKeySelector struct {
+
+	// A list of keys defined by Type to be included in CloudTrail enriched events.
+	//
+	// This member is required.
+	Equals []string
+
+	// Specifies the type of the event record field in ContextKeySelector. Valid
+	// values include RequestContext, TagContext.
+	//
+	// This member is required.
+	Type Type
 
 	noSmithyDocumentSerde
 }
@@ -513,14 +547,27 @@ type IngestionStatus struct {
 // or event data store.
 type InsightSelector struct {
 
+	// Select the event category on which Insights should be enabled.
+	//
+	//   - If EventCategories is not provided, the specified Insights types are
+	//   enabled on management API calls by default.
+	//
+	//   - If EventCategories is provided, the given event categories will overwrite
+	//   the existing ones. For example, if a trail already has Insights enabled on
+	//   management events, and then a PutInsightSelectors request is made with only data
+	//   events specified in EventCategories, Insights on management events will be
+	//   disabled.
+	EventCategories []SourceEventCategory
+
 	// The type of Insights events to log on a trail or event data store.
 	// ApiCallRateInsight and ApiErrorRateInsight are valid Insight types.
 	//
 	// The ApiCallRateInsight Insights type analyzes write-only management API calls
-	// that are aggregated per minute against a baseline API call volume.
+	// or read and write data API calls that are aggregated per minute against a
+	// baseline API call volume.
 	//
-	// The ApiErrorRateInsight Insights type analyzes management API calls that result
-	// in error codes. The error is shown if the API call is unsuccessful.
+	// The ApiErrorRateInsight Insights type analyzes management and data API calls
+	// that result in error codes. The error is shown if the API call is unsuccessful.
 	InsightType InsightType
 
 	noSmithyDocumentSerde
@@ -843,8 +890,9 @@ type Trail struct {
 	// Specifies whether the trail is an organization trail.
 	IsOrganizationTrail *bool
 
-	// Specifies the KMS key ID that encrypts the logs delivered by CloudTrail. The
-	// value is a fully specified ARN to a KMS key in the following format.
+	// Specifies the KMS key ID that encrypts the logs and digest files delivered by
+	// CloudTrail. The value is a fully specified ARN to a KMS key in the following
+	// format.
 	//
 	//     arn:aws:kms:us-east-2:123456789012:key/12345678-1234-1234-1234-123456789012
 	KmsKeyId *string

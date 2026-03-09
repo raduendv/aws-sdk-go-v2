@@ -38,6 +38,9 @@ type StartImportInput struct {
 	// Start import request client token.
 	ClientToken *string
 
+	// Start import request tags.
+	Tags map[string]string
+
 	noSmithyDocumentSerde
 }
 
@@ -144,16 +147,13 @@ func (c *Client) addOperationStartImportMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

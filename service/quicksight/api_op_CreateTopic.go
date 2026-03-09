@@ -45,6 +45,9 @@ type CreateTopicInput struct {
 	// This member is required.
 	TopicId *string
 
+	// Custom instructions for the topic.
+	CustomInstructions *types.CustomInstructions
+
 	// The Folder ARN of the folder that you want the topic to reside in.
 	FolderArns []string
 
@@ -167,16 +170,13 @@ func (c *Client) addOperationCreateTopicMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

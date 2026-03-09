@@ -2,6 +2,23 @@
 
 package types
 
+type AccessType string
+
+// Enum values for AccessType
+const (
+	AccessTypeAllow AccessType = "ALLOW"
+)
+
+// Values returns all known values for AccessType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AccessType) Values() []AccessType {
+	return []AccessType{
+		"ALLOW",
+	}
+}
+
 type ActionType string
 
 // Enum values for ActionType
@@ -94,6 +111,44 @@ func (AgentStatusType) Values() []AgentStatusType {
 	}
 }
 
+type AiUseCase string
+
+// Enum values for AiUseCase
+const (
+	AiUseCaseAgentAssistance AiUseCase = "AgentAssistance"
+	AiUseCaseSelfService     AiUseCase = "SelfService"
+)
+
+// Values returns all known values for AiUseCase. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AiUseCase) Values() []AiUseCase {
+	return []AiUseCase{
+		"AgentAssistance",
+		"SelfService",
+	}
+}
+
+type AllowedUserAction string
+
+// Enum values for AllowedUserAction
+const (
+	AllowedUserActionCall    AllowedUserAction = "CALL"
+	AllowedUserActionDiscard AllowedUserAction = "DISCARD"
+)
+
+// Values returns all known values for AllowedUserAction. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AllowedUserAction) Values() []AllowedUserAction {
+	return []AllowedUserAction{
+		"CALL",
+		"DISCARD",
+	}
+}
+
 type AnsweringMachineDetectionStatus string
 
 // Enum values for AnsweringMachineDetectionStatus
@@ -135,6 +190,25 @@ func (AnsweringMachineDetectionStatus) Values() []AnsweringMachineDetectionStatu
 		"AMD_UNANSWERED",
 		"AMD_ERROR",
 		"AMD_NOT_APPLICABLE",
+	}
+}
+
+type ApplicationType string
+
+// Enum values for ApplicationType
+const (
+	ApplicationTypeMcp                   ApplicationType = "MCP"
+	ApplicationTypeThirdPartyApplication ApplicationType = "THIRD_PARTY_APPLICATION"
+)
+
+// Values returns all known values for ApplicationType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ApplicationType) Values() []ApplicationType {
+	return []ApplicationType{
+		"MCP",
+		"THIRD_PARTY_APPLICATION",
 	}
 }
 
@@ -201,6 +275,27 @@ func (AttachedFileServiceQuotaExceededExceptionReason) Values() []AttachedFileSe
 	}
 }
 
+type AutoEvaluationStatus string
+
+// Enum values for AutoEvaluationStatus
+const (
+	AutoEvaluationStatusInProgress AutoEvaluationStatus = "IN_PROGRESS"
+	AutoEvaluationStatusFailed     AutoEvaluationStatus = "FAILED"
+	AutoEvaluationStatusSucceeded  AutoEvaluationStatus = "SUCCEEDED"
+)
+
+// Values returns all known values for AutoEvaluationStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutoEvaluationStatus) Values() []AutoEvaluationStatus {
+	return []AutoEvaluationStatus{
+		"IN_PROGRESS",
+		"FAILED",
+		"SUCCEEDED",
+	}
+}
+
 type BehaviorType string
 
 // Enum values for BehaviorType
@@ -217,6 +312,25 @@ func (BehaviorType) Values() []BehaviorType {
 	return []BehaviorType{
 		"ROUTE_CURRENT_CHANNEL_ONLY",
 		"ROUTE_ANY_CHANNEL",
+	}
+}
+
+type BooleanComparisonType string
+
+// Enum values for BooleanComparisonType
+const (
+	BooleanComparisonTypeIsTrue  BooleanComparisonType = "IS_TRUE"
+	BooleanComparisonTypeIsFalse BooleanComparisonType = "IS_FALSE"
+)
+
+// Values returns all known values for BooleanComparisonType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (BooleanComparisonType) Values() []BooleanComparisonType {
+	return []BooleanComparisonType{
+		"IS_TRUE",
+		"IS_FALSE",
 	}
 }
 
@@ -431,6 +545,85 @@ func (ContactInitiationMethod) Values() []ContactInitiationMethod {
 	}
 }
 
+type ContactInteractionType string
+
+// Enum values for ContactInteractionType
+const (
+	ContactInteractionTypeAgent     ContactInteractionType = "AGENT"
+	ContactInteractionTypeAutomated ContactInteractionType = "AUTOMATED"
+)
+
+// Values returns all known values for ContactInteractionType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContactInteractionType) Values() []ContactInteractionType {
+	return []ContactInteractionType{
+		"AGENT",
+		"AUTOMATED",
+	}
+}
+
+type ContactMediaProcessingFailureMode string
+
+// Enum values for ContactMediaProcessingFailureMode
+const (
+	ContactMediaProcessingFailureModeDeliverUnprocessedMessage      ContactMediaProcessingFailureMode = "DELIVER_UNPROCESSED_MESSAGE"
+	ContactMediaProcessingFailureModeDoNotDeliverUnprocessedMessage ContactMediaProcessingFailureMode = "DO_NOT_DELIVER_UNPROCESSED_MESSAGE"
+)
+
+// Values returns all known values for ContactMediaProcessingFailureMode. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContactMediaProcessingFailureMode) Values() []ContactMediaProcessingFailureMode {
+	return []ContactMediaProcessingFailureMode{
+		"DELIVER_UNPROCESSED_MESSAGE",
+		"DO_NOT_DELIVER_UNPROCESSED_MESSAGE",
+	}
+}
+
+type ContactMetricName string
+
+// Enum values for ContactMetricName
+const (
+	ContactMetricNameEstimatedWaitTime ContactMetricName = "ESTIMATED_WAIT_TIME"
+	ContactMetricNamePositionInQueue   ContactMetricName = "POSITION_IN_QUEUE"
+)
+
+// Values returns all known values for ContactMetricName. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContactMetricName) Values() []ContactMetricName {
+	return []ContactMetricName{
+		"ESTIMATED_WAIT_TIME",
+		"POSITION_IN_QUEUE",
+	}
+}
+
+type ContactParticipantRole string
+
+// Enum values for ContactParticipantRole
+const (
+	ContactParticipantRoleAgent     ContactParticipantRole = "AGENT"
+	ContactParticipantRoleSystem    ContactParticipantRole = "SYSTEM"
+	ContactParticipantRoleCustomBot ContactParticipantRole = "CUSTOM_BOT"
+)
+
+// Values returns all known values for ContactParticipantRole. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContactParticipantRole) Values() []ContactParticipantRole {
+	return []ContactParticipantRole{
+		"AGENT",
+		"SYSTEM",
+		"CUSTOM_BOT",
+	}
+}
+
 type ContactRecordingType string
 
 // Enum values for ContactRecordingType
@@ -502,6 +695,7 @@ const (
 	CurrentMetricNameAgentsOnContact        CurrentMetricName = "AGENTS_ON_CONTACT"
 	CurrentMetricNameSlotsActive            CurrentMetricName = "SLOTS_ACTIVE"
 	CurrentMetricNameSlotsAvailable         CurrentMetricName = "SLOTS_AVAILABLE"
+	CurrentMetricNameEstimatedWaitTime      CurrentMetricName = "ESTIMATED_WAIT_TIME"
 )
 
 // Values returns all known values for CurrentMetricName. Note that this can be
@@ -523,6 +717,74 @@ func (CurrentMetricName) Values() []CurrentMetricName {
 		"AGENTS_ON_CONTACT",
 		"SLOTS_ACTIVE",
 		"SLOTS_AVAILABLE",
+		"ESTIMATED_WAIT_TIME",
+	}
+}
+
+type DataTableAttributeValueType string
+
+// Enum values for DataTableAttributeValueType
+const (
+	DataTableAttributeValueTypeText       DataTableAttributeValueType = "TEXT"
+	DataTableAttributeValueTypeNumber     DataTableAttributeValueType = "NUMBER"
+	DataTableAttributeValueTypeBoolean    DataTableAttributeValueType = "BOOLEAN"
+	DataTableAttributeValueTypeTextList   DataTableAttributeValueType = "TEXT_LIST"
+	DataTableAttributeValueTypeNumberList DataTableAttributeValueType = "NUMBER_LIST"
+)
+
+// Values returns all known values for DataTableAttributeValueType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DataTableAttributeValueType) Values() []DataTableAttributeValueType {
+	return []DataTableAttributeValueType{
+		"TEXT",
+		"NUMBER",
+		"BOOLEAN",
+		"TEXT_LIST",
+		"NUMBER_LIST",
+	}
+}
+
+type DataTableLockLevel string
+
+// Enum values for DataTableLockLevel
+const (
+	DataTableLockLevelNone         DataTableLockLevel = "NONE"
+	DataTableLockLevelDataTable    DataTableLockLevel = "DATA_TABLE"
+	DataTableLockLevelPrimaryValue DataTableLockLevel = "PRIMARY_VALUE"
+	DataTableLockLevelAttribute    DataTableLockLevel = "ATTRIBUTE"
+	DataTableLockLevelValue        DataTableLockLevel = "VALUE"
+)
+
+// Values returns all known values for DataTableLockLevel. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DataTableLockLevel) Values() []DataTableLockLevel {
+	return []DataTableLockLevel{
+		"NONE",
+		"DATA_TABLE",
+		"PRIMARY_VALUE",
+		"ATTRIBUTE",
+		"VALUE",
+	}
+}
+
+type DataTableStatus string
+
+// Enum values for DataTableStatus
+const (
+	DataTableStatusPublished DataTableStatus = "PUBLISHED"
+)
+
+// Values returns all known values for DataTableStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DataTableStatus) Values() []DataTableStatus {
+	return []DataTableStatus{
+		"PUBLISHED",
 	}
 }
 
@@ -548,6 +810,62 @@ func (DateComparisonType) Values() []DateComparisonType {
 		"GREATER_THAN_OR_EQUAL_TO",
 		"LESS_THAN_OR_EQUAL_TO",
 		"EQUAL_TO",
+	}
+}
+
+type DateTimeComparisonType string
+
+// Enum values for DateTimeComparisonType
+const (
+	DateTimeComparisonTypeGreaterThan          DateTimeComparisonType = "GREATER_THAN"
+	DateTimeComparisonTypeLessThan             DateTimeComparisonType = "LESS_THAN"
+	DateTimeComparisonTypeGreaterThanOrEqualTo DateTimeComparisonType = "GREATER_THAN_OR_EQUAL_TO"
+	DateTimeComparisonTypeLessThanOrEqualTo    DateTimeComparisonType = "LESS_THAN_OR_EQUAL_TO"
+	DateTimeComparisonTypeEqualTo              DateTimeComparisonType = "EQUAL_TO"
+	DateTimeComparisonTypeRange                DateTimeComparisonType = "RANGE"
+)
+
+// Values returns all known values for DateTimeComparisonType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DateTimeComparisonType) Values() []DateTimeComparisonType {
+	return []DateTimeComparisonType{
+		"GREATER_THAN",
+		"LESS_THAN",
+		"GREATER_THAN_OR_EQUAL_TO",
+		"LESS_THAN_OR_EQUAL_TO",
+		"EQUAL_TO",
+		"RANGE",
+	}
+}
+
+type DecimalComparisonType string
+
+// Enum values for DecimalComparisonType
+const (
+	DecimalComparisonTypeGreaterOrEqual DecimalComparisonType = "GREATER_OR_EQUAL"
+	DecimalComparisonTypeGreater        DecimalComparisonType = "GREATER"
+	DecimalComparisonTypeLesserOrEqual  DecimalComparisonType = "LESSER_OR_EQUAL"
+	DecimalComparisonTypeLesser         DecimalComparisonType = "LESSER"
+	DecimalComparisonTypeEqual          DecimalComparisonType = "EQUAL"
+	DecimalComparisonTypeNotEqual       DecimalComparisonType = "NOT_EQUAL"
+	DecimalComparisonTypeRange          DecimalComparisonType = "RANGE"
+)
+
+// Values returns all known values for DecimalComparisonType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DecimalComparisonType) Values() []DecimalComparisonType {
+	return []DecimalComparisonType{
+		"GREATER_OR_EQUAL",
+		"GREATER",
+		"LESSER_OR_EQUAL",
+		"LESSER",
+		"EQUAL",
+		"NOT_EQUAL",
+		"RANGE",
 	}
 }
 
@@ -590,6 +908,24 @@ func (DirectoryType) Values() []DirectoryType {
 		"SAML",
 		"CONNECT_MANAGED",
 		"EXISTING_DIRECTORY",
+	}
+}
+
+type DisconnectOnCustomerExitParticipantType string
+
+// Enum values for DisconnectOnCustomerExitParticipantType
+const (
+	DisconnectOnCustomerExitParticipantTypeAgent DisconnectOnCustomerExitParticipantType = "AGENT"
+)
+
+// Values returns all known values for DisconnectOnCustomerExitParticipantType.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DisconnectOnCustomerExitParticipantType) Values() []DisconnectOnCustomerExitParticipantType {
+	return []DisconnectOnCustomerExitParticipantType{
+		"AGENT",
 	}
 }
 
@@ -660,6 +996,192 @@ func (EndpointType) Values() []EndpointType {
 	}
 }
 
+type EntityType string
+
+// Enum values for EntityType
+const (
+	EntityTypeUser    EntityType = "USER"
+	EntityTypeAiAgent EntityType = "AI_AGENT"
+)
+
+// Values returns all known values for EntityType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EntityType) Values() []EntityType {
+	return []EntityType{
+		"USER",
+		"AI_AGENT",
+	}
+}
+
+type EvaluationFormItemEnablementAction string
+
+// Enum values for EvaluationFormItemEnablementAction
+const (
+	EvaluationFormItemEnablementActionDisable EvaluationFormItemEnablementAction = "DISABLE"
+	EvaluationFormItemEnablementActionEnable  EvaluationFormItemEnablementAction = "ENABLE"
+)
+
+// Values returns all known values for EvaluationFormItemEnablementAction. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationFormItemEnablementAction) Values() []EvaluationFormItemEnablementAction {
+	return []EvaluationFormItemEnablementAction{
+		"DISABLE",
+		"ENABLE",
+	}
+}
+
+type EvaluationFormItemEnablementOperator string
+
+// Enum values for EvaluationFormItemEnablementOperator
+const (
+	EvaluationFormItemEnablementOperatorOr  EvaluationFormItemEnablementOperator = "OR"
+	EvaluationFormItemEnablementOperatorAnd EvaluationFormItemEnablementOperator = "AND"
+)
+
+// Values returns all known values for EvaluationFormItemEnablementOperator. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationFormItemEnablementOperator) Values() []EvaluationFormItemEnablementOperator {
+	return []EvaluationFormItemEnablementOperator{
+		"OR",
+		"AND",
+	}
+}
+
+type EvaluationFormItemEnablementSourceType string
+
+// Enum values for EvaluationFormItemEnablementSourceType
+const (
+	EvaluationFormItemEnablementSourceTypeQuestionRefId EvaluationFormItemEnablementSourceType = "QUESTION_REF_ID"
+)
+
+// Values returns all known values for EvaluationFormItemEnablementSourceType.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationFormItemEnablementSourceType) Values() []EvaluationFormItemEnablementSourceType {
+	return []EvaluationFormItemEnablementSourceType{
+		"QUESTION_REF_ID",
+	}
+}
+
+type EvaluationFormItemEnablementSourceValueType string
+
+// Enum values for EvaluationFormItemEnablementSourceValueType
+const (
+	EvaluationFormItemEnablementSourceValueTypeOptionRefId EvaluationFormItemEnablementSourceValueType = "OPTION_REF_ID"
+)
+
+// Values returns all known values for
+// EvaluationFormItemEnablementSourceValueType. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationFormItemEnablementSourceValueType) Values() []EvaluationFormItemEnablementSourceValueType {
+	return []EvaluationFormItemEnablementSourceValueType{
+		"OPTION_REF_ID",
+	}
+}
+
+type EvaluationFormItemSourceValuesComparator string
+
+// Enum values for EvaluationFormItemSourceValuesComparator
+const (
+	EvaluationFormItemSourceValuesComparatorIn    EvaluationFormItemSourceValuesComparator = "IN"
+	EvaluationFormItemSourceValuesComparatorNotIn EvaluationFormItemSourceValuesComparator = "NOT_IN"
+	EvaluationFormItemSourceValuesComparatorAllIn EvaluationFormItemSourceValuesComparator = "ALL_IN"
+	EvaluationFormItemSourceValuesComparatorExact EvaluationFormItemSourceValuesComparator = "EXACT"
+)
+
+// Values returns all known values for EvaluationFormItemSourceValuesComparator.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationFormItemSourceValuesComparator) Values() []EvaluationFormItemSourceValuesComparator {
+	return []EvaluationFormItemSourceValuesComparator{
+		"IN",
+		"NOT_IN",
+		"ALL_IN",
+		"EXACT",
+	}
+}
+
+type EvaluationFormLanguageCode string
+
+// Enum values for EvaluationFormLanguageCode
+const (
+	EvaluationFormLanguageCodeDeDe EvaluationFormLanguageCode = "de-DE"
+	EvaluationFormLanguageCodeEnUs EvaluationFormLanguageCode = "en-US"
+	EvaluationFormLanguageCodeEsEs EvaluationFormLanguageCode = "es-ES"
+	EvaluationFormLanguageCodeFrFr EvaluationFormLanguageCode = "fr-FR"
+	EvaluationFormLanguageCodeItIt EvaluationFormLanguageCode = "it-IT"
+	EvaluationFormLanguageCodePtBr EvaluationFormLanguageCode = "pt-BR"
+)
+
+// Values returns all known values for EvaluationFormLanguageCode. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationFormLanguageCode) Values() []EvaluationFormLanguageCode {
+	return []EvaluationFormLanguageCode{
+		"de-DE",
+		"en-US",
+		"es-ES",
+		"fr-FR",
+		"it-IT",
+		"pt-BR",
+	}
+}
+
+type EvaluationFormMultiSelectQuestionDisplayMode string
+
+// Enum values for EvaluationFormMultiSelectQuestionDisplayMode
+const (
+	EvaluationFormMultiSelectQuestionDisplayModeDropdown EvaluationFormMultiSelectQuestionDisplayMode = "DROPDOWN"
+	EvaluationFormMultiSelectQuestionDisplayModeCheckbox EvaluationFormMultiSelectQuestionDisplayMode = "CHECKBOX"
+)
+
+// Values returns all known values for
+// EvaluationFormMultiSelectQuestionDisplayMode. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationFormMultiSelectQuestionDisplayMode) Values() []EvaluationFormMultiSelectQuestionDisplayMode {
+	return []EvaluationFormMultiSelectQuestionDisplayMode{
+		"DROPDOWN",
+		"CHECKBOX",
+	}
+}
+
+type EvaluationFormQuestionAutomationAnswerSourceType string
+
+// Enum values for EvaluationFormQuestionAutomationAnswerSourceType
+const (
+	EvaluationFormQuestionAutomationAnswerSourceTypeContactLensData EvaluationFormQuestionAutomationAnswerSourceType = "CONTACT_LENS_DATA"
+	EvaluationFormQuestionAutomationAnswerSourceTypeGenAi           EvaluationFormQuestionAutomationAnswerSourceType = "GEN_AI"
+)
+
+// Values returns all known values for
+// EvaluationFormQuestionAutomationAnswerSourceType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationFormQuestionAutomationAnswerSourceType) Values() []EvaluationFormQuestionAutomationAnswerSourceType {
+	return []EvaluationFormQuestionAutomationAnswerSourceType{
+		"CONTACT_LENS_DATA",
+		"GEN_AI",
+	}
+}
+
 type EvaluationFormQuestionType string
 
 // Enum values for EvaluationFormQuestionType
@@ -667,6 +1189,8 @@ const (
 	EvaluationFormQuestionTypeText         EvaluationFormQuestionType = "TEXT"
 	EvaluationFormQuestionTypeSingleselect EvaluationFormQuestionType = "SINGLESELECT"
 	EvaluationFormQuestionTypeNumeric      EvaluationFormQuestionType = "NUMERIC"
+	EvaluationFormQuestionTypeMultiselect  EvaluationFormQuestionType = "MULTISELECT"
+	EvaluationFormQuestionTypeDatetime     EvaluationFormQuestionType = "DATETIME"
 )
 
 // Values returns all known values for EvaluationFormQuestionType. Note that this
@@ -678,6 +1202,8 @@ func (EvaluationFormQuestionType) Values() []EvaluationFormQuestionType {
 		"TEXT",
 		"SINGLESELECT",
 		"NUMERIC",
+		"MULTISELECT",
+		"DATETIME",
 	}
 }
 
@@ -758,12 +1284,52 @@ func (EvaluationFormVersionStatus) Values() []EvaluationFormVersionStatus {
 	}
 }
 
+type EvaluationQuestionAnswerAnalysisType string
+
+// Enum values for EvaluationQuestionAnswerAnalysisType
+const (
+	EvaluationQuestionAnswerAnalysisTypeContactLensData EvaluationQuestionAnswerAnalysisType = "CONTACT_LENS_DATA"
+	EvaluationQuestionAnswerAnalysisTypeGenAi           EvaluationQuestionAnswerAnalysisType = "GEN_AI"
+)
+
+// Values returns all known values for EvaluationQuestionAnswerAnalysisType. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationQuestionAnswerAnalysisType) Values() []EvaluationQuestionAnswerAnalysisType {
+	return []EvaluationQuestionAnswerAnalysisType{
+		"CONTACT_LENS_DATA",
+		"GEN_AI",
+	}
+}
+
+type EvaluationReviewNotificationRecipientType string
+
+// Enum values for EvaluationReviewNotificationRecipientType
+const (
+	EvaluationReviewNotificationRecipientTypeUserId EvaluationReviewNotificationRecipientType = "USER_ID"
+)
+
+// Values returns all known values for EvaluationReviewNotificationRecipientType.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationReviewNotificationRecipientType) Values() []EvaluationReviewNotificationRecipientType {
+	return []EvaluationReviewNotificationRecipientType{
+		"USER_ID",
+	}
+}
+
 type EvaluationStatus string
 
 // Enum values for EvaluationStatus
 const (
-	EvaluationStatusDraft     EvaluationStatus = "DRAFT"
-	EvaluationStatusSubmitted EvaluationStatus = "SUBMITTED"
+	EvaluationStatusDraft           EvaluationStatus = "DRAFT"
+	EvaluationStatusSubmitted       EvaluationStatus = "SUBMITTED"
+	EvaluationStatusReviewRequested EvaluationStatus = "REVIEW_REQUESTED"
+	EvaluationStatusUnderReview     EvaluationStatus = "UNDER_REVIEW"
 )
 
 // Values returns all known values for EvaluationStatus. Note that this can be
@@ -774,6 +1340,68 @@ func (EvaluationStatus) Values() []EvaluationStatus {
 	return []EvaluationStatus{
 		"DRAFT",
 		"SUBMITTED",
+		"REVIEW_REQUESTED",
+		"UNDER_REVIEW",
+	}
+}
+
+type EvaluationSuggestedAnswerStatus string
+
+// Enum values for EvaluationSuggestedAnswerStatus
+const (
+	EvaluationSuggestedAnswerStatusInProgress EvaluationSuggestedAnswerStatus = "IN_PROGRESS"
+	EvaluationSuggestedAnswerStatusFailed     EvaluationSuggestedAnswerStatus = "FAILED"
+	EvaluationSuggestedAnswerStatusSucceeded  EvaluationSuggestedAnswerStatus = "SUCCEEDED"
+)
+
+// Values returns all known values for EvaluationSuggestedAnswerStatus. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationSuggestedAnswerStatus) Values() []EvaluationSuggestedAnswerStatus {
+	return []EvaluationSuggestedAnswerStatus{
+		"IN_PROGRESS",
+		"FAILED",
+		"SUCCEEDED",
+	}
+}
+
+type EvaluationTranscriptType string
+
+// Enum values for EvaluationTranscriptType
+const (
+	EvaluationTranscriptTypeRaw      EvaluationTranscriptType = "RAW"
+	EvaluationTranscriptTypeRedacted EvaluationTranscriptType = "REDACTED"
+)
+
+// Values returns all known values for EvaluationTranscriptType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationTranscriptType) Values() []EvaluationTranscriptType {
+	return []EvaluationTranscriptType{
+		"RAW",
+		"REDACTED",
+	}
+}
+
+type EvaluationType string
+
+// Enum values for EvaluationType
+const (
+	EvaluationTypeStandard    EvaluationType = "STANDARD"
+	EvaluationTypeCalibration EvaluationType = "CALIBRATION"
+)
+
+// Values returns all known values for EvaluationType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EvaluationType) Values() []EvaluationType {
+	return []EvaluationType{
+		"STANDARD",
+		"CALIBRATION",
 	}
 }
 
@@ -816,6 +1444,29 @@ func (EventSourceName) Values() []EventSourceName {
 	}
 }
 
+type ExecutionRecordStatus string
+
+// Enum values for ExecutionRecordStatus
+const (
+	ExecutionRecordStatusPassed     ExecutionRecordStatus = "PASSED"
+	ExecutionRecordStatusFailed     ExecutionRecordStatus = "FAILED"
+	ExecutionRecordStatusInProgress ExecutionRecordStatus = "IN_PROGRESS"
+	ExecutionRecordStatusStopped    ExecutionRecordStatus = "STOPPED"
+)
+
+// Values returns all known values for ExecutionRecordStatus. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ExecutionRecordStatus) Values() []ExecutionRecordStatus {
+	return []ExecutionRecordStatus{
+		"PASSED",
+		"FAILED",
+		"IN_PROGRESS",
+		"STOPPED",
+	}
+}
+
 type FailureReasonCode string
 
 // Enum values for FailureReasonCode
@@ -824,6 +1475,7 @@ const (
 	FailureReasonCodeInvalidCustomerEndpoint         FailureReasonCode = "INVALID_CUSTOMER_ENDPOINT"
 	FailureReasonCodeInvalidSystemEndpoint           FailureReasonCode = "INVALID_SYSTEM_ENDPOINT"
 	FailureReasonCodeInvalidQueue                    FailureReasonCode = "INVALID_QUEUE"
+	FailureReasonCodeInvalidOutboundStrategy         FailureReasonCode = "INVALID_OUTBOUND_STRATEGY"
 	FailureReasonCodeMissingCampaign                 FailureReasonCode = "MISSING_CAMPAIGN"
 	FailureReasonCodeMissingCustomerEndpoint         FailureReasonCode = "MISSING_CUSTOMER_ENDPOINT"
 	FailureReasonCodeMissingQueueIdAndSystemEndpoint FailureReasonCode = "MISSING_QUEUE_ID_AND_SYSTEM_ENDPOINT"
@@ -842,6 +1494,7 @@ func (FailureReasonCode) Values() []FailureReasonCode {
 		"INVALID_CUSTOMER_ENDPOINT",
 		"INVALID_SYSTEM_ENDPOINT",
 		"INVALID_QUEUE",
+		"INVALID_OUTBOUND_STRATEGY",
 		"MISSING_CAMPAIGN",
 		"MISSING_CUSTOMER_ENDPOINT",
 		"MISSING_QUEUE_ID_AND_SYSTEM_ENDPOINT",
@@ -893,6 +1546,24 @@ func (FileUseCaseType) Values() []FileUseCaseType {
 	}
 }
 
+type FilterV2StringConditionComparisonOperator string
+
+// Enum values for FilterV2StringConditionComparisonOperator
+const (
+	FilterV2StringConditionComparisonOperatorNotExists FilterV2StringConditionComparisonOperator = "NOT_EXISTS"
+)
+
+// Values returns all known values for FilterV2StringConditionComparisonOperator.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (FilterV2StringConditionComparisonOperator) Values() []FilterV2StringConditionComparisonOperator {
+	return []FilterV2StringConditionComparisonOperator{
+		"NOT_EXISTS",
+	}
+}
+
 type FlowAssociationResourceType string
 
 // Enum values for FlowAssociationResourceType
@@ -918,6 +1589,23 @@ func (FlowAssociationResourceType) Values() []FlowAssociationResourceType {
 	}
 }
 
+type FlowModuleType string
+
+// Enum values for FlowModuleType
+const (
+	FlowModuleTypeMcp FlowModuleType = "MCP"
+)
+
+// Values returns all known values for FlowModuleType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (FlowModuleType) Values() []FlowModuleType {
+	return []FlowModuleType{
+		"MCP",
+	}
+}
+
 type Grouping string
 
 // Enum values for Grouping
@@ -926,6 +1614,9 @@ const (
 	GroupingChannel               Grouping = "CHANNEL"
 	GroupingRoutingProfile        Grouping = "ROUTING_PROFILE"
 	GroupingRoutingStepExpression Grouping = "ROUTING_STEP_EXPRESSION"
+	GroupingAgentStatus           Grouping = "AGENT_STATUS"
+	GroupingSubtype               Grouping = "SUBTYPE"
+	GroupingValidationTestType    Grouping = "VALIDATION_TEST_TYPE"
 )
 
 // Values returns all known values for Grouping. Note that this can be expanded in
@@ -938,6 +1629,9 @@ func (Grouping) Values() []Grouping {
 		"CHANNEL",
 		"ROUTING_PROFILE",
 		"ROUTING_STEP_EXPRESSION",
+		"AGENT_STATUS",
+		"SUBTYPE",
+		"VALIDATION_TEST_TYPE",
 	}
 }
 
@@ -1076,6 +1770,7 @@ type InitiateAs string
 // Enum values for InitiateAs
 const (
 	InitiateAsConnectedToUser InitiateAs = "CONNECTED_TO_USER"
+	InitiateAsCompleted       InitiateAs = "COMPLETED"
 )
 
 // Values returns all known values for InitiateAs. Note that this can be expanded
@@ -1085,6 +1780,7 @@ const (
 func (InitiateAs) Values() []InitiateAs {
 	return []InitiateAs{
 		"CONNECTED_TO_USER",
+		"COMPLETED",
 	}
 }
 
@@ -1104,6 +1800,7 @@ const (
 	InstanceAttributeTypeEnhancedContactMonitoring InstanceAttributeType = "ENHANCED_CONTACT_MONITORING"
 	InstanceAttributeTypeEnhancedChatMonitoring    InstanceAttributeType = "ENHANCED_CHAT_MONITORING"
 	InstanceAttributeTypeMultiPartyChatConference  InstanceAttributeType = "MULTI_PARTY_CHAT_CONFERENCE"
+	InstanceAttributeTypeMessageStreaming          InstanceAttributeType = "MESSAGE_STREAMING"
 )
 
 // Values returns all known values for InstanceAttributeType. Note that this can
@@ -1124,6 +1821,7 @@ func (InstanceAttributeType) Values() []InstanceAttributeType {
 		"ENHANCED_CONTACT_MONITORING",
 		"ENHANCED_CHAT_MONITORING",
 		"MULTI_PARTY_CHAT_CONFERENCE",
+		"MESSAGE_STREAMING",
 	}
 }
 
@@ -1234,6 +1932,7 @@ const (
 	IntegrationTypeAnalyticsConnector    IntegrationType = "ANALYTICS_CONNECTOR"
 	IntegrationTypeCallTransferConnector IntegrationType = "CALL_TRANSFER_CONNECTOR"
 	IntegrationTypeCognitoUserPool       IntegrationType = "COGNITO_USER_POOL"
+	IntegrationTypeMessageProcessor      IntegrationType = "MESSAGE_PROCESSOR"
 )
 
 // Values returns all known values for IntegrationType. Note that this can be
@@ -1256,6 +1955,7 @@ func (IntegrationType) Values() []IntegrationType {
 		"ANALYTICS_CONNECTOR",
 		"CALL_TRANSFER_CONNECTOR",
 		"COGNITO_USER_POOL",
+		"MESSAGE_PROCESSOR",
 	}
 }
 
@@ -1367,6 +2067,29 @@ func (MediaStreamType) Values() []MediaStreamType {
 	}
 }
 
+type MediaType string
+
+// Enum values for MediaType
+const (
+	MediaTypeImageLogoLightFavicon    MediaType = "IMAGE_LOGO_LIGHT_FAVICON"
+	MediaTypeImageLogoDarkFavicon     MediaType = "IMAGE_LOGO_DARK_FAVICON"
+	MediaTypeImageLogoLightHorizontal MediaType = "IMAGE_LOGO_LIGHT_HORIZONTAL"
+	MediaTypeImageLogoDarkHorizontal  MediaType = "IMAGE_LOGO_DARK_HORIZONTAL"
+)
+
+// Values returns all known values for MediaType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MediaType) Values() []MediaType {
+	return []MediaType{
+		"IMAGE_LOGO_LIGHT_FAVICON",
+		"IMAGE_LOGO_DARK_FAVICON",
+		"IMAGE_LOGO_LIGHT_HORIZONTAL",
+		"IMAGE_LOGO_DARK_HORIZONTAL",
+	}
+}
+
 type MeetingFeatureStatus string
 
 // Enum values for MeetingFeatureStatus
@@ -1402,6 +2125,43 @@ func (MonitorCapability) Values() []MonitorCapability {
 	return []MonitorCapability{
 		"SILENT_MONITOR",
 		"BARGE",
+	}
+}
+
+type MultiSelectQuestionRuleCategoryAutomationCondition string
+
+// Enum values for MultiSelectQuestionRuleCategoryAutomationCondition
+const (
+	MultiSelectQuestionRuleCategoryAutomationConditionPresent    MultiSelectQuestionRuleCategoryAutomationCondition = "PRESENT"
+	MultiSelectQuestionRuleCategoryAutomationConditionNotPresent MultiSelectQuestionRuleCategoryAutomationCondition = "NOT_PRESENT"
+)
+
+// Values returns all known values for
+// MultiSelectQuestionRuleCategoryAutomationCondition. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MultiSelectQuestionRuleCategoryAutomationCondition) Values() []MultiSelectQuestionRuleCategoryAutomationCondition {
+	return []MultiSelectQuestionRuleCategoryAutomationCondition{
+		"PRESENT",
+		"NOT_PRESENT",
+	}
+}
+
+type NextContactType string
+
+// Enum values for NextContactType
+const (
+	NextContactTypeQuickConnect NextContactType = "QUICK_CONNECT"
+)
+
+// Values returns all known values for NextContactType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (NextContactType) Values() []NextContactType {
+	return []NextContactType{
+		"QUICK_CONNECT",
 	}
 }
 
@@ -1472,14 +2232,19 @@ type NumericQuestionPropertyAutomationLabel string
 
 // Enum values for NumericQuestionPropertyAutomationLabel
 const (
-	NumericQuestionPropertyAutomationLabelOverallCustomerSentimentScore NumericQuestionPropertyAutomationLabel = "OVERALL_CUSTOMER_SENTIMENT_SCORE"
-	NumericQuestionPropertyAutomationLabelOverallAgentSentimentScore    NumericQuestionPropertyAutomationLabel = "OVERALL_AGENT_SENTIMENT_SCORE"
-	NumericQuestionPropertyAutomationLabelNonTalkTime                   NumericQuestionPropertyAutomationLabel = "NON_TALK_TIME"
-	NumericQuestionPropertyAutomationLabelNonTalkTimePercentage         NumericQuestionPropertyAutomationLabel = "NON_TALK_TIME_PERCENTAGE"
-	NumericQuestionPropertyAutomationLabelNumberOfInterruptions         NumericQuestionPropertyAutomationLabel = "NUMBER_OF_INTERRUPTIONS"
-	NumericQuestionPropertyAutomationLabelContactDuration               NumericQuestionPropertyAutomationLabel = "CONTACT_DURATION"
-	NumericQuestionPropertyAutomationLabelAgentInteractionDuration      NumericQuestionPropertyAutomationLabel = "AGENT_INTERACTION_DURATION"
-	NumericQuestionPropertyAutomationLabelCustomerHoldTime              NumericQuestionPropertyAutomationLabel = "CUSTOMER_HOLD_TIME"
+	NumericQuestionPropertyAutomationLabelOverallCustomerSentimentScore      NumericQuestionPropertyAutomationLabel = "OVERALL_CUSTOMER_SENTIMENT_SCORE"
+	NumericQuestionPropertyAutomationLabelOverallAgentSentimentScore         NumericQuestionPropertyAutomationLabel = "OVERALL_AGENT_SENTIMENT_SCORE"
+	NumericQuestionPropertyAutomationLabelCustomerSentimentScoreWithoutAgent NumericQuestionPropertyAutomationLabel = "CUSTOMER_SENTIMENT_SCORE_WITHOUT_AGENT"
+	NumericQuestionPropertyAutomationLabelCustomerSentimentScoreWithAgent    NumericQuestionPropertyAutomationLabel = "CUSTOMER_SENTIMENT_SCORE_WITH_AGENT"
+	NumericQuestionPropertyAutomationLabelNonTalkTime                        NumericQuestionPropertyAutomationLabel = "NON_TALK_TIME"
+	NumericQuestionPropertyAutomationLabelNonTalkTimePercentage              NumericQuestionPropertyAutomationLabel = "NON_TALK_TIME_PERCENTAGE"
+	NumericQuestionPropertyAutomationLabelNumberOfInterruptions              NumericQuestionPropertyAutomationLabel = "NUMBER_OF_INTERRUPTIONS"
+	NumericQuestionPropertyAutomationLabelContactDuration                    NumericQuestionPropertyAutomationLabel = "CONTACT_DURATION"
+	NumericQuestionPropertyAutomationLabelAgentInteractionDuration           NumericQuestionPropertyAutomationLabel = "AGENT_INTERACTION_DURATION"
+	NumericQuestionPropertyAutomationLabelCustomerHoldTime                   NumericQuestionPropertyAutomationLabel = "CUSTOMER_HOLD_TIME"
+	NumericQuestionPropertyAutomationLabelLongestHoldDuration                NumericQuestionPropertyAutomationLabel = "LONGEST_HOLD_DURATION"
+	NumericQuestionPropertyAutomationLabelNumberOfHolds                      NumericQuestionPropertyAutomationLabel = "NUMBER_OF_HOLDS"
+	NumericQuestionPropertyAutomationLabelAgentInteractionAndHoldDuration    NumericQuestionPropertyAutomationLabel = "AGENT_INTERACTION_AND_HOLD_DURATION"
 )
 
 // Values returns all known values for NumericQuestionPropertyAutomationLabel.
@@ -1491,12 +2256,36 @@ func (NumericQuestionPropertyAutomationLabel) Values() []NumericQuestionProperty
 	return []NumericQuestionPropertyAutomationLabel{
 		"OVERALL_CUSTOMER_SENTIMENT_SCORE",
 		"OVERALL_AGENT_SENTIMENT_SCORE",
+		"CUSTOMER_SENTIMENT_SCORE_WITHOUT_AGENT",
+		"CUSTOMER_SENTIMENT_SCORE_WITH_AGENT",
 		"NON_TALK_TIME",
 		"NON_TALK_TIME_PERCENTAGE",
 		"NUMBER_OF_INTERRUPTIONS",
 		"CONTACT_DURATION",
 		"AGENT_INTERACTION_DURATION",
 		"CUSTOMER_HOLD_TIME",
+		"LONGEST_HOLD_DURATION",
+		"NUMBER_OF_HOLDS",
+		"AGENT_INTERACTION_AND_HOLD_DURATION",
+	}
+}
+
+type OperationalStatus string
+
+// Enum values for OperationalStatus
+const (
+	OperationalStatusOpen   OperationalStatus = "OPEN"
+	OperationalStatusClosed OperationalStatus = "CLOSED"
+)
+
+// Values returns all known values for OperationalStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OperationalStatus) Values() []OperationalStatus {
+	return []OperationalStatus{
+		"OPEN",
+		"CLOSED",
 	}
 }
 
@@ -1516,6 +2305,23 @@ func (OutboundMessageSourceType) Values() []OutboundMessageSourceType {
 	return []OutboundMessageSourceType{
 		"TEMPLATE",
 		"RAW",
+	}
+}
+
+type OutboundStrategyType string
+
+// Enum values for OutboundStrategyType
+const (
+	OutboundStrategyTypeAgentFirst OutboundStrategyType = "AGENT_FIRST"
+)
+
+// Values returns all known values for OutboundStrategyType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OutboundStrategyType) Values() []OutboundStrategyType {
+	return []OutboundStrategyType{
+		"AGENT_FIRST",
 	}
 }
 
@@ -1545,6 +2351,27 @@ func (OverrideDays) Values() []OverrideDays {
 		"THURSDAY",
 		"FRIDAY",
 		"SATURDAY",
+	}
+}
+
+type OverrideType string
+
+// Enum values for OverrideType
+const (
+	OverrideTypeStandard OverrideType = "STANDARD"
+	OverrideTypeOpen     OverrideType = "OPEN"
+	OverrideTypeClosed   OverrideType = "CLOSED"
+)
+
+// Values returns all known values for OverrideType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OverrideType) Values() []OverrideType {
+	return []OverrideType{
+		"STANDARD",
+		"OPEN",
+		"CLOSED",
 	}
 }
 
@@ -2243,6 +3070,26 @@ func (PropertyValidationExceptionReason) Values() []PropertyValidationExceptionR
 	}
 }
 
+type QuestionRuleCategoryAutomationCondition string
+
+// Enum values for QuestionRuleCategoryAutomationCondition
+const (
+	QuestionRuleCategoryAutomationConditionPresent    QuestionRuleCategoryAutomationCondition = "PRESENT"
+	QuestionRuleCategoryAutomationConditionNotPresent QuestionRuleCategoryAutomationCondition = "NOT_PRESENT"
+)
+
+// Values returns all known values for QuestionRuleCategoryAutomationCondition.
+// Note that this can be expanded in the future, and so it is only as up to date as
+// the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (QuestionRuleCategoryAutomationCondition) Values() []QuestionRuleCategoryAutomationCondition {
+	return []QuestionRuleCategoryAutomationCondition{
+		"PRESENT",
+		"NOT_PRESENT",
+	}
+}
+
 type QueueStatus string
 
 // Enum values for QueueStatus
@@ -2288,6 +3135,7 @@ const (
 	QuickConnectTypeUser        QuickConnectType = "USER"
 	QuickConnectTypeQueue       QuickConnectType = "QUEUE"
 	QuickConnectTypePhoneNumber QuickConnectType = "PHONE_NUMBER"
+	QuickConnectTypeFlow        QuickConnectType = "FLOW"
 )
 
 // Values returns all known values for QuickConnectType. Note that this can be
@@ -2299,6 +3147,7 @@ func (QuickConnectType) Values() []QuickConnectType {
 		"USER",
 		"QUEUE",
 		"PHONE_NUMBER",
+		"FLOW",
 	}
 }
 
@@ -2479,6 +3328,27 @@ func (RecordingStatus) Values() []RecordingStatus {
 	}
 }
 
+type RecurrenceFrequency string
+
+// Enum values for RecurrenceFrequency
+const (
+	RecurrenceFrequencyWeekly  RecurrenceFrequency = "WEEKLY"
+	RecurrenceFrequencyMonthly RecurrenceFrequency = "MONTHLY"
+	RecurrenceFrequencyYearly  RecurrenceFrequency = "YEARLY"
+)
+
+// Values returns all known values for RecurrenceFrequency. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RecurrenceFrequency) Values() []RecurrenceFrequency {
+	return []RecurrenceFrequency{
+		"WEEKLY",
+		"MONTHLY",
+		"YEARLY",
+	}
+}
+
 type ReferenceStatus string
 
 // Enum values for ReferenceStatus
@@ -2510,14 +3380,15 @@ type ReferenceType string
 
 // Enum values for ReferenceType
 const (
-	ReferenceTypeUrl             ReferenceType = "URL"
-	ReferenceTypeAttachment      ReferenceType = "ATTACHMENT"
-	ReferenceTypeContactAnalysis ReferenceType = "CONTACT_ANALYSIS"
-	ReferenceTypeNumber          ReferenceType = "NUMBER"
-	ReferenceTypeString          ReferenceType = "STRING"
-	ReferenceTypeDate            ReferenceType = "DATE"
-	ReferenceTypeEmail           ReferenceType = "EMAIL"
-	ReferenceTypeEmailMessage    ReferenceType = "EMAIL_MESSAGE"
+	ReferenceTypeUrl                   ReferenceType = "URL"
+	ReferenceTypeAttachment            ReferenceType = "ATTACHMENT"
+	ReferenceTypeContactAnalysis       ReferenceType = "CONTACT_ANALYSIS"
+	ReferenceTypeNumber                ReferenceType = "NUMBER"
+	ReferenceTypeString                ReferenceType = "STRING"
+	ReferenceTypeDate                  ReferenceType = "DATE"
+	ReferenceTypeEmail                 ReferenceType = "EMAIL"
+	ReferenceTypeEmailMessage          ReferenceType = "EMAIL_MESSAGE"
+	ReferenceTypeEmailMessagePlainText ReferenceType = "EMAIL_MESSAGE_PLAIN_TEXT"
 )
 
 // Values returns all known values for ReferenceType. Note that this can be
@@ -2534,6 +3405,7 @@ func (ReferenceType) Values() []ReferenceType {
 		"DATE",
 		"EMAIL",
 		"EMAIL_MESSAGE",
+		"EMAIL_MESSAGE_PLAIN_TEXT",
 	}
 }
 
@@ -2584,6 +3456,25 @@ func (ResourceType) Values() []ResourceType {
 		"HIERARCHY_GROUP",
 		"USER",
 		"PHONE_NUMBER",
+	}
+}
+
+type ResponseMode string
+
+// Enum values for ResponseMode
+const (
+	ResponseModeIncremental ResponseMode = "INCREMENTAL"
+	ResponseModeComplete    ResponseMode = "COMPLETE"
+)
+
+// Values returns all known values for ResponseMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResponseMode) Values() []ResponseMode {
+	return []ResponseMode{
+		"INCREMENTAL",
+		"COMPLETE",
 	}
 }
 
@@ -2667,8 +3558,10 @@ type SearchContactsMatchType string
 
 // Enum values for SearchContactsMatchType
 const (
-	SearchContactsMatchTypeMatchAll SearchContactsMatchType = "MATCH_ALL"
-	SearchContactsMatchTypeMatchAny SearchContactsMatchType = "MATCH_ANY"
+	SearchContactsMatchTypeMatchAll   SearchContactsMatchType = "MATCH_ALL"
+	SearchContactsMatchTypeMatchAny   SearchContactsMatchType = "MATCH_ANY"
+	SearchContactsMatchTypeMatchExact SearchContactsMatchType = "MATCH_EXACT"
+	SearchContactsMatchTypeMatchNone  SearchContactsMatchType = "MATCH_NONE"
 )
 
 // Values returns all known values for SearchContactsMatchType. Note that this can
@@ -2679,6 +3572,26 @@ func (SearchContactsMatchType) Values() []SearchContactsMatchType {
 	return []SearchContactsMatchType{
 		"MATCH_ALL",
 		"MATCH_ANY",
+		"MATCH_EXACT",
+		"MATCH_NONE",
+	}
+}
+
+type SearchContactsTimeRangeConditionType string
+
+// Enum values for SearchContactsTimeRangeConditionType
+const (
+	SearchContactsTimeRangeConditionTypeNotExists SearchContactsTimeRangeConditionType = "NOT_EXISTS"
+)
+
+// Values returns all known values for SearchContactsTimeRangeConditionType. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SearchContactsTimeRangeConditionType) Values() []SearchContactsTimeRangeConditionType {
+	return []SearchContactsTimeRangeConditionType{
+		"NOT_EXISTS",
 	}
 }
 
@@ -2690,6 +3603,7 @@ const (
 	SearchContactsTimeRangeTypeScheduledTimestamp        SearchContactsTimeRangeType = "SCHEDULED_TIMESTAMP"
 	SearchContactsTimeRangeTypeConnectedToAgentTimestamp SearchContactsTimeRangeType = "CONNECTED_TO_AGENT_TIMESTAMP"
 	SearchContactsTimeRangeTypeDisconnectTimestamp       SearchContactsTimeRangeType = "DISCONNECT_TIMESTAMP"
+	SearchContactsTimeRangeTypeEnqueueTimestamp          SearchContactsTimeRangeType = "ENQUEUE_TIMESTAMP"
 )
 
 // Values returns all known values for SearchContactsTimeRangeType. Note that this
@@ -2702,6 +3616,7 @@ func (SearchContactsTimeRangeType) Values() []SearchContactsTimeRangeType {
 		"SCHEDULED_TIMESTAMP",
 		"CONNECTED_TO_AGENT_TIMESTAMP",
 		"DISCONNECT_TIMESTAMP",
+		"ENQUEUE_TIMESTAMP",
 	}
 }
 
@@ -2769,6 +3684,7 @@ const (
 	SortableFieldNameDisconnectTimestamp       SortableFieldName = "DISCONNECT_TIMESTAMP"
 	SortableFieldNameInitiationMethod          SortableFieldName = "INITIATION_METHOD"
 	SortableFieldNameChannel                   SortableFieldName = "CHANNEL"
+	SortableFieldNameExpiryTimestamp           SortableFieldName = "EXPIRY_TIMESTAMP"
 )
 
 // Values returns all known values for SortableFieldName. Note that this can be
@@ -2783,6 +3699,7 @@ func (SortableFieldName) Values() []SortableFieldName {
 		"DISCONNECT_TIMESTAMP",
 		"INITIATION_METHOD",
 		"CHANNEL",
+		"EXPIRY_TIMESTAMP",
 	}
 }
 
@@ -2991,6 +3908,67 @@ func (TaskTemplateStatus) Values() []TaskTemplateStatus {
 	}
 }
 
+type TestCaseEntryPointType string
+
+// Enum values for TestCaseEntryPointType
+const (
+	TestCaseEntryPointTypeVoiceCall TestCaseEntryPointType = "VOICE_CALL"
+)
+
+// Values returns all known values for TestCaseEntryPointType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TestCaseEntryPointType) Values() []TestCaseEntryPointType {
+	return []TestCaseEntryPointType{
+		"VOICE_CALL",
+	}
+}
+
+type TestCaseExecutionStatus string
+
+// Enum values for TestCaseExecutionStatus
+const (
+	TestCaseExecutionStatusInitiated  TestCaseExecutionStatus = "INITIATED"
+	TestCaseExecutionStatusPassed     TestCaseExecutionStatus = "PASSED"
+	TestCaseExecutionStatusFailed     TestCaseExecutionStatus = "FAILED"
+	TestCaseExecutionStatusInProgress TestCaseExecutionStatus = "IN_PROGRESS"
+	TestCaseExecutionStatusStopped    TestCaseExecutionStatus = "STOPPED"
+)
+
+// Values returns all known values for TestCaseExecutionStatus. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TestCaseExecutionStatus) Values() []TestCaseExecutionStatus {
+	return []TestCaseExecutionStatus{
+		"INITIATED",
+		"PASSED",
+		"FAILED",
+		"IN_PROGRESS",
+		"STOPPED",
+	}
+}
+
+type TestCaseStatus string
+
+// Enum values for TestCaseStatus
+const (
+	TestCaseStatusPublished TestCaseStatus = "PUBLISHED"
+	TestCaseStatusSaved     TestCaseStatus = "SAVED"
+)
+
+// Values returns all known values for TestCaseStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TestCaseStatus) Values() []TestCaseStatus {
+	return []TestCaseStatus{
+		"PUBLISHED",
+		"SAVED",
+	}
+}
+
 type TimerEligibleParticipantRoles string
 
 // Enum values for TimerEligibleParticipantRoles
@@ -3153,6 +4131,27 @@ func (ViewType) Values() []ViewType {
 	}
 }
 
+type Visibility string
+
+// Enum values for Visibility
+const (
+	VisibilityAll      Visibility = "ALL"
+	VisibilityAssigned Visibility = "ASSIGNED"
+	VisibilityNone     Visibility = "NONE"
+)
+
+// Values returns all known values for Visibility. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Visibility) Values() []Visibility {
+	return []Visibility{
+		"ALL",
+		"ASSIGNED",
+		"NONE",
+	}
+}
+
 type VocabularyLanguageCode string
 
 // Enum values for VocabularyLanguageCode
@@ -3257,6 +4256,27 @@ func (VocabularyState) Values() []VocabularyState {
 	}
 }
 
+type VoiceEnhancementMode string
+
+// Enum values for VoiceEnhancementMode
+const (
+	VoiceEnhancementModeVoiceIsolation   VoiceEnhancementMode = "VOICE_ISOLATION"
+	VoiceEnhancementModeNoiseSuppression VoiceEnhancementMode = "NOISE_SUPPRESSION"
+	VoiceEnhancementModeNone             VoiceEnhancementMode = "NONE"
+)
+
+// Values returns all known values for VoiceEnhancementMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (VoiceEnhancementMode) Values() []VoiceEnhancementMode {
+	return []VoiceEnhancementMode{
+		"VOICE_ISOLATION",
+		"NOISE_SUPPRESSION",
+		"NONE",
+	}
+}
+
 type VoiceRecordingTrack string
 
 // Enum values for VoiceRecordingTrack
@@ -3275,5 +4295,32 @@ func (VoiceRecordingTrack) Values() []VoiceRecordingTrack {
 		"FROM_AGENT",
 		"TO_AGENT",
 		"ALL",
+	}
+}
+
+type WorkspaceFontFamily string
+
+// Enum values for WorkspaceFontFamily
+const (
+	WorkspaceFontFamilyArial         WorkspaceFontFamily = "Arial"
+	WorkspaceFontFamilyCourierNew    WorkspaceFontFamily = "Courier New"
+	WorkspaceFontFamilyGeorgia       WorkspaceFontFamily = "Georgia"
+	WorkspaceFontFamilyTimesNewRoman WorkspaceFontFamily = "Times New Roman"
+	WorkspaceFontFamilyTrebuchet     WorkspaceFontFamily = "Trebuchet"
+	WorkspaceFontFamilyVerdana       WorkspaceFontFamily = "Verdana"
+)
+
+// Values returns all known values for WorkspaceFontFamily. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (WorkspaceFontFamily) Values() []WorkspaceFontFamily {
+	return []WorkspaceFontFamily{
+		"Arial",
+		"Courier New",
+		"Georgia",
+		"Times New Roman",
+		"Trebuchet",
+		"Verdana",
 	}
 }

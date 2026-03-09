@@ -38,6 +38,94 @@ func (BrowserType) Values() []BrowserType {
 	}
 }
 
+type Category string
+
+// Enum values for Category
+const (
+	CategoryCults                      Category = "Cults"
+	CategoryGambling                   Category = "Gambling"
+	CategoryNudity                     Category = "Nudity"
+	CategoryPornography                Category = "Pornography"
+	CategorySexEducation               Category = "SexEducation"
+	CategoryTasteless                  Category = "Tasteless"
+	CategoryViolence                   Category = "Violence"
+	CategoryDownloadSites              Category = "DownloadSites"
+	CategoryImageSharing               Category = "ImageSharing"
+	CategoryPeerToPeer                 Category = "PeerToPeer"
+	CategoryStreamingMediaAndDownloads Category = "StreamingMediaAndDownloads"
+	CategoryGenerativeAi               Category = "GenerativeAI"
+	CategoryCriminalActivity           Category = "CriminalActivity"
+	CategoryHacking                    Category = "Hacking"
+	CategoryHateAndIntolerance         Category = "HateAndIntolerance"
+	CategoryIllegalDrug                Category = "IllegalDrug"
+	CategoryIllegalSoftware            Category = "IllegalSoftware"
+	CategorySchoolCheating             Category = "SchoolCheating"
+	CategorySelfHarm                   Category = "SelfHarm"
+	CategoryWeapons                    Category = "Weapons"
+	CategoryChat                       Category = "Chat"
+	CategoryGames                      Category = "Games"
+	CategoryInstantMessaging           Category = "InstantMessaging"
+	CategoryProfessionalNetwork        Category = "ProfessionalNetwork"
+	CategorySocialNetworking           Category = "SocialNetworking"
+	CategoryWebBasedEmail              Category = "WebBasedEmail"
+	CategoryParkedDomains              Category = "ParkedDomains"
+)
+
+// Values returns all known values for Category. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Category) Values() []Category {
+	return []Category{
+		"Cults",
+		"Gambling",
+		"Nudity",
+		"Pornography",
+		"SexEducation",
+		"Tasteless",
+		"Violence",
+		"DownloadSites",
+		"ImageSharing",
+		"PeerToPeer",
+		"StreamingMediaAndDownloads",
+		"GenerativeAI",
+		"CriminalActivity",
+		"Hacking",
+		"HateAndIntolerance",
+		"IllegalDrug",
+		"IllegalSoftware",
+		"SchoolCheating",
+		"SelfHarm",
+		"Weapons",
+		"Chat",
+		"Games",
+		"InstantMessaging",
+		"ProfessionalNetwork",
+		"SocialNetworking",
+		"WebBasedEmail",
+		"ParkedDomains",
+	}
+}
+
+type ColorTheme string
+
+// Enum values for ColorTheme
+const (
+	ColorThemeLight ColorTheme = "Light"
+	ColorThemeDark  ColorTheme = "Dark"
+)
+
+// Values returns all known values for ColorTheme. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ColorTheme) Values() []ColorTheme {
+	return []ColorTheme{
+		"Light",
+		"Dark",
+	}
+}
+
 type EnabledType string
 
 // Enum values for EnabledType
@@ -54,6 +142,74 @@ func (EnabledType) Values() []EnabledType {
 	return []EnabledType{
 		"Disabled",
 		"Enabled",
+	}
+}
+
+type Event string
+
+// Enum values for Event
+const (
+	EventWebsiteInteract                           Event = "WebsiteInteract"
+	EventFileDownloadFromSecureBrowserToRemoteDisk Event = "FileDownloadFromSecureBrowserToRemoteDisk"
+	EventFileTransferFromRemoteToLocalDisk         Event = "FileTransferFromRemoteToLocalDisk"
+	EventFileTransferFromLocalToRemoteDisk         Event = "FileTransferFromLocalToRemoteDisk"
+	EventFileUploadFromRemoteDiskToSecureBrowser   Event = "FileUploadFromRemoteDiskToSecureBrowser"
+	EventContentPasteToWebsite                     Event = "ContentPasteToWebsite"
+	EventContentTransferFromLocalToRemoteClipboard Event = "ContentTransferFromLocalToRemoteClipboard"
+	EventContentCopyFromWebsite                    Event = "ContentCopyFromWebsite"
+	EventUrlLoad                                   Event = "UrlLoad"
+	EventTabOpen                                   Event = "TabOpen"
+	EventTabClose                                  Event = "TabClose"
+	EventPrintJobSubmit                            Event = "PrintJobSubmit"
+	EventSessionConnect                            Event = "SessionConnect"
+	EventSessionStart                              Event = "SessionStart"
+	EventSessionDisconnect                         Event = "SessionDisconnect"
+	EventSessionEnd                                Event = "SessionEnd"
+	EventUrlBlockByContentFilter                   Event = "UrlBlockByContentFilter"
+)
+
+// Values returns all known values for Event. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Event) Values() []Event {
+	return []Event{
+		"WebsiteInteract",
+		"FileDownloadFromSecureBrowserToRemoteDisk",
+		"FileTransferFromRemoteToLocalDisk",
+		"FileTransferFromLocalToRemoteDisk",
+		"FileUploadFromRemoteDiskToSecureBrowser",
+		"ContentPasteToWebsite",
+		"ContentTransferFromLocalToRemoteClipboard",
+		"ContentCopyFromWebsite",
+		"UrlLoad",
+		"TabOpen",
+		"TabClose",
+		"PrintJobSubmit",
+		"SessionConnect",
+		"SessionStart",
+		"SessionDisconnect",
+		"SessionEnd",
+		"UrlBlockByContentFilter",
+	}
+}
+
+type FolderStructure string
+
+// Enum values for FolderStructure
+const (
+	FolderStructureFlat         FolderStructure = "Flat"
+	FolderStructureNestedByDate FolderStructure = "NestedByDate"
+)
+
+// Values returns all known values for FolderStructure. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (FolderStructure) Values() []FolderStructure {
+	return []FolderStructure{
+		"Flat",
+		"NestedByDate",
 	}
 }
 
@@ -105,6 +261,62 @@ func (InstanceType) Values() []InstanceType {
 	}
 }
 
+type Locale string
+
+// Enum values for Locale
+const (
+	LocaleDe Locale = "de-DE"
+	LocaleEn Locale = "en-US"
+	LocaleEs Locale = "es-ES"
+	LocaleFr Locale = "fr-FR"
+	LocaleId Locale = "id-ID"
+	LocaleIt Locale = "it-IT"
+	LocaleJp Locale = "ja-JP"
+	LocaleKr Locale = "ko-KR"
+	LocaleBr Locale = "pt-BR"
+	LocaleCn Locale = "zh-CN"
+	LocaleTw Locale = "zh-TW"
+)
+
+// Values returns all known values for Locale. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Locale) Values() []Locale {
+	return []Locale{
+		"de-DE",
+		"en-US",
+		"es-ES",
+		"fr-FR",
+		"id-ID",
+		"it-IT",
+		"ja-JP",
+		"ko-KR",
+		"pt-BR",
+		"zh-CN",
+		"zh-TW",
+	}
+}
+
+type LogFileFormat string
+
+// Enum values for LogFileFormat
+const (
+	LogFileFormatJsonLines LogFileFormat = "JSONLines"
+	LogFileFormatJson      LogFileFormat = "Json"
+)
+
+// Values returns all known values for LogFileFormat. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (LogFileFormat) Values() []LogFileFormat {
+	return []LogFileFormat{
+		"JSONLines",
+		"Json",
+	}
+}
+
 type MaxDisplayResolution string
 
 // Enum values for MaxDisplayResolution
@@ -133,6 +345,27 @@ func (MaxDisplayResolution) Values() []MaxDisplayResolution {
 		"size1280X720",
 		"size1024X768",
 		"size800X600",
+	}
+}
+
+type MimeType string
+
+// Enum values for MimeType
+const (
+	MimeTypePng  MimeType = "image/png"
+	MimeTypeJpeg MimeType = "image/jpeg"
+	MimeTypeIco  MimeType = "image/x-icon"
+)
+
+// Values returns all known values for MimeType. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MimeType) Values() []MimeType {
+	return []MimeType{
+		"image/png",
+		"image/jpeg",
+		"image/x-icon",
 	}
 }
 

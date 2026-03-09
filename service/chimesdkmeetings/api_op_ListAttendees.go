@@ -16,7 +16,7 @@ import (
 // information about the Amazon Chime SDK, see [Using the Amazon Chime SDK]in the Amazon Chime Developer
 // Guide.
 //
-// [Using the Amazon Chime SDK]: https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html
+// [Using the Amazon Chime SDK]: https://docs.aws.amazon.com/chime-sdk/latest/dg/meetings-sdk.html
 func (c *Client) ListAttendees(ctx context.Context, params *ListAttendeesInput, optFns ...func(*Options)) (*ListAttendeesOutput, error) {
 	if params == nil {
 		params = &ListAttendeesInput{}
@@ -150,16 +150,13 @@ func (c *Client) addOperationListAttendeesMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

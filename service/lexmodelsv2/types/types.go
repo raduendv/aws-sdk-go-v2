@@ -1670,6 +1670,17 @@ type BotLocaleImportSpecification struct {
 	//   - IntentC
 	NluIntentConfidenceThreshold *float64
 
+	// The sensitivity level for voice activity detection (VAD) in the bot locale.
+	// This setting helps optimize speech recognition accuracy by adjusting how the
+	// system responds to background noise during voice interactions.
+	SpeechDetectionSensitivity SpeechDetectionSensitivity
+
+	// Speech-to-text settings to apply when importing the bot locale configuration.
+	SpeechRecognitionSettings *SpeechRecognitionSettings
+
+	// Unified speech settings to apply when importing the bot locale configuration.
+	UnifiedSpeechSettings *UnifiedSpeechSettings
+
 	// Defines settings for using an Amazon Polly voice to communicate with a user.
 	//
 	// Valid values include:
@@ -2505,6 +2516,23 @@ type DateRangeFilter struct {
 	//
 	// This member is required.
 	StartDateTime *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for integrating Deepgram speech-to-text models with
+// Amazon Lex.
+type DeepgramSpeechModelConfig struct {
+
+	// The Amazon Resource Name (ARN) of the Secrets Manager secret that contains the
+	// Deepgram API token.
+	//
+	// This member is required.
+	ApiTokenSecretArn *string
+
+	// The identifier of the Deepgram speech-to-text model to use for processing
+	// speech input.
+	ModelId *string
 
 	noSmithyDocumentSerde
 }
@@ -3346,6 +3374,34 @@ type IntentConfirmationSetting struct {
 	noSmithyDocumentSerde
 }
 
+// Configures the Intent Disambiguation feature that helps resolve ambiguous user
+// inputs when multiple intents could match. When enabled, the system presents
+// clarifying questions to users, helping them specify their exact intent for
+// improved conversation accuracy.
+type IntentDisambiguationSettings struct {
+
+	// Determines whether the Intent Disambiguation feature is enabled. When set to
+	// true , Amazon Lex will present disambiguation options to users when multiple
+	// intents could match their input, with the default being false .
+	//
+	// This member is required.
+	Enabled bool
+
+	// Provides a custom message that will be displayed before presenting the
+	// disambiguation options to users. This message helps set the context for users
+	// and can be customized to match your bot's tone and brand. If not specified, a
+	// default message will be used.
+	CustomDisambiguationMessage *string
+
+	// Specifies the maximum number of intent options (2-5) to present to users when
+	// disambiguation is needed. This setting determines how many intent options will
+	// be shown to users when the system detects ambiguous input. The default value is
+	// 3.
+	MaxDisambiguationIntents *int32
+
+	noSmithyDocumentSerde
+}
+
 // Filters the response from the ListIntents operation.
 type IntentFilter struct {
 
@@ -3450,6 +3506,9 @@ type IntentSummary struct {
 	// The input contexts that must be active for this intent to be considered for
 	// recognition.
 	InputContexts []InputContext
+
+	// The display name of the intent.
+	IntentDisplayName *string
 
 	// The unique identifier assigned to the intent. Use this ID to get detailed
 	// information about the intent with the DescribeIntent operation.
@@ -3601,6 +3660,31 @@ type NewCustomVocabularyItem struct {
 	// The weight assigned to the new custom vocabulary item from the custom
 	// vocabulary list.
 	Weight *int32
+
+	noSmithyDocumentSerde
+}
+
+// Configures the Assisted Natural Language Understanding (NLU) feature for your
+// bot. This specification determines whether enhanced intent recognition and
+// utterance understanding capabilities are active.
+type NluImprovementSpecification struct {
+
+	// Determines whether the Assisted NLU feature is enabled for the bot. When set to
+	// true , Amazon Lex uses advanced models to improve intent recognition and slot
+	// resolution, with the default being false .
+	//
+	// This member is required.
+	Enabled bool
+
+	// Specifies the mode for Assisted NLU operation. Use Primary to make Assisted NLU
+	// the primary intent recognition method, or Fallback to use it only when standard
+	// NLU confidence is low.
+	AssistedNluMode AssistedNluMode
+
+	// An object containing specifications for the Intent Disambiguation feature
+	// within the Assisted NLU settings. These settings determine how the bot handles
+	// ambiguous user inputs that could match multiple intents.
+	IntentDisambiguationSettings *IntentDisambiguationSettings
 
 	noSmithyDocumentSerde
 }
@@ -4091,6 +4175,11 @@ type RuntimeHintValue struct {
 // Contains specifications about the Amazon Lex runtime generative AI capabilities
 // from Amazon Bedrock that you can turn on for your bot.
 type RuntimeSettings struct {
+
+	// An object containing specifications for the Assisted NLU feature within the
+	// bot's runtime settings. These settings determine how the bot processes and
+	// interprets user utterances during conversations.
+	NluImprovement *NluImprovementSpecification
 
 	// An object containing specifications for the assisted slot resolution feature.
 	SlotResolutionImprovement *SlotResolutionImprovementSpecification
@@ -4740,6 +4829,46 @@ type Specifications struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration for a foundation model used for speech synthesis and recognition
+// capabilities.
+type SpeechFoundationModel struct {
+
+	// The Amazon Resource Name (ARN) of the foundation model used for speech
+	// processing.
+	//
+	// This member is required.
+	ModelArn *string
+
+	// The identifier of the voice to use for speech synthesis with the foundation
+	// model.
+	VoiceId *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings that define which speech-to-text model to use for
+// processing speech input.
+type SpeechModelConfig struct {
+
+	// Configuration settings for using Deepgram as the speech-to-text provider.
+	DeepgramConfig *DeepgramSpeechModelConfig
+
+	noSmithyDocumentSerde
+}
+
+// Settings that control how Amazon Lex processes and recognizes speech input from
+// users.
+type SpeechRecognitionSettings struct {
+
+	// Configuration settings for the selected speech-to-text model.
+	SpeechModelConfig *SpeechModelConfig
+
+	// The speech-to-text model to use.
+	SpeechModelPreference SpeechModelPreference
+
+	noSmithyDocumentSerde
+}
+
 // Defines a Speech Synthesis Markup Language (SSML) prompt.
 type SSMLMessage struct {
 
@@ -5308,6 +5437,19 @@ type TurnSpecification struct {
 
 	// Contains information about the user messages in the turn.
 	UserTurn *UserTurnSpecification
+
+	noSmithyDocumentSerde
+}
+
+// Unified configuration settings that combine speech recognition and synthesis
+// capabilities.
+type UnifiedSpeechSettings struct {
+
+	// The foundation model configuration to use for unified speech processing
+	// capabilities.
+	//
+	// This member is required.
+	SpeechFoundationModel *SpeechFoundationModel
 
 	noSmithyDocumentSerde
 }

@@ -44,7 +44,7 @@ type DescribeStackInstanceInput struct {
 	// This member is required.
 	StackInstanceRegion *string
 
-	// The name or the unique stack ID of the stack set that you want to get stack
+	// The name or the unique stack ID of the StackSet that you want to get stack
 	// instance information for.
 	//
 	// This member is required.
@@ -54,7 +54,7 @@ type DescribeStackInstanceInput struct {
 	// administrator in the organization's management account or as a delegated
 	// administrator in a member account.
 	//
-	// By default, SELF is specified. Use SELF for stack sets with self-managed
+	// By default, SELF is specified. Use SELF for StackSets with self-managed
 	// permissions.
 	//
 	//   - If you are signed in to the management account, specify SELF .
@@ -171,16 +171,13 @@ func (c *Client) addOperationDescribeStackInstanceMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

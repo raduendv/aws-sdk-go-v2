@@ -17,6 +17,8 @@ import (
 // for the change to take effect. Also, if you change the policy attached to the
 // role you specified in the roleArn field (for example, to correct an invalid
 // policy), it takes up to five minutes for that change to take effect.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) PutLoggingOptions(ctx context.Context, params *PutLoggingOptionsInput, optFns ...func(*Options)) (*PutLoggingOptionsOutput, error) {
 	if params == nil {
 		params = &PutLoggingOptionsInput{}
@@ -37,6 +39,8 @@ type PutLoggingOptionsInput struct {
 	// The new values of the IoT Analytics logging options.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	LoggingOptions *types.LoggingOptions
 
 	noSmithyDocumentSerde
@@ -137,16 +141,13 @@ func (c *Client) addOperationPutLoggingOptionsMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -10,7 +10,16 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Cancels a contact with a specified contact ID.
+// Cancels or stops a contact with a specified contact ID based on its position in
+// the [contact lifecycle].
+//
+// For contacts that:
+//
+//   - Have yet to start, the contact will be cancelled.
+//
+//   - Have started but have yet to finish, the contact will be stopped.
+//
+// [contact lifecycle]: https://docs.aws.amazon.com/ground-station/latest/ug/contacts.lifecycle.html
 func (c *Client) CancelContact(ctx context.Context, params *CancelContactInput, optFns ...func(*Options)) (*CancelContactOutput, error) {
 	if params == nil {
 		params = &CancelContactInput{}
@@ -135,16 +144,13 @@ func (c *Client) addOperationCancelContactMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

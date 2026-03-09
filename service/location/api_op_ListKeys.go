@@ -12,6 +12,10 @@ import (
 )
 
 // Lists API key resources in your Amazon Web Services account.
+//
+// For more information, see [Use API keys to authenticate] in the Amazon Location Service Developer Guide.
+//
+// [Use API keys to authenticate]: https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html
 func (c *Client) ListKeys(ctx context.Context, params *ListKeysInput, optFns ...func(*Options)) (*ListKeysOutput, error) {
 	if params == nil {
 		params = &ListKeysInput{}
@@ -152,16 +156,13 @@ func (c *Client) addOperationListKeysMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

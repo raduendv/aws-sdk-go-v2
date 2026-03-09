@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Updates settings for a FlexMatch matchmaking configuration. These changes
 // affect all matches and game sessions that are created after the update. To
 // update settings, specify the configuration name to be updated and provide the
@@ -78,13 +80,13 @@ type UpdateMatchmakingConfigurationInput struct {
 	Description *string
 
 	// Indicates whether this matchmaking configuration is being used with Amazon
-	// GameLift hosting or as a standalone matchmaking solution.
+	// GameLift Servers hosting or as a standalone matchmaking solution.
 	//
 	//   - STANDALONE - FlexMatch forms matches and returns match information,
 	//   including players and team assignments, in a [MatchmakingSucceeded]event.
 	//
 	//   - WITH_QUEUE - FlexMatch forms matches and uses the specified Amazon GameLift
-	//   queue to start a game session for the match.
+	//   Servers queue to start a game session for the match.
 	//
 	// [MatchmakingSucceeded]: https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-events.html#match-events-matchmakingsucceeded
 	FlexMatchMode types.FlexMatchMode
@@ -93,6 +95,10 @@ type UpdateMatchmakingConfigurationInput struct {
 	// example: {"Key": "difficulty", "Value": "novice"} . This information is added to
 	// the new GameSession object that is created for a successful match. This
 	// parameter is not used if FlexMatchMode is set to STANDALONE .
+	//
+	// Avoid using periods (".") in property keys if you plan to search for game
+	// sessions by properties. Property keys containing periods cannot be searched and
+	// will be filtered out from search results due to search index limitations.
 	GameProperties []types.GameProperty
 
 	// A set of custom game session properties, formatted as a single string value.
@@ -104,12 +110,12 @@ type UpdateMatchmakingConfigurationInput struct {
 	// [Start a game session]: https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-sdk-server-api.html#gamelift-sdk-server-startsession
 	GameSessionData *string
 
-	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift game session
-	// queue resource and uniquely identifies it. ARNs are unique across all Regions.
-	// Format is arn:aws:gamelift:::gamesessionqueue/ . Queues can be located in any
-	// Region. Queues are used to start new Amazon GameLift-hosted game sessions for
-	// matches that are created with this matchmaking configuration. If FlexMatchMode
-	// is set to STANDALONE , do not set this parameter.
+	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift Servers game
+	// session queue resource and uniquely identifies it. ARNs are unique across all
+	// Regions. Format is arn:aws:gamelift:::gamesessionqueue/ . Queues can be located
+	// in any Region. Queues are used to start new Amazon GameLift Servers-hosted game
+	// sessions for matches that are created with this matchmaking configuration. If
+	// FlexMatchMode is set to STANDALONE , do not set this parameter.
 	//
 	// [ARN]: https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html
 	GameSessionQueueArns []string
@@ -232,16 +238,13 @@ func (c *Client) addOperationUpdateMatchmakingConfigurationMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

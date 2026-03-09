@@ -44,6 +44,12 @@ type CreateApplicationInput struct {
 	// This member is required.
 	Namespace *string
 
+	// The configuration settings for the application.
+	ApplicationConfig *types.ApplicationConfig
+
+	// The type of application.
+	ApplicationType types.ApplicationType
+
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
 	// of the request. If not provided, the Amazon Web Services SDK populates this
 	// field. For more information about idempotency, see [Making retries safe with idempotent APIs].
@@ -53,6 +59,18 @@ type CreateApplicationInput struct {
 
 	// The description of the application.
 	Description *string
+
+	// The iframe configuration for the application.
+	IframeConfig *types.IframeConfig
+
+	// The maximum time in milliseconds allowed to establish a connection with the
+	// workspace.
+	InitializationTimeout *int32
+
+	// Indicates whether the application is a service.
+	//
+	// Deprecated: IsService has been deprecated in favor of ApplicationType
+	IsService bool
 
 	// The configuration of events or requests that the application has access to.
 	Permissions []string
@@ -179,16 +197,13 @@ func (c *Client) addOperationCreateApplicationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

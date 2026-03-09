@@ -196,6 +196,17 @@ type UpdateEnvironmentInput struct {
 	// time in 30 minute increments only.
 	WeeklyMaintenanceWindowStart *string
 
+	// The worker replacement strategy to use when updating the environment.
+	//
+	// You can select one of the following strategies:
+	//
+	//   - Forced - Stops and replaces Apache Airflow workers without waiting for
+	//   tasks to complete before an update.
+	//
+	//   - Graceful - Allows Apache Airflow workers to complete running tasks for up
+	//   to 12 hours during an update before they're stopped and replaced.
+	WorkerReplacementStrategy types.WorkerReplacementStrategy
+
 	noSmithyDocumentSerde
 }
 
@@ -302,16 +313,13 @@ func (c *Client) addOperationUpdateEnvironmentMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

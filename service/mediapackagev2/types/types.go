@@ -7,6 +7,24 @@ import (
 	"time"
 )
 
+// The settings to enable CDN authorization headers in MediaPackage.
+type CdnAuthConfiguration struct {
+
+	// The ARN for the secret in Secrets Manager that your CDN uses for authorization
+	// to access the endpoint.
+	//
+	// This member is required.
+	CdnIdentifierSecretArns []string
+
+	// The ARN for the IAM role that gives MediaPackage read access to Secrets Manager
+	// and KMS for CDN authorization.
+	//
+	// This member is required.
+	SecretsRoleArn *string
+
+	noSmithyDocumentSerde
+}
+
 // The configuration of the channel group.
 type ChannelGroupListConfiguration struct {
 
@@ -98,8 +116,25 @@ type CreateDashManifestConfiguration struct {
 	// This member is required.
 	ManifestName *string
 
+	// The base URLs to use for retrieving segments.
+	BaseUrls []DashBaseUrl
+
+	// The layout of the DASH manifest that MediaPackage produces. STANDARD indicates
+	// a default manifest, which is compacted. NONE indicates a full manifest.
+	//
+	// For information about compactness, see [DASH manifest compactness] in the Elemental MediaPackage v2 User
+	// Guide.
+	//
+	// [DASH manifest compactness]: https://docs.aws.amazon.com/mediapackage/latest/userguide/compacted.html
+	Compactness DashCompactness
+
 	// Determines how the DASH manifest signals the DRM content.
 	DrmSignaling DashDrmSignaling
+
+	// For endpoints that use the DVB-DASH profile only. The font download and error
+	// reporting information that you want MediaPackage to pass through to the
+	// manifest.
+	DvbSettings *DashDvbSettings
 
 	// Filter configuration includes settings for manifest filtering, start and end
 	// times, and time delay that apply to all of your egress requests for this
@@ -127,6 +162,13 @@ type CreateDashManifestConfiguration struct {
 	// [Multi-period DASH in AWS Elemental MediaPackage]: https://docs.aws.amazon.com/mediapackage/latest/userguide/multi-period.html
 	PeriodTriggers []DashPeriodTrigger
 
+	// The profile that the output is compliant with.
+	Profiles []DashProfile
+
+	// Details about the content that you want MediaPackage to pass through in the
+	// manifest to the playback device.
+	ProgramInformation *DashProgramInformation
+
 	// The SCTE configuration.
 	ScteDash *ScteDash
 
@@ -140,6 +182,9 @@ type CreateDashManifestConfiguration struct {
 	//   value of this variable is the sequential number of the segment. A full
 	//   SegmentTimeline object is presented in each SegmentTemplate .
 	SegmentTemplateFormat DashSegmentTemplateFormat
+
+	// The configuration for DASH subtitles.
+	SubtitleConfiguration *DashSubtitleConfiguration
 
 	// The amount of time (in seconds) that the player should be from the end of the
 	// manifest.
@@ -264,6 +309,162 @@ type CreateLowLatencyHlsManifestConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration parameters for creating a Microsoft Smooth Streaming (MSS)
+// manifest. MSS is a streaming media format developed by Microsoft that delivers
+// adaptive bitrate streaming content to compatible players and devices.
+type CreateMssManifestConfiguration struct {
+
+	// A short string that's appended to the endpoint URL to create a unique path to
+	// this MSS manifest. The manifest name must be unique within the origin endpoint
+	// and can contain letters, numbers, hyphens, and underscores.
+	//
+	// This member is required.
+	ManifestName *string
+
+	// Filter configuration includes settings for manifest filtering, start and end
+	// times, and time delay that apply to all of your egress requests for this
+	// manifest.
+	FilterConfiguration *FilterConfiguration
+
+	// Determines the layout format of the MSS manifest. This controls how the
+	// manifest is structured and presented to client players, affecting compatibility
+	// with different MSS-compatible devices and applications.
+	ManifestLayout MssManifestLayout
+
+	// The total duration (in seconds) of the manifest window. This determines how
+	// much content is available in the manifest at any given time. The manifest window
+	// slides forward as new segments become available, maintaining a consistent
+	// duration of content. The minimum value is 30 seconds.
+	ManifestWindowSeconds *int32
+
+	noSmithyDocumentSerde
+}
+
+// The base URLs to use for retrieving segments. You can specify multiple
+// locations and indicate the priority and weight for when each should be used, for
+// use in mutli-CDN workflows.
+type DashBaseUrl struct {
+
+	// A source location for segments.
+	//
+	// This member is required.
+	Url *string
+
+	// For use with DVB-DASH profiles only. The priority of this location for servings
+	// segments. The lower the number, the higher the priority.
+	DvbPriority *int32
+
+	// For use with DVB-DASH profiles only. The weighting for source locations that
+	// have the same priority.
+	DvbWeight *int32
+
+	// The name of the source location.
+	ServiceLocation *string
+
+	noSmithyDocumentSerde
+}
+
+// For use with DVB-DASH profiles only. The settings for font downloads that you
+// want Elemental MediaPackage to pass through to the manifest.
+type DashDvbFontDownload struct {
+
+	// The fontFamily name for subtitles, as described in [EBU-TT-D Subtitling Distribution Format].
+	//
+	// [EBU-TT-D Subtitling Distribution Format]: https://tech.ebu.ch/publications/tech3380
+	FontFamily *string
+
+	// The mimeType of the resource that's at the font download URL.
+	//
+	// For information about font MIME types, see the [MPEG-DASH Profile for Transport of ISO BMFF Based DVB Services over IP Based Networks] document.
+	//
+	// [MPEG-DASH Profile for Transport of ISO BMFF Based DVB Services over IP Based Networks]: https://dvb.org/wp-content/uploads/2021/06/A168r4_MPEG-DASH-Profile-for-Transport-of-ISO-BMFF-Based-DVB-Services_Draft-ts_103-285-v140_November_2021.pdf
+	MimeType *string
+
+	// The URL for downloading fonts for subtitles.
+	Url *string
+
+	noSmithyDocumentSerde
+}
+
+// For use with DVB-DASH profiles only. The settings for error reporting from the
+// playback device that you want Elemental MediaPackage to pass through to the
+// manifest.
+type DashDvbMetricsReporting struct {
+
+	// The URL where playback devices send error reports.
+	//
+	// This member is required.
+	ReportingUrl *string
+
+	// The number of playback devices per 1000 that will send error reports to the
+	// reporting URL. This represents the probability that a playback device will be a
+	// reporting player for this session.
+	Probability *int32
+
+	noSmithyDocumentSerde
+}
+
+// For endpoints that use the DVB-DASH profile only. The font download and error
+// reporting information that you want MediaPackage to pass through to the
+// manifest.
+type DashDvbSettings struct {
+
+	// Playback device error reporting settings.
+	ErrorMetrics []DashDvbMetricsReporting
+
+	// Subtitle font settings.
+	FontDownload *DashDvbFontDownload
+
+	noSmithyDocumentSerde
+}
+
+// Details about the content that you want MediaPackage to pass through in the
+// manifest to the playback device.
+type DashProgramInformation struct {
+
+	// A copyright statement about the content.
+	Copyright *string
+
+	// The language code for this manifest.
+	LanguageCode *string
+
+	// An absolute URL that contains more information about this content.
+	MoreInformationUrl *string
+
+	// Information about the content provider.
+	Source *string
+
+	// The title for the manifest.
+	Title *string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration for DASH subtitles.
+type DashSubtitleConfiguration struct {
+
+	// Settings for TTML subtitles.
+	TtmlConfiguration *DashTtmlConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The settings for TTML subtitles.
+type DashTtmlConfiguration struct {
+
+	// The profile that MediaPackage uses when signaling subtitles in the manifest.
+	// IMSC is the default profile. EBU-TT-D produces subtitles that are compliant
+	// with the EBU-TT-D TTML profile. MediaPackage passes through subtitle styles to
+	// the manifest. For more information about EBU-TT-D subtitles, see [EBU-TT-D Subtitling Distribution Format].
+	//
+	// [EBU-TT-D Subtitling Distribution Format]: https://tech.ebu.ch/publications/tech3380
+	//
+	// This member is required.
+	TtmlProfile DashTtmlProfile
+
+	noSmithyDocumentSerde
+}
+
 // Determines the type of UTC timing included in the DASH Media Presentation
 // Description (MPD).
 type DashUtcTiming struct {
@@ -303,6 +504,27 @@ type Encryption struct {
 	//
 	// This member is required.
 	SpekeKeyProvider *SpekeKeyProvider
+
+	// Excludes SEIG and SGPD boxes from segment metadata in CMAF containers.
+	//
+	// When set to true , MediaPackage omits these DRM metadata boxes from CMAF
+	// segments, which can improve compatibility with certain devices and players that
+	// don't support these boxes.
+	//
+	// Important considerations:
+	//
+	//   - This setting only affects CMAF container formats
+	//
+	//   - Key rotation can still be handled through media playlist signaling
+	//
+	//   - PSSH and TENC boxes remain unaffected
+	//
+	//   - Default behavior is preserved when this setting is disabled
+	//
+	// Valid values: true | false
+	//
+	// Default: false
+	CmafExcludeSegmentDrmMetadata *bool
 
 	// A 128-bit, 16-byte hex value represented by a 32-character string, used in
 	// conjunction with the key for encrypting content. If you don't specify a value,
@@ -404,6 +626,11 @@ type EncryptionMethod struct {
 	// The encryption method to use.
 	CmafEncryptionMethod CmafEncryptionMethod
 
+	// The encryption method used for Microsoft Smooth Streaming (MSS) content. This
+	// specifies how the MSS segments are encrypted to protect the content during
+	// delivery to client players.
+	IsmEncryptionMethod IsmEncryptionMethod
+
 	// The encryption method to use.
 	TsEncryptionMethod TsEncryptionMethod
 
@@ -419,6 +646,11 @@ type FilterConfiguration struct {
 	// requests. When you include clip start time, note that you cannot use clip start
 	// time query parameters for this manifest's endpoint URL.
 	ClipStartTime *time.Time
+
+	// Optionally specify one or more DRM settings for all of your manifest egress
+	// requests. When you include a DRM setting, note that you cannot use an identical
+	// DRM setting query parameter for this manifest's endpoint URL.
+	DrmSettings *string
 
 	// Optionally specify the end time for all of your manifest egress requests. When
 	// you include end time, note that you cannot use end time query parameters for
@@ -478,8 +710,20 @@ type GetDashManifestConfiguration struct {
 	// This member is required.
 	Url *string
 
+	// The base URL to use for retrieving segments.
+	BaseUrls []DashBaseUrl
+
+	// The layout of the DASH manifest that MediaPackage produces. STANDARD indicates
+	// a default manifest, which is compacted. NONE indicates a full manifest.
+	Compactness DashCompactness
+
 	// Determines how the DASH manifest signals the DRM content.
 	DrmSignaling DashDrmSignaling
+
+	// For endpoints that use the DVB-DASH profile only. The font download and error
+	// reporting information that you want MediaPackage to pass through to the
+	// manifest.
+	DvbSettings *DashDvbSettings
 
 	// Filter configuration includes settings for manifest filtering, start and end
 	// times, and time delay that apply to all of your egress requests for this
@@ -505,6 +749,13 @@ type GetDashManifestConfiguration struct {
 	// [Multi-period DASH in AWS Elemental MediaPackage]: https://docs.aws.amazon.com/mediapackage/latest/userguide/multi-period.html
 	PeriodTriggers []DashPeriodTrigger
 
+	// The profile that the output is compliant with.
+	Profiles []DashProfile
+
+	// Details about the content that you want MediaPackage to pass through in the
+	// manifest to the playback device.
+	ProgramInformation *DashProgramInformation
+
 	// The SCTE configuration.
 	ScteDash *ScteDash
 
@@ -518,6 +769,9 @@ type GetDashManifestConfiguration struct {
 	//   value of this variable is the sequential number of the segment. A full
 	//   SegmentTimeline object is presented in each SegmentTemplate .
 	SegmentTemplateFormat DashSegmentTemplateFormat
+
+	// The configuration for DASH subtitles.
+	SubtitleConfiguration *DashSubtitleConfiguration
 
 	// The amount of time (in seconds) that the player should be from the end of the
 	// manifest.
@@ -648,6 +902,40 @@ type GetLowLatencyHlsManifestConfiguration struct {
 	//
 	// [Amazon Web Services Signature Version 4 for API requests]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html
 	UrlEncodeChildManifest *bool
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for a Microsoft Smooth Streaming (MSS) manifest
+// associated with an origin endpoint. This includes all the settings and
+// properties that define how the MSS content is packaged and delivered.
+type GetMssManifestConfiguration struct {
+
+	// The name of the MSS manifest. This name is appended to the origin endpoint URL
+	// to create the unique path for accessing this specific MSS manifest.
+	//
+	// This member is required.
+	ManifestName *string
+
+	// The complete URL for accessing the MSS manifest. Client players use this URL to
+	// retrieve the manifest and begin streaming the Microsoft Smooth Streaming
+	// content.
+	//
+	// This member is required.
+	Url *string
+
+	// Filter configuration includes settings for manifest filtering, start and end
+	// times, and time delay that apply to all of your egress requests for this
+	// manifest.
+	FilterConfiguration *FilterConfiguration
+
+	// The layout format of the MSS manifest, which determines how the manifest is
+	// structured for client compatibility.
+	ManifestLayout MssManifestLayout
+
+	// The duration (in seconds) of the manifest window. This represents the total
+	// amount of content available in the manifest at any given time.
+	ManifestWindowSeconds *int32
 
 	noSmithyDocumentSerde
 }
@@ -806,8 +1094,14 @@ type IngestEndpoint struct {
 type InputSwitchConfiguration struct {
 
 	// When true, AWS Elemental MediaPackage performs input switching based on the
-	// MQCS. Default is true. This setting is valid only when InputType is CMAF .
+	// MQCS. Default is false. This setting is valid only when InputType is CMAF .
 	MQCSInputSwitching *bool
+
+	// For CMAF inputs, indicates which input MediaPackage should prefer when both
+	// inputs have equal MQCS scores. Select 1 to prefer the first ingest endpoint, or
+	// 2 to prefer the second ingest endpoint. If you don't specify a preferred input,
+	// MediaPackage uses its default switching behavior when MQCS scores are equal.
+	PreferredInput *int32
 
 	noSmithyDocumentSerde
 }
@@ -880,6 +1174,22 @@ type ListLowLatencyHlsManifestConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// Summary information about a Microsoft Smooth Streaming (MSS) manifest
+// configuration. This provides key details about the MSS manifest without
+// including all configuration parameters.
+type ListMssManifestConfiguration struct {
+
+	// The name of the MSS manifest configuration.
+	//
+	// This member is required.
+	ManifestName *string
+
+	// The URL for accessing the MSS manifest.
+	Url *string
+
+	noSmithyDocumentSerde
+}
+
 // The configuration of the origin endpoint.
 type OriginEndpointListConfiguration struct {
 
@@ -937,6 +1247,11 @@ type OriginEndpointListConfiguration struct {
 	// The date and time the origin endpoint was modified.
 	ModifiedAt *time.Time
 
+	// A list of Microsoft Smooth Streaming (MSS) manifest configurations associated
+	// with the origin endpoint. Each configuration represents a different MSS
+	// streaming option available from this endpoint.
+	MssManifests []ListMssManifestConfiguration
+
 	noSmithyDocumentSerde
 }
 
@@ -976,6 +1291,17 @@ type Scte struct {
 	// output.
 	ScteFilter []ScteFilter
 
+	// Controls whether SCTE-35 messages are included in segment files.
+	//
+	//   - None – SCTE-35 messages are not included in segments (default)
+	//
+	//   - All – SCTE-35 messages are embedded in segment data
+	//
+	// For DASH manifests, when set to All , an InbandEventStream tag signals that
+	// SCTE messages are present in segments. This setting works independently of
+	// manifest ad markers.
+	ScteInSegments ScteInSegments
+
 	noSmithyDocumentSerde
 }
 
@@ -1006,6 +1332,9 @@ type ScteHls struct {
 	// you want MediaPackage to do with the ad markers.
 	//
 	// Value description:
+	//
+	//   - SCTE35_ENHANCED - Generate industry-standard CUE tag ad markers in HLS
+	//   manifests based on SCTE-35 input messages from the input stream.
 	//
 	//   - DATERANGE - Insert EXT-X-DATERANGE tags to signal ad and program transition
 	//   events in TS and CMAF manifests. If you use DATERANGE, you must set a
@@ -1108,6 +1437,11 @@ type SpekeKeyProvider struct {
 	//
 	// This member is required.
 	Url *string
+
+	// The ARN for the certificate that you imported to AWS Certificate Manager to add
+	// content key encryption to this endpoint. For this feature to work, your DRM key
+	// provider must support content key encryption.
+	CertificateArn *string
 
 	noSmithyDocumentSerde
 }

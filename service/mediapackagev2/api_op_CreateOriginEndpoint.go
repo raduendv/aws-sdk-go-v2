@@ -82,6 +82,11 @@ type CreateOriginEndpointInput struct {
 	// A low-latency HLS manifest configuration.
 	LowLatencyHlsManifests []types.CreateLowLatencyHlsManifestConfiguration
 
+	// A list of Microsoft Smooth Streaming (MSS) manifest configurations for the
+	// origin endpoint. You can configure multiple MSS manifests to provide different
+	// streaming experiences or to support different client requirements.
+	MssManifests []types.CreateMssManifestConfiguration
+
 	// The segment configuration, including the segment name, duration, and other
 	// configuration values.
 	Segment *types.Segment
@@ -168,6 +173,10 @@ type CreateOriginEndpointOutput struct {
 
 	// A low-latency HLS manifest configuration.
 	LowLatencyHlsManifests []types.GetLowLatencyHlsManifestConfiguration
+
+	// The Microsoft Smooth Streaming (MSS) manifest configurations that were created
+	// for this origin endpoint.
+	MssManifests []types.GetMssManifestConfiguration
 
 	// The size of the window (in seconds) to create a window of the live stream
 	// that's available for on-demand viewing. Viewers can start-over or catch-up on
@@ -274,16 +283,13 @@ func (c *Client) addOperationCreateOriginEndpointMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -142,6 +142,12 @@ type DatastoreProperties struct {
 	// for accessing encrypted data.
 	KmsKeyArn *string
 
+	// The ARN of the authorizer's Lambda function.
+	LambdaAuthorizerArn *string
+
+	// The datastore's lossless storage format.
+	LosslessStorageFormat LosslessStorageFormat
+
 	// The timestamp when the data store was last updated.
 	UpdatedAt *time.Time
 
@@ -390,6 +396,9 @@ type ImageSetProperties struct {
 	// The image set workflow status.
 	ImageSetWorkflowStatus ImageSetWorkflowStatus
 
+	// The flag to determine whether the image set is primary or not.
+	IsPrimary *bool
+
 	// The error message thrown if an image set action fails.
 	Message *string
 
@@ -418,6 +427,15 @@ type ImageSetsMetadataSummary struct {
 
 	// The DICOM tags associated with the image set.
 	DICOMTags *DICOMTags
+
+	// The flag to determine whether the image set is primary or not.
+	IsPrimary *bool
+
+	// When the image set was last accessed.
+	LastAccessedAt *time.Time
+
+	// The image set's storage tier.
+	StorageTier StorageTier
 
 	// The time an image set was last updated.
 	UpdatedAt *time.Time
@@ -478,8 +496,9 @@ func (*MetadataUpdatesMemberRevertToVersionId) isMetadataUpdates() {}
 // and UpdateImageSetMetadata .
 type Overrides struct {
 
-	// Setting this flag will force the CopyImageSet and UpdateImageSetMetadata
-	// operations, even if Patient, Study, or Series level metadata are mismatched.
+	// Providing this parameter will force completion of the CopyImageSet and
+	// UpdateImageSetMetadata actions, even if metadata is inconsistent at the Patient,
+	// Study, and/or Series levels.
 	Forced *bool
 
 	noSmithyDocumentSerde
@@ -496,6 +515,7 @@ type Overrides struct {
 //	SearchByAttributeValueMemberDICOMStudyDateAndTime
 //	SearchByAttributeValueMemberDICOMStudyId
 //	SearchByAttributeValueMemberDICOMStudyInstanceUID
+//	SearchByAttributeValueMemberIsPrimary
 //	SearchByAttributeValueMemberUpdatedAt
 type SearchByAttributeValue interface {
 	isSearchByAttributeValue()
@@ -563,6 +583,15 @@ type SearchByAttributeValueMemberDICOMStudyInstanceUID struct {
 }
 
 func (*SearchByAttributeValueMemberDICOMStudyInstanceUID) isSearchByAttributeValue() {}
+
+// The primary image set flag provided for search.
+type SearchByAttributeValueMemberIsPrimary struct {
+	Value bool
+
+	noSmithyDocumentSerde
+}
+
+func (*SearchByAttributeValueMemberIsPrimary) isSearchByAttributeValue() {}
 
 // The timestamp input for search.
 type SearchByAttributeValueMemberUpdatedAt struct {

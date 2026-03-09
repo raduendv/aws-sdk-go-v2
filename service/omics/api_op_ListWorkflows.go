@@ -11,7 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves a list of workflows.
+// Retrieves a list of existing workflows. You can filter for specific workflows
+// by their name and type. Using the type parameter, specify PRIVATE to retrieve a
+// list of private workflows or specify READY2RUN for a list of all Ready2Run
+// workflows. If you do not specify the type of workflow, this operation returns a
+// list of existing workflows.
 func (c *Client) ListWorkflows(ctx context.Context, params *ListWorkflowsInput, optFns ...func(*Options)) (*ListWorkflowsOutput, error) {
 	if params == nil {
 		params = &ListWorkflowsInput{}
@@ -147,16 +151,13 @@ func (c *Client) addOperationListWorkflowsMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

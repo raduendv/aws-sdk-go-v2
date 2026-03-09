@@ -8,6 +8,135 @@ import (
 	"time"
 )
 
+// Controls and tracks usage limits for associated configured tables within a
+// collaboration across queries and job. Supports both period-based budgets that
+// can renew (daily, weekly, or monthly) and fixed lifetime budgets. Contains the
+// resource ARN, remaining budget information, and up to two budget configurations
+// (period-based and lifetime). By default, table usage is unlimited unless a
+// budget is configured.
+type AccessBudget struct {
+
+	// The total remaining budget across all budget parameters, showing the lower
+	// value between the per-period budget and lifetime budget for this access budget.
+	// For individual parameter budgets, see remainingBudget .
+	//
+	// This member is required.
+	AggregateRemainingBudget *int32
+
+	// Detailed budget information including time bounds, remaining budget, and
+	// refresh settings.
+	//
+	// This member is required.
+	Details []AccessBudgetDetails
+
+	// The Amazon Resource Name (ARN) of the access budget resource.
+	//
+	// This member is required.
+	ResourceArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Detailed information about an access budget including time bounds, budget
+// allocation, and configuration settings.
+type AccessBudgetDetails struct {
+
+	// The total budget allocation amount for this access budget.
+	//
+	// This member is required.
+	Budget *int32
+
+	// Specifies the time period for limiting table usage in queries and jobs. For
+	// calendar-based periods, the budget can renew if auto refresh is enabled. For
+	// lifetime budgets, the limit applies to the total usage throughout the
+	// collaboration. Valid values are:
+	//
+	// CALENDAR_DAY - Limit table usage per day.
+	//
+	// CALENDAR_WEEK - Limit table usage per week.
+	//
+	// CALENDAR_MONTH - Limit table usage per month.
+	//
+	// LIFETIME - Limit total table usage for the collaboration duration.
+	//
+	// This member is required.
+	BudgetType AccessBudgetType
+
+	// The remaining budget amount available for use within this access budget.
+	//
+	// This member is required.
+	RemainingBudget *int32
+
+	// The start time for the access budget period.
+	//
+	// This member is required.
+	StartTime *time.Time
+
+	// Indicates whether the budget automatically refreshes for each time period
+	// specified in budgetType . Valid values are:
+	//
+	// ENABLED - The budget refreshes automatically at the start of each period.
+	//
+	// DISABLED - The budget must be refreshed manually.
+	//
+	// NULL - The value is null when budgetType is set to LIFETIME .
+	AutoRefresh AutoRefreshMode
+
+	// The end time for the access budget period.
+	EndTime *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Input parameters for privacy budget templates that support access budgets
+// functionality, enabling enhanced budget management capabilities.
+type AccessBudgetsPrivacyTemplateParametersInput struct {
+
+	// An array of budget parameters that define the access budget configuration for
+	// the privacy template.
+	//
+	// This member is required.
+	BudgetParameters []BudgetParameter
+
+	// The Amazon Resource Name (ARN) of the resource associated with this privacy
+	// budget template.
+	//
+	// This member is required.
+	ResourceArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Output parameters for privacy budget templates with access budgets support,
+// containing the configured budget information.
+type AccessBudgetsPrivacyTemplateParametersOutput struct {
+
+	// An array of budget parameters returned from the access budget configuration.
+	//
+	// This member is required.
+	BudgetParameters []BudgetParameter
+
+	// The Amazon Resource Name (ARN) of the resource associated with this privacy
+	// budget template.
+	//
+	// This member is required.
+	ResourceArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Update parameters for privacy budget templates with access budgets
+// functionality, allowing modification of existing budget configurations.
+type AccessBudgetsPrivacyTemplateUpdateParameters struct {
+
+	// Updated array of budget parameters for the access budget configuration.
+	//
+	// This member is required.
+	BudgetParameters []BudgetParameter
+
+	noSmithyDocumentSerde
+}
+
 // Column in configured table that can be used in aggregate function in query.
 type AggregateColumn struct {
 
@@ -54,8 +183,8 @@ type AggregationConstraint struct {
 // data value in an analysis template.
 type AnalysisParameter struct {
 
-	// The name of the parameter. The name must use only alphanumeric, underscore (_),
-	// or hyphen (-) characters but cannot start or end with a hyphen.
+	// The name of the parameter. The name must use only alphanumeric or underscore
+	// (_) characters.
 	//
 	// This member is required.
 	Name *string
@@ -425,8 +554,18 @@ type AnalysisTemplate struct {
 	// The description of the analysis template.
 	Description *string
 
+	// The configuration that specifies the level of detail in error messages returned
+	// by analyses using this template. When set to DETAILED , error messages include
+	// more information to help troubleshoot issues with PySpark jobs. Detailed error
+	// messages may expose underlying data, including sensitive information.
+	// Recommended for faster troubleshooting in development and testing environments.
+	ErrorMessageConfiguration *ErrorMessageConfiguration
+
 	//  The source metadata for the analysis template.
 	SourceMetadata AnalysisSourceMetadata
+
+	// The parameters used to generate synthetic data for this analysis template.
+	SyntheticDataParameters SyntheticDataParameters
 
 	// Information about the validations performed on the analysis template.
 	Validations []AnalysisTemplateValidationStatusDetail
@@ -530,6 +669,9 @@ type AnalysisTemplateSummary struct {
 	// The description of the analysis template.
 	Description *string
 
+	// Indicates if this analysis template summary generated synthetic data.
+	IsSyntheticData *bool
+
 	noSmithyDocumentSerde
 }
 
@@ -573,6 +715,19 @@ type AnalysisTemplateValidationStatusReason struct {
 	noSmithyDocumentSerde
 }
 
+// Contains detailed information about the approval state of a given member in the
+// collaboration for a given collaboration change request.
+type ApprovalStatusDetails struct {
+
+	// The approval status of a member's vote on the change request. Valid values are
+	// PENDING (if they haven't voted), APPROVED, or DENIED.
+	//
+	// This member is required.
+	Status ApprovalStatus
+
+	noSmithyDocumentSerde
+}
+
 // A reference to a table within Athena.
 type AthenaTableReference struct {
 
@@ -593,6 +748,11 @@ type AthenaTableReference struct {
 
 	//  The output location for the Athena table.
 	OutputLocation *string
+
+	// The Amazon Web Services Region where the Athena table is located. This
+	// parameter is required to uniquely identify and access tables across different
+	// Regions.
+	Region CommercialRegion
 
 	noSmithyDocumentSerde
 }
@@ -692,6 +852,96 @@ type BilledResourceUtilization struct {
 	noSmithyDocumentSerde
 }
 
+// Individual budget parameter configuration that defines specific budget
+// allocation settings for access budgets.
+type BudgetParameter struct {
+
+	// The budget allocation amount for this specific parameter.
+	//
+	// This member is required.
+	Budget *int32
+
+	// The type of budget parameter being configured.
+	//
+	// This member is required.
+	Type AccessBudgetType
+
+	// Whether this individual budget parameter automatically refreshes when the
+	// budget period resets.
+	AutoRefresh AutoRefreshMode
+
+	noSmithyDocumentSerde
+}
+
+// Represents a single change within a collaboration change request, containing
+// the change identifier and specification.
+type Change struct {
+
+	// The specification details for this change.
+	//
+	// This member is required.
+	Specification ChangeSpecification
+
+	// The type of specification for this change.
+	//
+	// This member is required.
+	SpecificationType ChangeSpecificationType
+
+	// The list of change types that were applied.
+	//
+	// This member is required.
+	Types []ChangeType
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a change to apply to a collaboration.
+type ChangeInput struct {
+
+	// The specification details for the change. The structure depends on the
+	// specification type.
+	//
+	// This member is required.
+	Specification ChangeSpecification
+
+	// The type of specification for the change. Currently supports MEMBER for
+	// member-related changes.
+	//
+	// This member is required.
+	SpecificationType ChangeSpecificationType
+
+	noSmithyDocumentSerde
+}
+
+// A union that contains the specification details for different types of changes.
+//
+// The following types satisfy this interface:
+//
+//	ChangeSpecificationMemberCollaboration
+//	ChangeSpecificationMemberMember
+type ChangeSpecification interface {
+	isChangeSpecification()
+}
+
+// The collaboration configuration changes being requested. Currently, this only
+// supports modifying which change types are auto-approved for the collaboration.
+type ChangeSpecificationMemberCollaboration struct {
+	Value CollaborationChangeSpecification
+
+	noSmithyDocumentSerde
+}
+
+func (*ChangeSpecificationMemberCollaboration) isChangeSpecification() {}
+
+// The member change specification when the change type is MEMBER .
+type ChangeSpecificationMemberMember struct {
+	Value MemberChangeSpecification
+
+	noSmithyDocumentSerde
+}
+
+func (*ChangeSpecificationMemberMember) isChangeSpecification() {}
+
 // The multi-party data share environment. The collaboration contains metadata
 // about its purpose and participants.
 type Collaboration struct {
@@ -748,14 +998,32 @@ type Collaboration struct {
 	// This member is required.
 	UpdateTime *time.Time
 
+	// The Amazon Web Services Regions where collaboration query results can be
+	// stored. Returns the list of Region identifiers that were specified when the
+	// collaboration was created. This list is used to enforce regional storage
+	// policies and compliance requirements.
+	AllowedResultRegions []SupportedS3Region
+
 	//  The analytics engine for the collaboration.
+	//
+	// After July 16, 2025, the CLEAN_ROOMS_SQL parameter will no longer be available.
 	AnalyticsEngine AnalyticsEngine
+
+	// The types of change requests that are automatically approved for this
+	// collaboration.
+	AutoApprovedChangeTypes []AutoApprovedChangeType
 
 	// The settings for client-side encryption for cryptographic computing.
 	DataEncryptionMetadata *DataEncryptionMetadata
 
 	// A description of the collaboration provided by the collaboration owner.
 	Description *string
+
+	// An indicator as to whether metrics are enabled for the collaboration.
+	//
+	// When true , collaboration members can opt in to Amazon CloudWatch metrics for
+	// their membership queries.
+	IsMetricsEnabled *bool
 
 	// An indicator as to whether job logging has been enabled or disabled for the
 	// collaboration.
@@ -835,11 +1103,22 @@ type CollaborationAnalysisTemplate struct {
 	// The description of the analysis template.
 	Description *string
 
+	// The configuration that specifies the level of detail in error messages returned
+	// by analyses using this template. When set to DETAILED , error messages include
+	// more information to help troubleshoot issues with PySpark jobs. Detailed error
+	// messages may expose underlying data, including sensitive information.
+	// Recommended for faster troubleshooting in development and testing environments.
+	ErrorMessageConfiguration *ErrorMessageConfiguration
+
 	// The source of the analysis template within a collaboration.
 	Source AnalysisSource
 
 	//  The source metadata for the collaboration analysis template.
 	SourceMetadata AnalysisSourceMetadata
+
+	// The synthetic data generation parameters configured for this collaboration
+	// analysis template.
+	SyntheticDataParameters SyntheticDataParameters
 
 	// The validations that were performed.
 	Validations []AnalysisTemplateValidationStatusDetail
@@ -896,6 +1175,115 @@ type CollaborationAnalysisTemplateSummary struct {
 
 	// The description of the analysis template.
 	Description *string
+
+	// Indicates if this collaboration analysis template uses synthetic data
+	// generation.
+	IsSyntheticData *bool
+
+	noSmithyDocumentSerde
+}
+
+// Represents a request to modify a collaboration. Change requests enable
+// structured modifications to collaborations after they have been created.
+type CollaborationChangeRequest struct {
+
+	// The list of changes specified in this change request.
+	//
+	// This member is required.
+	Changes []Change
+
+	// The unique identifier for the collaboration being modified.
+	//
+	// This member is required.
+	CollaborationId *string
+
+	// The time when the change request was created.
+	//
+	// This member is required.
+	CreateTime *time.Time
+
+	// The unique identifier for the change request.
+	//
+	// This member is required.
+	Id *string
+
+	// Whether the change request was automatically approved based on the
+	// collaboration's auto-approval settings.
+	//
+	// This member is required.
+	IsAutoApproved *bool
+
+	// The current status of the change request. Valid values are PENDING , APPROVED ,
+	// DENIED , COMMITTED , and CANCELLED .
+	//
+	// This member is required.
+	Status ChangeRequestStatus
+
+	// The time when the change request was last updated.
+	//
+	// This member is required.
+	UpdateTime *time.Time
+
+	// A list of approval details from collaboration members, including approval
+	// status and multi-party approval workflow information.
+	Approvals map[string]ApprovalStatusDetails
+
+	noSmithyDocumentSerde
+}
+
+// Summary information about a collaboration change request.
+type CollaborationChangeRequestSummary struct {
+
+	// Summary of the changes in this change request.
+	//
+	// This member is required.
+	Changes []Change
+
+	// The unique identifier for the collaboration.
+	//
+	// This member is required.
+	CollaborationId *string
+
+	// The time when the change request was created.
+	//
+	// This member is required.
+	CreateTime *time.Time
+
+	// The unique identifier for the change request.
+	//
+	// This member is required.
+	Id *string
+
+	// Whether the change request was automatically approved.
+	//
+	// This member is required.
+	IsAutoApproved *bool
+
+	// The current status of the change request.
+	//
+	// This member is required.
+	Status ChangeRequestStatus
+
+	// The time when the change request was last updated.
+	//
+	// This member is required.
+	UpdateTime *time.Time
+
+	// Summary of approval statuses from all collaboration members for this change
+	// request.
+	Approvals map[string]ApprovalStatusDetails
+
+	noSmithyDocumentSerde
+}
+
+// Defines the specific changes being requested for a collaboration, including
+// configuration modifications and approval requirements.
+type CollaborationChangeSpecification struct {
+
+	// Defines requested updates to properties of the collaboration. Currently, this
+	// only supports modifying which change types are auto-approved for the
+	// collaboration.
+	AutoApprovedChangeTypes []AutoApprovedChangeType
 
 	noSmithyDocumentSerde
 }
@@ -1365,6 +1753,8 @@ type CollaborationSummary struct {
 	UpdateTime *time.Time
 
 	//  The analytics engine.
+	//
+	// After July 16, 2025, the CLEAN_ROOMS_SQL parameter will no longer be available.
 	AnalyticsEngine AnalyticsEngine
 
 	// The ARN of a member in a collaboration.
@@ -1388,6 +1778,21 @@ type Column struct {
 	//
 	// This member is required.
 	Type *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains classification information for data columns, including mappings that
+// specify how columns should be handled during synthetic data generation and
+// privacy analysis.
+type ColumnClassificationDetails struct {
+
+	// A mapping that defines the classification of data columns for synthetic data
+	// generation and specifies how each column should be handled during the
+	// privacy-preserving data synthesis process.
+	//
+	// This member is required.
+	ColumnMapping []SyntheticDataColumnProperties
 
 	noSmithyDocumentSerde
 }
@@ -1572,7 +1977,7 @@ type ConfiguredAudienceModelAssociationSummary struct {
 // A table that has been configured for use in a collaboration.
 type ConfiguredTable struct {
 
-	// The columns within the underlying Glue table that can be utilized within
+	// The columns within the underlying Glue table that can be used within
 	// collaborations.
 	//
 	// This member is required.
@@ -2471,6 +2876,25 @@ type DirectAnalysisConfigurationDetails struct {
 	noSmithyDocumentSerde
 }
 
+// A structure that defines the level of detail included in error messages
+// returned by PySpark jobs. This configuration allows you to control the verbosity
+// of error messages to help with troubleshooting PySpark jobs while maintaining
+// appropriate security controls.
+type ErrorMessageConfiguration struct {
+
+	// The level of detail for error messages returned by the PySpark job. When set to
+	// DETAILED, error messages include more information to help troubleshoot issues
+	// with your PySpark job.
+	//
+	// Because this setting may expose sensitive data, it is recommended for
+	// development and testing environments.
+	//
+	// This member is required.
+	Type ErrorMessageType
+
+	noSmithyDocumentSerde
+}
+
 // A reference to a table within an Glue data catalog.
 type GlueTableReference struct {
 
@@ -2483,6 +2907,10 @@ type GlueTableReference struct {
 	//
 	// This member is required.
 	TableName *string
+
+	// The Amazon Web Services Region where the Glue table is located. This parameter
+	// is required to uniquely identify and access tables across different Regions.
+	Region CommercialRegion
 
 	noSmithyDocumentSerde
 }
@@ -2911,6 +3339,34 @@ type JobComputePaymentConfig struct {
 	noSmithyDocumentSerde
 }
 
+// Specifies changes to collaboration membership, including adding new members
+// with their abilities and display names.
+type MemberChangeSpecification struct {
+
+	// The Amazon Web Services account ID of the member to add to the collaboration.
+	//
+	// This member is required.
+	AccountId *string
+
+	// The abilities granted to the collaboration member. These determine what actions
+	// the member can perform within the collaboration.
+	//
+	// The following values are currently not supported: CAN_QUERY ,
+	// CAN_RECEIVE_RESULTS, and CAN_RUN_JOB .
+	//
+	// Set the value of memberAbilities to [] to allow a member to contribute data.
+	//
+	// This member is required.
+	MemberAbilities []MemberAbility
+
+	// Specifies the display name that will be shown for this member in the
+	// collaboration. While this field is required when inviting new members, it
+	// becomes optional when modifying abilities of existing collaboration members.
+	DisplayName *string
+
+	noSmithyDocumentSerde
+}
+
 // The membership object.
 type Membership struct {
 
@@ -2992,6 +3448,12 @@ type Membership struct {
 	// can receive results.
 	DefaultResultConfiguration *MembershipProtectedQueryResultConfiguration
 
+	// An indicator as to whether Amazon CloudWatch metrics are enabled for the
+	// membership.
+	//
+	// When true , metrics about query execution are collected in Amazon CloudWatch.
+	IsMetricsEnabled *bool
+
 	// An indicator as to whether job logging has been enabled or disabled for the
 	// collaboration.
 	//
@@ -3039,6 +3501,10 @@ type MembershipMLPaymentConfig struct {
 
 	// The payment responsibilities accepted by the member for model training.
 	ModelTraining *MembershipModelTrainingPaymentConfig
+
+	// The payment configuration for synthetic data generation for this machine
+	// learning membership.
+	SyntheticDataGeneration *MembershipSyntheticDataGenerationPaymentConfig
 
 	noSmithyDocumentSerde
 }
@@ -3280,6 +3746,18 @@ type MembershipSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration for payment for synthetic data generation in a membership.
+type MembershipSyntheticDataGenerationPaymentConfig struct {
+
+	// Indicates if this membership is responsible for paying for synthetic data
+	// generation.
+	//
+	// This member is required.
+	IsResponsible *bool
+
+	noSmithyDocumentSerde
+}
+
 // Basic metadata used to construct a new member.
 type MemberSpecification struct {
 
@@ -3385,6 +3863,35 @@ type MLPaymentConfig struct {
 	// The payment responsibilities accepted by the member for model training.
 	ModelTraining *ModelTrainingPaymentConfig
 
+	// The payment configuration for machine learning synthetic data generation.
+	SyntheticDataGeneration *SyntheticDataGenerationPaymentConfig
+
+	noSmithyDocumentSerde
+}
+
+// Parameters that control the generation of synthetic data for machine learning,
+// including privacy settings and column classification details.
+type MLSyntheticDataParameters struct {
+
+	// Classification details for data columns that specify how each column should be
+	// treated during synthetic data generation.
+	//
+	// This member is required.
+	ColumnClassification *ColumnClassificationDetails
+
+	// The epsilon value for differential privacy when generating synthetic data.
+	// Lower values provide stronger privacy guarantees but may reduce data utility.
+	//
+	// This member is required.
+	Epsilon *float64
+
+	// The maximum acceptable score for membership inference attack vulnerability.
+	// Synthetic data generation fails if the score for the resulting data exceeds this
+	// threshold.
+	//
+	// This member is required.
+	MaxMembershipInferenceAttackScore *float64
+
 	noSmithyDocumentSerde
 }
 
@@ -3480,10 +3987,20 @@ func (*PreviewPrivacyImpactParametersInputMemberDifferentialPrivacy) isPreviewPr
 //
 // The following types satisfy this interface:
 //
+//	PrivacyBudgetMemberAccessBudget
 //	PrivacyBudgetMemberDifferentialPrivacy
 type PrivacyBudget interface {
 	isPrivacyBudget()
 }
+
+// Access budget information associated with this privacy budget.
+type PrivacyBudgetMemberAccessBudget struct {
+	Value AccessBudget
+
+	noSmithyDocumentSerde
+}
+
+func (*PrivacyBudgetMemberAccessBudget) isPrivacyBudget() {}
 
 // An object that specifies the epsilon parameter and the utility in terms of
 // total aggregations, as well as the remaining aggregations available.
@@ -3633,9 +4150,21 @@ type PrivacyBudgetTemplate struct {
 //
 // The following types satisfy this interface:
 //
+//	PrivacyBudgetTemplateParametersInputMemberAccessBudget
 //	PrivacyBudgetTemplateParametersInputMemberDifferentialPrivacy
 type PrivacyBudgetTemplateParametersInput interface {
 	isPrivacyBudgetTemplateParametersInput()
+}
+
+// Access budget configuration for the privacy budget template input, enabling
+// integration with access budget functionality.
+type PrivacyBudgetTemplateParametersInputMemberAccessBudget struct {
+	Value AccessBudgetsPrivacyTemplateParametersInput
+
+	noSmithyDocumentSerde
+}
+
+func (*PrivacyBudgetTemplateParametersInputMemberAccessBudget) isPrivacyBudgetTemplateParametersInput() {
 }
 
 // An object that specifies the epsilon and noise parameters.
@@ -3652,9 +4181,21 @@ func (*PrivacyBudgetTemplateParametersInputMemberDifferentialPrivacy) isPrivacyB
 //
 // The following types satisfy this interface:
 //
+//	PrivacyBudgetTemplateParametersOutputMemberAccessBudget
 //	PrivacyBudgetTemplateParametersOutputMemberDifferentialPrivacy
 type PrivacyBudgetTemplateParametersOutput interface {
 	isPrivacyBudgetTemplateParametersOutput()
+}
+
+// Access budget configuration returned from the privacy budget template,
+// containing the configured access budget settings.
+type PrivacyBudgetTemplateParametersOutputMemberAccessBudget struct {
+	Value AccessBudgetsPrivacyTemplateParametersOutput
+
+	noSmithyDocumentSerde
+}
+
+func (*PrivacyBudgetTemplateParametersOutputMemberAccessBudget) isPrivacyBudgetTemplateParametersOutput() {
 }
 
 // The epsilon and noise parameters.
@@ -3725,9 +4266,22 @@ type PrivacyBudgetTemplateSummary struct {
 //
 // The following types satisfy this interface:
 //
+//	PrivacyBudgetTemplateUpdateParametersMemberAccessBudget
 //	PrivacyBudgetTemplateUpdateParametersMemberDifferentialPrivacy
 type PrivacyBudgetTemplateUpdateParameters interface {
 	isPrivacyBudgetTemplateUpdateParameters()
+}
+
+//	The new access budget configuration that completely replaces the existing
+//
+// access budget settings in the privacy budget template.
+type PrivacyBudgetTemplateUpdateParametersMemberAccessBudget struct {
+	Value AccessBudgetsPrivacyTemplateUpdateParameters
+
+	noSmithyDocumentSerde
+}
+
+func (*PrivacyBudgetTemplateUpdateParametersMemberAccessBudget) isPrivacyBudgetTemplateUpdateParameters() {
 }
 
 // An object that specifies the new values for the epsilon and noise parameters.
@@ -3788,6 +4342,9 @@ type ProtectedJob struct {
 	// This member is required.
 	Status ProtectedJobStatus
 
+	// The compute configuration for the protected job.
+	ComputeConfiguration ProtectedJobComputeConfiguration
+
 	//  The error from the protected job.
 	Error *ProtectedJobError
 
@@ -3805,6 +4362,24 @@ type ProtectedJob struct {
 
 	noSmithyDocumentSerde
 }
+
+// The configuration of the compute resources for a PySpark job.
+//
+// The following types satisfy this interface:
+//
+//	ProtectedJobComputeConfigurationMemberWorker
+type ProtectedJobComputeConfiguration interface {
+	isProtectedJobComputeConfiguration()
+}
+
+// The worker configuration for the compute environment.
+type ProtectedJobComputeConfigurationMemberWorker struct {
+	Value ProtectedJobWorkerComputeConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*ProtectedJobComputeConfigurationMemberWorker) isProtectedJobComputeConfiguration() {}
 
 // The protected job configuration details.
 //
@@ -3951,7 +4526,13 @@ func (*ProtectedJobOutputConfigurationOutputMemberS3) isProtectedJobOutputConfig
 type ProtectedJobParameters struct {
 
 	//  The ARN of the analysis template.
+	//
+	// This member is required.
 	AnalysisTemplateArn *string
+
+	// Runtime configuration values passed to the PySpark analysis script. Parameter
+	// names and types must match those defined in the analysis template.
+	Parameters map[string]string
 
 	noSmithyDocumentSerde
 }
@@ -4099,6 +4680,22 @@ type ProtectedJobSummary struct {
 	//
 	// This member is required.
 	Status ProtectedJobStatus
+
+	noSmithyDocumentSerde
+}
+
+// The configuration of the compute resources for a PySpark job.
+type ProtectedJobWorkerComputeConfiguration struct {
+
+	// The number of workers for a PySpark job.
+	//
+	// This member is required.
+	Number *int32
+
+	// The worker compute configuration type.
+	//
+	// This member is required.
+	Type ProtectedJobWorkerComputeType
 
 	noSmithyDocumentSerde
 }
@@ -4631,6 +5228,9 @@ type Schema struct {
 	// table.
 	AnalysisMethod AnalysisMethod
 
+	// The Amazon Resource Name (ARN) of the schema resource.
+	ResourceArn *string
+
 	// The schema type properties.
 	SchemaTypeProperties SchemaTypeProperties
 
@@ -4758,6 +5358,9 @@ type SchemaSummary struct {
 	// table.
 	AnalysisMethod AnalysisMethod
 
+	// The Amazon Resource Name (ARN) of the schema summary resource.
+	ResourceArn *string
+
 	//  The selected analysis methods for the schema.
 	SelectedAnalysisMethods []SelectedAnalysisMethod
 
@@ -4855,6 +5458,63 @@ type SnowflakeTableSchemaV1 struct {
 	noSmithyDocumentSerde
 }
 
+// Properties that define how a specific data column should be handled during
+// synthetic data generation, including its name, type, and role in predictive
+// modeling.
+type SyntheticDataColumnProperties struct {
+
+	// The name of the data column as it appears in the dataset.
+	//
+	// This member is required.
+	ColumnName *string
+
+	// The data type of the column, which determines how the synthetic data generation
+	// algorithm processes and synthesizes values for this column.
+	//
+	// This member is required.
+	ColumnType SyntheticDataColumnType
+
+	// Indicates if this column contains predictive values that should be treated as
+	// target variables in machine learning models. This affects how the synthetic data
+	// generation preserves statistical relationships.
+	//
+	// This member is required.
+	IsPredictiveValue *bool
+
+	noSmithyDocumentSerde
+}
+
+// Payment configuration for synthetic data generation.
+type SyntheticDataGenerationPaymentConfig struct {
+
+	// Indicates who is responsible for paying for synthetic data generation.
+	//
+	// This member is required.
+	IsResponsible *bool
+
+	noSmithyDocumentSerde
+}
+
+// The parameters that control how synthetic data is generated, including privacy
+// settings, column classifications, and other configuration options that affect
+// the data synthesis process.
+//
+// The following types satisfy this interface:
+//
+//	SyntheticDataParametersMemberMlSyntheticDataParameters
+type SyntheticDataParameters interface {
+	isSyntheticDataParameters()
+}
+
+// The machine learning-specific parameters for synthetic data generation.
+type SyntheticDataParametersMemberMlSyntheticDataParameters struct {
+	Value MLSyntheticDataParameters
+
+	noSmithyDocumentSerde
+}
+
+func (*SyntheticDataParametersMemberMlSyntheticDataParameters) isSyntheticDataParameters() {}
+
 // A pointer to the dataset that underlies this table.
 //
 // The following types satisfy this interface:
@@ -4919,13 +5579,47 @@ type ValidationExceptionField struct {
 type WorkerComputeConfiguration struct {
 
 	//  The number of workers.
+	//
+	// SQL queries support a minimum value of 2 and a maximum value of 400.
+	//
+	// PySpark jobs support a minimum value of 4 and a maximum value of 128.
 	Number *int32
+
+	// The configuration properties for the worker compute environment. These
+	// properties allow you to customize the compute settings for your Clean Rooms
+	// workloads.
+	Properties WorkerComputeConfigurationProperties
 
 	//  The worker compute configuration type.
 	Type WorkerComputeType
 
 	noSmithyDocumentSerde
 }
+
+// The configuration properties that define the compute environment settings for
+// workers in Clean Rooms. These properties enable customization of the underlying
+// compute environment to optimize performance for your specific workloads.
+//
+// The following types satisfy this interface:
+//
+//	WorkerComputeConfigurationPropertiesMemberSpark
+type WorkerComputeConfigurationProperties interface {
+	isWorkerComputeConfigurationProperties()
+}
+
+// The Spark configuration properties for SQL workloads. This map contains
+// key-value pairs that configure Apache Spark settings to optimize performance for
+// your data processing jobs. You can specify up to 50 Spark properties, with each
+// key being 1-200 characters and each value being 0-500 characters. These
+// properties allow you to adjust compute capacity for large datasets and complex
+// workloads.
+type WorkerComputeConfigurationPropertiesMemberSpark struct {
+	Value map[string]string
+
+	noSmithyDocumentSerde
+}
+
+func (*WorkerComputeConfigurationPropertiesMemberSpark) isWorkerComputeConfigurationProperties() {}
 
 type noSmithyDocumentSerde = smithydocument.NoSerde
 
@@ -4942,6 +5636,7 @@ func (*UnknownUnionMember) isAnalysisRulePolicy()                               
 func (*UnknownUnionMember) isAnalysisRulePolicyV1()                                {}
 func (*UnknownUnionMember) isAnalysisSource()                                      {}
 func (*UnknownUnionMember) isAnalysisSourceMetadata()                              {}
+func (*UnknownUnionMember) isChangeSpecification()                                 {}
 func (*UnknownUnionMember) isComputeConfiguration()                                {}
 func (*UnknownUnionMember) isConfigurationDetails()                                {}
 func (*UnknownUnionMember) isConfiguredTableAnalysisRulePolicy()                   {}
@@ -4958,6 +5653,7 @@ func (*UnknownUnionMember) isPrivacyBudgetTemplateParametersInput()             
 func (*UnknownUnionMember) isPrivacyBudgetTemplateParametersOutput()               {}
 func (*UnknownUnionMember) isPrivacyBudgetTemplateUpdateParameters()               {}
 func (*UnknownUnionMember) isPrivacyImpact()                                       {}
+func (*UnknownUnionMember) isProtectedJobComputeConfiguration()                    {}
 func (*UnknownUnionMember) isProtectedJobConfigurationDetails()                    {}
 func (*UnknownUnionMember) isProtectedJobOutput()                                  {}
 func (*UnknownUnionMember) isProtectedJobOutputConfigurationInput()                {}
@@ -4968,4 +5664,6 @@ func (*UnknownUnionMember) isProtectedQueryOutputConfiguration()                
 func (*UnknownUnionMember) isQueryConstraint()                                     {}
 func (*UnknownUnionMember) isSchemaTypeProperties()                                {}
 func (*UnknownUnionMember) isSnowflakeTableSchema()                                {}
+func (*UnknownUnionMember) isSyntheticDataParameters()                             {}
 func (*UnknownUnionMember) isTableReference()                                      {}
+func (*UnknownUnionMember) isWorkerComputeConfigurationProperties()                {}

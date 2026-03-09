@@ -11,8 +11,16 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	End of support notice: On May 20, 2026, Amazon Web Services will end support
+//
+// for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no
+// longer be able to access the Amazon Web Services DMS Fleet Advisor; console or
+// Amazon Web Services DMS Fleet Advisor; resources. For more information, see [Amazon Web Services DMS Fleet Advisor end of support].
+//
 // Returns a paginated list of limitations for recommendations of target Amazon
 // Web Services engines.
+//
+// [Amazon Web Services DMS Fleet Advisor end of support]: https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html
 func (c *Client) DescribeRecommendationLimitations(ctx context.Context, params *DescribeRecommendationLimitationsInput, optFns ...func(*Options)) (*DescribeRecommendationLimitationsOutput, error) {
 	if params == nil {
 		params = &DescribeRecommendationLimitationsInput{}
@@ -31,6 +39,8 @@ func (c *Client) DescribeRecommendationLimitations(ctx context.Context, params *
 type DescribeRecommendationLimitationsInput struct {
 
 	// Filters applied to the limitations described in the form of key-value pairs.
+	//
+	// Valid filter names: database-id | engine-name
 	Filters []types.Filter
 
 	// The maximum number of records to include in the response. If more records exist
@@ -157,16 +167,13 @@ func (c *Client) addOperationDescribeRecommendationLimitationsMiddlewares(stack 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -10,9 +10,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes a container group definition.
+//	This API works with the following fleet types: Container
 //
 // Request options:
+//
+// Deletes a container group definition.
 //
 //   - Delete an entire container group definition, including all versions.
 //     Specify the container group definition name, or use an ARN value without the
@@ -28,9 +30,9 @@ import (
 //
 // # Result
 //
-// If successful, Amazon GameLift removes the container group definition versions
-// that you request deletion for. This request will fail for any requested versions
-// if the following is true:
+// If successful, Amazon GameLift Servers removes the container group definition
+// versions that you request deletion for. This request will fail for any requested
+// versions if the following is true:
 //
 //   - If the version is being used in an active fleet
 //
@@ -172,16 +174,13 @@ func (c *Client) addOperationDeleteContainerGroupDefinitionMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -20,16 +20,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpCreateCliToken struct {
 }
@@ -2513,6 +2504,15 @@ func awsRestjson1_deserializeDocumentLastUpdate(v **types.LastUpdate, value inte
 					return fmt.Errorf("expected UpdateStatus to be of type string, got %T instead", value)
 				}
 				sv.Status = types.UpdateStatus(jtv)
+			}
+
+		case "WorkerReplacementStrategy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected WorkerReplacementStrategy to be of type string, got %T instead", value)
+				}
+				sv.WorkerReplacementStrategy = types.WorkerReplacementStrategy(jtv)
 			}
 
 		default:

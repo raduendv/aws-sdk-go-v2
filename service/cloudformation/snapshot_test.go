@@ -326,6 +326,18 @@ func TestCheckSnapshot_DescribeChangeSetHooks(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeEvents(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeEvents(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeEvents")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeGeneratedTemplate(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeGeneratedTemplate(context.Background(), nil, func(o *Options) {
@@ -595,6 +607,18 @@ func TestCheckSnapshot_GetGeneratedTemplate(t *testing.T) {
 	_, err := svc.GetGeneratedTemplate(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetGeneratedTemplate")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetHookResult(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetHookResult(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetHookResult")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1381,6 +1405,18 @@ func TestUpdateSnapshot_DescribeChangeSetHooks(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeEvents(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeEvents(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeEvents")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeGeneratedTemplate(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeGeneratedTemplate(context.Background(), nil, func(o *Options) {
@@ -1650,6 +1686,18 @@ func TestUpdateSnapshot_GetGeneratedTemplate(t *testing.T) {
 	_, err := svc.GetGeneratedTemplate(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetGeneratedTemplate")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetHookResult(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetHookResult(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetHookResult")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

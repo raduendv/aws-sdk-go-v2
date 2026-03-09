@@ -12,7 +12,9 @@ import (
 	"time"
 )
 
-// Starts a read set import job.
+// Imports a read set from the sequence store. Read set import jobs support a
+// maximum of 100 read sets of different types. Monitor the progress of your read
+// set import job by calling the GetReadSetImportJob API operation.
 func (c *Client) StartReadSetImportJob(ctx context.Context, params *StartReadSetImportJobInput, optFns ...func(*Options)) (*StartReadSetImportJobOutput, error) {
 	if params == nil {
 		params = &StartReadSetImportJobInput{}
@@ -176,16 +178,13 @@ func (c *Client) addOperationStartReadSetImportJobMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

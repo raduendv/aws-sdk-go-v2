@@ -38,6 +38,13 @@ type CancelTrainedModelInput struct {
 	// This member is required.
 	TrainedModelArn *string
 
+	// The version identifier of the trained model to cancel. This parameter allows
+	// you to specify which version of the trained model you want to cancel when
+	// multiple versions exist.
+	//
+	// If versionIdentifier is not specified, the base model will be cancelled.
+	VersionIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
@@ -136,16 +143,13 @@ func (c *Client) addOperationCancelTrainedModelMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

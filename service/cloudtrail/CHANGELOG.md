@@ -1,3 +1,142 @@
+# v1.55.5 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.55.4 (2025-12-09)
+
+* No change notes available for this release.
+
+# v1.55.3 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.55.2 (2025-12-02)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.55.1 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.55.0 (2025-11-20)
+
+* **Feature**: AWS launches CloudTrail aggregated events to simplify monitoring of data events at scale. This feature delivers both granular and summarized data events for resources like S3/Lambda, helping security teams identify patterns without custom aggregation logic.
+
+# v1.54.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.54.0 (2025-11-19)
+
+* **Feature**: AWS CloudTrail now supports Insights for data events, expanding beyond management events to automatically detect unusual activity on data plane operations.
+
+# v1.53.13 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.53.12 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.53.11 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.53.10 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.9 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.8 (2025-10-22)
+
+* No change notes available for this release.
+
+# v1.53.7 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.6 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.5 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.4 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.53.3 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.2 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.1 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.0 (2025-08-21)
+
+* **Feature**: Remove incorrect endpoint tests
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.52.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.51.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.50.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.50.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.4 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.3 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.2 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.1 (2025-06-06)
+
+* No change notes available for this release.
+
+# v1.49.0 (2025-05-29)
+
+* **Feature**: CloudTrail Feature Release: Support for Enriched Events with Configurable Context for Event Data Store
+
 # v1.48.4 (2025-04-10)
 
 * No change notes available for this release.

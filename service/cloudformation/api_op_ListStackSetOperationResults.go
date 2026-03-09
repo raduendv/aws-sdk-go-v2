@@ -11,7 +11,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Returns summary information about the results of a stack set operation.
+// Returns summary information about the results of a StackSet operation.
+//
+// This API provides eventually consistent reads meaning it may take some time but
+// will eventually return the most up-to-date data.
 func (c *Client) ListStackSetOperationResults(ctx context.Context, params *ListStackSetOperationResultsInput, optFns ...func(*Options)) (*ListStackSetOperationResultsOutput, error) {
 	if params == nil {
 		params = &ListStackSetOperationResultsInput{}
@@ -29,12 +32,12 @@ func (c *Client) ListStackSetOperationResults(ctx context.Context, params *ListS
 
 type ListStackSetOperationResultsInput struct {
 
-	// The ID of the stack set operation.
+	// The ID of the StackSet operation.
 	//
 	// This member is required.
 	OperationId *string
 
-	// The name or unique ID of the stack set that you want to get operation results
+	// The name or unique ID of the StackSet that you want to get operation results
 	// for.
 	//
 	// This member is required.
@@ -44,7 +47,7 @@ type ListStackSetOperationResultsInput struct {
 	// administrator in the organization's management account or as a delegated
 	// administrator in a member account.
 	//
-	// By default, SELF is specified. Use SELF for stack sets with self-managed
+	// By default, SELF is specified. Use SELF for StackSets with self-managed
 	// permissions.
 	//
 	//   - If you are signed in to the management account, specify SELF .
@@ -68,11 +71,8 @@ type ListStackSetOperationResultsInput struct {
 	// set of results.
 	MaxResults *int32
 
-	// If the previous request didn't return all the remaining results, the response
-	// object's NextToken parameter value is set to a token. To retrieve the next set
-	// of results, call ListStackSetOperationResults again and assign that token to
-	// the request object's NextToken parameter. If there are no remaining results,
-	// the previous response object's NextToken parameter is set to null .
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	noSmithyDocumentSerde
@@ -185,16 +185,13 @@ func (c *Client) addOperationListStackSetOperationResultsMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

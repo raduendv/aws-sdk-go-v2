@@ -14,11 +14,12 @@ import (
 // Stops a running task. Any tags associated with the task will be deleted.
 //
 // When you call StopTask on a task, the equivalent of docker stop is issued to
-// the containers running in the task. This results in a SIGTERM value and a
+// the containers running in the task. This results in a stop signal value and a
 // default 30-second timeout, after which the SIGKILL value is sent and the
-// containers are forcibly stopped. If the container handles the SIGTERM value
-// gracefully and exits within 30 seconds from receiving it, no SIGKILL value is
-// sent.
+// containers are forcibly stopped. This signal can be defined in your container
+// image with the STOPSIGNAL instruction and will default to SIGTERM . If the
+// container handles the SIGTERM value gracefully and exits within 30 seconds from
+// receiving it, no SIGKILL value is sent.
 //
 // For Windows containers, POSIX signals do not work and runtime stops the
 // container by sending a CTRL_SHUTDOWN_EVENT . For more information, see [Unable to react to graceful shutdown of (Windows) container #25982] on
@@ -166,16 +167,13 @@ func (c *Client) addOperationStopTaskMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

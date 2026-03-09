@@ -304,6 +304,46 @@ func (DBProxyStatus) Values() []DBProxyStatus {
 	}
 }
 
+type DefaultAuthScheme string
+
+// Enum values for DefaultAuthScheme
+const (
+	DefaultAuthSchemeIamAuth DefaultAuthScheme = "IAM_AUTH"
+	DefaultAuthSchemeNone    DefaultAuthScheme = "NONE"
+)
+
+// Values returns all known values for DefaultAuthScheme. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DefaultAuthScheme) Values() []DefaultAuthScheme {
+	return []DefaultAuthScheme{
+		"IAM_AUTH",
+		"NONE",
+	}
+}
+
+type EndpointNetworkType string
+
+// Enum values for EndpointNetworkType
+const (
+	EndpointNetworkTypeIpv4 EndpointNetworkType = "IPV4"
+	EndpointNetworkTypeIpv6 EndpointNetworkType = "IPV6"
+	EndpointNetworkTypeDual EndpointNetworkType = "DUAL"
+)
+
+// Values returns all known values for EndpointNetworkType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EndpointNetworkType) Values() []EndpointNetworkType {
+	return []EndpointNetworkType{
+		"IPV4",
+		"IPV6",
+		"DUAL",
+	}
+}
+
 type EngineFamily string
 
 // Enum values for EngineFamily
@@ -435,6 +475,25 @@ func (IntegrationStatus) Values() []IntegrationStatus {
 	}
 }
 
+type LifecycleSupportName string
+
+// Enum values for LifecycleSupportName
+const (
+	LifecycleSupportNameOpenSourceRdsStandardSupport LifecycleSupportName = "open-source-rds-standard-support"
+	LifecycleSupportNameOpenSourceRdsExtendedSupport LifecycleSupportName = "open-source-rds-extended-support"
+)
+
+// Values returns all known values for LifecycleSupportName. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (LifecycleSupportName) Values() []LifecycleSupportName {
+	return []LifecycleSupportName{
+		"open-source-rds-standard-support",
+		"open-source-rds-extended-support",
+	}
+}
+
 type LimitlessDatabaseStatus string
 
 // Enum values for LimitlessDatabaseStatus
@@ -491,6 +550,26 @@ func (LocalWriteForwardingStatus) Values() []LocalWriteForwardingStatus {
 	}
 }
 
+type MasterUserAuthenticationType string
+
+// Enum values for MasterUserAuthenticationType
+const (
+	MasterUserAuthenticationTypePassword  MasterUserAuthenticationType = "password"
+	MasterUserAuthenticationTypeIamDbAuth MasterUserAuthenticationType = "iam-db-auth"
+)
+
+// Values returns all known values for MasterUserAuthenticationType. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MasterUserAuthenticationType) Values() []MasterUserAuthenticationType {
+	return []MasterUserAuthenticationType{
+		"password",
+		"iam-db-auth",
+	}
+}
+
 type ReplicaMode string
 
 // Enum values for ReplicaMode
@@ -523,6 +602,8 @@ const (
 	SourceTypeCustomEngineVersion SourceType = "custom-engine-version"
 	SourceTypeDbProxy             SourceType = "db-proxy"
 	SourceTypeBlueGreenDeployment SourceType = "blue-green-deployment"
+	SourceTypeDbShardGroup        SourceType = "db-shard-group"
+	SourceTypeZeroEtl             SourceType = "zero-etl"
 )
 
 // Values returns all known values for SourceType. Note that this can be expanded
@@ -540,6 +621,27 @@ func (SourceType) Values() []SourceType {
 		"custom-engine-version",
 		"db-proxy",
 		"blue-green-deployment",
+		"db-shard-group",
+		"zero-etl",
+	}
+}
+
+type TargetConnectionNetworkType string
+
+// Enum values for TargetConnectionNetworkType
+const (
+	TargetConnectionNetworkTypeIpv4 TargetConnectionNetworkType = "IPV4"
+	TargetConnectionNetworkTypeIpv6 TargetConnectionNetworkType = "IPV6"
+)
+
+// Values returns all known values for TargetConnectionNetworkType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TargetConnectionNetworkType) Values() []TargetConnectionNetworkType {
+	return []TargetConnectionNetworkType{
+		"IPV4",
+		"IPV6",
 	}
 }
 
@@ -552,6 +654,7 @@ const (
 	TargetHealthReasonAuthFailure             TargetHealthReason = "AUTH_FAILURE"
 	TargetHealthReasonPendingProxyCapacity    TargetHealthReason = "PENDING_PROXY_CAPACITY"
 	TargetHealthReasonInvalidReplicationState TargetHealthReason = "INVALID_REPLICATION_STATE"
+	TargetHealthReasonPromoted                TargetHealthReason = "PROMOTED"
 )
 
 // Values returns all known values for TargetHealthReason. Note that this can be
@@ -565,6 +668,7 @@ func (TargetHealthReason) Values() []TargetHealthReason {
 		"AUTH_FAILURE",
 		"PENDING_PROXY_CAPACITY",
 		"INVALID_REPLICATION_STATE",
+		"PROMOTED",
 	}
 }
 
@@ -596,6 +700,7 @@ const (
 	TargetStateRegistering TargetState = "REGISTERING"
 	TargetStateAvailable   TargetState = "AVAILABLE"
 	TargetStateUnavailable TargetState = "UNAVAILABLE"
+	TargetStateUnused      TargetState = "UNUSED"
 )
 
 // Values returns all known values for TargetState. Note that this can be expanded
@@ -607,6 +712,7 @@ func (TargetState) Values() []TargetState {
 		"REGISTERING",
 		"AVAILABLE",
 		"UNAVAILABLE",
+		"UNUSED",
 	}
 }
 
@@ -628,6 +734,27 @@ func (TargetType) Values() []TargetType {
 		"RDS_INSTANCE",
 		"RDS_SERVERLESS_ENDPOINT",
 		"TRACKED_CLUSTER",
+	}
+}
+
+type UpgradeRolloutOrder string
+
+// Enum values for UpgradeRolloutOrder
+const (
+	UpgradeRolloutOrderFirst  UpgradeRolloutOrder = "first"
+	UpgradeRolloutOrderSecond UpgradeRolloutOrder = "second"
+	UpgradeRolloutOrderLast   UpgradeRolloutOrder = "last"
+)
+
+// Values returns all known values for UpgradeRolloutOrder. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (UpgradeRolloutOrder) Values() []UpgradeRolloutOrder {
+	return []UpgradeRolloutOrder{
+		"first",
+		"second",
+		"last",
 	}
 }
 

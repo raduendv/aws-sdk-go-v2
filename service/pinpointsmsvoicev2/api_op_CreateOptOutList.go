@@ -20,7 +20,7 @@ import (
 // can't send SMS or voice messages to them. If end user replies with the keyword
 // "STOP," an entry for the phone number is added to the opt-out list. In addition
 // to STOP, your recipients can use any supported opt-out keyword, such as CANCEL
-// or OPTOUT. For a list of supported opt-out keywords, see [SMS opt out]in the AWS End User
+// or OPTOUT. For a list of supported opt-out keywords, see [SMS opt out]in the End User
 // Messaging SMS User Guide.
 //
 // [SMS opt out]: https://docs.aws.amazon.com/pinpoint/latest/userguide/channels-sms-manage.html#channels-sms-manage-optout
@@ -170,16 +170,13 @@ func (c *Client) addOperationCreateOptOutListMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

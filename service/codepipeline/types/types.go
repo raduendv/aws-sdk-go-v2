@@ -955,6 +955,63 @@ type CurrentRevision struct {
 	noSmithyDocumentSerde
 }
 
+// The target for the deploy action.
+type DeployActionExecutionTarget struct {
+
+	// The end time for the deploy action.
+	EndTime *time.Time
+
+	// The lifecycle events for the deploy action.
+	Events []DeployTargetEvent
+
+	// The start time for the deploy action.
+	StartTime *time.Time
+
+	// The status of the deploy action.
+	Status *string
+
+	// The ID of the target for the deploy action.
+	TargetId *string
+
+	// The type of target for the deploy action.
+	TargetType *string
+
+	noSmithyDocumentSerde
+}
+
+// A lifecycle event for the deploy action.
+type DeployTargetEvent struct {
+
+	// The context for the event for the deploy action.
+	Context *DeployTargetEventContext
+
+	// The end time for the event for the deploy action.
+	EndTime *time.Time
+
+	// The name of the event for the deploy action.
+	Name *string
+
+	// The start time for the event for the deploy action.
+	StartTime *time.Time
+
+	// The status of the event for the deploy action.
+	Status *string
+
+	noSmithyDocumentSerde
+}
+
+// The context for the event for the deploy action.
+type DeployTargetEventContext struct {
+
+	// The context message for the event for the deploy action.
+	Message *string
+
+	// The command ID for the event for the deploy action.
+	SsmCommandId *string
+
+	noSmithyDocumentSerde
+}
+
 // Represents information about the key used to encrypt data in the artifact
 // store, such as an Amazon Web Services Key Management Service (Key Management
 // Service) key.
@@ -993,6 +1050,11 @@ type EnvironmentVariable struct {
 	//
 	// This member is required.
 	Value *string
+
+	// Specifies the type of use for the environment variable value. The value can be
+	// either PLAINTEXT or SECRETS_MANAGER . If the value is SECRETS_MANAGER , provide
+	// the Secrets reference in the EnvironmentVariable value.
+	Type EnvironmentVariableType
 
 	noSmithyDocumentSerde
 }
@@ -1677,12 +1739,20 @@ type PipelineMetadata struct {
 	PipelineArn *string
 
 	// The date and time that polling for source changes (periodic checks) was stopped
-	// for the pipeline, in timestamp format. You can migrate (update) a polling
-	// pipeline to use event-based change detection. For example, for a pipeline with a
-	// CodeCommit source, we recommend you migrate (update) your pipeline to use
-	// CloudWatch Events. To learn more, see [Migrate polling pipelines to use event-based change detection]in the CodePipeline User Guide.
+	// for the pipeline, in timestamp format.
+	//
+	// Pipelines that are inactive for longer than 30 days will have polling disabled
+	// for the pipeline. For more information, see [pollingDisabledAt]in the pipeline structure
+	// reference. For the steps to migrate your pipeline from polling to event-based
+	// change detection, see [Migrate polling pipelines to use event-based change detection].
+	//
+	// You can migrate (update) a polling pipeline to use event-based change
+	// detection. For example, for a pipeline with a CodeCommit source, we recommend
+	// you migrate (update) your pipeline to use CloudWatch Events. To learn more, see [Migrate polling pipelines to use event-based change detection]
+	// in the CodePipeline User Guide.
 	//
 	// [Migrate polling pipelines to use event-based change detection]: https://docs.aws.amazon.com/codepipeline/latest/userguide/update-change-detection.html
+	// [pollingDisabledAt]: https://docs.aws.amazon.com/codepipeline/latest/userguide/reference-pipeline-structure.html#metadata.pollingDisabledAt
 	PollingDisabledAt *time.Time
 
 	// The date and time the pipeline was last updated, in timestamp format.
@@ -2480,6 +2550,18 @@ type Tag struct {
 	//
 	// This member is required.
 	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// Filters the list of targets.
+type TargetFilter struct {
+
+	// The name on which to filter.
+	Name TargetFilterName
+
+	// The values on which to filter.
+	Values []string
 
 	noSmithyDocumentSerde
 }

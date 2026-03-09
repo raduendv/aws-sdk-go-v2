@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Gets the status, metrics, and errors (if there are any) that are associated
+// Returns the status, metrics, and errors (if there are any) that are associated
 // with a job.
 func (c *Client) GetIdMappingJob(ctx context.Context, params *GetIdMappingJobInput, optFns ...func(*Options)) (*GetIdMappingJobOutput, error) {
 	if params == nil {
@@ -66,6 +66,20 @@ type GetIdMappingJobOutput struct {
 
 	// An object containing an error message, if there was an error.
 	ErrorDetails *types.ErrorDetails
+
+	//  The job type of the ID mapping job.
+	//
+	// A value of INCREMENTAL indicates that only new or changed data was processed
+	// since the last job run. This is the default job type if the workflow was created
+	// with an incrementalRunConfig .
+	//
+	// A value of BATCH indicates that all data was processed from the input source,
+	// regardless of previous job runs. This is the default job type if the workflow
+	// wasn't created with an incrementalRunConfig .
+	//
+	// A value of DELETE_ONLY indicates that only deletion requests from
+	// BatchDeleteUniqueIds were processed.
+	JobType types.JobType
 
 	// Metrics associated with the execution, specifically total records processed,
 	// unique IDs generated, and records the execution skipped.
@@ -168,16 +182,13 @@ func (c *Client) addOperationGetIdMappingJobMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

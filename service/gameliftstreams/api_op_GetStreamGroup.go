@@ -35,8 +35,11 @@ func (c *Client) GetStreamGroup(ctx context.Context, params *GetStreamGroupInput
 
 type GetStreamGroupInput struct {
 
-	// The unique ID value of the stream group resource to retrieve. Format example:
-	// sg-1AB2C3De4 .
+	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
+	// Example ID: sg-1AB2C3De4 .
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
 	// This member is required.
 	Identifier *string
@@ -46,10 +49,11 @@ type GetStreamGroupInput struct {
 
 type GetStreamGroupOutput struct {
 
-	// An Amazon Resource Name (ARN) that is assigned to the stream group resource and
-	// that uniquely identifies the group across all Amazon Web Services Regions.
-	// Format is arn:aws:gameliftstreams:[AWS Region]:[AWS
-	// account]:streamgroup/[resource ID] .
+	// The [Amazon Resource Name (ARN)] that is assigned to the stream group resource and that uniquely identifies
+	// the group across all Amazon Web Services Regions. Format is
+	// arn:aws:gameliftstreams:[AWS Region]:[AWS account]:streamgroup/[resource ID] .
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
 	// This member is required.
 	Arn *string
@@ -57,9 +61,8 @@ type GetStreamGroupOutput struct {
 	//  A set of applications that this stream group is associated to. You can stream
 	// any of these applications by using this stream group.
 	//
-	// This value is a set of [Amazon Resource Names (ARNs)] that uniquely identify application resources. Format
-	// example: arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6
-	// .
+	// This value is a set of [Amazon Resource Names (ARNs)] that uniquely identify application resources. Example
+	// ARN: arn:aws:gameliftstreams:us-west-2:111122223333:application/a-9ZY8X7Wv6 .
 	//
 	// [Amazon Resource Names (ARNs)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	AssociatedApplications []string
@@ -75,6 +78,12 @@ type GetStreamGroupOutput struct {
 	// A descriptive label for the stream group.
 	Description *string
 
+	// The time at which this stream group expires. Timestamps are expressed using in
+	// ISO8601 format, such as: 2022-12-27T22:29:40+00:00 (UTC). After this time, you
+	// will no longer be able to update this stream group or use it to start stream
+	// sessions. Only Get and Delete operations will work on an expired stream group.
+	ExpiresAt *time.Time
+
 	// A unique ID value that is assigned to the resource when it's created. Format
 	// example: sg-1AB2C3De4 .
 	Id *string
@@ -88,18 +97,18 @@ type GetStreamGroupOutput struct {
 	//
 	// A location can be in one of the following states:
 	//
-	//   - ACTIVATING: Amazon GameLift Streams is preparing the location. You cannot
+	//   - ACTIVATING : Amazon GameLift Streams is preparing the location. You cannot
 	//   stream from, scale the capacity of, or remove this location yet.
 	//
-	//   - ACTIVE: The location is provisioned with initial capacity. You can now
+	//   - ACTIVE : The location is provisioned with initial capacity. You can now
 	//   stream from, scale the capacity of, or remove this location.
 	//
-	//   - ERROR: Amazon GameLift Streams failed to set up this location. The
-	//   StatusReason field describes the error. You can remove this location and try to
-	//   add it again.
+	//   - ERROR : Amazon GameLift Streams failed to set up this location. The
+	//   StatusReason field describes the error. You can remove this location and try
+	//   to add it again.
 	//
-	//   - REMOVING: Amazon GameLift Streams is working to remove this location. It
-	//   releases all provisioned capacity for this location in this stream group.
+	//   - REMOVING : Amazon GameLift Streams is working to remove this location. This
+	//   will release all provisioned capacity for this location in this stream group.
 	LocationStates []types.LocationState
 
 	// The current status of the stream group resource. Possible statuses include the
@@ -113,11 +122,16 @@ type GetStreamGroupOutput struct {
 	//   error state. Verify the details of individual locations and remove any locations
 	//   which are in error.
 	//
-	//   - ERROR : An error occurred when the stream group deployed. See StatusReason
-	//   for more information.
-	//
 	//   - DELETING : Amazon GameLift Streams is in the process of deleting the stream
 	//   group.
+	//
+	//   - ERROR : An error occurred when the stream group deployed. See StatusReason
+	//   (returned by CreateStreamGroup , GetStreamGroup , and UpdateStreamGroup ) for
+	//   more information.
+	//
+	//   - EXPIRED : The stream group is expired and can no longer host streams. This
+	//   typically occurs when a stream group is 365 days old, as indicated by the value
+	//   of ExpiresAt . Create a new stream group to resume streaming capabilities.
 	//
 	//   - UPDATING_LOCATIONS : One or more locations in the stream group are in the
 	//   process of updating (either activating or deleting).
@@ -126,24 +140,107 @@ type GetStreamGroupOutput struct {
 	//  A short description of the reason that the stream group is in ERROR status.
 	// The possible reasons can be one of the following:
 	//
-	//   - internalError : The request can't process right now bcause of an issue with
-	//   the server. Try again later. Reach out to the Amazon GameLift Streams team for
-	//   more help.
+	//   - internalError : The request can't process right now because of an issue with
+	//   the server. Try again later.
 	//
 	//   - noAvailableInstances : Amazon GameLift Streams does not currently have
-	//   enough available On-Demand capacity to fulfill your request. Wait a few minutes
-	//   and retry the request as capacity can shift frequently. You can also try to make
-	//   the request using a different stream class or in another region.
+	//   enough available capacity to fulfill your request. Wait a few minutes and retry
+	//   the request as capacity can shift frequently. You can also try to make the
+	//   request using a different stream class or in another region.
 	StatusReason types.StreamGroupStatusReason
 
 	// The target stream quality for the stream group.
 	//
 	// A stream class can be one of the following:
 	//
+	//   - gen6n_pro_win2022 (NVIDIA, pro) Supports applications with extremely high 3D
+	//   scene complexity which require maximum resources. Runs applications on Microsoft
+	//   Windows Server 2022 Base and supports DirectX 12. Compatible with Unreal Engine
+	//   versions up through 5.6, 32 and 64-bit applications, and anti-cheat technology.
+	//   Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 16 vCPUs, 64 GB RAM, 24 GB VRAM
+	//
+	//   - Tenancy: Supports 1 concurrent stream session
+	//
+	//   - gen6n_pro (NVIDIA, pro) Supports applications with extremely high 3D scene
+	//   complexity which require maximum resources. Uses dedicated NVIDIA L4 Tensor Core
+	//   GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 16 vCPUs, 64 GB RAM, 24 GB VRAM
+	//
+	//   - Tenancy: Supports 1 concurrent stream session
+	//
+	//   - gen6n_ultra_win2022 (NVIDIA, ultra) Supports applications with high 3D scene
+	//   complexity. Runs applications on Microsoft Windows Server 2022 Base and supports
+	//   DirectX 12. Compatible with Unreal Engine versions up through 5.6, 32 and 64-bit
+	//   applications, and anti-cheat technology. Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 8 vCPUs, 32 GB RAM, 24 GB VRAM
+	//
+	//   - Tenancy: Supports 1 concurrent stream session
+	//
+	//   - gen6n_ultra (NVIDIA, ultra) Supports applications with high 3D scene
+	//   complexity. Uses dedicated NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 8 vCPUs, 32 GB RAM, 24 GB VRAM
+	//
+	//   - Tenancy: Supports 1 concurrent stream session
+	//
+	//   - gen6n_high (NVIDIA, high) Supports applications with moderate to high 3D
+	//   scene complexity. Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 4 vCPUs, 16 GB RAM, 12 GB VRAM
+	//
+	//   - Tenancy: Supports up to 2 concurrent stream sessions
+	//
+	//   - gen6n_medium (NVIDIA, medium) Supports applications with moderate 3D scene
+	//   complexity. Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 2 vCPUs, 8 GB RAM, 6 GB VRAM
+	//
+	//   - Tenancy: Supports up to 4 concurrent stream sessions
+	//
+	//   - gen6n_small (NVIDIA, small) Supports applications with lightweight 3D scene
+	//   complexity and low CPU usage. Uses NVIDIA L4 Tensor Core GPU.
+	//
+	//   - Reference resolution: 1080p
+	//
+	//   - Reference frame rate: 60 fps
+	//
+	//   - Workload specifications: 1 vCPUs, 4 GB RAM, 2 GB VRAM
+	//
+	//   - Tenancy: Supports up to 12 concurrent stream sessions
+	//
 	//   - gen5n_win2022 (NVIDIA, ultra) Supports applications with extremely high 3D
 	//   scene complexity. Runs applications on Microsoft Windows Server 2022 Base and
-	//   supports DirectX 12. Compatible with Unreal Engine versions up through 5.4, 32
-	//   and 64-bit applications, and anti-cheat technology. Uses NVIDIA A10G Tensor GPU.
+	//   supports DirectX 12. Compatible with Unreal Engine versions up through 5.6, 32
+	//   and 64-bit applications, and anti-cheat technology. Uses NVIDIA A10G Tensor Core
+	//   GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -154,7 +251,7 @@ type GetStreamGroupOutput struct {
 	//   - Tenancy: Supports 1 concurrent stream session
 	//
 	//   - gen5n_high (NVIDIA, high) Supports applications with moderate to high 3D
-	//   scene complexity. Uses NVIDIA A10G Tensor GPU.
+	//   scene complexity. Uses NVIDIA A10G Tensor Core GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -165,7 +262,7 @@ type GetStreamGroupOutput struct {
 	//   - Tenancy: Supports up to 2 concurrent stream sessions
 	//
 	//   - gen5n_ultra (NVIDIA, ultra) Supports applications with extremely high 3D
-	//   scene complexity. Uses dedicated NVIDIA A10G Tensor GPU.
+	//   scene complexity. Uses dedicated NVIDIA A10G Tensor Core GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -177,8 +274,9 @@ type GetStreamGroupOutput struct {
 	//
 	//   - gen4n_win2022 (NVIDIA, ultra) Supports applications with extremely high 3D
 	//   scene complexity. Runs applications on Microsoft Windows Server 2022 Base and
-	//   supports DirectX 12. Compatible with Unreal Engine versions up through 5.4, 32
-	//   and 64-bit applications, and anti-cheat technology. Uses NVIDIA T4 Tensor GPU.
+	//   supports DirectX 12. Compatible with Unreal Engine versions up through 5.6, 32
+	//   and 64-bit applications, and anti-cheat technology. Uses NVIDIA T4 Tensor Core
+	//   GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -189,7 +287,7 @@ type GetStreamGroupOutput struct {
 	//   - Tenancy: Supports 1 concurrent stream session
 	//
 	//   - gen4n_high (NVIDIA, high) Supports applications with moderate to high 3D
-	//   scene complexity. Uses NVIDIA T4 Tensor GPU.
+	//   scene complexity. Uses NVIDIA T4 Tensor Core GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -200,7 +298,7 @@ type GetStreamGroupOutput struct {
 	//   - Tenancy: Supports up to 2 concurrent stream sessions
 	//
 	//   - gen4n_ultra (NVIDIA, ultra) Supports applications with high 3D scene
-	//   complexity. Uses dedicated NVIDIA T4 Tensor GPU.
+	//   complexity. Uses dedicated NVIDIA T4 Tensor Core GPU.
 	//
 	//   - Reference resolution: 1080p
 	//
@@ -305,16 +403,13 @@ func (c *Client) addOperationGetStreamGroupMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,8 +11,8 @@ import (
 )
 
 // Disassociates a Channel from a specified NotificationConfiguration . Supported
-// Channels include Chatbot, the Console Mobile Application, and emails
-// (notifications-contacts).
+// Channels include Amazon Q Developer in chat applications, the Console Mobile
+// Application, and emails (notifications-contacts).
 func (c *Client) DisassociateChannel(ctx context.Context, params *DisassociateChannelInput, optFns ...func(*Options)) (*DisassociateChannelOutput, error) {
 	if params == nil {
 		params = &DisassociateChannelInput{}
@@ -138,16 +138,13 @@ func (c *Client) addOperationDisassociateChannelMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

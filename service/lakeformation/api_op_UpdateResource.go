@@ -39,6 +39,10 @@ type UpdateResourceInput struct {
 	// This member is required.
 	RoleArn *string
 
+	// The Amazon Web Services account that owns the Glue tables associated with
+	// specific Amazon S3 locations.
+	ExpectedResourceOwnerAccount *string
+
 	//  Specifies whether the data access of tables pointing to the location can be
 	// managed by both Lake Formation permissions as well as Amazon S3 bucket policies.
 	HybridAccessEnabled *bool
@@ -144,16 +148,13 @@ func (c *Client) addOperationUpdateResourceMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

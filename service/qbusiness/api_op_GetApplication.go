@@ -94,7 +94,7 @@ type GetApplicationOutput struct {
 	// experience.
 	QAppsConfiguration *types.QAppsConfiguration
 
-	// The Amazon QuickSight authentication configuration for the Amazon Q Business
+	// The Amazon Quick Suite authentication configuration for the Amazon Q Business
 	// application.
 	QuickSightConfiguration *types.QuickSightConfiguration
 
@@ -202,16 +202,13 @@ func (c *Client) addOperationGetApplicationMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

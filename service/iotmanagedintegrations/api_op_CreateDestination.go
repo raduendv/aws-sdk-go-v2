@@ -11,9 +11,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	Create a destination. IoT managed integrations uses the destination to
+//	Create a notification destination such as Kinesis Data Streams that receive
 //
-// determine where to deliver notifications for a device.
+// events and notifications from Managed integrations. Managed integrations uses
+// the destination to determine where to deliver notifications.
 func (c *Client) CreateDestination(ctx context.Context, params *CreateDestinationInput, optFns ...func(*Options)) (*CreateDestinationOutput, error) {
 	if params == nil {
 		params = &CreateDestinationInput{}
@@ -60,6 +61,8 @@ type CreateDestinationInput struct {
 	Description *string
 
 	// A set of key/value pairs that are used to manage the destination.
+	//
+	// Deprecated: Tags have been deprecated from this api
 	Tags map[string]string
 
 	noSmithyDocumentSerde
@@ -167,16 +170,13 @@ func (c *Client) addOperationCreateDestinationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

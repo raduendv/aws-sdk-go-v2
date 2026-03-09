@@ -62,7 +62,8 @@ type CreateClusterInput struct {
 	// replicas) and 10 (one primary and nine read replicas). If the AvailabilityZones
 	// parameter is provided, its length must equal the ReplicationFactor .
 	//
-	// AWS recommends that you have at least two read replicas per cluster.
+	// Amazon Web Services recommends that you have at least two read replicas per
+	// cluster.
 	//
 	// This member is required.
 	ReplicationFactor int32
@@ -82,6 +83,19 @@ type CreateClusterInput struct {
 
 	// A description of the cluster.
 	Description *string
+
+	// Specifies the IP protocol(s) the cluster uses for network communications.
+	// Values are:
+	//
+	//   - ipv4 - The cluster is accessible only through IPv4 addresses
+	//
+	//   - ipv6 - The cluster is accessible only through IPv6 addresses
+	//
+	//   - dual_stack - The cluster is accessible through both IPv4 and IPv6 addresses.
+	//
+	// If no explicit NetworkType is provided, the network type is derived based on
+	// the subnet group's configuration.
+	NetworkType types.NetworkType
 
 	// The Amazon Resource Name (ARN) of the Amazon SNS topic to which notifications
 	// will be sent.
@@ -239,16 +253,13 @@ func (c *Client) addOperationCreateClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

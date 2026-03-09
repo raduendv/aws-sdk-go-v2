@@ -992,6 +992,67 @@ func (m *awsAwsjson10_serializeOpUntagResource) HandleSerialize(ctx context.Cont
 	return next.HandleSerialize(ctx, in)
 }
 
+type awsAwsjson10_serializeOpUpdateCluster struct {
+}
+
+func (*awsAwsjson10_serializeOpUpdateCluster) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson10_serializeOpUpdateCluster) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*UpdateClusterInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.0")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("AWSParallelComputingService.UpdateCluster")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson10_serializeOpDocumentUpdateClusterInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
 type awsAwsjson10_serializeOpUpdateComputeNodeGroup struct {
 }
 
@@ -1113,9 +1174,33 @@ func (m *awsAwsjson10_serializeOpUpdateQueue) HandleSerialize(ctx context.Contex
 	span.End()
 	return next.HandleSerialize(ctx, in)
 }
+func awsAwsjson10_serializeDocumentAccountingRequest(v *types.AccountingRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.DefaultPurgeTimeInDays != nil {
+		ok := object.Key("defaultPurgeTimeInDays")
+		ok.Integer(*v.DefaultPurgeTimeInDays)
+	}
+
+	if len(v.Mode) > 0 {
+		ok := object.Key("mode")
+		ok.String(string(v.Mode))
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentClusterSlurmConfigurationRequest(v *types.ClusterSlurmConfigurationRequest, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.Accounting != nil {
+		ok := object.Key("accounting")
+		if err := awsAwsjson10_serializeDocumentAccountingRequest(v.Accounting, ok); err != nil {
+			return err
+		}
+	}
 
 	if v.ScaleDownIdleTimeInSeconds != nil {
 		ok := object.Key("scaleDownIdleTimeInSeconds")
@@ -1125,6 +1210,13 @@ func awsAwsjson10_serializeDocumentClusterSlurmConfigurationRequest(v *types.Clu
 	if v.SlurmCustomSettings != nil {
 		ok := object.Key("slurmCustomSettings")
 		if err := awsAwsjson10_serializeDocumentSlurmCustomSettings(v.SlurmCustomSettings, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.SlurmRest != nil {
+		ok := object.Key("slurmRest")
+		if err := awsAwsjson10_serializeDocumentSlurmRestRequest(v.SlurmRest, ok); err != nil {
 			return err
 		}
 	}
@@ -1217,6 +1309,11 @@ func awsAwsjson10_serializeDocumentNetworkingRequest(v *types.NetworkingRequest,
 	object := value.Object()
 	defer object.Close()
 
+	if len(v.NetworkType) > 0 {
+		ok := object.Key("networkType")
+		ok.String(string(v.NetworkType))
+	}
+
 	if v.SecurityGroupIds != nil {
 		ok := object.Key("securityGroupIds")
 		if err := awsAwsjson10_serializeDocumentSecurityGroupIdList(v.SecurityGroupIds, ok); err != nil {
@@ -1227,6 +1324,20 @@ func awsAwsjson10_serializeDocumentNetworkingRequest(v *types.NetworkingRequest,
 	if v.SubnetIds != nil {
 		ok := object.Key("subnetIds")
 		if err := awsAwsjson10_serializeDocumentSubnetIdList(v.SubnetIds, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentQueueSlurmConfigurationRequest(v *types.QueueSlurmConfigurationRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.SlurmCustomSettings != nil {
+		ok := object.Key("slurmCustomSettings")
+		if err := awsAwsjson10_serializeDocumentSlurmCustomSettings(v.SlurmCustomSettings, ok); err != nil {
 			return err
 		}
 	}
@@ -1320,6 +1431,18 @@ func awsAwsjson10_serializeDocumentSlurmCustomSettings(v []types.SlurmCustomSett
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentSlurmRestRequest(v *types.SlurmRestRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.Mode) > 0 {
+		ok := object.Key("mode")
+		ok.String(string(v.Mode))
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentSpotOptions(v *types.SpotOptions, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1365,6 +1488,56 @@ func awsAwsjson10_serializeDocumentTagKeys(v []string, value smithyjson.Value) e
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentUpdateAccountingRequest(v *types.UpdateAccountingRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.DefaultPurgeTimeInDays != nil {
+		ok := object.Key("defaultPurgeTimeInDays")
+		ok.Integer(*v.DefaultPurgeTimeInDays)
+	}
+
+	if len(v.Mode) > 0 {
+		ok := object.Key("mode")
+		ok.String(string(v.Mode))
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentUpdateClusterSlurmConfigurationRequest(v *types.UpdateClusterSlurmConfigurationRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Accounting != nil {
+		ok := object.Key("accounting")
+		if err := awsAwsjson10_serializeDocumentUpdateAccountingRequest(v.Accounting, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ScaleDownIdleTimeInSeconds != nil {
+		ok := object.Key("scaleDownIdleTimeInSeconds")
+		ok.Integer(*v.ScaleDownIdleTimeInSeconds)
+	}
+
+	if v.SlurmCustomSettings != nil {
+		ok := object.Key("slurmCustomSettings")
+		if err := awsAwsjson10_serializeDocumentSlurmCustomSettings(v.SlurmCustomSettings, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.SlurmRest != nil {
+		ok := object.Key("slurmRest")
+		if err := awsAwsjson10_serializeDocumentUpdateSlurmRestRequest(v.SlurmRest, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentUpdateComputeNodeGroupSlurmConfigurationRequest(v *types.UpdateComputeNodeGroupSlurmConfigurationRequest, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1374,6 +1547,32 @@ func awsAwsjson10_serializeDocumentUpdateComputeNodeGroupSlurmConfigurationReque
 		if err := awsAwsjson10_serializeDocumentSlurmCustomSettings(v.SlurmCustomSettings, ok); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentUpdateQueueSlurmConfigurationRequest(v *types.UpdateQueueSlurmConfigurationRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.SlurmCustomSettings != nil {
+		ok := object.Key("slurmCustomSettings")
+		if err := awsAwsjson10_serializeDocumentSlurmCustomSettings(v.SlurmCustomSettings, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentUpdateSlurmRestRequest(v *types.UpdateSlurmRestRequest, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.Mode) > 0 {
+		ok := object.Key("mode")
+		ok.String(string(v.Mode))
 	}
 
 	return nil
@@ -1539,6 +1738,13 @@ func awsAwsjson10_serializeOpDocumentCreateQueueInput(v *CreateQueueInput, value
 	if v.QueueName != nil {
 		ok := object.Key("queueName")
 		ok.String(*v.QueueName)
+	}
+
+	if v.SlurmConfiguration != nil {
+		ok := object.Key("slurmConfiguration")
+		if err := awsAwsjson10_serializeDocumentQueueSlurmConfigurationRequest(v.SlurmConfiguration, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.Tags != nil {
@@ -1786,6 +1992,30 @@ func awsAwsjson10_serializeOpDocumentUntagResourceInput(v *UntagResourceInput, v
 	return nil
 }
 
+func awsAwsjson10_serializeOpDocumentUpdateClusterInput(v *UpdateClusterInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ClientToken != nil {
+		ok := object.Key("clientToken")
+		ok.String(*v.ClientToken)
+	}
+
+	if v.ClusterIdentifier != nil {
+		ok := object.Key("clusterIdentifier")
+		ok.String(*v.ClusterIdentifier)
+	}
+
+	if v.SlurmConfiguration != nil {
+		ok := object.Key("slurmConfiguration")
+		if err := awsAwsjson10_serializeDocumentUpdateClusterSlurmConfigurationRequest(v.SlurmConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeOpDocumentUpdateComputeNodeGroupInput(v *UpdateComputeNodeGroupInput, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1882,6 +2112,13 @@ func awsAwsjson10_serializeOpDocumentUpdateQueueInput(v *UpdateQueueInput, value
 	if v.QueueIdentifier != nil {
 		ok := object.Key("queueIdentifier")
 		ok.String(*v.QueueIdentifier)
+	}
+
+	if v.SlurmConfiguration != nil {
+		ok := object.Key("slurmConfiguration")
+		if err := awsAwsjson10_serializeDocumentUpdateQueueSlurmConfigurationRequest(v.SlurmConfiguration, ok); err != nil {
+			return err
+		}
 	}
 
 	return nil

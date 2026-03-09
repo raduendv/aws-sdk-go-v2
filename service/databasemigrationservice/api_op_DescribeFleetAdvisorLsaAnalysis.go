@@ -11,8 +11,16 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	End of support notice: On May 20, 2026, Amazon Web Services will end support
+//
+// for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no
+// longer be able to access the Amazon Web Services DMS Fleet Advisor; console or
+// Amazon Web Services DMS Fleet Advisor; resources. For more information, see [Amazon Web Services DMS Fleet Advisor end of support].
+//
 // Provides descriptions of large-scale assessment (LSA) analyses produced by your
 // Fleet Advisor collectors.
+//
+// [Amazon Web Services DMS Fleet Advisor end of support]: https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html
 func (c *Client) DescribeFleetAdvisorLsaAnalysis(ctx context.Context, params *DescribeFleetAdvisorLsaAnalysisInput, optFns ...func(*Options)) (*DescribeFleetAdvisorLsaAnalysisOutput, error) {
 	if params == nil {
 		params = &DescribeFleetAdvisorLsaAnalysisInput{}
@@ -144,16 +152,13 @@ func (c *Client) addOperationDescribeFleetAdvisorLsaAnalysisMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

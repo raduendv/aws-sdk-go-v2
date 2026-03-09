@@ -24,7 +24,7 @@ import (
 // information, see [Scheduling Tasks]in the Amazon Elastic Container Service Developer Guide.
 //
 // You can attach Amazon EBS volumes to Amazon ECS tasks by configuring the volume
-// when creating or updating a service. For more infomation, see [Amazon EBS volumes]in the Amazon
+// when creating or updating a service. For more information, see [Amazon EBS volumes]in the Amazon
 // Elastic Container Service Developer Guide.
 //
 // [Scheduling Tasks]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/scheduling_tasks.html
@@ -256,16 +256,13 @@ func (c *Client) addOperationStartTaskMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

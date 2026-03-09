@@ -5756,6 +5756,36 @@ func awsRestjson1_serializeOpDocumentVerifyDevicePositionInput(v *VerifyDevicePo
 	return nil
 }
 
+func awsRestjson1_serializeDocumentAndroidApp(v *types.AndroidApp, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.CertificateFingerprint != nil {
+		ok := object.Key("CertificateFingerprint")
+		ok.String(*v.CertificateFingerprint)
+	}
+
+	if v.Package != nil {
+		ok := object.Key("Package")
+		ok.String(*v.Package)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentAndroidAppList(v []types.AndroidApp, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentAndroidApp(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocumentApiKeyActionList(v []string, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -5790,6 +5820,20 @@ func awsRestjson1_serializeDocumentApiKeyRestrictions(v *types.ApiKeyRestriction
 		}
 	}
 
+	if v.AllowAndroidApps != nil {
+		ok := object.Key("AllowAndroidApps")
+		if err := awsRestjson1_serializeDocumentAndroidAppList(v.AllowAndroidApps, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.AllowAppleApps != nil {
+		ok := object.Key("AllowAppleApps")
+		if err := awsRestjson1_serializeDocumentAppleAppList(v.AllowAppleApps, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.AllowReferers != nil {
 		ok := object.Key("AllowReferers")
 		if err := awsRestjson1_serializeDocumentRefererPatternList(v.AllowReferers, ok); err != nil {
@@ -5804,6 +5848,31 @@ func awsRestjson1_serializeDocumentApiKeyRestrictions(v *types.ApiKeyRestriction
 		}
 	}
 
+	return nil
+}
+
+func awsRestjson1_serializeDocumentAppleApp(v *types.AppleApp, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.BundleId != nil {
+		ok := object.Key("BundleId")
+		ok.String(*v.BundleId)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentAppleAppList(v []types.AppleApp, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentAppleApp(&v[i], av); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -6180,6 +6249,13 @@ func awsRestjson1_serializeDocumentGeofenceGeometry(v *types.GeofenceGeometry, v
 		ok.Base64EncodeBytes(v.Geobuf)
 	}
 
+	if v.MultiPolygon != nil {
+		ok := object.Key("MultiPolygon")
+		if err := awsRestjson1_serializeDocumentMultiLinearRings(v.MultiPolygon, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Polygon != nil {
 		ok := object.Key("Polygon")
 		if err := awsRestjson1_serializeDocumentLinearRings(v.Polygon, ok); err != nil {
@@ -6435,6 +6511,22 @@ func awsRestjson1_serializeDocumentMapConfigurationUpdate(v *types.MapConfigurat
 		ok.String(*v.PoliticalView)
 	}
 
+	return nil
+}
+
+func awsRestjson1_serializeDocumentMultiLinearRings(v [][][][]float64, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if vv := v[i]; vv == nil {
+			continue
+		}
+		if err := awsRestjson1_serializeDocumentLinearRings(v[i], av); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

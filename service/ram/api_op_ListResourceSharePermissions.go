@@ -12,6 +12,11 @@ import (
 )
 
 // Lists the RAM permissions that are associated with a resource share.
+//
+// Always check the NextToken response parameter for a null value when calling a
+// paginated operation. These operations can occasionally return an empty set of
+// results even when there are more results available. The NextToken response
+// parameter value is null only when there are no more results to display.
 func (c *Client) ListResourceSharePermissions(ctx context.Context, params *ListResourceSharePermissionsInput, optFns ...func(*Options)) (*ListResourceSharePermissionsOutput, error) {
 	if params == nil {
 		params = &ListResourceSharePermissionsInput{}
@@ -164,16 +169,13 @@ func (c *Client) addOperationListResourceSharePermissionsMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

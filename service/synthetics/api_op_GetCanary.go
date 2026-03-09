@@ -37,6 +37,10 @@ type GetCanaryInput struct {
 	// This member is required.
 	Name *string
 
+	// The DryRunId associated with an existing canary’s dry run. You can use this
+	// DryRunId to retrieve information about the dry run.
+	DryRunId *string
+
 	noSmithyDocumentSerde
 }
 
@@ -139,16 +143,13 @@ func (c *Client) addOperationGetCanaryMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

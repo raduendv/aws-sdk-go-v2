@@ -24,6 +24,8 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.go.codegen.GoDelegator;
 import software.amazon.smithy.go.codegen.GoSettings;
 import software.amazon.smithy.go.codegen.GoWriter;
+import software.amazon.smithy.go.codegen.ChainWritable;
+import software.amazon.smithy.go.codegen.Writable;
 import software.amazon.smithy.go.codegen.SmithyGoDependency;
 import software.amazon.smithy.go.codegen.integration.GoIntegration;
 import software.amazon.smithy.go.codegen.integration.RuntimeClientPlugin;
@@ -32,6 +34,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
@@ -64,6 +67,10 @@ public class S3ExpiresShapeCustomization implements GoIntegration {
         }
 
         var withExpiresString = model.toBuilder()
+                .removeShape(S3_EXPIRES)
+                .addShape(TimestampShape.builder()
+                        .id(S3_EXPIRES)
+                        .build())
                 .addShape(StringShape.builder()
                         .id(S3_EXPIRES_STRING)
                         .build())
@@ -73,7 +80,9 @@ public class S3ExpiresShapeCustomization implements GoIntegration {
 
     @Override
     public void writeAdditionalFiles(GoSettings settings, Model model, SymbolProvider symbolProvider, GoDelegator goDelegator) {
-        goDelegator.useFileWriter("deserializers.go", settings.getModuleName(), deserializeS3Expires());
+        if (isServiceS3(model, settings.getService(model))) {
+            goDelegator.useFileWriter("deserializers.go", settings.getModuleName(), deserializeS3Expires());
+        }
     }
 
     private Shape addExpiresString(Shape shape) {
@@ -109,7 +118,7 @@ public class S3ExpiresShapeCustomization implements GoIntegration {
                 .build();
     }
 
-    private GoWriter.Writable deserializeS3Expires() {
+    private Writable deserializeS3Expires() {
         return goTemplate("""
                 func $name:L(v string) ($time:P, error) {
                     t, err := $parseHTTPDate:T(v)

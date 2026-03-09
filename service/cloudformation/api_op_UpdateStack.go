@@ -113,17 +113,17 @@ type UpdateStackInput struct {
 	//
 	// Only one of the Capabilities and ResourceType parameters can be specified.
 	//
-	// [AWS::IAM::ManagedPolicy]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-managedpolicy.html
-	// [AWS::IAM::AccessKey]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-accesskey.html
+	// [AWS::IAM::ManagedPolicy]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-managedpolicy.html
+	// [AWS::IAM::AccessKey]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-accesskey.html
 	// [AWS::Include]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-include.html
-	// [AWS::IAM::User]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-user.html
-	// [AWS::IAM::InstanceProfile]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-instanceprofile.html
+	// [AWS::IAM::User]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-user.html
+	// [AWS::IAM::InstanceProfile]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-instanceprofile.html
 	// [Acknowledging IAM resources in CloudFormation templates]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/control-access-with-iam.html#using-iam-capabilities
 	// [Perform custom processing on CloudFormation templates with template macros]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-macros.html
-	// [AWS::IAM::Policy]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-policy.html
-	// [AWS::IAM::Group]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-group.html
-	// [AWS::IAM::UserToGroupAddition]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-usertogroupaddition.html
-	// [AWS::IAM::Role]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+	// [AWS::IAM::Policy]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-policy.html
+	// [AWS::IAM::Group]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-group.html
+	// [AWS::IAM::UserToGroupAddition]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-usertogroupaddition.html
+	// [AWS::IAM::Role]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-role.html
 	// [AWS::Serverless]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
 	Capabilities []types.Capability
 
@@ -161,18 +161,17 @@ type UpdateStackInput struct {
 	// [Parameter]: https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_Parameter.html
 	Parameters []types.Parameter
 
-	// The template resource types that you have permissions to work with for this
-	// update stack action, such as AWS::EC2::Instance , AWS::EC2::* , or
+	// Specifies which resource types you can work with, such as AWS::EC2::Instance or
 	// Custom::MyCustomInstance .
 	//
 	// If the list of resource types doesn't include a resource that you're updating,
 	// the stack update fails. By default, CloudFormation grants permissions to all
 	// resource types. IAM uses this parameter for CloudFormation-specific condition
-	// keys in IAM policies. For more information, see [Control access with Identity and Access Management].
+	// keys in IAM policies. For more information, see [Control CloudFormation access with Identity and Access Management].
 	//
 	// Only one of the Capabilities and ResourceType parameters can be specified.
 	//
-	// [Control access with Identity and Access Management]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/control-access-with-iam.html
+	// [Control CloudFormation access with Identity and Access Management]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/control-access-with-iam.html
 	ResourceTypes []string
 
 	// When set to true , newly created resources are deleted when the operation rolls
@@ -198,7 +197,7 @@ type UpdateStackInput struct {
 	// updating operations, and for the specified monitoring period afterwards.
 	RollbackConfiguration *types.RollbackConfiguration
 
-	// Structure containing a new stack policy body. You can specify either the
+	// Structure that contains a new stack policy body. You can specify either the
 	// StackPolicyBody or the StackPolicyURL parameter, but not both.
 	//
 	// You might update the stack policy, for example, in order to protect a new
@@ -206,7 +205,7 @@ type UpdateStackInput struct {
 	// policy, the current policy that is associated with the stack is unchanged.
 	StackPolicyBody *string
 
-	// Structure containing the temporary overriding stack policy body. You can
+	// Structure that contains the temporary overriding stack policy body. You can
 	// specify either the StackPolicyDuringUpdateBody or the StackPolicyDuringUpdateURL
 	// parameter, but not both.
 	//
@@ -215,10 +214,12 @@ type UpdateStackInput struct {
 	// policy that is associated with the stack will be used.
 	StackPolicyDuringUpdateBody *string
 
-	// Location of a file containing the temporary overriding stack policy. The URL
+	// Location of a file that contains the temporary overriding stack policy. The URL
 	// must point to a policy (max size: 16KB) located in an S3 bucket in the same
 	// Region as the stack. The location for an Amazon S3 bucket must start with
-	// https:// . You can specify either the StackPolicyDuringUpdateBody or the
+	// https:// . URLs from S3 static websites are not supported.
+	//
+	// You can specify either the StackPolicyDuringUpdateBody or the
 	// StackPolicyDuringUpdateURL parameter, but not both.
 	//
 	// If you want to update protected resources, specify a temporary overriding stack
@@ -226,10 +227,13 @@ type UpdateStackInput struct {
 	// policy that is associated with the stack will be used.
 	StackPolicyDuringUpdateURL *string
 
-	// Location of a file containing the updated stack policy. The URL must point to a
-	// policy (max size: 16KB) located in an S3 bucket in the same Region as the stack.
-	// The location for an Amazon S3 bucket must start with https:// . You can specify
-	// either the StackPolicyBody or the StackPolicyURL parameter, but not both.
+	// Location of a file that contains the updated stack policy. The URL must point
+	// to a policy (max size: 16KB) located in an S3 bucket in the same Region as the
+	// stack. The location for an Amazon S3 bucket must start with https:// . URLs from
+	// S3 static websites are not supported.
+	//
+	// You can specify either the StackPolicyBody or the StackPolicyURL parameter, but
+	// not both.
 	//
 	// You might update the stack policy, for example, in order to protect a new
 	// resource that you created during a stack update. If you don't specify a stack
@@ -244,14 +248,14 @@ type UpdateStackInput struct {
 	// tags. If you specify an empty value, CloudFormation removes all associated tags.
 	Tags []types.Tag
 
-	// Structure containing the template body with a minimum length of 1 byte and a
+	// Structure that contains the template body with a minimum length of 1 byte and a
 	// maximum length of 51,200 bytes.
 	//
 	// Conditional: You must specify only one of the following parameters: TemplateBody
 	// , TemplateURL , or set the UsePreviousTemplate to true .
 	TemplateBody *string
 
-	// The URL of a file containing the template body. The URL must point to a
+	// The URL of a file that contains the template body. The URL must point to a
 	// template that's located in an Amazon S3 bucket or a Systems Manager document.
 	// The location for an Amazon S3 bucket must start with https:// .
 	//
@@ -262,8 +266,15 @@ type UpdateStackInput struct {
 	// Reuse the existing template that is associated with the stack that you are
 	// updating.
 	//
+	// When using templates with the AWS::LanguageExtensions transform, provide the
+	// template instead of using UsePreviousTemplate to ensure new parameter values
+	// and Systems Manager parameter updates are applied correctly. For more
+	// information, see [AWS::LanguageExtensions transform].
+	//
 	// Conditional: You must specify only one of the following parameters: TemplateBody
 	// , TemplateURL , or set the UsePreviousTemplate to true .
+	//
+	// [AWS::LanguageExtensions transform]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/transform-aws-languageextensions.html
 	UsePreviousTemplate *bool
 
 	noSmithyDocumentSerde
@@ -271,6 +282,10 @@ type UpdateStackInput struct {
 
 // The output for an UpdateStack action.
 type UpdateStackOutput struct {
+
+	// A unique identifier for this update operation that can be used to track the
+	// operation's progress and events.
+	OperationId *string
 
 	// Unique identifier of the stack.
 	StackId *string
@@ -369,16 +384,13 @@ func (c *Client) addOperationUpdateStackMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

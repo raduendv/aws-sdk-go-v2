@@ -151,6 +151,10 @@ type AllocateConnectionOnInterconnectOutput struct {
 	// The ID of the Amazon Web Services account that owns the connection.
 	OwnerAccount *string
 
+	// Indicates whether the interconnect hosting this connection supports MAC
+	// Security (MACsec).
+	PartnerInterconnectMacSecCapable *bool
+
 	// The name of the Direct Connect service provider associated with the connection.
 	PartnerName *string
 
@@ -266,16 +270,13 @@ func (c *Client) addOperationAllocateConnectionOnInterconnectMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

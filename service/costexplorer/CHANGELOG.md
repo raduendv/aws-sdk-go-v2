@@ -1,3 +1,153 @@
+# v1.63.2 (2026-01-14)
+
+* **Documentation**: Cost Categories added support to BillingView data filter expressions through the new costCategories parameter, enabling users to filter billing views by AWS Cost Categories for more granular cost management and allocation.
+
+# v1.63.1 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.63.0 (2026-01-06)
+
+* **Feature**: This release updates existing reservation recommendations API to support deployment model.
+
+# v1.62.0 (2025-12-08)
+
+* **Feature**: Add support for Cost Category resource associations including filtering by resource type on ListCostCategoryDefinitions and new ListCostCategoryResourceAssociations API.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.61.0 (2025-12-02)
+
+* **Feature**: This release updates existing Savings Plans Purchase Analyzer and Recommendations APIs to support Database Savings Plans.
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.60.2 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.60.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.60.0 (2025-11-19)
+
+* **Feature**: Add support for COST_CATEGORY, TAG, and LINKED_ACCOUNT AWS managed cost anomaly detection monitors
+
+# v1.59.4 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.59.3 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.59.2 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.59.1 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.59.0 (2025-10-27)
+
+* **Feature**: Updated endpoint for eusc-de-east-1 region.
+
+# v1.58.1 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.58.0 (2025-10-22)
+
+* **Feature**: Update endpoint ruleset parameters casing
+
+# v1.57.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.57.0 (2025-09-26)
+
+* **Feature**: Support for payer account dimension and billing view health status.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.56.1 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.56.0 (2025-09-15)
+
+* **Feature**: Added endpoint support for eusc-de-east-1 region.
+
+# v1.55.5 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.55.4 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.55.3 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.55.2 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.55.1 (2025-08-21)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.55.0 (2025-08-20)
+
+* **Feature**: Remove incorrect endpoint tests
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.54.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.51.3 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.51.2 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.51.1 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.51.0 (2025-06-09)
+
+* **Feature**: Support dual-stack endpoints for ce api
+
+# v1.50.0 (2025-05-27)
+
+* **Feature**: This release introduces Cost Comparison feature (GetCostAndUsageComparisons, GetCostComparisonDrivers) allowing you find cost variations across multiple dimensions and identify key drivers of spending changes.
+
 # v1.49.0 (2025-04-08)
 
 * **Feature**: This release supports Pagination traits on Cost Anomaly Detection APIs.

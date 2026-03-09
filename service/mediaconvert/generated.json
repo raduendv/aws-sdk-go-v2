@@ -14,6 +14,7 @@
         "api_op_CreateJobTemplate.go",
         "api_op_CreatePreset.go",
         "api_op_CreateQueue.go",
+        "api_op_CreateResourceShare.go",
         "api_op_DeleteJobTemplate.go",
         "api_op_DeletePolicy.go",
         "api_op_DeletePreset.go",
@@ -22,6 +23,7 @@
         "api_op_DisassociateCertificate.go",
         "api_op_GetJob.go",
         "api_op_GetJobTemplate.go",
+        "api_op_GetJobsQueryResults.go",
         "api_op_GetPolicy.go",
         "api_op_GetPreset.go",
         "api_op_GetQueue.go",
@@ -34,6 +36,7 @@
         "api_op_Probe.go",
         "api_op_PutPolicy.go",
         "api_op_SearchJobs.go",
+        "api_op_StartJobsQuery.go",
         "api_op_TagResource.go",
         "api_op_UntagResource.go",
         "api_op_UpdateJobTemplate.go",
@@ -58,7 +61,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/mediaconvert",
     "unstable": false
 }

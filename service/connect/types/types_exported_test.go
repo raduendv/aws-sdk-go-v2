@@ -8,6 +8,24 @@ import (
 	"time"
 )
 
+func ExampleContactMetricValue_outputUsage() {
+	var union types.ContactMetricValue
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.ContactMetricValueMemberNumber:
+		_ = v.Value // Value is float64
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *float64
+
 func ExampleCreatedByInfo_outputUsage() {
 	var union types.CreatedByInfo
 	// type switches can be used to check the union value
@@ -33,6 +51,9 @@ func ExampleEvaluationAnswerData_outputUsage() {
 	var union types.EvaluationAnswerData
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.EvaluationAnswerDataMemberDateTimeValue:
+		_ = v.Value // Value is string
+
 	case *types.EvaluationAnswerDataMemberNotApplicable:
 		_ = v.Value // Value is bool
 
@@ -41,6 +62,9 @@ func ExampleEvaluationAnswerData_outputUsage() {
 
 	case *types.EvaluationAnswerDataMemberStringValue:
 		_ = v.Value // Value is string
+
+	case *types.EvaluationAnswerDataMemberStringValues:
+		_ = v.Value // Value is []string
 
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
@@ -52,8 +76,10 @@ func ExampleEvaluationAnswerData_outputUsage() {
 }
 
 var _ *string
+var _ *string
 var _ bool
 var _ float64
+var _ []string
 
 func ExampleEvaluationFormItem_outputUsage() {
 	var union types.EvaluationFormItem
@@ -77,10 +103,53 @@ func ExampleEvaluationFormItem_outputUsage() {
 var _ *types.EvaluationFormQuestion
 var _ *types.EvaluationFormSection
 
+func ExampleEvaluationFormItemEnablementConditionOperand_outputUsage() {
+	var union types.EvaluationFormItemEnablementConditionOperand
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.EvaluationFormItemEnablementConditionOperandMemberCondition:
+		_ = v.Value // Value is types.EvaluationFormItemEnablementCondition
+
+	case *types.EvaluationFormItemEnablementConditionOperandMemberExpression:
+		_ = v.Value // Value is types.EvaluationFormItemEnablementExpression
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.EvaluationFormItemEnablementExpression
+var _ *types.EvaluationFormItemEnablementCondition
+
+func ExampleEvaluationFormMultiSelectQuestionAutomationOption_outputUsage() {
+	var union types.EvaluationFormMultiSelectQuestionAutomationOption
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.EvaluationFormMultiSelectQuestionAutomationOptionMemberRuleCategory:
+		_ = v.Value // Value is types.MultiSelectQuestionRuleCategoryAutomation
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.MultiSelectQuestionRuleCategoryAutomation
+
 func ExampleEvaluationFormNumericQuestionAutomation_outputUsage() {
 	var union types.EvaluationFormNumericQuestionAutomation
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.EvaluationFormNumericQuestionAutomationMemberAnswerSource:
+		_ = v.Value // Value is types.EvaluationFormQuestionAutomationAnswerSource
+
 	case *types.EvaluationFormNumericQuestionAutomationMemberPropertyValue:
 		_ = v.Value // Value is types.NumericQuestionPropertyValueAutomation
 
@@ -94,16 +163,23 @@ func ExampleEvaluationFormNumericQuestionAutomation_outputUsage() {
 }
 
 var _ *types.NumericQuestionPropertyValueAutomation
+var _ *types.EvaluationFormQuestionAutomationAnswerSource
 
 func ExampleEvaluationFormQuestionTypeProperties_outputUsage() {
 	var union types.EvaluationFormQuestionTypeProperties
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.EvaluationFormQuestionTypePropertiesMemberMultiSelect:
+		_ = v.Value // Value is types.EvaluationFormMultiSelectQuestionProperties
+
 	case *types.EvaluationFormQuestionTypePropertiesMemberNumeric:
 		_ = v.Value // Value is types.EvaluationFormNumericQuestionProperties
 
 	case *types.EvaluationFormQuestionTypePropertiesMemberSingleSelect:
 		_ = v.Value // Value is types.EvaluationFormSingleSelectQuestionProperties
+
+	case *types.EvaluationFormQuestionTypePropertiesMemberText:
+		_ = v.Value // Value is types.EvaluationFormTextQuestionProperties
 
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
@@ -114,6 +190,8 @@ func ExampleEvaluationFormQuestionTypeProperties_outputUsage() {
 	}
 }
 
+var _ *types.EvaluationFormMultiSelectQuestionProperties
+var _ *types.EvaluationFormTextQuestionProperties
 var _ *types.EvaluationFormSingleSelectQuestionProperties
 var _ *types.EvaluationFormNumericQuestionProperties
 
@@ -135,6 +213,46 @@ func ExampleEvaluationFormSingleSelectQuestionAutomationOption_outputUsage() {
 
 var _ *types.SingleSelectQuestionRuleCategoryAutomation
 
+func ExampleEvaluationQuestionAnswerAnalysisDetails_outputUsage() {
+	var union types.EvaluationQuestionAnswerAnalysisDetails
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.EvaluationQuestionAnswerAnalysisDetailsMemberContactLens:
+		_ = v.Value // Value is types.EvaluationContactLensAnswerAnalysisDetails
+
+	case *types.EvaluationQuestionAnswerAnalysisDetailsMemberGenAI:
+		_ = v.Value // Value is types.EvaluationGenAIAnswerAnalysisDetails
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.EvaluationContactLensAnswerAnalysisDetails
+var _ *types.EvaluationGenAIAnswerAnalysisDetails
+
+func ExampleEvaluatorUserUnion_outputUsage() {
+	var union types.EvaluatorUserUnion
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.EvaluatorUserUnionMemberConnectUserArn:
+		_ = v.Value // Value is string
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *string
+
 func ExampleInvalidRequestExceptionReason_outputUsage() {
 	var union types.InvalidRequestExceptionReason
 	// type switches can be used to check the union value
@@ -152,6 +270,24 @@ func ExampleInvalidRequestExceptionReason_outputUsage() {
 }
 
 var _ types.AttachedFileInvalidRequestExceptionReason
+
+func ExampleNextContactMetadata_outputUsage() {
+	var union types.NextContactMetadata
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.NextContactMetadataMemberQuickConnectContactData:
+		_ = v.Value // Value is types.QuickConnectContactData
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.QuickConnectContactData
 
 func ExampleParticipantTimerValue_outputUsage() {
 	var union types.ParticipantTimerValue
@@ -263,6 +399,9 @@ func ExampleReferenceSummary_outputUsage() {
 		_ = v.Value // Value is types.EmailReference
 
 	case *types.ReferenceSummaryMemberEmailMessage:
+		_ = v.Value // Value is types.EmailMessageReference
+
+	case *types.ReferenceSummaryMemberEmailMessagePlainText:
 		_ = v.Value // Value is types.EmailMessageReference
 
 	case *types.ReferenceSummaryMemberNumber:

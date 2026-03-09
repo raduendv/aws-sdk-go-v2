@@ -250,6 +250,26 @@ func (m *validateOpGetConnectInstanceConfig) HandleInitialize(ctx context.Contex
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetInstanceCommunicationLimits struct {
+}
+
+func (*validateOpGetInstanceCommunicationLimits) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetInstanceCommunicationLimits) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetInstanceCommunicationLimitsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetInstanceCommunicationLimitsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetInstanceOnboardingJobStatus struct {
 }
 
@@ -365,6 +385,26 @@ func (m *validateOpPutConnectInstanceIntegration) HandleInitialize(ctx context.C
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpPutConnectInstanceIntegrationInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpPutInstanceCommunicationLimits struct {
+}
+
+func (*validateOpPutInstanceCommunicationLimits) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpPutInstanceCommunicationLimits) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*PutInstanceCommunicationLimitsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpPutInstanceCommunicationLimitsInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -718,6 +758,10 @@ func addOpGetConnectInstanceConfigValidationMiddleware(stack *middleware.Stack) 
 	return stack.Initialize.Add(&validateOpGetConnectInstanceConfig{}, middleware.After)
 }
 
+func addOpGetInstanceCommunicationLimitsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetInstanceCommunicationLimits{}, middleware.After)
+}
+
 func addOpGetInstanceOnboardingJobStatusValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetInstanceOnboardingJobStatus{}, middleware.After)
 }
@@ -740,6 +784,10 @@ func addOpPauseCampaignValidationMiddleware(stack *middleware.Stack) error {
 
 func addOpPutConnectInstanceIntegrationValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpPutConnectInstanceIntegration{}, middleware.After)
+}
+
+func addOpPutInstanceCommunicationLimitsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpPutInstanceCommunicationLimits{}, middleware.After)
 }
 
 func addOpPutOutboundRequestBatchValidationMiddleware(stack *middleware.Stack) error {
@@ -854,6 +902,11 @@ func validateChannelSubtypeConfig(v *types.ChannelSubtypeConfig) error {
 			invalidParams.AddNested("Email", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.WhatsApp != nil {
+		if err := validateWhatsAppChannelSubtypeConfig(v.WhatsApp); err != nil {
+			invalidParams.AddNested("WhatsApp", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -880,6 +933,11 @@ func validateChannelSubtypeParameters(v types.ChannelSubtypeParameters) error {
 	case *types.ChannelSubtypeParametersMemberTelephony:
 		if err := validateTelephonyChannelSubtypeParameters(&uv.Value); err != nil {
 			invalidParams.AddNested("[telephony]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.ChannelSubtypeParametersMemberWhatsApp:
+		if err := validateWhatsAppChannelSubtypeParameters(&uv.Value); err != nil {
+			invalidParams.AddNested("[whatsApp]", err.(smithy.InvalidParamsError))
 		}
 
 	}
@@ -985,6 +1043,11 @@ func validateCommunicationTimeConfig(v *types.CommunicationTimeConfig) error {
 	if v.Email != nil {
 		if err := validateTimeWindow(v.Email); err != nil {
 			invalidParams.AddNested("Email", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.WhatsApp != nil {
+		if err := validateTimeWindow(v.WhatsApp); err != nil {
+			invalidParams.AddNested("WhatsApp", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -1114,6 +1177,23 @@ func validateEncryptionConfig(v *types.EncryptionConfig) error {
 	}
 }
 
+func validateInstanceCommunicationLimitsConfig(v *types.InstanceCommunicationLimitsConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "InstanceCommunicationLimitsConfig"}
+	if v.AllChannelSubtypes != nil {
+		if err := validateCommunicationLimits(v.AllChannelSubtypes); err != nil {
+			invalidParams.AddNested("AllChannelSubtypes", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateInstanceIdFilter(v *types.InstanceIdFilter) error {
 	if v == nil {
 		return nil
@@ -1143,6 +1223,11 @@ func validateIntegrationConfig(v types.IntegrationConfig) error {
 			invalidParams.AddNested("[customerProfiles]", err.(smithy.InvalidParamsError))
 		}
 
+	case *types.IntegrationConfigMemberLambda:
+		if err := validateLambdaIntegrationConfig(&uv.Value); err != nil {
+			invalidParams.AddNested("[lambda]", err.(smithy.InvalidParamsError))
+		}
+
 	case *types.IntegrationConfigMemberQConnect:
 		if err := validateQConnectIntegrationConfig(&uv.Value); err != nil {
 			invalidParams.AddNested("[qConnect]", err.(smithy.InvalidParamsError))
@@ -1167,11 +1252,46 @@ func validateIntegrationIdentifier(v types.IntegrationIdentifier) error {
 			invalidParams.AddNested("[customerProfiles]", err.(smithy.InvalidParamsError))
 		}
 
+	case *types.IntegrationIdentifierMemberLambda:
+		if err := validateLambdaIntegrationIdentifier(&uv.Value); err != nil {
+			invalidParams.AddNested("[lambda]", err.(smithy.InvalidParamsError))
+		}
+
 	case *types.IntegrationIdentifierMemberQConnect:
 		if err := validateQConnectIntegrationIdentifier(&uv.Value); err != nil {
 			invalidParams.AddNested("[qConnect]", err.(smithy.InvalidParamsError))
 		}
 
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateLambdaIntegrationConfig(v *types.LambdaIntegrationConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "LambdaIntegrationConfig"}
+	if v.FunctionArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("FunctionArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateLambdaIntegrationIdentifier(v *types.LambdaIntegrationIdentifier) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "LambdaIntegrationIdentifier"}
+	if v.FunctionArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("FunctionArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1248,6 +1368,28 @@ func validatePredictiveConfig(v *types.PredictiveConfig) error {
 	invalidParams := smithy.InvalidParamsError{Context: "PredictiveConfig"}
 	if v.BandwidthAllocation == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("BandwidthAllocation"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validatePreviewConfig(v *types.PreviewConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "PreviewConfig"}
+	if v.BandwidthAllocation == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("BandwidthAllocation"))
+	}
+	if v.TimeoutConfig == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TimeoutConfig"))
+	} else if v.TimeoutConfig != nil {
+		if err := validateTimeoutConfig(v.TimeoutConfig); err != nil {
+			invalidParams.AddNested("TimeoutConfig", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1546,11 +1688,31 @@ func validateTelephonyOutboundMode(v types.TelephonyOutboundMode) error {
 			invalidParams.AddNested("[predictive]", err.(smithy.InvalidParamsError))
 		}
 
+	case *types.TelephonyOutboundModeMemberPreview:
+		if err := validatePreviewConfig(&uv.Value); err != nil {
+			invalidParams.AddNested("[preview]", err.(smithy.InvalidParamsError))
+		}
+
 	case *types.TelephonyOutboundModeMemberProgressive:
 		if err := validateProgressiveConfig(&uv.Value); err != nil {
 			invalidParams.AddNested("[progressive]", err.(smithy.InvalidParamsError))
 		}
 
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateTimeoutConfig(v *types.TimeoutConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "TimeoutConfig"}
+	if v.DurationInSeconds == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DurationInSeconds"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1618,6 +1780,64 @@ func validateTimeWindow(v *types.TimeWindow) error {
 	}
 }
 
+func validateWhatsAppChannelSubtypeConfig(v *types.WhatsAppChannelSubtypeConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "WhatsAppChannelSubtypeConfig"}
+	if v.OutboundMode == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("OutboundMode"))
+	}
+	if v.DefaultOutboundConfig == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DefaultOutboundConfig"))
+	} else if v.DefaultOutboundConfig != nil {
+		if err := validateWhatsAppOutboundConfig(v.DefaultOutboundConfig); err != nil {
+			invalidParams.AddNested("DefaultOutboundConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateWhatsAppChannelSubtypeParameters(v *types.WhatsAppChannelSubtypeParameters) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "WhatsAppChannelSubtypeParameters"}
+	if v.DestinationPhoneNumber == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DestinationPhoneNumber"))
+	}
+	if v.TemplateParameters == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TemplateParameters"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateWhatsAppOutboundConfig(v *types.WhatsAppOutboundConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "WhatsAppOutboundConfig"}
+	if v.ConnectSourcePhoneNumberArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConnectSourcePhoneNumberArn"))
+	}
+	if v.WisdomTemplateArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("WisdomTemplateArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateCampaignInput(v *CreateCampaignInput) error {
 	if v == nil {
 		return nil
@@ -1629,9 +1849,7 @@ func validateOpCreateCampaignInput(v *CreateCampaignInput) error {
 	if v.ConnectInstanceId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ConnectInstanceId"))
 	}
-	if v.ChannelSubtypeConfig == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("ChannelSubtypeConfig"))
-	} else if v.ChannelSubtypeConfig != nil {
+	if v.ChannelSubtypeConfig != nil {
 		if err := validateChannelSubtypeConfig(v.ChannelSubtypeConfig); err != nil {
 			invalidParams.AddNested("ChannelSubtypeConfig", err.(smithy.InvalidParamsError))
 		}
@@ -1839,6 +2057,21 @@ func validateOpGetConnectInstanceConfigInput(v *GetConnectInstanceConfigInput) e
 	}
 }
 
+func validateOpGetInstanceCommunicationLimitsInput(v *GetInstanceCommunicationLimitsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetInstanceCommunicationLimitsInput"}
+	if v.ConnectInstanceId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConnectInstanceId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetInstanceOnboardingJobStatusInput(v *GetInstanceOnboardingJobStatusInput) error {
 	if v == nil {
 		return nil
@@ -1929,6 +2162,28 @@ func validateOpPutConnectInstanceIntegrationInput(v *PutConnectInstanceIntegrati
 	} else if v.IntegrationConfig != nil {
 		if err := validateIntegrationConfig(v.IntegrationConfig); err != nil {
 			invalidParams.AddNested("IntegrationConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpPutInstanceCommunicationLimitsInput(v *PutInstanceCommunicationLimitsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "PutInstanceCommunicationLimitsInput"}
+	if v.ConnectInstanceId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConnectInstanceId"))
+	}
+	if v.CommunicationLimitsConfig == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("CommunicationLimitsConfig"))
+	} else if v.CommunicationLimitsConfig != nil {
+		if err := validateInstanceCommunicationLimitsConfig(v.CommunicationLimitsConfig); err != nil {
+			invalidParams.AddNested("CommunicationLimitsConfig", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

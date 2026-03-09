@@ -40,7 +40,7 @@ type AddRegionInput struct {
 	// This member is required.
 	RegionName *string
 
-	// Contains VPC information for the CreateDirectory or CreateMicrosoftAD operation.
+	// Contains VPC information for the CreateDirectory, CreateMicrosoftAD, or CreateHybridAD operation.
 	//
 	// This member is required.
 	VPCSettings *types.DirectoryVpcSettings
@@ -143,16 +143,13 @@ func (c *Client) addOperationAddRegionMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

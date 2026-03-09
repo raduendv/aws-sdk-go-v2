@@ -101,7 +101,7 @@ type CreateDBClusterParameterGroupInput struct {
 	// following command:
 	//
 	//     aws rds describe-db-engine-versions --query
-	//     "DBEngineVersions[].DBParameterGroupFamily" --engine
+	//     "DBEngineVersions[].DBParameterGroupFamily" --engine <engine>
 	//
 	// For example, to list all of the available parameter group families for the
 	// Aurora PostgreSQL DB engine, use the following command:
@@ -237,16 +237,13 @@ func (c *Client) addOperationCreateDBClusterParameterGroupMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

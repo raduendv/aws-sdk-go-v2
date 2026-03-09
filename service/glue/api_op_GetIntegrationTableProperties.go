@@ -31,7 +31,12 @@ func (c *Client) GetIntegrationTableProperties(ctx context.Context, params *GetI
 
 type GetIntegrationTablePropertiesInput struct {
 
-	// The connection ARN of the source, or the database ARN of the target.
+	// The Amazon Resource Name (ARN) of the target table for which to retrieve
+	// integration table properties. Currently, this API only supports retrieving
+	// properties for target tables, and the provided ARN should be the ARN of the
+	// target table in the Glue Data Catalog. Support for retrieving integration table
+	// properties for source connections (using the connection ARN) is not yet
+	// implemented and will be added in a future release.
 	//
 	// This member is required.
 	ResourceArn *string
@@ -46,7 +51,12 @@ type GetIntegrationTablePropertiesInput struct {
 
 type GetIntegrationTablePropertiesOutput struct {
 
-	// The connection ARN of the source, or the database ARN of the target.
+	// The Amazon Resource Name (ARN) of the target table for which to retrieve
+	// integration table properties. Currently, this API only supports retrieving
+	// properties for target tables, and the provided ARN should be the ARN of the
+	// target table in the Glue Data Catalog. Support for retrieving integration table
+	// properties for source connections (using the connection ARN) is not yet
+	// implemented and will be added in a future release.
 	ResourceArn *string
 
 	// A structure for the source table configuration.
@@ -152,16 +162,13 @@ func (c *Client) addOperationGetIntegrationTablePropertiesMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

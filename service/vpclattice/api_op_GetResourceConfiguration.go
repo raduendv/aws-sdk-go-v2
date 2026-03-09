@@ -58,8 +58,22 @@ type GetResourceConfigurationOutput struct {
 	// The custom domain name of the resource configuration.
 	CustomDomainName *string
 
+	//  The ARN of the domain verification.
+	DomainVerificationArn *string
+
+	//  The domain verification ID.
+	DomainVerificationId *string
+
+	//  The domain verification status.
+	DomainVerificationStatus types.VerificationStatus
+
 	// The reason the create-resource-configuration request failed.
 	FailureReason *string
+
+	//  (GROUP) The group domain for a group resource configuration. Any domains that
+	// you create for the child resource are subdomains of the group domain. Child
+	// resources inherit the verification status of the domain.
+	GroupDomain *string
 
 	// The ID of the resource configuration.
 	Id *string
@@ -197,16 +211,13 @@ func (c *Client) addOperationGetResourceConfigurationMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

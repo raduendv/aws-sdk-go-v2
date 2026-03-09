@@ -18,7 +18,7 @@ import (
 //
 // Deprecated: This operation is no longer supported.
 //
-// [GetResourcePosition]: https://docs.aws.amazon.com/iot-wireless/2020-11-22/apireference/API_GetResourcePosition.html
+// [GetResourcePosition]: https://docs.aws.amazon.com/iot-wireless/latest/apireference/API_GetResourcePosition.html
 func (c *Client) GetPositionConfiguration(ctx context.Context, params *GetPositionConfigurationInput, optFns ...func(*Options)) (*GetPositionConfigurationOutput, error) {
 	if params == nil {
 		params = &GetPositionConfigurationInput{}
@@ -152,16 +152,13 @@ func (c *Client) addOperationGetPositionConfigurationMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

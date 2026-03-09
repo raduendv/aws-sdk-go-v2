@@ -60,8 +60,8 @@ type CreateProfileInput struct {
 	// A list of managed policy ARNs that apply to the vended session credentials.
 	ManagedPolicyArns []string
 
-	// Specifies whether instance properties are required in temporary credential
-	// requests with this profile.
+	// Unused, saved for future use. Will likely specify whether instance properties
+	// are required in temporary credential requests with this profile.
 	RequireInstanceProperties *bool
 
 	// A session policy that applies to the trust boundary of the vended session
@@ -173,16 +173,13 @@ func (c *Client) addOperationCreateProfileMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

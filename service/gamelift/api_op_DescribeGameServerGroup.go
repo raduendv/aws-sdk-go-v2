@@ -11,24 +11,22 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	This operation is used with the Amazon GameLift FleetIQ solution and game
-//
-// server groups.
+//	This API works with the following fleet types: EC2 (FleetIQ)
 //
 // Retrieves information on a game server group. This operation returns only
-// properties related to Amazon GameLift FleetIQ. To view or update properties for
-// the corresponding Auto Scaling group, such as launch template, auto scaling
-// policies, and maximum/minimum group size, access the Auto Scaling group
-// directly.
+// properties related to Amazon GameLift Servers FleetIQ. To view or update
+// properties for the corresponding Auto Scaling group, such as launch template,
+// auto scaling policies, and maximum/minimum group size, access the Auto Scaling
+// group directly.
 //
 // To get attributes for a game server group, provide a group name or ARN value.
 // If successful, a GameServerGroup object is returned.
 //
 // # Learn more
 //
-// [Amazon GameLift FleetIQ Guide]
+// [Amazon GameLift Servers FleetIQ Guide]
 //
-// [Amazon GameLift FleetIQ Guide]: https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html
+// [Amazon GameLift Servers FleetIQ Guide]: https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html
 func (c *Client) DescribeGameServerGroup(ctx context.Context, params *DescribeGameServerGroupInput, optFns ...func(*Options)) (*DescribeGameServerGroupOutput, error) {
 	if params == nil {
 		params = &DescribeGameServerGroupInput{}
@@ -154,16 +152,13 @@ func (c *Client) addOperationDescribeGameServerGroupMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

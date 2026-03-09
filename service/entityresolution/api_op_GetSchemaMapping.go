@@ -51,8 +51,8 @@ type GetSchemaMappingOutput struct {
 	HasWorkflows *bool
 
 	// A list of MappedInputFields . Each MappedInputField corresponds to a column the
-	// source data table, and contains column name plus additional information Venice
-	// uses for matching.
+	// source data table, and contains column name plus additional information Entity
+	// Resolution uses for matching.
 	//
 	// This member is required.
 	MappedInputFields []types.SchemaInputAttribute
@@ -173,16 +173,13 @@ func (c *Client) addOperationGetSchemaMappingMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

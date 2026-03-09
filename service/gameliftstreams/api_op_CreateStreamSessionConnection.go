@@ -10,26 +10,46 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Allows clients to reconnect to a recently disconnected stream session without
-// losing any data from the last session.
+// Enables clients to reconnect to a stream session while preserving all session
+// state and data in the disconnected session. This reconnection process can be
+// initiated when a stream session is in either PENDING_CLIENT_RECONNECTION or
+// ACTIVE status. The process works as follows:
 //
-// A client can reconnect to a stream session that's in PENDING_CLIENT_RECONNECTION
-// or ACTIVE status. In the stream session life cycle, when the client disconnects
-// from the stream session, the stream session transitions from CONNECTED to
-// PENDING_CLIENT_RECONNECTION status. When a client requests to reconnect by
-// calling CreateStreamSessionConnection , the stream session transitions to
-// RECONNECTING status. When the reconnection is successful, the stream session
-// transitions to ACTIVE status. After a stream session is disconnected for longer
-// than ConnectionTimeoutSeconds , the stream session transitions to the TERMINATED
-// status.
+//   - Initial disconnect:
 //
-// To connect to an existing stream session, specify the stream group ID and
-// stream session ID that you want to reconnect to, as well as the signal request
-// settings to use with the stream.
+//   - When a client disconnects or loses connection, the stream session
+//     transitions from CONNECTED to PENDING_CLIENT_RECONNECTION
 //
-// ConnectionTimeoutSeconds defines the amount of time after the stream session
-// disconnects that a reconnection is allowed. If a client is disconnected from the
-// stream for longer than ConnectionTimeoutSeconds , the stream session ends.
+//   - Reconnection time window:
+//
+//   - Clients have ConnectionTimeoutSeconds (defined in [StartStreamSession]) to reconnect before
+//     session termination
+//
+//   - Your backend server must call CreateStreamSessionConnection to initiate
+//     reconnection
+//
+//   - Session transitions to RECONNECTING status
+//
+//   - Reconnection completion:
+//
+//   - On successful CreateStreamSessionConnection, session status changes to
+//     ACTIVE
+//
+//   - Provide the new connection information to the requesting client
+//
+//   - Client must establish connection within ConnectionTimeoutSeconds
+//
+//   - Session terminates automatically if client fails to connect in time
+//
+// For more information about the stream session lifecycle, see [Stream sessions] in the Amazon
+// GameLift Streams Developer Guide.
+//
+// To begin re-connecting to an existing stream session, specify the stream group
+// ID and stream session ID that you want to reconnect to, and the signal request
+// to use with the stream.
+//
+// [Stream sessions]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/stream-sessions.html
+// [StartStreamSession]: https://docs.aws.amazon.com/gameliftstreams/latest/apireference/API_StartStreamSession.html
 func (c *Client) CreateStreamSessionConnection(ctx context.Context, params *CreateStreamSessionConnectionInput, optFns ...func(*Options)) (*CreateStreamSessionConnectionOutput, error) {
 	if params == nil {
 		params = &CreateStreamSessionConnectionInput{}
@@ -47,12 +67,12 @@ func (c *Client) CreateStreamSessionConnection(ctx context.Context, params *Crea
 
 type CreateStreamSessionConnectionInput struct {
 
-	// [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource. Format example: ARN-
-	// arn:aws:gameliftstreams:us-west-2:123456789012:streamgroup/sg-1AB2C3De4 or ID-
-	// sg-1AB2C3De4 .
+	// [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
+	// Example ID: sg-1AB2C3De4 .
 	//
 	// The stream group that you want to run this stream session with. The stream
-	// group must be in ACTIVE status and have idle stream capacity.
+	// group must be in ACTIVE status.
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
@@ -67,8 +87,11 @@ type CreateStreamSessionConnectionInput struct {
 	// This member is required.
 	SignalRequest *string
 
-	// [Amazon Resource Name (ARN)] that uniquely identifies the stream session resource. Format example: 1AB2C3De4
-	// . The stream session must be in PENDING_CLIENT_RECONNECTION or ACTIVE status.
+	// [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream session resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamsession/sg-1AB2C3De4/ABC123def4567
+	// . Example ID: ABC123def4567 .
+	//
+	// The stream session must be in PENDING_CLIENT_RECONNECTION or ACTIVE status.
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
@@ -186,16 +209,13 @@ func (c *Client) addOperationCreateStreamSessionConnectionMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

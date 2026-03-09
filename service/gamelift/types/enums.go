@@ -2330,6 +2330,7 @@ const (
 	OperatingSystemAmazonLinux2    OperatingSystem = "AMAZON_LINUX_2"
 	OperatingSystemWindows2016     OperatingSystem = "WINDOWS_2016"
 	OperatingSystemAmazonLinux2023 OperatingSystem = "AMAZON_LINUX_2023"
+	OperatingSystemWindows2022     OperatingSystem = "WINDOWS_2022"
 )
 
 // Values returns all known values for OperatingSystem. Note that this can be
@@ -2343,6 +2344,7 @@ func (OperatingSystem) Values() []OperatingSystem {
 		"AMAZON_LINUX_2",
 		"WINDOWS_2016",
 		"AMAZON_LINUX_2023",
+		"WINDOWS_2022",
 	}
 }
 
@@ -2572,5 +2574,24 @@ func (TerminationMode) Values() []TerminationMode {
 	return []TerminationMode{
 		"TRIGGER_ON_PROCESS_TERMINATE",
 		"FORCE_TERMINATE",
+	}
+}
+
+type ZeroCapacityStrategy string
+
+// Enum values for ZeroCapacityStrategy
+const (
+	ZeroCapacityStrategyManual             ZeroCapacityStrategy = "MANUAL"
+	ZeroCapacityStrategyScaleToAndFromZero ZeroCapacityStrategy = "SCALE_TO_AND_FROM_ZERO"
+)
+
+// Values returns all known values for ZeroCapacityStrategy. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ZeroCapacityStrategy) Values() []ZeroCapacityStrategy {
+	return []ZeroCapacityStrategy{
+		"MANUAL",
+		"SCALE_TO_AND_FROM_ZERO",
 	}
 }

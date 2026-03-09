@@ -52,6 +52,9 @@ type UpdateQueueInput struct {
 	// Queues assign jobs to associated compute node groups.
 	ComputeNodeGroupConfigurations []types.ComputeNodeGroupConfiguration
 
+	// Additional options related to the Slurm scheduler.
+	SlurmConfiguration *types.UpdateQueueSlurmConfigurationRequest
+
 	noSmithyDocumentSerde
 }
 
@@ -157,16 +160,13 @@ func (c *Client) addOperationUpdateQueueMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

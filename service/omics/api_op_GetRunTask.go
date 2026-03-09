@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-// Gets information about a workflow run task.
+// Gets detailed information about a run task using its ID.
 func (c *Client) GetRunTask(ctx context.Context, params *GetRunTaskInput, optFns ...func(*Options)) (*GetRunTaskOutput, error) {
 	if params == nil {
 		params = &GetRunTaskInput{}
@@ -65,6 +65,9 @@ type GetRunTaskOutput struct {
 
 	// The number of Graphics Processing Units (GPU) specified in the task.
 	Gpus *int32
+
+	// Details about the container image that this task uses.
+	ImageDetails *types.ImageDetails
 
 	// The instance type for a task.
 	InstanceType *string
@@ -190,16 +193,13 @@ func (c *Client) addOperationGetRunTaskMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

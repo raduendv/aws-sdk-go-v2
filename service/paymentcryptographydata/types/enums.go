@@ -142,6 +142,8 @@ type KeyCheckValueAlgorithm string
 const (
 	KeyCheckValueAlgorithmCmac     KeyCheckValueAlgorithm = "CMAC"
 	KeyCheckValueAlgorithmAnsiX924 KeyCheckValueAlgorithm = "ANSI_X9_24"
+	KeyCheckValueAlgorithmHmac     KeyCheckValueAlgorithm = "HMAC"
+	KeyCheckValueAlgorithmSha1     KeyCheckValueAlgorithm = "SHA_1"
 )
 
 // Values returns all known values for KeyCheckValueAlgorithm. Note that this can
@@ -152,6 +154,8 @@ func (KeyCheckValueAlgorithm) Values() []KeyCheckValueAlgorithm {
 	return []KeyCheckValueAlgorithm{
 		"CMAC",
 		"ANSI_X9_24",
+		"HMAC",
+		"SHA_1",
 	}
 }
 
@@ -202,10 +206,12 @@ const (
 	MacAlgorithmIso9797Algorithm1 MacAlgorithm = "ISO9797_ALGORITHM1"
 	MacAlgorithmIso9797Algorithm3 MacAlgorithm = "ISO9797_ALGORITHM3"
 	MacAlgorithmCmac              MacAlgorithm = "CMAC"
+	MacAlgorithmHmac              MacAlgorithm = "HMAC"
 	MacAlgorithmHmacSha224        MacAlgorithm = "HMAC_SHA224"
 	MacAlgorithmHmacSha256        MacAlgorithm = "HMAC_SHA256"
 	MacAlgorithmHmacSha384        MacAlgorithm = "HMAC_SHA384"
 	MacAlgorithmHmacSha512        MacAlgorithm = "HMAC_SHA512"
+	MacAlgorithmAs280541          MacAlgorithm = "AS2805_4_1"
 )
 
 // Values returns all known values for MacAlgorithm. Note that this can be
@@ -217,10 +223,12 @@ func (MacAlgorithm) Values() []MacAlgorithm {
 		"ISO9797_ALGORITHM1",
 		"ISO9797_ALGORITHM3",
 		"CMAC",
+		"HMAC",
 		"HMAC_SHA224",
 		"HMAC_SHA256",
 		"HMAC_SHA384",
 		"HMAC_SHA512",
+		"AS2805_4_1",
 	}
 }
 
@@ -293,6 +301,7 @@ type PinBlockFormatForPinData string
 // Enum values for PinBlockFormatForPinData
 const (
 	PinBlockFormatForPinDataIsoFormat0 PinBlockFormatForPinData = "ISO_FORMAT_0"
+	PinBlockFormatForPinDataIsoFormat1 PinBlockFormatForPinData = "ISO_FORMAT_1"
 	PinBlockFormatForPinDataIsoFormat3 PinBlockFormatForPinData = "ISO_FORMAT_3"
 	PinBlockFormatForPinDataIsoFormat4 PinBlockFormatForPinData = "ISO_FORMAT_4"
 )
@@ -304,6 +313,7 @@ const (
 func (PinBlockFormatForPinData) Values() []PinBlockFormatForPinData {
 	return []PinBlockFormatForPinData{
 		"ISO_FORMAT_0",
+		"ISO_FORMAT_1",
 		"ISO_FORMAT_3",
 		"ISO_FORMAT_4",
 	}
@@ -347,6 +357,25 @@ func (PinBlockPaddingType) Values() []PinBlockPaddingType {
 	}
 }
 
+type RandomKeySendVariantMask string
+
+// Enum values for RandomKeySendVariantMask
+const (
+	RandomKeySendVariantMaskVariantMask82c0 RandomKeySendVariantMask = "VARIANT_MASK_82C0"
+	RandomKeySendVariantMaskVariantMask82   RandomKeySendVariantMask = "VARIANT_MASK_82"
+)
+
+// Values returns all known values for RandomKeySendVariantMask. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RandomKeySendVariantMask) Values() []RandomKeySendVariantMask {
+	return []RandomKeySendVariantMask{
+		"VARIANT_MASK_82C0",
+		"VARIANT_MASK_82",
+	}
+}
+
 type SessionKeyDerivationMode string
 
 // Enum values for SessionKeyDerivationMode
@@ -376,11 +405,15 @@ type SymmetricKeyAlgorithm string
 
 // Enum values for SymmetricKeyAlgorithm
 const (
-	SymmetricKeyAlgorithmTdes2key SymmetricKeyAlgorithm = "TDES_2KEY"
-	SymmetricKeyAlgorithmTdes3key SymmetricKeyAlgorithm = "TDES_3KEY"
-	SymmetricKeyAlgorithmAes128   SymmetricKeyAlgorithm = "AES_128"
-	SymmetricKeyAlgorithmAes192   SymmetricKeyAlgorithm = "AES_192"
-	SymmetricKeyAlgorithmAes256   SymmetricKeyAlgorithm = "AES_256"
+	SymmetricKeyAlgorithmTdes2key   SymmetricKeyAlgorithm = "TDES_2KEY"
+	SymmetricKeyAlgorithmTdes3key   SymmetricKeyAlgorithm = "TDES_3KEY"
+	SymmetricKeyAlgorithmAes128     SymmetricKeyAlgorithm = "AES_128"
+	SymmetricKeyAlgorithmAes192     SymmetricKeyAlgorithm = "AES_192"
+	SymmetricKeyAlgorithmAes256     SymmetricKeyAlgorithm = "AES_256"
+	SymmetricKeyAlgorithmHmacSha256 SymmetricKeyAlgorithm = "HMAC_SHA256"
+	SymmetricKeyAlgorithmHmacSha384 SymmetricKeyAlgorithm = "HMAC_SHA384"
+	SymmetricKeyAlgorithmHmacSha512 SymmetricKeyAlgorithm = "HMAC_SHA512"
+	SymmetricKeyAlgorithmHmacSha224 SymmetricKeyAlgorithm = "HMAC_SHA224"
 )
 
 // Values returns all known values for SymmetricKeyAlgorithm. Note that this can
@@ -394,6 +427,10 @@ func (SymmetricKeyAlgorithm) Values() []SymmetricKeyAlgorithm {
 		"AES_128",
 		"AES_192",
 		"AES_256",
+		"HMAC_SHA256",
+		"HMAC_SHA384",
+		"HMAC_SHA512",
+		"HMAC_SHA224",
 	}
 }
 
@@ -417,5 +454,26 @@ func (VerificationFailedReason) Values() []VerificationFailedReason {
 		"INVALID_PIN",
 		"INVALID_VALIDATION_DATA",
 		"INVALID_AUTH_REQUEST_CRYPTOGRAM",
+	}
+}
+
+type WrappedKeyMaterialFormat string
+
+// Enum values for WrappedKeyMaterialFormat
+const (
+	WrappedKeyMaterialFormatKeyCryptogram WrappedKeyMaterialFormat = "KEY_CRYPTOGRAM"
+	WrappedKeyMaterialFormatTr31KeyBlock  WrappedKeyMaterialFormat = "TR31_KEY_BLOCK"
+	WrappedKeyMaterialFormatTr34KeyBlock  WrappedKeyMaterialFormat = "TR34_KEY_BLOCK"
+)
+
+// Values returns all known values for WrappedKeyMaterialFormat. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (WrappedKeyMaterialFormat) Values() []WrappedKeyMaterialFormat {
+	return []WrappedKeyMaterialFormat{
+		"KEY_CRYPTOGRAM",
+		"TR31_KEY_BLOCK",
+		"TR34_KEY_BLOCK",
 	}
 }

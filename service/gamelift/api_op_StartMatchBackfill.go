@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Finds new players to fill open slots in currently running game sessions. The
 // backfill match process is essentially identical to the process of forming new
 // matches. Backfill requests use the same matchmaker that was used to make the
@@ -18,8 +20,8 @@ import (
 // the game session. FlexMatch uses this information to select new players so that
 // backfilled match continues to meet the original match requirements.
 //
-// When using FlexMatch with Amazon GameLift managed hosting, you can request a
-// backfill match from a client service by calling this operation with a
+// When using FlexMatch with Amazon GameLift Servers managed hosting, you can
+// request a backfill match from a client service by calling this operation with a
 // GameSessions ID. You also have the option of making backfill requests directly
 // from your game server. In response to a request, FlexMatch creates player
 // sessions for the new players, updates the GameSession resource, and sends
@@ -48,11 +50,11 @@ import (
 //
 // [Matchmaking events](reference)
 //
-// [How Amazon GameLift FlexMatch works]
+// [How Amazon GameLift Servers FlexMatch works]
 //
-// [How Amazon GameLift FlexMatch works]: https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/gamelift-match.html
 // [Matchmaking events]: https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-events.html
 // [Backfill existing games with FlexMatch]: https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-backfill.html
+// [How Amazon GameLift Servers FlexMatch works]: https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/gamelift-match.html
 func (c *Client) StartMatchBackfill(ctx context.Context, params *StartMatchBackfillInput, optFns ...func(*Options)) (*StartMatchBackfillOutput, error) {
 	if params == nil {
 		params = &StartMatchBackfillInput{}
@@ -106,7 +108,7 @@ type StartMatchBackfillInput struct {
 	GameSessionArn *string
 
 	// A unique identifier for a matchmaking ticket. If no ticket ID is specified
-	// here, Amazon GameLift will generate one in the form of a UUID. Use this
+	// here, Amazon GameLift Servers will generate one in the form of a UUID. Use this
 	// identifier to track the match backfill ticket status and retrieve match results.
 	TicketId *string
 
@@ -214,16 +216,13 @@ func (c *Client) addOperationStartMatchBackfillMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

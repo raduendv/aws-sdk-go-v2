@@ -12,6 +12,8 @@ import (
 )
 
 // List the infrastructure as code outputs for your environment.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) ListEnvironmentOutputs(ctx context.Context, params *ListEnvironmentOutputsInput, optFns ...func(*Options)) (*ListEnvironmentOutputsOutput, error) {
 	if params == nil {
 		params = &ListEnvironmentOutputsInput{}
@@ -150,16 +152,13 @@ func (c *Client) addOperationListEnvironmentOutputsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -86,6 +86,35 @@ func (AWSServiceName) Values() []AWSServiceName {
 	}
 }
 
+type BlockingResourceType string
+
+// Enum values for BlockingResourceType
+const (
+	BlockingResourceTypeEc2Instance                      BlockingResourceType = "EC2_INSTANCE"
+	BlockingResourceTypeOutpostRamShare                  BlockingResourceType = "OUTPOST_RAM_SHARE"
+	BlockingResourceTypeLgwRoutingDomain                 BlockingResourceType = "LGW_ROUTING_DOMAIN"
+	BlockingResourceTypeLgwRouteTable                    BlockingResourceType = "LGW_ROUTE_TABLE"
+	BlockingResourceTypeLgwVirtualInterfaceGroup         BlockingResourceType = "LGW_VIRTUAL_INTERFACE_GROUP"
+	BlockingResourceTypeOutpostOrderCancellable          BlockingResourceType = "OUTPOST_ORDER_CANCELLABLE"
+	BlockingResourceTypeOutpostOrderInterventionRequired BlockingResourceType = "OUTPOST_ORDER_INTERVENTION_REQUIRED"
+)
+
+// Values returns all known values for BlockingResourceType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (BlockingResourceType) Values() []BlockingResourceType {
+	return []BlockingResourceType{
+		"EC2_INSTANCE",
+		"OUTPOST_RAM_SHARE",
+		"LGW_ROUTING_DOMAIN",
+		"LGW_ROUTE_TABLE",
+		"LGW_VIRTUAL_INTERFACE_GROUP",
+		"OUTPOST_ORDER_CANCELLABLE",
+		"OUTPOST_ORDER_INTERVENTION_REQUIRED",
+	}
+}
+
 type CapacityTaskFailureType string
 
 // Enum values for CapacityTaskFailureType
@@ -196,6 +225,27 @@ func (ComputeAssetState) Values() []ComputeAssetState {
 		"ACTIVE",
 		"ISOLATED",
 		"RETIRING",
+	}
+}
+
+type DecommissionRequestStatus string
+
+// Enum values for DecommissionRequestStatus
+const (
+	DecommissionRequestStatusSkipped   DecommissionRequestStatus = "SKIPPED"
+	DecommissionRequestStatusBlocked   DecommissionRequestStatus = "BLOCKED"
+	DecommissionRequestStatusRequested DecommissionRequestStatus = "REQUESTED"
+)
+
+// Values returns all known values for DecommissionRequestStatus. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DecommissionRequestStatus) Values() []DecommissionRequestStatus {
+	return []DecommissionRequestStatus{
+		"SKIPPED",
+		"BLOCKED",
+		"REQUESTED",
 	}
 }
 
@@ -542,6 +592,48 @@ func (ShipmentCarrier) Values() []ShipmentCarrier {
 		"FEDEX",
 		"UPS",
 		"EXPEDITORS",
+	}
+}
+
+type SubscriptionStatus string
+
+// Enum values for SubscriptionStatus
+const (
+	SubscriptionStatusActive    SubscriptionStatus = "ACTIVE"
+	SubscriptionStatusInactive  SubscriptionStatus = "INACTIVE"
+	SubscriptionStatusCancelled SubscriptionStatus = "CANCELLED"
+)
+
+// Values returns all known values for SubscriptionStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SubscriptionStatus) Values() []SubscriptionStatus {
+	return []SubscriptionStatus{
+		"ACTIVE",
+		"INACTIVE",
+		"CANCELLED",
+	}
+}
+
+type SubscriptionType string
+
+// Enum values for SubscriptionType
+const (
+	SubscriptionTypeOriginal         SubscriptionType = "ORIGINAL"
+	SubscriptionTypeRenewal          SubscriptionType = "RENEWAL"
+	SubscriptionTypeCapacityIncrease SubscriptionType = "CAPACITY_INCREASE"
+)
+
+// Values returns all known values for SubscriptionType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SubscriptionType) Values() []SubscriptionType {
+	return []SubscriptionType{
+		"ORIGINAL",
+		"RENEWAL",
+		"CAPACITY_INCREASE",
 	}
 }
 

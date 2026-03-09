@@ -88,6 +88,11 @@ type CreateAppMonitorInput struct {
 	// The CreateAppMonitor requires either the domain or the domain list.
 	DomainList []string
 
+	// The platform type for the app monitor. Valid values are Web for web
+	// applications, Android for Android applications, and iOS for IOS applications.
+	// If you omit this parameter, the default is Web .
+	Platform types.AppMonitorPlatform
+
 	// Assigns one or more tags (key-value pairs) to the app monitor.
 	//
 	// Tags can help you organize and categorize your resources. You can also use them
@@ -206,16 +211,13 @@ func (c *Client) addOperationCreateAppMonitorMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

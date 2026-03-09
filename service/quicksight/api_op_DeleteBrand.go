@@ -10,7 +10,20 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes an Amazon QuickSight brand.
+// This API permanently deletes the specified Quick Sight brand. When you delete a
+// brand:
+//
+//   - The brand and all its associated branding elements are permanently removed
+//
+//   - Any applications or dashboards using this brand will revert to default
+//     styling
+//
+//   - This action cannot be undone through the API
+//
+// Before proceeding: Verify that the brand is no longer needed and consider the
+// impact on any applications currently using this brand.
+//
+// Deletes an Quick Sight brand.
 func (c *Client) DeleteBrand(ctx context.Context, params *DeleteBrandInput, optFns ...func(*Options)) (*DeleteBrandOutput, error) {
 	if params == nil {
 		params = &DeleteBrandInput{}
@@ -33,7 +46,7 @@ type DeleteBrandInput struct {
 	// This member is required.
 	AwsAccountId *string
 
-	// The ID of the Amazon QuickSight brand.
+	// The ID of the Quick Suite brand.
 	//
 	// This member is required.
 	BrandId *string
@@ -140,16 +153,13 @@ func (c *Client) addOperationDeleteBrandMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

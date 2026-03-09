@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Removes a user group from Amazon QuickSight.
+// Removes a user group from Amazon Quick Sight.
 func (c *Client) DeleteGroup(ctx context.Context, params *DeleteGroupInput, optFns ...func(*Options)) (*DeleteGroupOutput, error) {
 	if params == nil {
 		params = &DeleteGroupInput{}
@@ -29,8 +29,8 @@ func (c *Client) DeleteGroup(ctx context.Context, params *DeleteGroupInput, optF
 type DeleteGroupInput struct {
 
 	// The ID for the Amazon Web Services account that the group is in. Currently, you
-	// use the ID for the Amazon Web Services account that contains your Amazon
-	// QuickSight account.
+	// use the ID for the Amazon Web Services account that contains your Amazon Quick
+	// Sight account.
 	//
 	// This member is required.
 	AwsAccountId *string
@@ -150,16 +150,13 @@ func (c *Client) addOperationDeleteGroupMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

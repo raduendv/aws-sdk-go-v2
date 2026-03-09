@@ -10,9 +10,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Delete a managed thing. If a controller is deleted, all of the devices
+// Delete a managed thing. For direct-connected and hub-connected devices
+// connecting with Managed integrations via a controller, all of the devices
 // connected to it will have their status changed to PENDING . It is not possible
-// to remove a cloud device.
+// to remove a cloud-to-cloud device.
 func (c *Client) DeleteManagedThing(ctx context.Context, params *DeleteManagedThingInput, optFns ...func(*Options)) (*DeleteManagedThingOutput, error) {
 	if params == nil {
 		params = &DeleteManagedThingInput{}
@@ -137,16 +138,13 @@ func (c *Client) addOperationDeleteManagedThingMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

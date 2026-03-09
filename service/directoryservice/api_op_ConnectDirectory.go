@@ -60,6 +60,10 @@ type ConnectDirectoryInput struct {
 	// A description for the directory.
 	Description *string
 
+	// The network type for your directory. The default value is IPv4 or IPv6 based on
+	// the provided subnet capabilities.
+	NetworkType types.NetworkType
+
 	// The NetBIOS name of your self-managed directory, such as CORP .
 	ShortName *string
 
@@ -169,16 +173,13 @@ func (c *Client) addOperationConnectDirectoryMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

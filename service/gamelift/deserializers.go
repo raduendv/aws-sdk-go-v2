@@ -20,16 +20,7 @@ import (
 	"io/ioutil"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpAcceptMatch struct {
 }
@@ -13746,6 +13737,9 @@ func awsAwsjson11_deserializeOpErrorUpdateGameSession(response *smithyhttp.Respo
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsAwsjson11_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("NotReadyException", errorCode):
+		return awsAwsjson11_deserializeErrorNotReadyException(response, errorBody)
+
 	case strings.EqualFold("UnauthorizedException", errorCode):
 		return awsAwsjson11_deserializeErrorUnauthorizedException(response, errorBody)
 
@@ -17880,6 +17874,11 @@ func awsAwsjson11_deserializeDocumentFleetCapacity(v **types.FleetCapacity, valu
 				sv.Location = ptr.String(jtv)
 			}
 
+		case "ManagedCapacityConfiguration":
+			if err := awsAwsjson11_deserializeDocumentManagedCapacityConfiguration(&sv.ManagedCapacityConfiguration, value); err != nil {
+				return err
+			}
+
 		default:
 			_, _ = key, value
 
@@ -20962,6 +20961,11 @@ func awsAwsjson11_deserializeDocumentLocationModel(v **types.LocationModel, valu
 				sv.LocationName = ptr.String(jtv)
 			}
 
+		case "PingBeacon":
+			if err := awsAwsjson11_deserializeDocumentPingBeacon(&sv.PingBeacon, value); err != nil {
+				return err
+			}
+
 		default:
 			_, _ = key, value
 
@@ -21171,6 +21175,59 @@ func awsAwsjson11_deserializeDocumentLogConfiguration(v **types.LogConfiguration
 					return fmt.Errorf("expected NonEmptyString to be of type string, got %T instead", value)
 				}
 				sv.S3BucketName = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentManagedCapacityConfiguration(v **types.ManagedCapacityConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.ManagedCapacityConfiguration
+	if *v == nil {
+		sv = &types.ManagedCapacityConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "ScaleInAfterInactivityMinutes":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected ScaleInAfterInactivityMinutes to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.ScaleInAfterInactivityMinutes = ptr.Int32(int32(i64))
+			}
+
+		case "ZeroCapacityStrategy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ZeroCapacityStrategy to be of type string, got %T instead", value)
+				}
+				sv.ZeroCapacityStrategy = types.ZeroCapacityStrategy(jtv)
 			}
 
 		default:
@@ -21921,6 +21978,42 @@ func awsAwsjson11_deserializeDocumentOutOfCapacityException(v **types.OutOfCapac
 					return fmt.Errorf("expected NonEmptyString to be of type string, got %T instead", value)
 				}
 				sv.Message = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentPingBeacon(v **types.PingBeacon, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.PingBeacon
+	if *v == nil {
+		sv = &types.PingBeacon{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "UDPEndpoint":
+			if err := awsAwsjson11_deserializeDocumentUDPEndpoint(&sv.UDPEndpoint, value); err != nil {
+				return err
 			}
 
 		default:
@@ -23308,6 +23401,15 @@ func awsAwsjson11_deserializeDocumentScript(v **types.Script, value interface{})
 				sv.Name = ptr.String(jtv)
 			}
 
+		case "NodeJsVersion":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected NodeJsVersion to be of type string, got %T instead", value)
+				}
+				sv.NodeJsVersion = ptr.String(jtv)
+			}
+
 		case "ScriptArn":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -23918,6 +24020,59 @@ func awsAwsjson11_deserializeDocumentTerminalRoutingStrategyException(v **types.
 					return fmt.Errorf("expected NonEmptyString to be of type string, got %T instead", value)
 				}
 				sv.Message = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentUDPEndpoint(v **types.UDPEndpoint, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.UDPEndpoint
+	if *v == nil {
+		sv = &types.UDPEndpoint{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Domain":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected NonZeroAndMaxString to be of type string, got %T instead", value)
+				}
+				sv.Domain = ptr.String(jtv)
+			}
+
+		case "Port":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected PositiveInteger to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Port = ptr.Int32(int32(i64))
 			}
 
 		default:
@@ -28479,6 +28634,11 @@ func awsAwsjson11_deserializeOpDocumentUpdateFleetCapacityOutput(v **UpdateFleet
 					return fmt.Errorf("expected LocationStringModel to be of type string, got %T instead", value)
 				}
 				sv.Location = ptr.String(jtv)
+			}
+
+		case "ManagedCapacityConfiguration":
+			if err := awsAwsjson11_deserializeDocumentManagedCapacityConfiguration(&sv.ManagedCapacityConfiguration, value); err != nil {
+				return err
 			}
 
 		default:

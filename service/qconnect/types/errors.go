@@ -62,6 +62,32 @@ func (e *ConflictException) ErrorCode() string {
 }
 func (e *ConflictException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
+// The request failed because it depends on another request that failed.
+type DependencyFailedException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *DependencyFailedException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *DependencyFailedException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *DependencyFailedException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "DependencyFailedException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *DependencyFailedException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
+
 // The provided revisionId does not match, indicating the content has been
 // modified since it was last read.
 type PreconditionFailedException struct {
@@ -228,6 +254,58 @@ func (e *TooManyTagsException) ErrorCode() string {
 	return *e.ErrorCodeOverride
 }
 func (e *TooManyTagsException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
+
+// You do not have permission to perform this action.
+type UnauthorizedException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *UnauthorizedException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *UnauthorizedException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *UnauthorizedException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "UnauthorizedException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *UnauthorizedException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
+
+// The server has a failure of processing the message
+type UnprocessableContentException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *UnprocessableContentException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *UnprocessableContentException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *UnprocessableContentException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "UnprocessableContentException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *UnprocessableContentException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
 // The input fails to satisfy the constraints specified by a service.
 type ValidationException struct {

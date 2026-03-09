@@ -34,6 +34,10 @@ type GetCanaryRunsInput struct {
 	// This member is required.
 	Name *string
 
+	// The DryRunId associated with an existing canary’s dry run. You can use this
+	// DryRunId to retrieve information about the dry run.
+	DryRunId *string
+
 	// Specify this parameter to limit how many runs are returned each time you use
 	// the GetCanaryRuns operation. If you omit this parameter, the default of 100 is
 	// used.
@@ -42,7 +46,20 @@ type GetCanaryRunsInput struct {
 	// A token that indicates that there is more data available. You can use this
 	// token in a subsequent GetCanaryRuns operation to retrieve the next set of
 	// results.
+	//
+	// When auto retry is enabled for the canary, the first subsequent retry is
+	// suffixed with *1 indicating its the first retry and the next subsequent try is
+	// suffixed with *2.
 	NextToken *string
+
+	//   - When you provide RunType=CANARY_RUN and dryRunId , you will get an exception
+	//
+	//   - When a value is not provided for RunType , the default value is CANARY_RUN
+	//
+	//   - When CANARY_RUN is provided, all canary runs excluding dry runs are returned
+	//
+	//   - When DRY_RUN is provided, all dry runs excluding canary runs are returned
+	RunType types.RunType
 
 	noSmithyDocumentSerde
 }
@@ -152,16 +169,13 @@ func (c *Client) addOperationGetCanaryRunsMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

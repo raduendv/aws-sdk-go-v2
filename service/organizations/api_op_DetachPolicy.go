@@ -25,9 +25,8 @@ import (
 // in the FullAWSAccess policy (or any other attached SCP), you're using the
 // authorization strategy of a "[deny list] ".
 //
-// This operation can be called only from the organization's management account or
-// by a member account that is a delegated administrator for an Amazon Web Services
-// service.
+// You can only call this operation from the management account or a member
+// account that is a delegated administrator.
 //
 // [deny list]: https://docs.aws.amazon.com/organizations/latest/userguide/SCP_strategies.html#orgs_policies_denylist
 // [allow list]: https://docs.aws.amazon.com/organizations/latest/userguide/SCP_strategies.html#orgs_policies_allowlist
@@ -48,8 +47,8 @@ func (c *Client) DetachPolicy(ctx context.Context, params *DetachPolicyInput, op
 
 type DetachPolicyInput struct {
 
-	// The unique identifier (ID) of the policy you want to detach. You can get the ID
-	// from the ListPoliciesor ListPoliciesForTarget operations.
+	// ID for the policy you want to detach. You can get the ID from the ListPolicies or ListPoliciesForTarget
+	// operations.
 	//
 	// The [regex pattern] for a policy ID string requires "p-" followed by from 8 to 128 lowercase
 	// or uppercase letters, digits, or the underscore character (_).
@@ -59,8 +58,8 @@ type DetachPolicyInput struct {
 	// This member is required.
 	PolicyId *string
 
-	// The unique identifier (ID) of the root, OU, or account that you want to detach
-	// the policy from. You can get the ID from the ListRoots, ListOrganizationalUnitsForParent, or ListAccounts operations.
+	// ID for the root, OU, or account that you want to detach the policy from. You
+	// can get the ID from the ListRoots, ListOrganizationalUnitsForParent, or ListAccounts operations.
 	//
 	// The [regex pattern] for a target ID string requires one of the following:
 	//
@@ -177,16 +176,13 @@ func (c *Client) addOperationDetachPolicyMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

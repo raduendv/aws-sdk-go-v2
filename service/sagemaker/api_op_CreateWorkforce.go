@@ -62,6 +62,10 @@ type CreateWorkforceInput struct {
 	// [Amazon Cognito user pool]: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html
 	CognitoConfig *types.CognitoConfig
 
+	// Use this parameter to specify whether you want IPv4 only or dualstack ( IPv4
+	// and IPv6 ) to support your labeling workforce.
+	IpAddressType types.WorkforceIpAddressType
+
 	// Use this parameter to configure a private workforce using your own OIDC
 	// Identity Provider.
 	//
@@ -188,16 +192,13 @@ func (c *Client) addOperationCreateWorkforceMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

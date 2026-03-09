@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates the state of a Amazon QuickSight Q Search configuration.
+// Updates the state of a Quick Sight Q Search configuration.
 func (c *Client) UpdateQuickSightQSearchConfiguration(ctx context.Context, params *UpdateQuickSightQSearchConfigurationInput, optFns ...func(*Options)) (*UpdateQuickSightQSearchConfigurationOutput, error) {
 	if params == nil {
 		params = &UpdateQuickSightQSearchConfigurationInput{}
@@ -29,14 +29,14 @@ func (c *Client) UpdateQuickSightQSearchConfiguration(ctx context.Context, param
 
 type UpdateQuickSightQSearchConfigurationInput struct {
 
-	// The ID of the Amazon Web Services account that contains the Amazon QuickSight Q
+	// The ID of the Amazon Web Services account that contains the Quick Sight Q
 	// Search configuration that you want to update.
 	//
 	// This member is required.
 	AwsAccountId *string
 
-	// The status of the Amazon QuickSight Q Search configuration that the user wants
-	// to update.
+	// The status of the Quick Sight Q Search configuration that the user wants to
+	// update.
 	//
 	// This member is required.
 	QSearchStatus types.QSearchStatus
@@ -46,7 +46,7 @@ type UpdateQuickSightQSearchConfigurationInput struct {
 
 type UpdateQuickSightQSearchConfigurationOutput struct {
 
-	// The status of the Amazon QuickSight Q Search configuration.
+	// The status of the Quick Sight Q Search configuration.
 	QSearchStatus types.QSearchStatus
 
 	// The Amazon Web Services request ID for this operation.
@@ -149,16 +149,13 @@ func (c *Client) addOperationUpdateQuickSightQSearchConfigurationMiddlewares(sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

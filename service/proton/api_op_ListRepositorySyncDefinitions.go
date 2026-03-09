@@ -12,6 +12,8 @@ import (
 )
 
 // List repository sync definitions with detail data.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) ListRepositorySyncDefinitions(ctx context.Context, params *ListRepositorySyncDefinitionsInput, optFns ...func(*Options)) (*ListRepositorySyncDefinitionsOutput, error) {
 	if params == nil {
 		params = &ListRepositorySyncDefinitionsInput{}
@@ -158,16 +160,13 @@ func (c *Client) addOperationListRepositorySyncDefinitionsMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

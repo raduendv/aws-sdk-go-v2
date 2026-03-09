@@ -49,7 +49,7 @@ type CreateDBParameterGroupInput struct {
 	// following command:
 	//
 	//     aws rds describe-db-engine-versions --query
-	//     "DBEngineVersions[].DBParameterGroupFamily" --engine
+	//     "DBEngineVersions[].DBParameterGroupFamily" --engine <engine>
 	//
 	// For example, to list all of the available parameter group families for the
 	// MySQL DB engine, use the following command:
@@ -220,16 +220,13 @@ func (c *Client) addOperationCreateDBParameterGroupMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

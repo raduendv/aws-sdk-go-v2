@@ -41,6 +41,9 @@ type AcceptSubscriptionRequestInput struct {
 	// This member is required.
 	Identifier *string
 
+	// The asset permissions of the accept subscription request.
+	AssetPermissions []types.AssetPermission
+
 	// The asset scopes of the accept subscription request.
 	AssetScopes []types.AcceptedAssetScope
 
@@ -211,16 +214,13 @@ func (c *Client) addOperationAcceptSubscriptionRequestMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -98,6 +98,9 @@ type CreateApiCacheInput struct {
 
 	// At-rest encryption flag for cache. You cannot update this setting after
 	// creation.
+	//
+	// Deprecated: atRestEncryptionEnabled attribute is deprecated. Encryption at rest
+	// is always enabled.
 	AtRestEncryptionEnabled bool
 
 	// Controls how cache health metrics will be emitted to CloudWatch. Cache health
@@ -117,6 +120,9 @@ type CreateApiCacheInput struct {
 
 	// Transit encryption flag when connecting to cache. You cannot update this
 	// setting after creation.
+	//
+	// Deprecated: transitEncryptionEnabled attribute is deprecated. Encryption in
+	// transit is always enabled.
 	TransitEncryptionEnabled bool
 
 	noSmithyDocumentSerde
@@ -222,16 +228,13 @@ func (c *Client) addOperationCreateApiCacheMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

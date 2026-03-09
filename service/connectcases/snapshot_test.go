@@ -182,6 +182,18 @@ func TestCheckSnapshot_CreateTemplate(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteCase(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteCase(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteCase")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteCaseRule(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteCaseRule(context.Background(), nil, func(o *Options) {
@@ -223,6 +235,18 @@ func TestCheckSnapshot_DeleteLayout(t *testing.T) {
 	_, err := svc.DeleteLayout(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteRelatedItem(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteRelatedItem(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteRelatedItem")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -415,6 +439,18 @@ func TestCheckSnapshot_PutCaseEventConfiguration(t *testing.T) {
 	_, err := svc.PutCaseEventConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "PutCaseEventConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_SearchAllRelatedItems(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.SearchAllRelatedItems(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "SearchAllRelatedItems")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -649,6 +685,18 @@ func TestUpdateSnapshot_CreateTemplate(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteCase(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteCase(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteCase")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteCaseRule(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteCaseRule(context.Background(), nil, func(o *Options) {
@@ -690,6 +738,18 @@ func TestUpdateSnapshot_DeleteLayout(t *testing.T) {
 	_, err := svc.DeleteLayout(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteRelatedItem(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteRelatedItem(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteRelatedItem")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -882,6 +942,18 @@ func TestUpdateSnapshot_PutCaseEventConfiguration(t *testing.T) {
 	_, err := svc.PutCaseEventConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "PutCaseEventConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_SearchAllRelatedItems(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.SearchAllRelatedItems(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "SearchAllRelatedItems")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

@@ -32,6 +32,7 @@ func (c *Client) StartDataQualityRuleRecommendationRun(ctx context.Context, para
 	return out, nil
 }
 
+// The request of the Data Quality rule recommendation request.
 type StartDataQualityRuleRecommendationRunInput struct {
 
 	// The data source (Glue table) associated with this run.
@@ -165,16 +166,13 @@ func (c *Client) addOperationStartDataQualityRuleRecommendationRunMiddlewares(st
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

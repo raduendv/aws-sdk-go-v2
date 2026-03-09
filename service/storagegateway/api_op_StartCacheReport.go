@@ -23,8 +23,8 @@ import (
 //
 // The following requirements must be met to successfully generate a cache report:
 //
-//   - You must have permissions to list the entire Amazon S3 bucket associated
-//     with the specified file share.
+//   - You must have s3:PutObject and s3:AbortMultipartUpload permissions for the
+//     Amazon S3 bucket where you want to store the cache report.
 //
 //   - No other cache reports can currently be in-progress for the specified file
 //     share.
@@ -211,16 +211,13 @@ func (c *Client) addOperationStartCacheReportMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

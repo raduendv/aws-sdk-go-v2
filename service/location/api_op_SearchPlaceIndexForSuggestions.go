@@ -11,6 +11,24 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+// This operation is no longer current and may be deprecated in the future. We
+// recommend you upgrade to SuggestSuggest or AutocompleteAutocomplete unless you require Grab data.
+//
+//   - SearchPlaceIndexForSuggestions is part of a previous Amazon Location Service
+//     Places API (version 1) which has been superseded by a more intuitive, powerful,
+//     and complete API (version 2).
+//
+//   - The version 2 Suggest operation gives better results for typeahead place
+//     search suggestions with fuzzy matching, while the version 2 Autocomplete
+//     operation gives better results for address completion based on partial input.
+//
+//   - If you are using an Amazon Web Services SDK or the Amazon Web Services CLI,
+//     note that the Places API version 2 is found under geo-places or geo_places ,
+//     not under location .
+//
+//   - Since Grab is not yet fully supported in Places API version 2, we recommend
+//     you continue using API version 1 when using Grab.
+//
 // Generates suggestions for addresses and points of interest based on partial or
 // misspelled free-form text. This operation is also known as autocomplete,
 // autosuggest, or fuzzy matching.
@@ -86,9 +104,9 @@ type SearchPlaceIndexForSuggestionsInput struct {
 	// match any of the categories listed.
 	//
 	// For more information about using categories, including a list of Amazon
-	// Location categories, see [Categories and filtering], in the Amazon Location Service Developer Guide.
+	// Location categories, see [Categories and filtering], in the Amazon Location Service developer guide.
 	//
-	// [Categories and filtering]: https://docs.aws.amazon.com/location/latest/developerguide/category-filtering.html
+	// [Categories and filtering]: https://docs.aws.amazon.com/location/previous/developerguide/category-filtering.html
 	FilterCategories []string
 
 	// An optional parameter that limits the search results by returning only
@@ -102,7 +120,7 @@ type SearchPlaceIndexForSuggestionsInput struct {
 
 	// The optional [API key] to authorize the request.
 	//
-	// [API key]: https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html
+	// [API key]: https://docs.aws.amazon.com/location/previous/developerguide/using-apikeys.html
 	Key *string
 
 	// The preferred language used to return results. The value must be a valid [BCP 47]
@@ -244,16 +262,13 @@ func (c *Client) addOperationSearchPlaceIndexForSuggestionsMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

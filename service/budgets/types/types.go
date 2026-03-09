@@ -173,6 +173,13 @@ type Budget struct {
 	// The parameters that determine the budget amount for an auto-adjusting budget.
 	AutoAdjustData *AutoAdjustData
 
+	// The Amazon Resource Name (ARN) that uniquely identifies a specific billing
+	// view. The ARN is used to specify which particular billing view you want to
+	// interact with or retrieve information from when making API calls related to
+	// Amazon Web Services Billing and Cost Management features. The BillingViewArn can
+	// be retrieved by calling the ListBillingViews API.
+	BillingViewArn *string
+
 	// The total amount of cost, usage, RI utilization, RI coverage, Savings Plans
 	// utilization, or Savings Plans coverage that you want to track with your budget.
 	//
@@ -218,6 +225,9 @@ type Budget struct {
 	// The filtering dimensions for the budget and their corresponding values.
 	FilterExpression *Expression
 
+	// The current operational state of a Billing View derived resource.
+	HealthStatus *HealthStatus
+
 	// The last time that you updated this budget.
 	LastUpdatedTime *time.Time
 
@@ -261,13 +271,13 @@ type Budget struct {
 	// before 06/15/87 00:00 UTC .
 	//
 	// If you create your budget and don't specify a start date, Amazon Web Services
-	// defaults to the start of your chosen time period (DAILY, MONTHLY, QUARTERLY, or
-	// ANNUALLY). For example, if you created your budget on January 24, 2018, chose
-	// DAILY , and didn't set a start date, Amazon Web Services set your start date to
-	// 01/24/18 00:00 UTC . If you chose MONTHLY , Amazon Web Services set your start
-	// date to 01/01/18 00:00 UTC . If you didn't specify an end date, Amazon Web
-	// Services set your end date to 06/15/87 00:00 UTC . The defaults are the same for
-	// the Billing and Cost Management console and the API.
+	// defaults to the start of your chosen time period (DAILY, MONTHLY, QUARTERLY,
+	// ANNUALLY, or CUSTOM). For example, if you created your budget on January 24,
+	// 2018, chose DAILY , and didn't set a start date, Amazon Web Services set your
+	// start date to 01/24/18 00:00 UTC . If you chose MONTHLY , Amazon Web Services
+	// set your start date to 01/01/18 00:00 UTC . If you didn't specify an end date,
+	// Amazon Web Services set your end date to 06/15/87 00:00 UTC . The defaults are
+	// the same for the Billing and Cost Management console and the API.
 	//
 	// You can change either date with the UpdateBudget operation.
 	//
@@ -311,6 +321,13 @@ type BudgetNotificationsForAccount struct {
 // period.
 type BudgetPerformanceHistory struct {
 
+	// The Amazon Resource Name (ARN) that uniquely identifies a specific billing
+	// view. The ARN is used to specify which particular billing view you want to
+	// interact with or retrieve information from when making API calls related to
+	// Amazon Web Services Billing and Cost Management features. The BillingViewArn can
+	// be retrieved by calling the ListBillingViews API.
+	BillingViewArn *string
+
 	//  A string that represents the budget name. The ":" and "\" characters, and the
 	// "/action/" substring, aren't allowed.
 	BudgetName *string
@@ -330,6 +347,12 @@ type BudgetPerformanceHistory struct {
 
 	// The history of the cost types for a budget during the specified time period.
 	CostTypes *CostTypes
+
+	// The filtering dimensions for the budget and their corresponding values.
+	FilterExpression *Expression
+
+	// The definition for how the budget data is aggregated.
+	Metrics []Metric
 
 	//  The time unit of the budget, such as MONTHLY or QUARTERLY.
 	TimeUnit TimeUnit
@@ -494,6 +517,35 @@ type ExpressionDimensionValues struct {
 	// The match options that you can use to filter your results. You can specify only
 	// one of these values in the array.
 	MatchOptions []MatchOption
+
+	noSmithyDocumentSerde
+}
+
+// Provides information about the current operational state of a billing view
+// resource, including its ability to access and update based on its associated
+// billing view.
+type HealthStatus struct {
+
+	//  A generic time stamp. In Java, it's transformed to a Date object.
+	LastUpdatedTime *time.Time
+
+	// The current status of the billing view resource.
+	Status HealthStatusValue
+
+	// The reason for the current status.
+	//
+	//   - BILLING_VIEW_NO_ACCESS : The billing view resource does not grant
+	//   billing:GetBillingViewData permission to this account.
+	//
+	//   - BILLING_VIEW_UNHEALTHY : The billing view associated with the budget is
+	//   unhealthy.
+	//
+	//   - FILTER_INVALID : The filter contains reference to an account you do not have
+	//   access to.
+	//
+	//   - MULTI_YEAR_HISTORICAL_DATA_DISABLED : The budget is not being updated.
+	//   Enable multi-year historical data in your Cost Management preferences.
+	StatusReason HealthStatusReason
 
 	noSmithyDocumentSerde
 }
@@ -767,11 +819,11 @@ type TimePeriod struct {
 
 	// The start date for a budget. If you created your budget and didn't specify a
 	// start date, Amazon Web Services defaults to the start of your chosen time period
-	// (DAILY, MONTHLY, QUARTERLY, or ANNUALLY). For example, if you created your
-	// budget on January 24, 2018, chose DAILY , and didn't set a start date, Amazon
-	// Web Services set your start date to 01/24/18 00:00 UTC . If you chose MONTHLY ,
-	// Amazon Web Services set your start date to 01/01/18 00:00 UTC . The defaults are
-	// the same for the Billing and Cost Management console and the API.
+	// (DAILY, MONTHLY, QUARTERLY, ANNUALLY, or CUSTOM). For example, if you created
+	// your budget on January 24, 2018, chose DAILY , and didn't set a start date,
+	// Amazon Web Services set your start date to 01/24/18 00:00 UTC . If you chose
+	// MONTHLY , Amazon Web Services set your start date to 01/01/18 00:00 UTC . The
+	// defaults are the same for the Billing and Cost Management console and the API.
 	//
 	// You can change your start date with the UpdateBudget operation.
 	Start *time.Time

@@ -18,13 +18,13 @@ import (
 // TIFF, and PDF format. The documents are stored in an Amazon S3 bucket. Use DocumentLocationto
 // specify the bucket name and file name of the document.
 //
-// StartTextDetection returns a job identifier ( JobId ) that you use to get the
-// results of the operation. When text detection is finished, Amazon Textract
-// publishes a completion status to the Amazon Simple Notification Service (Amazon
-// SNS) topic that you specify in NotificationChannel . To get the results of the
-// text detection operation, first check that the status value published to the
-// Amazon SNS topic is SUCCEEDED . If so, call GetDocumentTextDetection, and pass the job identifier ( JobId
-// ) from the initial call to StartDocumentTextDetection .
+// StartDocumentTextDetection returns a job identifier ( JobId ) that you use to
+// get the results of the operation. When text detection is finished, Amazon
+// Textract publishes a completion status to the Amazon Simple Notification Service
+// (Amazon SNS) topic that you specify in NotificationChannel . To get the results
+// of the text detection operation, first check that the status value published to
+// the Amazon SNS topic is SUCCEEDED . If so, call GetDocumentTextDetection, and pass the job identifier (
+// JobId ) from the initial call to StartDocumentTextDetection .
 //
 // For more information, see [Document Text Detection].
 //
@@ -184,16 +184,13 @@ func (c *Client) addOperationStartDocumentTextDetectionMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

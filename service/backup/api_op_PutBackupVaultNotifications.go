@@ -30,25 +30,10 @@ func (c *Client) PutBackupVaultNotifications(ctx context.Context, params *PutBac
 type PutBackupVaultNotificationsInput struct {
 
 	// An array of events that indicate the status of jobs to back up resources to the
-	// backup vault.
+	// backup vault. For the list of supported events, common use cases, and code
+	// samples, see [Notification options with Backup].
 	//
-	// For common use cases and code samples, see [Using Amazon SNS to track Backup events].
-	//
-	// The following events are supported:
-	//
-	//   - BACKUP_JOB_STARTED | BACKUP_JOB_COMPLETED
-	//
-	//   - COPY_JOB_STARTED | COPY_JOB_SUCCESSFUL | COPY_JOB_FAILED
-	//
-	//   - RESTORE_JOB_STARTED | RESTORE_JOB_COMPLETED | RECOVERY_POINT_MODIFIED
-	//
-	//   - S3_BACKUP_OBJECT_FAILED | S3_RESTORE_OBJECT_FAILED
-	//
-	// The list below includes both supported events and deprecated events that are no
-	// longer in use (for reference). Deprecated events do not return statuses or
-	// notifications. Refer to the list above for the supported events.
-	//
-	// [Using Amazon SNS to track Backup events]: https://docs.aws.amazon.com/aws-backup/latest/devguide/sns-notifications.html
+	// [Notification options with Backup]: https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-notifications.html
 	//
 	// This member is required.
 	BackupVaultEvents []types.BackupVaultEvent
@@ -164,16 +149,13 @@ func (c *Client) addOperationPutBackupVaultNotificationsMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

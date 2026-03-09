@@ -41,8 +41,8 @@ type DeletePoolInput struct {
 	// The PoolId or PoolArn of the pool to delete. You can use DescribePools to find the values
 	// for PoolId and PoolArn .
 	//
-	// If you are using a shared AWS End User Messaging SMS and Voice resource then
-	// you must use the full Amazon Resource Name(ARN).
+	// If you are using a shared End User Messaging SMS resource then you must use the
+	// full Amazon Resource Name(ARN).
 	//
 	// This member is required.
 	PoolId *string
@@ -69,12 +69,12 @@ type DeletePoolOutput struct {
 	// The PoolId of the pool that was deleted.
 	PoolId *string
 
-	// By default this is set to false. When an end recipient sends a message that
-	// begins with HELP or STOP to one of your dedicated numbers, AWS End User
-	// Messaging SMS and Voice automatically replies with a customizable message and
-	// adds the end recipient to the OptOutList. When set to true you're responsible
-	// for responding to HELP and STOP requests. You're also responsible for tracking
-	// and honoring opt-out requests.
+	// By default this is set to false. When set to false and an end recipient sends a
+	// message that begins with HELP or STOP to one of your dedicated numbers, End User
+	// Messaging SMS automatically replies with a customizable message and adds the end
+	// recipient to the OptOutList. When set to true you're responsible for responding
+	// to HELP and STOP requests. You're also responsible for tracking and honoring
+	// opt-out requests.
 	SelfManagedOptOutsEnabled bool
 
 	// Indicates whether shared routes are enabled for the pool.
@@ -195,16 +195,13 @@ func (c *Client) addOperationDeletePoolMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

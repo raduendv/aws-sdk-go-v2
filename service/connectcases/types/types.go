@@ -225,6 +225,7 @@ type CaseEventIncludedData struct {
 //	CaseFilterMemberField
 //	CaseFilterMemberNot
 //	CaseFilterMemberOrAll
+//	CaseFilterMemberTag
 type CaseFilter interface {
 	isCaseFilter()
 }
@@ -265,18 +266,48 @@ type CaseFilterMemberOrAll struct {
 
 func (*CaseFilterMemberOrAll) isCaseFilter() {}
 
+// A list of tags to filter on.
+type CaseFilterMemberTag struct {
+	Value TagFilter
+
+	noSmithyDocumentSerde
+}
+
+func (*CaseFilterMemberTag) isCaseFilter() {}
+
 // Represents what rule type should take place, under what conditions. In the
 // Amazon Connect admin website, case rules are known as case field conditions. For
 // more information about case field conditions, see [Add case field conditions to a case template].
 //
 // The following types satisfy this interface:
 //
+//	CaseRuleDetailsMemberFieldOptions
+//	CaseRuleDetailsMemberHidden
 //	CaseRuleDetailsMemberRequired
 //
 // [Add case field conditions to a case template]: https://docs.aws.amazon.com/connect/latest/adminguide/case-field-conditions.html
 type CaseRuleDetails interface {
 	isCaseRuleDetails()
 }
+
+// Which options are available in a child field based on the selected value in a
+// parent field.
+type CaseRuleDetailsMemberFieldOptions struct {
+	Value FieldOptionsCaseRule
+
+	noSmithyDocumentSerde
+}
+
+func (*CaseRuleDetailsMemberFieldOptions) isCaseRuleDetails() {}
+
+// Whether a field is visible, based on values in other fields.
+type CaseRuleDetailsMemberHidden struct {
+	Value HiddenCaseRule
+
+	noSmithyDocumentSerde
+}
+
+func (*CaseRuleDetailsMemberHidden) isCaseRuleDetails() {}
 
 // Required rule type, used to indicate whether a field is required.
 type CaseRuleDetailsMemberRequired struct {
@@ -391,6 +422,37 @@ type CommentFilter struct {
 	noSmithyDocumentSerde
 }
 
+// Represents the content of a ConnectCase type related item.
+type ConnectCaseContent struct {
+
+	// A unique identifier of the case.
+	//
+	// This member is required.
+	CaseId *string
+
+	noSmithyDocumentSerde
+}
+
+// A filter for related items of type ConnectCase .
+type ConnectCaseFilter struct {
+
+	// A unique identifier of the case.
+	CaseId *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents the content of a ConnectCase related item.
+type ConnectCaseInputContent struct {
+
+	// A unique identifier of the case.
+	//
+	// This member is required.
+	CaseId *string
+
+	noSmithyDocumentSerde
+}
+
 // An object that represents an Amazon Connect contact object.
 type Contact struct {
 
@@ -432,6 +494,86 @@ type ContactFilter struct {
 
 	// A unique identifier of a contact in Amazon Connect.
 	ContactArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents the content of a Custom type related item.
+type CustomContent struct {
+
+	// List of field values for the Custom related item.
+	//
+	// This member is required.
+	Fields []FieldValue
+
+	noSmithyDocumentSerde
+}
+
+// A filter for fields in Custom type related items. Only one value can be
+// provided.
+//
+// The following types satisfy this interface:
+//
+//	CustomFieldsFilterMemberAndAll
+//	CustomFieldsFilterMemberField
+//	CustomFieldsFilterMemberNot
+//	CustomFieldsFilterMemberOrAll
+type CustomFieldsFilter interface {
+	isCustomFieldsFilter()
+}
+
+// Provides "and all" filtering.
+type CustomFieldsFilterMemberAndAll struct {
+	Value []CustomFieldsFilter
+
+	noSmithyDocumentSerde
+}
+
+func (*CustomFieldsFilterMemberAndAll) isCustomFieldsFilter() {}
+
+// A filter for fields. Only one value can be provided.
+type CustomFieldsFilterMemberField struct {
+	Value FieldFilter
+
+	noSmithyDocumentSerde
+}
+
+func (*CustomFieldsFilterMemberField) isCustomFieldsFilter() {}
+
+// Excludes items matching the filter.
+type CustomFieldsFilterMemberNot struct {
+	Value CustomFieldsFilter
+
+	noSmithyDocumentSerde
+}
+
+func (*CustomFieldsFilterMemberNot) isCustomFieldsFilter() {}
+
+// Provides "or all" filtering.
+type CustomFieldsFilterMemberOrAll struct {
+	Value []CustomFieldsFilter
+
+	noSmithyDocumentSerde
+}
+
+func (*CustomFieldsFilterMemberOrAll) isCustomFieldsFilter() {}
+
+// A filter for related items of type Custom .
+type CustomFilter struct {
+
+	// Filter conditions for custom fields.
+	Fields CustomFieldsFilter
+
+	noSmithyDocumentSerde
+}
+
+// Represents the content of a Custom related item.
+type CustomInputContent struct {
+
+	// List of field values for the Custom related item.
+	//
+	// This member is required.
+	Fields []FieldValue
 
 	noSmithyDocumentSerde
 }
@@ -503,6 +645,24 @@ type EventIncludedData struct {
 
 	noSmithyDocumentSerde
 }
+
+// Union of field attributes.
+//
+// The following types satisfy this interface:
+//
+//	FieldAttributesMemberText
+type FieldAttributes interface {
+	isFieldAttributes()
+}
+
+// Field attributes for Text field type.
+type FieldAttributesMemberText struct {
+	Value TextAttributes
+
+	noSmithyDocumentSerde
+}
+
+func (*FieldAttributesMemberText) isFieldAttributes() {}
 
 // Object for errors on fields.
 type FieldError struct {
@@ -670,6 +830,24 @@ type FieldOptionError struct {
 	noSmithyDocumentSerde
 }
 
+// Rules that control which options are available in a child field based on the
+// selected value in a parent field.
+type FieldOptionsCaseRule struct {
+
+	// A mapping between a parent field option value and child field option values.
+	//
+	// This member is required.
+	ParentChildFieldOptionsMappings []ParentChildFieldOptionsMapping
+
+	// The identifier of the child field whose options are controlled.
+	ChildFieldId *string
+
+	// The identifier of the parent field that controls options.
+	ParentFieldId *string
+
+	noSmithyDocumentSerde
+}
+
 // Object for the summarized details of the field.
 type FieldSummary struct {
 
@@ -697,6 +875,9 @@ type FieldSummary struct {
 	//
 	// This member is required.
 	Type FieldType
+
+	// Union of field attributes.
+	Attributes FieldAttributes
 
 	noSmithyDocumentSerde
 }
@@ -874,6 +1055,9 @@ type GetFieldResponse struct {
 	// This member is required.
 	Type FieldType
 
+	// Union of field attributes.
+	Attributes FieldAttributes
+
 	// Timestamp at which the resource was created.
 	CreatedTime *time.Time
 
@@ -889,6 +1073,23 @@ type GetFieldResponse struct {
 	// A map of of key-value pairs that represent tags on a resource. Tags are used to
 	// organize, track, or control access for this resource.
 	Tags map[string]*string
+
+	noSmithyDocumentSerde
+}
+
+// A rule that controls field visibility based on conditions. Fields can be shown
+// or hidden dynamically based on values in other fields.
+type HiddenCaseRule struct {
+
+	// A list of conditions that determine field visibility.
+	//
+	// This member is required.
+	Conditions []BooleanCondition
+
+	// Whether the field is hidden when no conditions match.
+	//
+	// This member is required.
+	DefaultValue *bool
 
 	noSmithyDocumentSerde
 }
@@ -1026,12 +1227,30 @@ type OperandTwoMemberStringValue struct {
 
 func (*OperandTwoMemberStringValue) isOperandTwo() {}
 
+// A mapping between a parent field option value and child field option values.
+type ParentChildFieldOptionsMapping struct {
+
+	// A list of allowed values in the child field.
+	//
+	// This member is required.
+	ChildFieldOptionValues []string
+
+	// The value in the parent field.
+	//
+	// This member is required.
+	ParentFieldOptionValue *string
+
+	noSmithyDocumentSerde
+}
+
 // Represents the content of a particular type of related item.
 //
 // The following types satisfy this interface:
 //
 //	RelatedItemContentMemberComment
+//	RelatedItemContentMemberConnectCase
 //	RelatedItemContentMemberContact
+//	RelatedItemContentMemberCustom
 //	RelatedItemContentMemberFile
 //	RelatedItemContentMemberSla
 type RelatedItemContent interface {
@@ -1047,6 +1266,15 @@ type RelatedItemContentMemberComment struct {
 
 func (*RelatedItemContentMemberComment) isRelatedItemContent() {}
 
+// Represents the Amazon Connect case to be created as a related item.
+type RelatedItemContentMemberConnectCase struct {
+	Value ConnectCaseContent
+
+	noSmithyDocumentSerde
+}
+
+func (*RelatedItemContentMemberConnectCase) isRelatedItemContent() {}
+
 // Represents the content of a contact to be returned to agents.
 type RelatedItemContentMemberContact struct {
 	Value ContactContent
@@ -1055,6 +1283,15 @@ type RelatedItemContentMemberContact struct {
 }
 
 func (*RelatedItemContentMemberContact) isRelatedItemContent() {}
+
+// Represents the content of a Custom type related item.
+type RelatedItemContentMemberCustom struct {
+	Value CustomContent
+
+	noSmithyDocumentSerde
+}
+
+func (*RelatedItemContentMemberCustom) isRelatedItemContent() {}
 
 // Represents the content of a File to be returned to agents.
 type RelatedItemContentMemberFile struct {
@@ -1090,7 +1327,9 @@ type RelatedItemEventIncludedData struct {
 // The following types satisfy this interface:
 //
 //	RelatedItemInputContentMemberComment
+//	RelatedItemInputContentMemberConnectCase
 //	RelatedItemInputContentMemberContact
+//	RelatedItemInputContentMemberCustom
 //	RelatedItemInputContentMemberFile
 //	RelatedItemInputContentMemberSla
 type RelatedItemInputContent interface {
@@ -1106,6 +1345,15 @@ type RelatedItemInputContentMemberComment struct {
 
 func (*RelatedItemInputContentMemberComment) isRelatedItemInputContent() {}
 
+// Represents the Amazon Connect case to be created as a related item.
+type RelatedItemInputContentMemberConnectCase struct {
+	Value ConnectCaseInputContent
+
+	noSmithyDocumentSerde
+}
+
+func (*RelatedItemInputContentMemberConnectCase) isRelatedItemInputContent() {}
+
 // Object representing a contact in Amazon Connect as an API request field.
 type RelatedItemInputContentMemberContact struct {
 	Value Contact
@@ -1114,6 +1362,15 @@ type RelatedItemInputContentMemberContact struct {
 }
 
 func (*RelatedItemInputContentMemberContact) isRelatedItemInputContent() {}
+
+// Represents the content of a Custom type related item.
+type RelatedItemInputContentMemberCustom struct {
+	Value CustomInputContent
+
+	noSmithyDocumentSerde
+}
+
+func (*RelatedItemInputContentMemberCustom) isRelatedItemInputContent() {}
 
 // A file of related items.
 type RelatedItemInputContentMemberFile struct {
@@ -1138,7 +1395,9 @@ func (*RelatedItemInputContentMemberSla) isRelatedItemInputContent() {}
 // The following types satisfy this interface:
 //
 //	RelatedItemTypeFilterMemberComment
+//	RelatedItemTypeFilterMemberConnectCase
 //	RelatedItemTypeFilterMemberContact
+//	RelatedItemTypeFilterMemberCustom
 //	RelatedItemTypeFilterMemberFile
 //	RelatedItemTypeFilterMemberSla
 type RelatedItemTypeFilter interface {
@@ -1154,6 +1413,15 @@ type RelatedItemTypeFilterMemberComment struct {
 
 func (*RelatedItemTypeFilterMemberComment) isRelatedItemTypeFilter() {}
 
+// Represents the Amazon Connect case to be created as a related item.
+type RelatedItemTypeFilterMemberConnectCase struct {
+	Value ConnectCaseFilter
+
+	noSmithyDocumentSerde
+}
+
+func (*RelatedItemTypeFilterMemberConnectCase) isRelatedItemTypeFilter() {}
+
 // A filter for related items of type Contact .
 type RelatedItemTypeFilterMemberContact struct {
 	Value ContactFilter
@@ -1162,6 +1430,15 @@ type RelatedItemTypeFilterMemberContact struct {
 }
 
 func (*RelatedItemTypeFilterMemberContact) isRelatedItemTypeFilter() {}
+
+// Represents the content of a Custom type related item.
+type RelatedItemTypeFilterMemberCustom struct {
+	Value CustomFilter
+
+	noSmithyDocumentSerde
+}
+
+func (*RelatedItemTypeFilterMemberCustom) isRelatedItemTypeFilter() {}
 
 // A filter for related items of this type of File .
 type RelatedItemTypeFilterMemberFile struct {
@@ -1210,6 +1487,63 @@ type RequiredField struct {
 	//
 	// This member is required.
 	FieldId *string
+
+	noSmithyDocumentSerde
+}
+
+// A list of items that represent RelatedItems. This data type is similar to [SearchRelatedItemsResponseItem]
+// except SearchAllRelatedItemsResponseItem has a caseId field.
+//
+// [SearchRelatedItemsResponseItem]: https://docs.aws.amazon.com/connect/latest/APIReference/API_connect-cases_SearchRelatedItemsResponseItem.html
+type SearchAllRelatedItemsResponseItem struct {
+
+	// Time at which a related item was associated with a case.
+	//
+	// This member is required.
+	AssociationTime *time.Time
+
+	// A unique identifier of the case.
+	//
+	// This member is required.
+	CaseId *string
+
+	// Represents the content of a particular type of related item.
+	//
+	// This member is required.
+	Content RelatedItemContent
+
+	// Unique identifier of a related item.
+	//
+	// This member is required.
+	RelatedItemId *string
+
+	// Type of a related item.
+	//
+	// This member is required.
+	Type RelatedItemType
+
+	// Represents the entity that performed the action.
+	PerformedBy UserUnion
+
+	// A map of of key-value pairs that represent tags on a resource. Tags are used to
+	// organize, track, or control access for this resource.
+	Tags map[string]*string
+
+	noSmithyDocumentSerde
+}
+
+// The order in which all returned related items should be sorted.
+type SearchAllRelatedItemsSort struct {
+
+	// Whether related items should be sorted by association time or case ID.
+	//
+	// This member is required.
+	SortOrder Order
+
+	// Whether related items should be sorted in ascending or descending order.
+	//
+	// This member is required.
+	SortProperty SearchAllRelatedItemsSortProperty
 
 	noSmithyDocumentSerde
 }
@@ -1412,6 +1746,55 @@ type Sort struct {
 	noSmithyDocumentSerde
 }
 
+// A filter for tags. Only one value can be provided.
+//
+// The following types satisfy this interface:
+//
+//	TagFilterMemberEqualTo
+type TagFilter interface {
+	isTagFilter()
+}
+
+// Object containing tag key and value information.
+type TagFilterMemberEqualTo struct {
+	Value TagValue
+
+	noSmithyDocumentSerde
+}
+
+func (*TagFilterMemberEqualTo) isTagFilter() {}
+
+// Defines tag propagation configuration for resources created within a domain.
+// Tags specified here will be automatically applied to resources being created for
+// the specified resource type.
+type TagPropagationConfiguration struct {
+
+	// Supported resource types for tag propagation. Determines which resources will
+	// receive automatically propagated tags.
+	//
+	// This member is required.
+	ResourceType TagPropagationResourceType
+
+	// The tags that will be applied to the created resource.
+	//
+	// This member is required.
+	TagMap map[string]string
+
+	noSmithyDocumentSerde
+}
+
+// Object for case tag filter values.
+type TagValue struct {
+
+	// The tag key in the tag filter value.
+	Key *string
+
+	// The tag value in the tag filter value.
+	Value *string
+
+	noSmithyDocumentSerde
+}
+
 // An association representing a case rule acting upon a field. In the Amazon
 // Connect admin website, case rules are known as case field conditions. For more
 // information about case field conditions, see [Add case field conditions to a case template].
@@ -1425,8 +1808,6 @@ type TemplateRule struct {
 	CaseRuleId *string
 
 	// Unique identifier of a field.
-	//
-	// This member is required.
 	FieldId *string
 
 	noSmithyDocumentSerde
@@ -1454,6 +1835,22 @@ type TemplateSummary struct {
 	//
 	// This member is required.
 	TemplateId *string
+
+	// Defines tag propagation configuration for resources created within a domain.
+	// Tags specified here will be automatically applied to resources being created for
+	// the specified resource type.
+	TagPropagationConfigurations []TagPropagationConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// Field attributes for Text field type.
+type TextAttributes struct {
+
+	// Attribute that defines rendering component and validation.
+	//
+	// This member is required.
+	IsMultiline *bool
 
 	noSmithyDocumentSerde
 }
@@ -1501,6 +1898,8 @@ func (*UnknownUnionMember) isAuditEventFieldValueUnion() {}
 func (*UnknownUnionMember) isBooleanCondition()          {}
 func (*UnknownUnionMember) isCaseFilter()                {}
 func (*UnknownUnionMember) isCaseRuleDetails()           {}
+func (*UnknownUnionMember) isCustomFieldsFilter()        {}
+func (*UnknownUnionMember) isFieldAttributes()           {}
 func (*UnknownUnionMember) isFieldFilter()               {}
 func (*UnknownUnionMember) isFieldValueUnion()           {}
 func (*UnknownUnionMember) isLayoutContent()             {}
@@ -1511,4 +1910,5 @@ func (*UnknownUnionMember) isRelatedItemInputContent()   {}
 func (*UnknownUnionMember) isRelatedItemTypeFilter()     {}
 func (*UnknownUnionMember) isSection()                   {}
 func (*UnknownUnionMember) isSlaInputContent()           {}
+func (*UnknownUnionMember) isTagFilter()                 {}
 func (*UnknownUnionMember) isUserUnion()                 {}

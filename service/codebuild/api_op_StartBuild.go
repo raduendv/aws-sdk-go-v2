@@ -72,9 +72,11 @@ type StartBuildInput struct {
 	// the container, you should note that an IAM principal with the ability to call
 	// this API and set this parameter can override the default settings. Moreover, we
 	// encourage that you use a trustworthy buildspec location like a file in your
-	// source repository or a Amazon S3 bucket.
+	// source repository or a Amazon S3 bucket. Alternatively, you can restrict
+	// overrides to the buildspec by using a condition key: [Prevent unauthorized modifications to project buildspec].
 	//
 	// [Buildspec File Name and Storage Location]: https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html#build-spec-ref-name-storage
+	// [Prevent unauthorized modifications to project buildspec]: https://docs.aws.amazon.com/codebuild/latest/userguide/action-context-keys.html#action-context-keys-example-overridebuildspec.html
 	BuildspecOverride *string
 
 	// A ProjectCache object specified for this build that overrides the one defined
@@ -346,16 +348,13 @@ func (c *Client) addOperationStartBuildMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

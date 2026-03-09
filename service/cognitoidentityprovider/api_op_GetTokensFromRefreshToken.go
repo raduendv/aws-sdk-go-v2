@@ -41,7 +41,7 @@ type GetTokensFromRefreshTokenInput struct {
 
 	// A valid refresh token that can authorize the request for new tokens. When
 	// refresh token rotation is active in the requested app client, this token is
-	// invalidated after the request is complete.
+	// invalidated after the request is complete and after an optional grace period.
 	//
 	// This member is required.
 	RefreshToken *string
@@ -133,9 +133,6 @@ func (c *Client) addOperationGetTokensFromRefreshTokenMiddlewares(stack *middlew
 	if err = addResolveEndpointMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addComputePayloadSHA256(stack); err != nil {
-		return err
-	}
 	if err = addRetry(stack, options); err != nil {
 		return err
 	}
@@ -190,16 +187,13 @@ func (c *Client) addOperationGetTokensFromRefreshTokenMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

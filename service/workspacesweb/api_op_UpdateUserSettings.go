@@ -34,6 +34,13 @@ type UpdateUserSettingsInput struct {
 	// This member is required.
 	UserSettingsArn *string
 
+	// The branding configuration that customizes the appearance of the web portal for
+	// end users. When updating user settings without an existing branding
+	// configuration, all fields (logo, favicon, wallpaper, localized strings, and
+	// color theme) are required except for terms of service. When updating user
+	// settings with an existing branding configuration, all fields are optional.
+	BrandingConfigurationInput *types.BrandingConfigurationUpdateInput
+
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
 	// of the request. Idempotency ensures that an API request completes only once.
 	// With an idempotent request, if the original request completes successfully,
@@ -88,6 +95,10 @@ type UpdateUserSettingsInput struct {
 	// Specifies whether the user can upload files from the local device to the
 	// streaming session.
 	UploadAllowed types.EnabledType
+
+	// Specifies whether the user can use WebAuthn redirection for passwordless login
+	// to websites within the streaming session.
+	WebAuthnAllowed types.EnabledType
 
 	noSmithyDocumentSerde
 }
@@ -196,16 +207,13 @@ func (c *Client) addOperationUpdateUserSettingsMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -40,6 +40,25 @@ func (AdminStatus) Values() []AdminStatus {
 	}
 }
 
+type AllowedOperators string
+
+// Enum values for AllowedOperators
+const (
+	AllowedOperatorsAnd AllowedOperators = "AND"
+	AllowedOperatorsOr  AllowedOperators = "OR"
+)
+
+// Values returns all known values for AllowedOperators. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AllowedOperators) Values() []AllowedOperators {
+	return []AllowedOperators{
+		"AND",
+		"OR",
+	}
+}
+
 type AssociationStatus string
 
 // Enum values for AssociationStatus
@@ -114,6 +133,25 @@ func (AutomationRulesActionType) Values() []AutomationRulesActionType {
 	}
 }
 
+type AutomationRulesActionTypeV2 string
+
+// Enum values for AutomationRulesActionTypeV2
+const (
+	AutomationRulesActionTypeV2FindingFieldsUpdate AutomationRulesActionTypeV2 = "FINDING_FIELDS_UPDATE"
+	AutomationRulesActionTypeV2ExternalIntegration AutomationRulesActionTypeV2 = "EXTERNAL_INTEGRATION"
+)
+
+// Values returns all known values for AutomationRulesActionTypeV2. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutomationRulesActionTypeV2) Values() []AutomationRulesActionTypeV2 {
+	return []AutomationRulesActionTypeV2{
+		"FINDING_FIELDS_UPDATE",
+		"EXTERNAL_INTEGRATION",
+	}
+}
+
 type AwsIamAccessKeyStatus string
 
 // Enum values for AwsIamAccessKeyStatus
@@ -150,6 +188,30 @@ func (AwsS3BucketNotificationConfigurationS3KeyFilterRuleName) Values() []AwsS3B
 	return []AwsS3BucketNotificationConfigurationS3KeyFilterRuleName{
 		"Prefix",
 		"Suffix",
+	}
+}
+
+type BatchUpdateFindingsV2UnprocessedFindingErrorCode string
+
+// Enum values for BatchUpdateFindingsV2UnprocessedFindingErrorCode
+const (
+	BatchUpdateFindingsV2UnprocessedFindingErrorCodeResourceNotFoundException BatchUpdateFindingsV2UnprocessedFindingErrorCode = "ResourceNotFoundException"
+	BatchUpdateFindingsV2UnprocessedFindingErrorCodeValidationException       BatchUpdateFindingsV2UnprocessedFindingErrorCode = "ValidationException"
+	BatchUpdateFindingsV2UnprocessedFindingErrorCodeInternalServerException   BatchUpdateFindingsV2UnprocessedFindingErrorCode = "InternalServerException"
+	BatchUpdateFindingsV2UnprocessedFindingErrorCodeConflictException         BatchUpdateFindingsV2UnprocessedFindingErrorCode = "ConflictException"
+)
+
+// Values returns all known values for
+// BatchUpdateFindingsV2UnprocessedFindingErrorCode. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (BatchUpdateFindingsV2UnprocessedFindingErrorCode) Values() []BatchUpdateFindingsV2UnprocessedFindingErrorCode {
+	return []BatchUpdateFindingsV2UnprocessedFindingErrorCode{
+		"ResourceNotFoundException",
+		"ValidationException",
+		"InternalServerException",
+		"ConflictException",
 	}
 }
 
@@ -214,6 +276,67 @@ func (ConnectionDirection) Values() []ConnectionDirection {
 	return []ConnectionDirection{
 		"INBOUND",
 		"OUTBOUND",
+	}
+}
+
+type ConnectorAuthStatus string
+
+// Enum values for ConnectorAuthStatus
+const (
+	ConnectorAuthStatusActive ConnectorAuthStatus = "ACTIVE"
+	ConnectorAuthStatusFailed ConnectorAuthStatus = "FAILED"
+)
+
+// Values returns all known values for ConnectorAuthStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConnectorAuthStatus) Values() []ConnectorAuthStatus {
+	return []ConnectorAuthStatus{
+		"ACTIVE",
+		"FAILED",
+	}
+}
+
+type ConnectorProviderName string
+
+// Enum values for ConnectorProviderName
+const (
+	ConnectorProviderNameJiraCloud  ConnectorProviderName = "JIRA_CLOUD"
+	ConnectorProviderNameServicenow ConnectorProviderName = "SERVICENOW"
+)
+
+// Values returns all known values for ConnectorProviderName. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConnectorProviderName) Values() []ConnectorProviderName {
+	return []ConnectorProviderName{
+		"JIRA_CLOUD",
+		"SERVICENOW",
+	}
+}
+
+type ConnectorStatus string
+
+// Enum values for ConnectorStatus
+const (
+	ConnectorStatusConnected            ConnectorStatus = "CONNECTED"
+	ConnectorStatusFailedToConnect      ConnectorStatus = "FAILED_TO_CONNECT"
+	ConnectorStatusPendingConfiguration ConnectorStatus = "PENDING_CONFIGURATION"
+	ConnectorStatusPendingAuthorization ConnectorStatus = "PENDING_AUTHORIZATION"
+)
+
+// Values returns all known values for ConnectorStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConnectorStatus) Values() []ConnectorStatus {
+	return []ConnectorStatus{
+		"CONNECTED",
+		"FAILED_TO_CONNECT",
+		"PENDING_CONFIGURATION",
+		"PENDING_AUTHORIZATION",
 	}
 }
 
@@ -292,6 +415,123 @@ func (FindingHistoryUpdateSourceType) Values() []FindingHistoryUpdateSourceType 
 	}
 }
 
+type FindingsTrendsStringField string
+
+// Enum values for FindingsTrendsStringField
+const (
+	FindingsTrendsStringFieldAccountId           FindingsTrendsStringField = "account_id"
+	FindingsTrendsStringFieldRegion              FindingsTrendsStringField = "region"
+	FindingsTrendsStringFieldFindingType         FindingsTrendsStringField = "finding_types"
+	FindingsTrendsStringFieldFindingStatus       FindingsTrendsStringField = "finding_status"
+	FindingsTrendsStringFieldCveId               FindingsTrendsStringField = "finding_cve_ids"
+	FindingsTrendsStringFieldComplianceStatus    FindingsTrendsStringField = "finding_compliance_status"
+	FindingsTrendsStringFieldComplianceControl   FindingsTrendsStringField = "finding_control_id"
+	FindingsTrendsStringFieldFindingClass        FindingsTrendsStringField = "finding_class_name"
+	FindingsTrendsStringFieldProviderName        FindingsTrendsStringField = "finding_provider"
+	FindingsTrendsStringFieldFindingActivityName FindingsTrendsStringField = "finding_activity_name"
+)
+
+// Values returns all known values for FindingsTrendsStringField. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (FindingsTrendsStringField) Values() []FindingsTrendsStringField {
+	return []FindingsTrendsStringField{
+		"account_id",
+		"region",
+		"finding_types",
+		"finding_status",
+		"finding_cve_ids",
+		"finding_compliance_status",
+		"finding_control_id",
+		"finding_class_name",
+		"finding_provider",
+		"finding_activity_name",
+	}
+}
+
+type GranularityField string
+
+// Enum values for GranularityField
+const (
+	GranularityFieldDaily   GranularityField = "Daily"
+	GranularityFieldWeekly  GranularityField = "Weekly"
+	GranularityFieldMonthly GranularityField = "Monthly"
+)
+
+// Values returns all known values for GranularityField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GranularityField) Values() []GranularityField {
+	return []GranularityField{
+		"Daily",
+		"Weekly",
+		"Monthly",
+	}
+}
+
+type GroupByField string
+
+// Enum values for GroupByField
+const (
+	GroupByFieldActivityName                           GroupByField = "activity_name"
+	GroupByFieldCloudAccountUid                        GroupByField = "cloud.account.uid"
+	GroupByFieldCloudProvider                          GroupByField = "cloud.provider"
+	GroupByFieldCloudRegion                            GroupByField = "cloud.region"
+	GroupByFieldComplianceAssessmentsName              GroupByField = "compliance.assessments.name"
+	GroupByFieldComplianceStatus                       GroupByField = "compliance.status"
+	GroupByFieldComplianceControl                      GroupByField = "compliance.control"
+	GroupByFieldFindingInfoTitle                       GroupByField = "finding_info.title"
+	GroupByFieldFindingInfoRelatedEventsTraitsCategory GroupByField = "finding_info.related_events.traits.category"
+	GroupByFieldFindingInfoTypes                       GroupByField = "finding_info.types"
+	GroupByFieldMetadataProductName                    GroupByField = "metadata.product.name"
+	GroupByFieldMetadataProductUid                     GroupByField = "metadata.product.uid"
+	GroupByFieldResourcesType                          GroupByField = "resources.type"
+	GroupByFieldResourcesUid                           GroupByField = "resources.uid"
+	GroupByFieldSeverity                               GroupByField = "severity"
+	GroupByFieldStatus                                 GroupByField = "status"
+	GroupByFieldVulnerabilitiesFixCoverage             GroupByField = "vulnerabilities.fix_coverage"
+	GroupByFieldClassName                              GroupByField = "class_name"
+	GroupByFieldVulnerabilitiesAffectedPackagesName    GroupByField = "vulnerabilities.affected_packages.name"
+	GroupByFieldFindingInfoAnalyticName                GroupByField = "finding_info.analytic.name"
+	GroupByFieldComplianceStandards                    GroupByField = "compliance.standards"
+	GroupByFieldCloudAccountName                       GroupByField = "cloud.account.name"
+	GroupByFieldVendorAttributesSeverity               GroupByField = "vendor_attributes.severity"
+)
+
+// Values returns all known values for GroupByField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GroupByField) Values() []GroupByField {
+	return []GroupByField{
+		"activity_name",
+		"cloud.account.uid",
+		"cloud.provider",
+		"cloud.region",
+		"compliance.assessments.name",
+		"compliance.status",
+		"compliance.control",
+		"finding_info.title",
+		"finding_info.related_events.traits.category",
+		"finding_info.types",
+		"metadata.product.name",
+		"metadata.product.uid",
+		"resources.type",
+		"resources.uid",
+		"severity",
+		"status",
+		"vulnerabilities.fix_coverage",
+		"class_name",
+		"vulnerabilities.affected_packages.name",
+		"finding_info.analytic.name",
+		"compliance.standards",
+		"cloud.account.name",
+		"vendor_attributes.severity",
+	}
+}
+
 type IntegrationType string
 
 // Enum values for IntegrationType
@@ -307,6 +547,27 @@ const (
 // The ordering of this slice is not guaranteed to be stable across updates.
 func (IntegrationType) Values() []IntegrationType {
 	return []IntegrationType{
+		"SEND_FINDINGS_TO_SECURITY_HUB",
+		"RECEIVE_FINDINGS_FROM_SECURITY_HUB",
+		"UPDATE_FINDINGS_IN_SECURITY_HUB",
+	}
+}
+
+type IntegrationV2Type string
+
+// Enum values for IntegrationV2Type
+const (
+	IntegrationV2TypeSendFindingsToSecurityHub      IntegrationV2Type = "SEND_FINDINGS_TO_SECURITY_HUB"
+	IntegrationV2TypeReceiveFindingsFromSecurityHub IntegrationV2Type = "RECEIVE_FINDINGS_FROM_SECURITY_HUB"
+	IntegrationV2TypeUpdateFindingsInSecurityHub    IntegrationV2Type = "UPDATE_FINDINGS_IN_SECURITY_HUB"
+)
+
+// Values returns all known values for IntegrationV2Type. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IntegrationV2Type) Values() []IntegrationV2Type {
+	return []IntegrationV2Type{
 		"SEND_FINDINGS_TO_SECURITY_HUB",
 		"RECEIVE_FINDINGS_FROM_SECURITY_HUB",
 		"UPDATE_FINDINGS_IN_SECURITY_HUB",
@@ -418,6 +679,298 @@ func (NetworkDirection) Values() []NetworkDirection {
 	return []NetworkDirection{
 		"IN",
 		"OUT",
+	}
+}
+
+type OcsfBooleanField string
+
+// Enum values for OcsfBooleanField
+const (
+	OcsfBooleanFieldComplianceAssessmentsMeetsCriteria OcsfBooleanField = "compliance.assessments.meets_criteria"
+	OcsfBooleanFieldVulnerabilitiesIsExploitAvailable  OcsfBooleanField = "vulnerabilities.is_exploit_available"
+	OcsfBooleanFieldVulnerabilitiesIsFixAvailable      OcsfBooleanField = "vulnerabilities.is_fix_available"
+)
+
+// Values returns all known values for OcsfBooleanField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OcsfBooleanField) Values() []OcsfBooleanField {
+	return []OcsfBooleanField{
+		"compliance.assessments.meets_criteria",
+		"vulnerabilities.is_exploit_available",
+		"vulnerabilities.is_fix_available",
+	}
+}
+
+type OcsfDateField string
+
+// Enum values for OcsfDateField
+const (
+	OcsfDateFieldFindingInfoCreatedTimeDt     OcsfDateField = "finding_info.created_time_dt"
+	OcsfDateFieldFindingInfoFirstSeenTimeDt   OcsfDateField = "finding_info.first_seen_time_dt"
+	OcsfDateFieldFindingInfoLastSeenTimeDt    OcsfDateField = "finding_info.last_seen_time_dt"
+	OcsfDateFieldFindingInfoModifiedTimeDt    OcsfDateField = "finding_info.modified_time_dt"
+	OcsfDateFieldResourcesImageCreatedTimeDt  OcsfDateField = "resources.image.created_time_dt"
+	OcsfDateFieldResourcesImageLastUsedTimeDt OcsfDateField = "resources.image.last_used_time_dt"
+	OcsfDateFieldResourcesModifiedTimeDt      OcsfDateField = "resources.modified_time_dt"
+)
+
+// Values returns all known values for OcsfDateField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OcsfDateField) Values() []OcsfDateField {
+	return []OcsfDateField{
+		"finding_info.created_time_dt",
+		"finding_info.first_seen_time_dt",
+		"finding_info.last_seen_time_dt",
+		"finding_info.modified_time_dt",
+		"resources.image.created_time_dt",
+		"resources.image.last_used_time_dt",
+		"resources.modified_time_dt",
+	}
+}
+
+type OcsfIpField string
+
+// Enum values for OcsfIpField
+const (
+	OcsfIpFieldEvidencesDstEndpointIp OcsfIpField = "evidences.dst_endpoint.ip"
+	OcsfIpFieldEvidencesSrcEndpointIp OcsfIpField = "evidences.src_endpoint.ip"
+)
+
+// Values returns all known values for OcsfIpField. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OcsfIpField) Values() []OcsfIpField {
+	return []OcsfIpField{
+		"evidences.dst_endpoint.ip",
+		"evidences.src_endpoint.ip",
+	}
+}
+
+type OcsfMapField string
+
+// Enum values for OcsfMapField
+const (
+	OcsfMapFieldResourcesTags               OcsfMapField = "resources.tags"
+	OcsfMapFieldComplianceControlParameters OcsfMapField = "compliance.control_parameters"
+	OcsfMapFieldDatabucketTags              OcsfMapField = "databucket.tags"
+	OcsfMapFieldFindingInfoTags             OcsfMapField = "finding_info.tags"
+)
+
+// Values returns all known values for OcsfMapField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OcsfMapField) Values() []OcsfMapField {
+	return []OcsfMapField{
+		"resources.tags",
+		"compliance.control_parameters",
+		"databucket.tags",
+		"finding_info.tags",
+	}
+}
+
+type OcsfNumberField string
+
+// Enum values for OcsfNumberField
+const (
+	OcsfNumberFieldActivityId                                 OcsfNumberField = "activity_id"
+	OcsfNumberFieldComplianceStatusId                         OcsfNumberField = "compliance.status_id"
+	OcsfNumberFieldConfidenceScore                            OcsfNumberField = "confidence_score"
+	OcsfNumberFieldSeverityId                                 OcsfNumberField = "severity_id"
+	OcsfNumberFieldStatusId                                   OcsfNumberField = "status_id"
+	OcsfNumberFieldFindingInfoRelatedEventsCount              OcsfNumberField = "finding_info.related_events_count"
+	OcsfNumberFieldEvidencesApiResponseCode                   OcsfNumberField = "evidences.api.response.code"
+	OcsfNumberFieldEvidencesDstEndpointAutonomousSystemNumber OcsfNumberField = "evidences.dst_endpoint.autonomous_system.number"
+	OcsfNumberFieldEvidencesDstEndpointPort                   OcsfNumberField = "evidences.dst_endpoint.port"
+	OcsfNumberFieldEvidencesSrcEndpointAutonomousSystemNumber OcsfNumberField = "evidences.src_endpoint.autonomous_system.number"
+	OcsfNumberFieldEvidencesSrcEndpointPort                   OcsfNumberField = "evidences.src_endpoint.port"
+	OcsfNumberFieldResourcesImageInUseCount                   OcsfNumberField = "resources.image.in_use_count"
+	OcsfNumberFieldVulnerabilitiesCveCvssBaseScore            OcsfNumberField = "vulnerabilities.cve.cvss.base_score"
+	OcsfNumberFieldVendorAttributesSeverityId                 OcsfNumberField = "vendor_attributes.severity_id"
+)
+
+// Values returns all known values for OcsfNumberField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OcsfNumberField) Values() []OcsfNumberField {
+	return []OcsfNumberField{
+		"activity_id",
+		"compliance.status_id",
+		"confidence_score",
+		"severity_id",
+		"status_id",
+		"finding_info.related_events_count",
+		"evidences.api.response.code",
+		"evidences.dst_endpoint.autonomous_system.number",
+		"evidences.dst_endpoint.port",
+		"evidences.src_endpoint.autonomous_system.number",
+		"evidences.src_endpoint.port",
+		"resources.image.in_use_count",
+		"vulnerabilities.cve.cvss.base_score",
+		"vendor_attributes.severity_id",
+	}
+}
+
+type OcsfStringField string
+
+// Enum values for OcsfStringField
+const (
+	OcsfStringFieldMetadataUid                                            OcsfStringField = "metadata.uid"
+	OcsfStringFieldActivityName                                           OcsfStringField = "activity_name"
+	OcsfStringFieldCloudAccountUid                                        OcsfStringField = "cloud.account.uid"
+	OcsfStringFieldCloudProvider                                          OcsfStringField = "cloud.provider"
+	OcsfStringFieldCloudRegion                                            OcsfStringField = "cloud.region"
+	OcsfStringFieldComplianceAssessmentsCategory                          OcsfStringField = "compliance.assessments.category"
+	OcsfStringFieldComplianceAssessmentsName                              OcsfStringField = "compliance.assessments.name"
+	OcsfStringFieldComplianceControl                                      OcsfStringField = "compliance.control"
+	OcsfStringFieldComplianceStatus                                       OcsfStringField = "compliance.status"
+	OcsfStringFieldComplianceStandards                                    OcsfStringField = "compliance.standards"
+	OcsfStringFieldFindingInfoDesc                                        OcsfStringField = "finding_info.desc"
+	OcsfStringFieldFindingInfoSrcUrl                                      OcsfStringField = "finding_info.src_url"
+	OcsfStringFieldFindingInfoTitle                                       OcsfStringField = "finding_info.title"
+	OcsfStringFieldFindingInfoTypes                                       OcsfStringField = "finding_info.types"
+	OcsfStringFieldFindingInfoUid                                         OcsfStringField = "finding_info.uid"
+	OcsfStringFieldFindingInfoRelatedEventsTraitsCategory                 OcsfStringField = "finding_info.related_events.traits.category"
+	OcsfStringFieldFindingInfoRelatedEventsUid                            OcsfStringField = "finding_info.related_events.uid"
+	OcsfStringFieldFindingInfoRelatedEventsProductUid                     OcsfStringField = "finding_info.related_events.product.uid"
+	OcsfStringFieldFindingInfoRelatedEventsTitle                          OcsfStringField = "finding_info.related_events.title"
+	OcsfStringFieldMetadataProductName                                    OcsfStringField = "metadata.product.name"
+	OcsfStringFieldMetadataProductUid                                     OcsfStringField = "metadata.product.uid"
+	OcsfStringFieldMetadataProductVendorName                              OcsfStringField = "metadata.product.vendor_name"
+	OcsfStringFieldRemediationDesc                                        OcsfStringField = "remediation.desc"
+	OcsfStringFieldRemediationReferences                                  OcsfStringField = "remediation.references"
+	OcsfStringFieldResourcesCloudPartition                                OcsfStringField = "resources.cloud_partition"
+	OcsfStringFieldResourcesRegion                                        OcsfStringField = "resources.region"
+	OcsfStringFieldResourcesType                                          OcsfStringField = "resources.type"
+	OcsfStringFieldResourcesUid                                           OcsfStringField = "resources.uid"
+	OcsfStringFieldSeverity                                               OcsfStringField = "severity"
+	OcsfStringFieldStatus                                                 OcsfStringField = "status"
+	OcsfStringFieldComment                                                OcsfStringField = "comment"
+	OcsfStringFieldVulnerabilitiesFixCoverage                             OcsfStringField = "vulnerabilities.fix_coverage"
+	OcsfStringFieldClassName                                              OcsfStringField = "class_name"
+	OcsfStringFieldDatabucketEncryptionDetailsAlgorithm                   OcsfStringField = "databucket.encryption_details.algorithm"
+	OcsfStringFieldDatabucketEncryptionDetailsKeyUid                      OcsfStringField = "databucket.encryption_details.key_uid"
+	OcsfStringFieldDatabucketFileDataClassificationsClassifierDetailsType OcsfStringField = "databucket.file.data_classifications.classifier_details.type"
+	OcsfStringFieldEvidencesActorUserAccountUid                           OcsfStringField = "evidences.actor.user.account.uid"
+	OcsfStringFieldEvidencesApiOperation                                  OcsfStringField = "evidences.api.operation"
+	OcsfStringFieldEvidencesApiResponseErrorMessage                       OcsfStringField = "evidences.api.response.error_message"
+	OcsfStringFieldEvidencesApiServiceName                                OcsfStringField = "evidences.api.service.name"
+	OcsfStringFieldEvidencesConnectionInfoDirection                       OcsfStringField = "evidences.connection_info.direction"
+	OcsfStringFieldEvidencesConnectionInfoProtocolName                    OcsfStringField = "evidences.connection_info.protocol_name"
+	OcsfStringFieldEvidencesDstEndpointAutonomousSystemName               OcsfStringField = "evidences.dst_endpoint.autonomous_system.name"
+	OcsfStringFieldEvidencesDstEndpointLocationCity                       OcsfStringField = "evidences.dst_endpoint.location.city"
+	OcsfStringFieldEvidencesDstEndpointLocationCountry                    OcsfStringField = "evidences.dst_endpoint.location.country"
+	OcsfStringFieldEvidencesSrcEndpointAutonomousSystemName               OcsfStringField = "evidences.src_endpoint.autonomous_system.name"
+	OcsfStringFieldEvidencesSrcEndpointHostname                           OcsfStringField = "evidences.src_endpoint.hostname"
+	OcsfStringFieldEvidencesSrcEndpointLocationCity                       OcsfStringField = "evidences.src_endpoint.location.city"
+	OcsfStringFieldEvidencesSrcEndpointLocationCountry                    OcsfStringField = "evidences.src_endpoint.location.country"
+	OcsfStringFieldFindingInfoAnalyticName                                OcsfStringField = "finding_info.analytic.name"
+	OcsfStringFieldMalwareName                                            OcsfStringField = "malware.name"
+	OcsfStringFieldMalwareScanInfoUid                                     OcsfStringField = "malware_scan_info.uid"
+	OcsfStringFieldMalwareSeverity                                        OcsfStringField = "malware.severity"
+	OcsfStringFieldResourcesCloudFunctionLayersUidAlt                     OcsfStringField = "resources.cloud_function.layers.uid_alt"
+	OcsfStringFieldResourcesCloudFunctionRuntime                          OcsfStringField = "resources.cloud_function.runtime"
+	OcsfStringFieldResourcesCloudFunctionUserUid                          OcsfStringField = "resources.cloud_function.user.uid"
+	OcsfStringFieldResourcesDeviceEncryptionDetailsKeyUid                 OcsfStringField = "resources.device.encryption_details.key_uid"
+	OcsfStringFieldResourcesDeviceImageUid                                OcsfStringField = "resources.device.image.uid"
+	OcsfStringFieldResourcesImageArchitecture                             OcsfStringField = "resources.image.architecture"
+	OcsfStringFieldResourcesImageRegistryUid                              OcsfStringField = "resources.image.registry_uid"
+	OcsfStringFieldResourcesImageRepositoryName                           OcsfStringField = "resources.image.repository_name"
+	OcsfStringFieldResourcesImageUid                                      OcsfStringField = "resources.image.uid"
+	OcsfStringFieldResourcesSubnetInfoUid                                 OcsfStringField = "resources.subnet_info.uid"
+	OcsfStringFieldResourcesVpcUid                                        OcsfStringField = "resources.vpc_uid"
+	OcsfStringFieldVulnerabilitiesAffectedCodeFilePath                    OcsfStringField = "vulnerabilities.affected_code.file.path"
+	OcsfStringFieldVulnerabilitiesAffectedPackagesName                    OcsfStringField = "vulnerabilities.affected_packages.name"
+	OcsfStringFieldVulnerabilitiesCveEpssScore                            OcsfStringField = "vulnerabilities.cve.epss.score"
+	OcsfStringFieldVulnerabilitiesCveUid                                  OcsfStringField = "vulnerabilities.cve.uid"
+	OcsfStringFieldVulnerabilitiesRelatedVulnerabilities                  OcsfStringField = "vulnerabilities.related_vulnerabilities"
+	OcsfStringFieldCloudAccountName                                       OcsfStringField = "cloud.account.name"
+	OcsfStringFieldVendorAttributesSeverity                               OcsfStringField = "vendor_attributes.severity"
+)
+
+// Values returns all known values for OcsfStringField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OcsfStringField) Values() []OcsfStringField {
+	return []OcsfStringField{
+		"metadata.uid",
+		"activity_name",
+		"cloud.account.uid",
+		"cloud.provider",
+		"cloud.region",
+		"compliance.assessments.category",
+		"compliance.assessments.name",
+		"compliance.control",
+		"compliance.status",
+		"compliance.standards",
+		"finding_info.desc",
+		"finding_info.src_url",
+		"finding_info.title",
+		"finding_info.types",
+		"finding_info.uid",
+		"finding_info.related_events.traits.category",
+		"finding_info.related_events.uid",
+		"finding_info.related_events.product.uid",
+		"finding_info.related_events.title",
+		"metadata.product.name",
+		"metadata.product.uid",
+		"metadata.product.vendor_name",
+		"remediation.desc",
+		"remediation.references",
+		"resources.cloud_partition",
+		"resources.region",
+		"resources.type",
+		"resources.uid",
+		"severity",
+		"status",
+		"comment",
+		"vulnerabilities.fix_coverage",
+		"class_name",
+		"databucket.encryption_details.algorithm",
+		"databucket.encryption_details.key_uid",
+		"databucket.file.data_classifications.classifier_details.type",
+		"evidences.actor.user.account.uid",
+		"evidences.api.operation",
+		"evidences.api.response.error_message",
+		"evidences.api.service.name",
+		"evidences.connection_info.direction",
+		"evidences.connection_info.protocol_name",
+		"evidences.dst_endpoint.autonomous_system.name",
+		"evidences.dst_endpoint.location.city",
+		"evidences.dst_endpoint.location.country",
+		"evidences.src_endpoint.autonomous_system.name",
+		"evidences.src_endpoint.hostname",
+		"evidences.src_endpoint.location.city",
+		"evidences.src_endpoint.location.country",
+		"finding_info.analytic.name",
+		"malware.name",
+		"malware_scan_info.uid",
+		"malware.severity",
+		"resources.cloud_function.layers.uid_alt",
+		"resources.cloud_function.runtime",
+		"resources.cloud_function.user.uid",
+		"resources.device.encryption_details.key_uid",
+		"resources.device.image.uid",
+		"resources.image.architecture",
+		"resources.image.registry_uid",
+		"resources.image.repository_name",
+		"resources.image.uid",
+		"resources.subnet_info.uid",
+		"resources.vpc_uid",
+		"vulnerabilities.affected_code.file.path",
+		"vulnerabilities.affected_packages.name",
+		"vulnerabilities.cve.epss.score",
+		"vulnerabilities.cve.uid",
+		"vulnerabilities.related_vulnerabilities",
+		"cloud.account.name",
+		"vendor_attributes.severity",
 	}
 }
 
@@ -541,6 +1094,189 @@ func (RegionAvailabilityStatus) Values() []RegionAvailabilityStatus {
 	}
 }
 
+type ResourceCategory string
+
+// Enum values for ResourceCategory
+const (
+	ResourceCategoryCompute  ResourceCategory = "Compute"
+	ResourceCategoryDatabase ResourceCategory = "Database"
+	ResourceCategoryStorage  ResourceCategory = "Storage"
+	ResourceCategoryCode     ResourceCategory = "Code"
+	ResourceCategoryAiMl     ResourceCategory = "AI/ML"
+	ResourceCategoryIdentity ResourceCategory = "Identity"
+	ResourceCategoryNetwork  ResourceCategory = "Network"
+	ResourceCategoryOther    ResourceCategory = "Other"
+)
+
+// Values returns all known values for ResourceCategory. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourceCategory) Values() []ResourceCategory {
+	return []ResourceCategory{
+		"Compute",
+		"Database",
+		"Storage",
+		"Code",
+		"AI/ML",
+		"Identity",
+		"Network",
+		"Other",
+	}
+}
+
+type ResourceGroupByField string
+
+// Enum values for ResourceGroupByField
+const (
+	ResourceGroupByFieldAccountId        ResourceGroupByField = "AccountId"
+	ResourceGroupByFieldRegion           ResourceGroupByField = "Region"
+	ResourceGroupByFieldResourceCategory ResourceGroupByField = "ResourceCategory"
+	ResourceGroupByFieldResourceType     ResourceGroupByField = "ResourceType"
+	ResourceGroupByFieldResourceName     ResourceGroupByField = "ResourceName"
+	ResourceGroupByFieldFindingType      ResourceGroupByField = "FindingsSummary.FindingType"
+)
+
+// Values returns all known values for ResourceGroupByField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourceGroupByField) Values() []ResourceGroupByField {
+	return []ResourceGroupByField{
+		"AccountId",
+		"Region",
+		"ResourceCategory",
+		"ResourceType",
+		"ResourceName",
+		"FindingsSummary.FindingType",
+	}
+}
+
+type ResourcesDateField string
+
+// Enum values for ResourcesDateField
+const (
+	ResourcesDateFieldResourceDetailCaptureTimeDt ResourcesDateField = "ResourceDetailCaptureTime"
+	ResourcesDateFieldResourceCreationTimeDt      ResourcesDateField = "ResourceCreationTime"
+)
+
+// Values returns all known values for ResourcesDateField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourcesDateField) Values() []ResourcesDateField {
+	return []ResourcesDateField{
+		"ResourceDetailCaptureTime",
+		"ResourceCreationTime",
+	}
+}
+
+type ResourcesMapField string
+
+// Enum values for ResourcesMapField
+const (
+	ResourcesMapFieldTag ResourcesMapField = "ResourceTags"
+)
+
+// Values returns all known values for ResourcesMapField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourcesMapField) Values() []ResourcesMapField {
+	return []ResourcesMapField{
+		"ResourceTags",
+	}
+}
+
+type ResourcesNumberField string
+
+// Enum values for ResourcesNumberField
+const (
+	ResourcesNumberFieldTotalFindings         ResourcesNumberField = "FindingsSummary.TotalFindings"
+	ResourcesNumberFieldSeverityOther         ResourcesNumberField = "FindingsSummary.Severities.Other"
+	ResourcesNumberFieldSeverityFatal         ResourcesNumberField = "FindingsSummary.Severities.Fatal"
+	ResourcesNumberFieldSeverityCritical      ResourcesNumberField = "FindingsSummary.Severities.Critical"
+	ResourcesNumberFieldSeverityHigh          ResourcesNumberField = "FindingsSummary.Severities.High"
+	ResourcesNumberFieldSeverityMedium        ResourcesNumberField = "FindingsSummary.Severities.Medium"
+	ResourcesNumberFieldSeverityLow           ResourcesNumberField = "FindingsSummary.Severities.Low"
+	ResourcesNumberFieldSeverityInformational ResourcesNumberField = "FindingsSummary.Severities.Informational"
+	ResourcesNumberFieldSeverityUnknown       ResourcesNumberField = "FindingsSummary.Severities.Unknown"
+)
+
+// Values returns all known values for ResourcesNumberField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourcesNumberField) Values() []ResourcesNumberField {
+	return []ResourcesNumberField{
+		"FindingsSummary.TotalFindings",
+		"FindingsSummary.Severities.Other",
+		"FindingsSummary.Severities.Fatal",
+		"FindingsSummary.Severities.Critical",
+		"FindingsSummary.Severities.High",
+		"FindingsSummary.Severities.Medium",
+		"FindingsSummary.Severities.Low",
+		"FindingsSummary.Severities.Informational",
+		"FindingsSummary.Severities.Unknown",
+	}
+}
+
+type ResourcesStringField string
+
+// Enum values for ResourcesStringField
+const (
+	ResourcesStringFieldResourceGuid     ResourcesStringField = "ResourceGuid"
+	ResourcesStringFieldResourceId       ResourcesStringField = "ResourceId"
+	ResourcesStringFieldAccountId        ResourcesStringField = "AccountId"
+	ResourcesStringFieldRegion           ResourcesStringField = "Region"
+	ResourcesStringFieldResourceCategory ResourcesStringField = "ResourceCategory"
+	ResourcesStringFieldResourceType     ResourcesStringField = "ResourceType"
+	ResourcesStringFieldResourceName     ResourcesStringField = "ResourceName"
+	ResourcesStringFieldFindingType      ResourcesStringField = "FindingsSummary.FindingType"
+	ResourcesStringFieldProductName      ResourcesStringField = "FindingsSummary.ProductName"
+)
+
+// Values returns all known values for ResourcesStringField. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourcesStringField) Values() []ResourcesStringField {
+	return []ResourcesStringField{
+		"ResourceGuid",
+		"ResourceId",
+		"AccountId",
+		"Region",
+		"ResourceCategory",
+		"ResourceType",
+		"ResourceName",
+		"FindingsSummary.FindingType",
+		"FindingsSummary.ProductName",
+	}
+}
+
+type ResourcesTrendsStringField string
+
+// Enum values for ResourcesTrendsStringField
+const (
+	ResourcesTrendsStringFieldAccountId        ResourcesTrendsStringField = "account_id"
+	ResourcesTrendsStringFieldRegion           ResourcesTrendsStringField = "region"
+	ResourcesTrendsStringFieldResourceType     ResourcesTrendsStringField = "resource_type"
+	ResourcesTrendsStringFieldResourceCategory ResourcesTrendsStringField = "resource_category"
+)
+
+// Values returns all known values for ResourcesTrendsStringField. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourcesTrendsStringField) Values() []ResourcesTrendsStringField {
+	return []ResourcesTrendsStringField{
+		"account_id",
+		"region",
+		"resource_type",
+		"resource_category",
+	}
+}
+
 type RuleStatus string
 
 // Enum values for RuleStatus
@@ -560,6 +1296,25 @@ func (RuleStatus) Values() []RuleStatus {
 	}
 }
 
+type RuleStatusV2 string
+
+// Enum values for RuleStatusV2
+const (
+	RuleStatusV2Enabled  RuleStatusV2 = "ENABLED"
+	RuleStatusV2Disabled RuleStatusV2 = "DISABLED"
+)
+
+// Values returns all known values for RuleStatusV2. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RuleStatusV2) Values() []RuleStatusV2 {
+	return []RuleStatusV2{
+		"ENABLED",
+		"DISABLED",
+	}
+}
+
 type SecurityControlProperty string
 
 // Enum values for SecurityControlProperty
@@ -574,6 +1329,25 @@ const (
 func (SecurityControlProperty) Values() []SecurityControlProperty {
 	return []SecurityControlProperty{
 		"Parameters",
+	}
+}
+
+type SecurityHubFeature string
+
+// Enum values for SecurityHubFeature
+const (
+	SecurityHubFeatureSecurityHub   SecurityHubFeature = "SecurityHub"
+	SecurityHubFeatureSecurityHubV2 SecurityHubFeature = "SecurityHubV2"
+)
+
+// Values returns all known values for SecurityHubFeature. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SecurityHubFeature) Values() []SecurityHubFeature {
+	return []SecurityHubFeature{
+		"SecurityHub",
+		"SecurityHubV2",
 	}
 }
 
@@ -719,6 +1493,7 @@ const (
 	StringFilterComparisonPrefixNotEquals StringFilterComparison = "PREFIX_NOT_EQUALS"
 	StringFilterComparisonContains        StringFilterComparison = "CONTAINS"
 	StringFilterComparisonNotContains     StringFilterComparison = "NOT_CONTAINS"
+	StringFilterComparisonContainsWord    StringFilterComparison = "CONTAINS_WORD"
 )
 
 // Values returns all known values for StringFilterComparison. Note that this can
@@ -733,6 +1508,7 @@ func (StringFilterComparison) Values() []StringFilterComparison {
 		"PREFIX_NOT_EQUALS",
 		"CONTAINS",
 		"NOT_CONTAINS",
+		"CONTAINS_WORD",
 	}
 }
 
@@ -822,14 +1598,32 @@ func (ThreatIntelIndicatorType) Values() []ThreatIntelIndicatorType {
 	}
 }
 
+type TicketCreationMode string
+
+// Enum values for TicketCreationMode
+const (
+	TicketCreationModeDryrun TicketCreationMode = "DRYRUN"
+)
+
+// Values returns all known values for TicketCreationMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TicketCreationMode) Values() []TicketCreationMode {
+	return []TicketCreationMode{
+		"DRYRUN",
+	}
+}
+
 type UnprocessedErrorCode string
 
 // Enum values for UnprocessedErrorCode
 const (
-	UnprocessedErrorCodeInvalidInput  UnprocessedErrorCode = "INVALID_INPUT"
-	UnprocessedErrorCodeAccessDenied  UnprocessedErrorCode = "ACCESS_DENIED"
-	UnprocessedErrorCodeNotFound      UnprocessedErrorCode = "NOT_FOUND"
-	UnprocessedErrorCodeLimitExceeded UnprocessedErrorCode = "LIMIT_EXCEEDED"
+	UnprocessedErrorCodeInvalidInput     UnprocessedErrorCode = "INVALID_INPUT"
+	UnprocessedErrorCodeAccessDenied     UnprocessedErrorCode = "ACCESS_DENIED"
+	UnprocessedErrorCodeNotFound         UnprocessedErrorCode = "NOT_FOUND"
+	UnprocessedErrorCodeResourceNotFound UnprocessedErrorCode = "RESOURCE_NOT_FOUND"
+	UnprocessedErrorCodeLimitExceeded    UnprocessedErrorCode = "LIMIT_EXCEEDED"
 )
 
 // Values returns all known values for UnprocessedErrorCode. Note that this can be
@@ -841,6 +1635,7 @@ func (UnprocessedErrorCode) Values() []UnprocessedErrorCode {
 		"INVALID_INPUT",
 		"ACCESS_DENIED",
 		"NOT_FOUND",
+		"RESOURCE_NOT_FOUND",
 		"LIMIT_EXCEEDED",
 	}
 }

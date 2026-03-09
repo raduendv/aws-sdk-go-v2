@@ -49,7 +49,37 @@ type DescribeBackupJobOutput struct {
 	// Represents the options specified as part of backup plan or on-demand backup job.
 	BackupOptions map[string]string
 
-	// The size, in bytes, of a backup.
+	// The size, in bytes, of a backup (recovery point).
+	//
+	// This value can render differently depending on the resource type as Backup
+	// pulls in data information from other Amazon Web Services services. For example,
+	// the value returned may show a value of 0 , which may differ from the anticipated
+	// value.
+	//
+	// The expected behavior for values by resource type are described as follows:
+	//
+	//   - Amazon Aurora, Amazon DocumentDB, and Amazon Neptune do not have this value
+	//   populate from the operation GetBackupJobStatus .
+	//
+	//   - For Amazon DynamoDB with advanced features, this value refers to the size
+	//   of the recovery point (backup).
+	//
+	//   - Amazon EC2 and Amazon EBS show volume size (provisioned storage) returned
+	//   as part of this value. Amazon EBS does not return backup size information;
+	//   snapshot size will have the same value as the original resource that was backed
+	//   up.
+	//
+	//   - For Amazon EFS, this value refers to the delta bytes transferred during a
+	//   backup.
+	//
+	//   - Amazon FSx does not populate this value from the operation
+	//   GetBackupJobStatus for FSx file systems.
+	//
+	//   - An Amazon RDS instance will show as 0 .
+	//
+	//   - For virtual machines running VMware, this value is passed to Backup through
+	//   an asynchronous workflow, which can mean this displayed value can
+	//   under-represent the actual backup size.
 	BackupSizeInBytes *int64
 
 	// Represents the actual backup type selected for a backup job. For example, if a
@@ -91,6 +121,11 @@ type DescribeBackupJobOutput struct {
 	// 12:11:30.087 AM.
 	CreationDate *time.Time
 
+	// The Amazon Resource Name (ARN) of the KMS key used to encrypt the backup. This
+	// can be a customer-managed key or an Amazon Web Services managed key, depending
+	// on the vault configuration.
+	EncryptionKeyArn *string
+
 	// The date and time that a job to back up resources is expected to be completed,
 	// in Unix format and Coordinated Universal Time (UTC). The value of
 	// ExpectedCompletionDate is accurate to milliseconds. For example, the value
@@ -103,6 +138,11 @@ type DescribeBackupJobOutput struct {
 
 	// The date a backup job was initiated.
 	InitiationDate *time.Time
+
+	// A boolean value indicating whether the backup is encrypted. All backups in
+	// Backup are encrypted, but this field indicates the encryption status for
+	// transparency.
+	IsEncrypted bool
 
 	// This returns the boolean value that a backup job is a parent (composite) job.
 	IsParent bool
@@ -130,6 +170,25 @@ type DescribeBackupJobOutput struct {
 	// .
 	RecoveryPointArn *string
 
+	// Specifies the time period, in days, before a recovery point transitions to cold
+	// storage or is deleted.
+	//
+	// Backups transitioned to cold storage must be stored in cold storage for a
+	// minimum of 90 days. Therefore, on the console, the retention setting must be 90
+	// days greater than the transition to cold after days setting. The transition to
+	// cold after days setting can't be changed after a backup has been transitioned to
+	// cold.
+	//
+	// Resource types that can transition to cold storage are listed in the [Feature availability by resource] table.
+	// Backup ignores this expression for other resource types.
+	//
+	// To remove the existing lifecycle and retention periods and keep your recovery
+	// points indefinitely, specify -1 for MoveToColdStorageAfterDays and
+	// DeleteAfterDays .
+	//
+	// [Feature availability by resource]: https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html#features-by-resource
+	RecoveryPointLifecycle *types.Lifecycle
+
 	// An ARN that uniquely identifies a saved resource. The format of the ARN depends
 	// on the resource type.
 	ResourceArn *string
@@ -156,6 +215,16 @@ type DescribeBackupJobOutput struct {
 
 	// A detailed message explaining the status of the job to back up a resource.
 	StatusMessage *string
+
+	// The lock state of the backup vault. For logically air-gapped vaults, this
+	// indicates whether the vault is locked in compliance mode. Valid values include
+	// LOCKED and UNLOCKED .
+	VaultLockState *string
+
+	// The type of backup vault where the recovery point is stored. Valid values are
+	// BACKUP_VAULT for standard backup vaults and LOGICALLY_AIR_GAPPED_BACKUP_VAULT
+	// for logically air-gapped vaults.
+	VaultType *string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -251,16 +320,13 @@ func (c *Client) addOperationDescribeBackupJobMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

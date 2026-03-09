@@ -10,9 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	This operation is used with the Amazon GameLift FleetIQ solution and game
-//
-// server groups.
+//	This API works with the following fleet types: EC2 (FleetIQ)
 //
 // Removes the game server from a game server group. As a result of this
 // operation, the deregistered game server can no longer be claimed and will not be
@@ -24,9 +22,9 @@ import (
 //
 // # Learn more
 //
-// [Amazon GameLift FleetIQ Guide]
+// [Amazon GameLift Servers FleetIQ Guide]
 //
-// [Amazon GameLift FleetIQ Guide]: https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html
+// [Amazon GameLift Servers FleetIQ Guide]: https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html
 func (c *Client) DeregisterGameServer(ctx context.Context, params *DeregisterGameServerInput, optFns ...func(*Options)) (*DeregisterGameServerOutput, error) {
 	if params == nil {
 		params = &DeregisterGameServerInput{}
@@ -152,16 +150,13 @@ func (c *Client) addOperationDeregisterGameServerMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

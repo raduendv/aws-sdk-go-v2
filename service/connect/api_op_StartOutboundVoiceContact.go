@@ -19,8 +19,10 @@ import (
 // contact in queue, the call is then routed to the agent, like any other inbound
 // case.
 //
-// There is a 60-second dialing timeout for this operation. If the call is not
-// connected after 60 seconds, it fails.
+// Dialing timeout for this operation can be configured with the
+// “RingTimeoutInSeconds” parameter. If not specified, the default dialing timeout
+// will be 60 seconds which means if the call is not connected within 60 seconds,
+// it fails.
 //
 // UK numbers with a 447 prefix are not allowed by default. Before you can dial
 // these UK mobile numbers, you must submit a service quota increase request. For
@@ -29,6 +31,10 @@ import (
 // Campaign calls are not allowed by default. Before you can make a call with
 // TrafficType = CAMPAIGN , you must submit a service quota increase request to the
 // quota [Amazon Connect campaigns].
+//
+// For Preview dialing mode, only the Amazon Connect outbound campaigns service
+// principal is allowed to assume a role in your account and call this API with
+// OutboundStrategy.
 //
 // [Amazon Connect Service Quotas]: https://docs.aws.amazon.com/connect/latest/adminguide/amazon-connect-service-limits.html
 // [Amazon Connect campaigns]: https://docs.aws.amazon.com/connect/latest/adminguide/amazon-connect-service-limits.html#outbound-communications-quotas
@@ -107,6 +113,9 @@ type StartOutboundVoiceContactInput struct {
 	// Panel (CCP).
 	Name *string
 
+	// Information about the outbound strategy.
+	OutboundStrategy *types.OutboundStrategy
+
 	// The queue for the call. If you specify a queue, the phone displayed for caller
 	// ID is the phone number specified in the queue. If you do not specify a queue,
 	// the queue defined in the flow is used. If you do not specify a queue, you must
@@ -125,6 +134,10 @@ type StartOutboundVoiceContactInput struct {
 	// are limited to the individual contact ID. There are no limits to the number of
 	// contacts that can be linked by using RelatedContactId .
 	RelatedContactId *string
+
+	// The maximum time the outbound call will wait for the destination to answer the
+	// call, in seconds
+	RingTimeoutInSeconds *int32
 
 	// The phone number associated with the Amazon Connect instance, in E.164 format.
 	// If you do not specify a source phone number, you must specify a queue.
@@ -240,16 +253,13 @@ func (c *Client) addOperationStartOutboundVoiceContactMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

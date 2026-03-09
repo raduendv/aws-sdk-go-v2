@@ -15,6 +15,9 @@ import (
 // both use access-analyzer:GetFinding in the Action element of an IAM policy
 // statement. You must have permission to perform the access-analyzer:GetFinding
 // action.
+//
+// GetFinding is supported only for external access analyzers. You must use
+// GetFindingV2 for internal and unused access analyzers.
 func (c *Client) GetFinding(ctx context.Context, params *GetFindingInput, optFns ...func(*Options)) (*GetFindingOutput, error) {
 	if params == nil {
 		params = &GetFindingInput{}
@@ -148,16 +151,13 @@ func (c *Client) addOperationGetFindingMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

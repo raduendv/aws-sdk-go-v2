@@ -1,3 +1,225 @@
+# v1.161.0 (2026-02-10.2)
+
+* **Feature**: Amazon Connect now supports per-channel auto-accept and After Contact Work (ACW) timeouts. Configure agents with auto-accept and ACW timeout settings for chat, tasks, emails, and callbacks. Use the new UpdateUserConfig API to manage these settings.
+
+# v1.160.0 (2026-01-30)
+
+* **Feature**: This release adds Estimated Wait Time support to the GetContactMetrics API for Amazon Connect.
+
+# v1.159.0 (2026-01-28)
+
+* **Feature**: Adds support for filtering search results based on tags assigned to contacts.
+
+# v1.158.0 (2026-01-27)
+
+* **Feature**: Added support for task attachments. The StartTaskContact API now accepts file attachments, enabling customers to include files (.csv, .doc, .docx, .heic, .jfif, .jpeg, .jpg, .mov, .mp4, .pdf, .png, .ppt, .pptx, .rtf, .txt, etc.) when creating Task contacts. Supports up to 5 attachments per task.
+
+# v1.157.0 (2026-01-23)
+
+* **Feature**: Amazon Connect now offers public APIs to programmatically configure and run automated tests for contact center experiences. Integrate testing into CICD pipelines, run multiple tests at scale, and retrieve results via API to automate validation of voice interactions and workflows.
+
+# v1.156.0 (2026-01-16)
+
+* **Feature**: Adds support to allow customers to create form with Dispute configuration
+
+# v1.155.0 (2026-01-14)
+
+* **Feature**: Amazon Connect makes it easier to manage contact center operating hours by enabling automated scheduling for recurring events like holidays and maintenance windows. Set up recurring patterns (weekly, monthly, etc.) or link to another hours of operation to inherit overrides.
+
+# v1.154.1 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.154.0 (2025-12-30)
+
+* **Feature**: Adds support for searching global contacts using the ActiveRegions filter, and pagination support for ListSecurityProfileFlowModules and ListEntitySecurityProfiles.
+
+# v1.153.0 (2025-12-29)
+
+* **Feature**: Changes for Contact for Global Search
+
+# v1.152.0 (2025-12-19)
+
+* **Feature**: Adding support for Custom Metrics and Pre-Defined Attributes to GetCurrentMetricData API.
+
+# v1.151.0 (2025-12-15)
+
+* **Feature**: Amazon Connect now supports outbound WhatsApp contacts via the Send message block or StartOutboundChatContact API. Send proactive messages for surveys, reminders, and updates. Offer customers the option to switch to WhatsApp while in queue, eliminating hold time.
+
+# v1.150.0 (2025-12-12)
+
+* **Feature**: Amazon Connect now offers automated post-chat surveys triggered when customers end conversations. This captures timely feedback while experience is fresh, using either a no-code form builder or Amazon Lex-powered interactive surveys.
+
+# v1.149.2 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.149.1 (2025-12-02)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.149.0 (2025-12-01)
+
+* **Feature**: This is a combined re:Invent release for Amazon Connect.
+
+# v1.148.1 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.148.0 (2025-11-21)
+
+* **Feature**: New APIs to support aliases and versions for ContactFlowModule. Updated ContactFlowModule APIs to support custom blocks.
+
+# v1.147.0 (2025-11-20)
+
+* **Feature**: Add optional ability to exclude users from send notification actions for Contact Lens Rules.
+
+# v1.146.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.146.0 (2025-11-18)
+
+* **Feature**: This release added support for ring timer configuration for campaign calls.
+
+# v1.145.0 (2025-11-12)
+
+* **Feature**: Updated Authentication Profile APIs to add support for automatic logout on user inactivity
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.144.1 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.144.0 (2025-11-06)
+
+* **Feature**: Added support for Conditional Questions in Evaluation Forms. Introduced Auto Evaluation capability for Evaluation Forms and Contact Evaluations. Added new API operations: SearchEvaluationForms and SearchContactEvaluations.
+
+# v1.143.3 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.143.2 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.143.1 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.143.0 (2025-10-22)
+
+* **Feature**: This release added support for email address alias configuration and outbound campaign preview mode.
+
+# v1.142.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.142.0 (2025-10-14)
+
+* **Feature**: SDK release for TaskTemplateInfo in Contact for DescribeContact response.
+
+# v1.141.0 (2025-09-26)
+
+* **Feature**: Adds supports for manual contact picking (WorkList) operations on Routing Profiles, Agent Management and SearchContacts APIs.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.140.1 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.140.0 (2025-09-19)
+
+* **Feature**: This release adds a persistent connection field to UserPhoneConfig that maintains agent's softphone media connection for faster call connections.
+
+# v1.139.1 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.139.0 (2025-09-09)
+
+* **Feature**: SDK release for user defined predefined attributes.
+
+# v1.138.2 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.138.1 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.138.0 (2025-08-28)
+
+* **Feature**: AgentStatusDrillDown feature in GetCurrentMetricData API. Adding AGENT_STATUS as filter and grouping in GetCurrentMetricData API
+
+# v1.137.1 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.137.0 (2025-08-21)
+
+* **Feature**: Remove incorrect endpoint tests
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.136.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.136.0 (2025-08-18)
+
+* **Feature**: Amazon Connect Service Feature: Add support to enable multi-user in-app, web, and video calling.
+
+# v1.135.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Feature**: Updating SearchUserHierarchyGroups API
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.134.0 (2025-08-08)
+
+* **Feature**: This release adds a new API GetContactMetrics for Amazon Connect.
+
+# v1.133.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.132.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.132.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.131.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.131.0 (2025-06-30)
+
+* **Feature**: This release introduces ChatMetrics to the model, providing comprehensive analytics insights for Amazon Connect chat conversations. Users can access these detailed metrics through the AWS Connect API by using the DescribeContact operation with their specific instance and contact IDs
+
+# v1.130.0 (2025-06-27)
+
+* **Feature**: This release adds the following value to an InitiateAs enum: COMPLETED
+
+# v1.129.2 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.129.1 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
 # v1.129.0 (2025-05-01)
 
 * **Feature**: This release adds the following fields to DescribeContact: DisconnectReason, AgentInitiatedHoldDuration, AfterContactWorkStartTimestamp, AfterContactWorkEndTimestamp, AfterContactWorkDuration, StateTransitions, Recordings, ContactDetails, ContactEvaluations, Attributes

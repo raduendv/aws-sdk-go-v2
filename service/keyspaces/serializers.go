@@ -1262,6 +1262,35 @@ func awsAwsjson10_serializeDocumentCapacitySpecification(v *types.CapacitySpecif
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentCdcSpecification(v *types.CdcSpecification, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.PropagateTags) > 0 {
+		ok := object.Key("propagateTags")
+		ok.String(string(v.PropagateTags))
+	}
+
+	if len(v.Status) > 0 {
+		ok := object.Key("status")
+		ok.String(string(v.Status))
+	}
+
+	if v.Tags != nil {
+		ok := object.Key("tags")
+		if err := awsAwsjson10_serializeDocumentTagList(v.Tags, ok); err != nil {
+			return err
+		}
+	}
+
+	if len(v.ViewType) > 0 {
+		ok := object.Key("viewType")
+		ok.String(string(v.ViewType))
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentClientSideTimestamps(v *types.ClientSideTimestamps, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1639,6 +1668,23 @@ func awsAwsjson10_serializeDocumentTimeToLive(v *types.TimeToLive, value smithyj
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentWarmThroughputSpecification(v *types.WarmThroughputSpecification, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ReadUnitsPerSecond != nil {
+		ok := object.Key("readUnitsPerSecond")
+		ok.Long(*v.ReadUnitsPerSecond)
+	}
+
+	if v.WriteUnitsPerSecond != nil {
+		ok := object.Key("writeUnitsPerSecond")
+		ok.Long(*v.WriteUnitsPerSecond)
+	}
+
+	return nil
+}
+
 func awsAwsjson10_serializeOpDocumentCreateKeyspaceInput(v *CreateKeyspaceInput, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -1679,6 +1725,13 @@ func awsAwsjson10_serializeOpDocumentCreateTableInput(v *CreateTableInput, value
 	if v.CapacitySpecification != nil {
 		ok := object.Key("capacitySpecification")
 		if err := awsAwsjson10_serializeDocumentCapacitySpecification(v.CapacitySpecification, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.CdcSpecification != nil {
+		ok := object.Key("cdcSpecification")
+		if err := awsAwsjson10_serializeDocumentCdcSpecification(v.CdcSpecification, ok); err != nil {
 			return err
 		}
 	}
@@ -1750,6 +1803,13 @@ func awsAwsjson10_serializeOpDocumentCreateTableInput(v *CreateTableInput, value
 	if v.Ttl != nil {
 		ok := object.Key("ttl")
 		if err := awsAwsjson10_serializeDocumentTimeToLive(v.Ttl, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.WarmThroughputSpecification != nil {
+		ok := object.Key("warmThroughputSpecification")
+		if err := awsAwsjson10_serializeDocumentWarmThroughputSpecification(v.WarmThroughputSpecification, ok); err != nil {
 			return err
 		}
 	}
@@ -2136,6 +2196,13 @@ func awsAwsjson10_serializeOpDocumentUpdateTableInput(v *UpdateTableInput, value
 		}
 	}
 
+	if v.CdcSpecification != nil {
+		ok := object.Key("cdcSpecification")
+		if err := awsAwsjson10_serializeDocumentCdcSpecification(v.CdcSpecification, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.ClientSideTimestamps != nil {
 		ok := object.Key("clientSideTimestamps")
 		if err := awsAwsjson10_serializeDocumentClientSideTimestamps(v.ClientSideTimestamps, ok); err != nil {
@@ -2182,6 +2249,13 @@ func awsAwsjson10_serializeOpDocumentUpdateTableInput(v *UpdateTableInput, value
 	if v.Ttl != nil {
 		ok := object.Key("ttl")
 		if err := awsAwsjson10_serializeDocumentTimeToLive(v.Ttl, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.WarmThroughputSpecification != nil {
+		ok := object.Key("warmThroughputSpecification")
+		if err := awsAwsjson10_serializeDocumentWarmThroughputSpecification(v.WarmThroughputSpecification, ok); err != nil {
 			return err
 		}
 	}

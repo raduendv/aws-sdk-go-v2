@@ -31,6 +31,8 @@ func (c *Client) DescribeReplications(ctx context.Context, params *DescribeRepli
 type DescribeReplicationsInput struct {
 
 	// Filters applied to the replications.
+	//
+	// Valid filter names: replication-config-arn | replication-config-id
 	Filters []types.Filter
 
 	// An optional pagination token provided by a previous request. If this parameter
@@ -150,16 +152,13 @@ func (c *Client) addOperationDescribeReplicationsMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

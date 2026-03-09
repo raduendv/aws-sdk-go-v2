@@ -14,11 +14,11 @@ import (
 // Creates a dashboard from either a template or directly with a
 // DashboardDefinition . To first create a template, see the [CreateTemplate] API operation.
 //
-// A dashboard is an entity in Amazon QuickSight that identifies Amazon QuickSight
-// reports, created from analyses. You can share Amazon QuickSight dashboards. With
-// the right permissions, you can create scheduled email reports from them. If you
-// have the correct permissions, you can create a dashboard from a template that
-// exists in a different Amazon Web Services account.
+// A dashboard is an entity in Amazon Quick Sight that identifies Amazon Quick
+// Sight reports, created from analyses. You can share Amazon Quick Sight
+// dashboards. With the right permissions, you can create scheduled email reports
+// from them. If you have the correct permissions, you can create a dashboard from
+// a template that exists in a different Amazon Web Services account.
 //
 // [CreateTemplate]: https://docs.aws.amazon.com/quicksight/latest/APIReference/API_CreateTemplate.html
 func (c *Client) CreateDashboard(ctx context.Context, params *CreateDashboardInput, optFns ...func(*Options)) (*CreateDashboardOutput, error) {
@@ -57,7 +57,7 @@ type CreateDashboardInput struct {
 	// Options for publishing the dashboard when you create it:
 	//
 	//   - AvailabilityStatus for AdHocFilteringOption - This status can be either
-	//   ENABLED or DISABLED . When this is set to DISABLED , Amazon QuickSight
+	//   ENABLED or DISABLED . When this is set to DISABLED , Amazon Quick Sight
 	//   disables the left filter pane on the published dashboard, which can be used for
 	//   ad hoc (one-time) filtering. This option is ENABLED by default.
 	//
@@ -67,6 +67,19 @@ type CreateDashboardInput struct {
 	//
 	//   - VisibilityState for SheetControlsOption - This visibility state can be
 	//   either COLLAPSED or EXPANDED . This option is COLLAPSED by default.
+	//
+	//   - AvailabilityStatus for QuickSuiteActionsOption - This status can be either
+	//   ENABLED or DISABLED . Features related to Actions in Amazon Quick Suite on
+	//   dashboards are disabled when this is set to DISABLED . This option is DISABLED
+	//   by default.
+	//
+	//   - AvailabilityStatus for ExecutiveSummaryOption - This status can be either
+	//   ENABLED or DISABLED . The option to build an executive summary is disabled
+	//   when this is set to DISABLED . This option is ENABLED by default.
+	//
+	//   - AvailabilityStatus for DataStoriesSharingOption - This status can be either
+	//   ENABLED or DISABLED . The option to share a data story is disabled when this
+	//   is set to DISABLED . This option is ENABLED by default.
 	DashboardPublishOptions *types.DashboardPublishOptions
 
 	// The definition of a dashboard.
@@ -78,7 +91,7 @@ type CreateDashboardInput struct {
 	// to be valid.
 	Definition *types.DashboardVersionDefinition
 
-	// When you create the dashboard, Amazon QuickSight adds the dashboard to these
+	// When you create the dashboard, Amazon Quick Sight adds the dashboard to these
 	// folders.
 	FolderArns []string
 
@@ -106,7 +119,7 @@ type CreateDashboardInput struct {
 	// you need to create a dashboard from an analysis, first convert the analysis to a
 	// template by using the [CreateTemplate]API operation. For SourceTemplate , specify the Amazon
 	// Resource Name (ARN) of the source template. The SourceTemplate ARN can contain
-	// any Amazon Web Services account and any Amazon QuickSight-supported Amazon Web
+	// any Amazon Web Services account and any Amazon Quick Sight-supported Amazon Web
 	// Services Region.
 	//
 	// Use the DataSetReferences entity within SourceTemplate to list the replacement
@@ -254,16 +267,13 @@ func (c *Client) addOperationCreateDashboardMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

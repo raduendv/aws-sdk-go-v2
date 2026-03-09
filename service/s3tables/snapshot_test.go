@@ -146,6 +146,18 @@ func TestCheckSnapshot_DeleteTableBucketEncryption(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteTableBucketMetricsConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTableBucketMetricsConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteTableBucketMetricsConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteTableBucketPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteTableBucketPolicy(context.Background(), nil, func(o *Options) {
@@ -158,11 +170,35 @@ func TestCheckSnapshot_DeleteTableBucketPolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteTableBucketReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTableBucketReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteTableBucketReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteTablePolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteTablePolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteTablePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteTableReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTableReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteTableReplication")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -230,11 +266,47 @@ func TestCheckSnapshot_GetTableBucketMaintenanceConfiguration(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetTableBucketMetricsConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableBucketMetricsConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTableBucketMetricsConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetTableBucketPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetTableBucketPolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetTableBucketPolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetTableBucketReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableBucketReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTableBucketReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetTableBucketStorageClass(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableBucketStorageClass(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTableBucketStorageClass")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -302,6 +374,66 @@ func TestCheckSnapshot_GetTablePolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetTableRecordExpirationConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableRecordExpirationConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTableRecordExpirationConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetTableRecordExpirationJobStatus(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableRecordExpirationJobStatus(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTableRecordExpirationJobStatus")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetTableReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTableReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetTableReplicationStatus(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableReplicationStatus(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTableReplicationStatus")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetTableStorageClass(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableStorageClass(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTableStorageClass")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListNamespaces(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListNamespaces(context.Background(), nil, func(o *Options) {
@@ -338,6 +470,18 @@ func TestCheckSnapshot_ListTables(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListTagsForResource(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListTagsForResource(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListTagsForResource")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_PutTableBucketEncryption(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutTableBucketEncryption(context.Background(), nil, func(o *Options) {
@@ -362,11 +506,47 @@ func TestCheckSnapshot_PutTableBucketMaintenanceConfiguration(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_PutTableBucketMetricsConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableBucketMetricsConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutTableBucketMetricsConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_PutTableBucketPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutTableBucketPolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "PutTableBucketPolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_PutTableBucketReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableBucketReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutTableBucketReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_PutTableBucketStorageClass(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableBucketStorageClass(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutTableBucketStorageClass")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -398,11 +578,59 @@ func TestCheckSnapshot_PutTablePolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_PutTableRecordExpirationConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableRecordExpirationConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutTableRecordExpirationConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_PutTableReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutTableReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_RenameTable(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.RenameTable(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "RenameTable")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_TagResource(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.TagResource(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "TagResource")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UntagResource(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UntagResource(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UntagResource")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -505,6 +733,18 @@ func TestUpdateSnapshot_DeleteTableBucketEncryption(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteTableBucketMetricsConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTableBucketMetricsConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteTableBucketMetricsConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteTableBucketPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteTableBucketPolicy(context.Background(), nil, func(o *Options) {
@@ -517,11 +757,35 @@ func TestUpdateSnapshot_DeleteTableBucketPolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteTableBucketReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTableBucketReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteTableBucketReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteTablePolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteTablePolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteTablePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteTableReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTableReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteTableReplication")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -589,11 +853,47 @@ func TestUpdateSnapshot_GetTableBucketMaintenanceConfiguration(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetTableBucketMetricsConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableBucketMetricsConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTableBucketMetricsConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetTableBucketPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetTableBucketPolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetTableBucketPolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetTableBucketReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableBucketReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTableBucketReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetTableBucketStorageClass(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableBucketStorageClass(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTableBucketStorageClass")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -661,6 +961,66 @@ func TestUpdateSnapshot_GetTablePolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetTableRecordExpirationConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableRecordExpirationConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTableRecordExpirationConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetTableRecordExpirationJobStatus(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableRecordExpirationJobStatus(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTableRecordExpirationJobStatus")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetTableReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTableReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetTableReplicationStatus(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableReplicationStatus(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTableReplicationStatus")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetTableStorageClass(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTableStorageClass(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTableStorageClass")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListNamespaces(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListNamespaces(context.Background(), nil, func(o *Options) {
@@ -697,6 +1057,18 @@ func TestUpdateSnapshot_ListTables(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListTagsForResource(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListTagsForResource(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListTagsForResource")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_PutTableBucketEncryption(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutTableBucketEncryption(context.Background(), nil, func(o *Options) {
@@ -721,11 +1093,47 @@ func TestUpdateSnapshot_PutTableBucketMaintenanceConfiguration(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_PutTableBucketMetricsConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableBucketMetricsConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutTableBucketMetricsConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_PutTableBucketPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutTableBucketPolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "PutTableBucketPolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_PutTableBucketReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableBucketReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutTableBucketReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_PutTableBucketStorageClass(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableBucketStorageClass(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutTableBucketStorageClass")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -757,11 +1165,59 @@ func TestUpdateSnapshot_PutTablePolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_PutTableRecordExpirationConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableRecordExpirationConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutTableRecordExpirationConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_PutTableReplication(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutTableReplication(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutTableReplication")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_RenameTable(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.RenameTable(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "RenameTable")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_TagResource(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.TagResource(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "TagResource")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UntagResource(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UntagResource(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UntagResource")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

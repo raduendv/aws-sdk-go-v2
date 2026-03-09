@@ -11,6 +11,8 @@ import (
 )
 
 // Deletes an Evidently feature.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) DeleteFeature(ctx context.Context, params *DeleteFeatureInput, optFns ...func(*Options)) (*DeleteFeatureOutput, error) {
 	if params == nil {
 		params = &DeleteFeatureInput{}
@@ -31,11 +33,15 @@ type DeleteFeatureInput struct {
 	// The name of the feature to delete.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Feature *string
 
 	// The name or ARN of the project that contains the feature to delete.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	noSmithyDocumentSerde
@@ -136,16 +142,13 @@ func (c *Client) addOperationDeleteFeatureMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -42,6 +42,11 @@ type PutPlaybackConfigurationInput struct {
 	// when inserting ads.
 	AdConditioningConfiguration *types.AdConditioningConfiguration
 
+	// The configuration for customizing HTTP requests to the ad decision server
+	// (ADS). This includes settings for request method, headers, body content, and
+	// compression options.
+	AdDecisionServerConfiguration *types.AdDecisionServerConfiguration
+
 	// The URL for the ad decision server (ADS). This includes the specification of
 	// static parameters and placeholders for dynamic parameters. AWS Elemental
 	// MediaTailor substitutes player-specific and session-specific parameters as
@@ -134,6 +139,11 @@ type PutPlaybackConfigurationOutput struct {
 	// that the ad decision server (ADS) returns, and what priority MediaTailor uses
 	// when inserting ads.
 	AdConditioningConfiguration *types.AdConditioningConfiguration
+
+	// The configuration for customizing HTTP requests to the ad decision server
+	// (ADS). This includes settings for request method, headers, body content, and
+	// compression options.
+	AdDecisionServerConfiguration *types.AdDecisionServerConfiguration
 
 	// The URL for the ad decision server (ADS). This includes the specification of
 	// static parameters and placeholders for dynamic parameters. AWS Elemental
@@ -332,16 +342,13 @@ func (c *Client) addOperationPutPlaybackConfigurationMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

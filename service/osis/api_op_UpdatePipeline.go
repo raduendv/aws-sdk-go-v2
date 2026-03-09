@@ -57,6 +57,10 @@ type UpdatePipelineInput struct {
 	// configuration as a string, each new line must be escaped with \n .
 	PipelineConfigurationBody *string
 
+	// The Amazon Resource Name (ARN) of the IAM role that grants the pipeline
+	// permission to access Amazon Web Services resources.
+	PipelineRoleArn *string
+
 	noSmithyDocumentSerde
 }
 
@@ -159,16 +163,13 @@ func (c *Client) addOperationUpdatePipelineMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

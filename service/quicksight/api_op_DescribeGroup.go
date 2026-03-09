@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Returns an Amazon QuickSight group's description and Amazon Resource Name
+// Returns an Amazon Quick Sight group's description and Amazon Resource Name
 // (ARN).
 func (c *Client) DescribeGroup(ctx context.Context, params *DescribeGroupInput, optFns ...func(*Options)) (*DescribeGroupOutput, error) {
 	if params == nil {
@@ -31,8 +31,8 @@ func (c *Client) DescribeGroup(ctx context.Context, params *DescribeGroupInput, 
 type DescribeGroupInput struct {
 
 	// The ID for the Amazon Web Services account that the group is in. Currently, you
-	// use the ID for the Amazon Web Services account that contains your Amazon
-	// QuickSight account.
+	// use the ID for the Amazon Web Services account that contains your Amazon Quick
+	// Sight account.
 	//
 	// This member is required.
 	AwsAccountId *string
@@ -155,16 +155,13 @@ func (c *Client) addOperationDescribeGroupMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

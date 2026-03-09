@@ -230,6 +230,26 @@ func (m *validateOpDeleteSchemaMapping) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGenerateMatchId struct {
+}
+
+func (*validateOpGenerateMatchId) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGenerateMatchId) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GenerateMatchIdInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGenerateMatchIdInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetIdMappingJob struct {
 }
 
@@ -694,6 +714,10 @@ func addOpDeleteSchemaMappingValidationMiddleware(stack *middleware.Stack) error
 	return stack.Initialize.Add(&validateOpDeleteSchemaMapping{}, middleware.After)
 }
 
+func addOpGenerateMatchIdValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGenerateMatchId{}, middleware.After)
+}
+
 func addOpGetIdMappingJobValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetIdMappingJob{}, middleware.After)
 }
@@ -776,6 +800,24 @@ func addOpUpdateMatchingWorkflowValidationMiddleware(stack *middleware.Stack) er
 
 func addOpUpdateSchemaMappingValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateSchemaMapping{}, middleware.After)
+}
+
+func validateCustomerProfilesIntegrationConfig(v *types.CustomerProfilesIntegrationConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CustomerProfilesIntegrationConfig"}
+	if v.DomainArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainArn"))
+	}
+	if v.ObjectTypeArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ObjectTypeArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
 }
 
 func validateIdMappingJobOutputSource(v *types.IdMappingJobOutputSource) error {
@@ -1121,14 +1163,16 @@ func validateOutputSource(v *types.OutputSource) error {
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "OutputSource"}
-	if v.OutputS3Path == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("OutputS3Path"))
-	}
 	if v.Output == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Output"))
 	} else if v.Output != nil {
 		if err := validateOutputAttributes(v.Output); err != nil {
 			invalidParams.AddNested("Output", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.CustomerProfilesIntegrationConfig != nil {
+		if err := validateCustomerProfilesIntegrationConfig(v.CustomerProfilesIntegrationConfig); err != nil {
+			invalidParams.AddNested("CustomerProfilesIntegrationConfig", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -1175,6 +1219,44 @@ func validateProviderProperties(v *types.ProviderProperties) error {
 	}
 }
 
+func validateRecord(v *types.Record) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "Record"}
+	if v.InputSourceARN == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("InputSourceARN"))
+	}
+	if v.UniqueId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("UniqueId"))
+	}
+	if v.RecordAttributeMap == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RecordAttributeMap"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateRecordList(v []types.Record) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RecordList"}
+	for i := range v {
+		if err := validateRecord(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateResolutionTechniques(v *types.ResolutionTechniques) error {
 	if v == nil {
 		return nil
@@ -1186,6 +1268,11 @@ func validateResolutionTechniques(v *types.ResolutionTechniques) error {
 	if v.RuleBasedProperties != nil {
 		if err := validateRuleBasedProperties(v.RuleBasedProperties); err != nil {
 			invalidParams.AddNested("RuleBasedProperties", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.RuleConditionProperties != nil {
+		if err := validateRuleConditionProperties(v.RuleConditionProperties); err != nil {
+			invalidParams.AddNested("RuleConditionProperties", err.(smithy.InvalidParamsError))
 		}
 	}
 	if v.ProviderProperties != nil {
@@ -1232,6 +1319,60 @@ func validateRuleBasedProperties(v *types.RuleBasedProperties) error {
 	}
 	if len(v.AttributeMatchingModel) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("AttributeMatchingModel"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateRuleCondition(v *types.RuleCondition) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RuleCondition"}
+	if v.RuleName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RuleName"))
+	}
+	if v.Condition == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Condition"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateRuleConditionList(v []types.RuleCondition) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RuleConditionList"}
+	for i := range v {
+		if err := validateRuleCondition(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateRuleConditionProperties(v *types.RuleConditionProperties) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RuleConditionProperties"}
+	if v.Rules == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Rules"))
+	} else if v.Rules != nil {
+		if err := validateRuleConditionList(v.Rules); err != nil {
+			invalidParams.AddNested("Rules", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1530,6 +1671,28 @@ func validateOpDeleteSchemaMappingInput(v *DeleteSchemaMappingInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DeleteSchemaMappingInput"}
 	if v.SchemaName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("SchemaName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGenerateMatchIdInput(v *GenerateMatchIdInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GenerateMatchIdInput"}
+	if v.WorkflowName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("WorkflowName"))
+	}
+	if v.Records == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Records"))
+	} else if v.Records != nil {
+		if err := validateRecordList(v.Records); err != nil {
+			invalidParams.AddNested("Records", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

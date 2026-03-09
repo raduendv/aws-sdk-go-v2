@@ -10,8 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates a Amazon Q Business application that is linked to a Amazon QuickSight
-// account.
+// Updates a Amazon Q Business application that is linked to a Quick Sight account.
 func (c *Client) UpdateDefaultQBusinessApplication(ctx context.Context, params *UpdateDefaultQBusinessApplicationInput, optFns ...func(*Options)) (*UpdateDefaultQBusinessApplicationOutput, error) {
 	if params == nil {
 		params = &UpdateDefaultQBusinessApplicationInput{}
@@ -34,13 +33,13 @@ type UpdateDefaultQBusinessApplicationInput struct {
 	// This member is required.
 	ApplicationId *string
 
-	// The ID of the Amazon QuickSight account that is connected to the Amazon Q
-	// Business application that you want to update.
+	// The ID of the Quick Sight account that is connected to the Amazon Q Business
+	// application that you want to update.
 	//
 	// This member is required.
 	AwsAccountId *string
 
-	// The Amazon QuickSight namespace that contains the linked Amazon Q Business
+	// The Quick Sight namespace that contains the linked Amazon Q Business
 	// application. If this field is left blank, the default namespace is used.
 	// Currently, the default namespace is the only valid value for this parameter.
 	Namespace *string
@@ -150,16 +149,13 @@ func (c *Client) addOperationUpdateDefaultQBusinessApplicationMiddlewares(stack 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

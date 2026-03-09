@@ -32,6 +32,11 @@ func (c *Client) TagResource(ctx context.Context, params *TagResourceInput, optF
 
 type TagResourceInput struct {
 
+	// The Amazon Resource Name (ARN) of the Kinesis resource to which to add tags.
+	//
+	// This member is required.
+	ResourceARN *string
+
 	// An array of tags to be added to the Kinesis resource. A tag consists of a
 	// required key and an optional value. You can add up to 50 tags per resource.
 	//
@@ -41,8 +46,8 @@ type TagResourceInput struct {
 	// This member is required.
 	Tags map[string]string
 
-	// The Amazon Resource Name (ARN) of the Kinesis resource to which to add tags.
-	ResourceARN *string
+	// Not Implemented. Reserved for future use.
+	StreamId *string
 
 	noSmithyDocumentSerde
 }
@@ -50,6 +55,7 @@ type TagResourceInput struct {
 func (in *TagResourceInput) bindEndpointParams(p *EndpointParameters) {
 
 	p.ResourceARN = in.ResourceARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("control")
 }
 
@@ -148,16 +154,13 @@ func (c *Client) addOperationTagResourceMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

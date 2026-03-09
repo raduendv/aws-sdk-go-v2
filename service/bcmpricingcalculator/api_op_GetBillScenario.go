@@ -48,6 +48,9 @@ type GetBillScenarioOutput struct {
 	//  The time period covered by the bill scenario.
 	BillInterval *types.BillInterval
 
+	// The arn of the cost category used in the reserved and prioritized group sharing.
+	CostCategoryGroupSharingPreferenceArn *string
+
 	//  The timestamp when the bill scenario was created.
 	CreatedAt *time.Time
 
@@ -56,6 +59,10 @@ type GetBillScenarioOutput struct {
 
 	//  An error message if the bill scenario retrieval failed.
 	FailureMessage *string
+
+	// The setting for the reserved instance and savings plan group sharing used in
+	// this estimate.
+	GroupSharingPreference types.GroupSharingPreferenceEnum
 
 	//  The name of the retrieved bill scenario.
 	Name *string
@@ -157,16 +164,13 @@ func (c *Client) addOperationGetBillScenarioMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

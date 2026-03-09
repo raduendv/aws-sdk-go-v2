@@ -11,8 +11,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Gets the key material for an Amazon Web Services Payment Cryptography key,
-// including the immutable and mutable data specified when the key was created.
+// Gets the key metadata for an Amazon Web Services Payment Cryptography key,
+// including the immutable and mutable attributes specified when the key was
+// created. Returns key metadata including attributes, state, and timestamps, but
+// does not return the actual cryptographic key material.
 //
 // Cross-account use: This operation can't be used across different Amazon Web
 // Services accounts.
@@ -55,7 +57,8 @@ type GetKeyInput struct {
 
 type GetKeyOutput struct {
 
-	// The key material, including the immutable and mutable data for the key.
+	// Contains the key metadata, including both immutable and mutable attributes for
+	// the key, but does not include actual cryptographic key material.
 	//
 	// This member is required.
 	Key *types.Key
@@ -154,16 +157,13 @@ func (c *Client) addOperationGetKeyMiddlewares(stack *middleware.Stack, options 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

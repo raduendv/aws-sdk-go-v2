@@ -12,7 +12,14 @@ import (
 	"time"
 )
 
+// Amazon Web Services HealthOmics variant stores and annotation stores will no
+// longer be open to new customers starting November 7, 2025. If you would like to
+// use variant stores or annotation stores, sign up prior to that date. Existing
+// customers can continue to use the service as normal. For more information, see [Amazon Web Services HealthOmics variant store and annotation store availability change].
+//
 // Creates a variant store.
+//
+// [Amazon Web Services HealthOmics variant store and annotation store availability change]: https://docs.aws.amazon.com/omics/latest/dev/variant-store-availability-change.html
 func (c *Client) CreateVariantStore(ctx context.Context, params *CreateVariantStoreInput, optFns ...func(*Options)) (*CreateVariantStoreOutput, error) {
 	if params == nil {
 		params = &CreateVariantStoreInput{}
@@ -172,16 +179,13 @@ func (c *Client) addOperationCreateVariantStoreMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

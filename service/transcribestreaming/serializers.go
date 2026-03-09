@@ -163,6 +163,11 @@ func awsRestjson1_serializeOpHttpBindingsStartCallAnalyticsStreamTranscriptionIn
 		encoder.SetHeader(locationName).Boolean(v.EnablePartialResultsStabilization)
 	}
 
+	if v.IdentifyLanguage {
+		locationName := "X-Amzn-Transcribe-Identify-Language"
+		encoder.SetHeader(locationName).Boolean(v.IdentifyLanguage)
+	}
+
 	if len(v.LanguageCode) > 0 {
 		locationName := "X-Amzn-Transcribe-Language-Code"
 		encoder.SetHeader(locationName).String(string(v.LanguageCode))
@@ -171,6 +176,11 @@ func awsRestjson1_serializeOpHttpBindingsStartCallAnalyticsStreamTranscriptionIn
 	if v.LanguageModelName != nil {
 		locationName := "X-Amzn-Transcribe-Language-Model-Name"
 		encoder.SetHeader(locationName).String(*v.LanguageModelName)
+	}
+
+	if v.LanguageOptions != nil {
+		locationName := "X-Amzn-Transcribe-Language-Options"
+		encoder.SetHeader(locationName).String(*v.LanguageOptions)
 	}
 
 	if len(v.MediaEncoding) > 0 {
@@ -193,6 +203,11 @@ func awsRestjson1_serializeOpHttpBindingsStartCallAnalyticsStreamTranscriptionIn
 		encoder.SetHeader(locationName).String(*v.PiiEntityTypes)
 	}
 
+	if len(v.PreferredLanguage) > 0 {
+		locationName := "X-Amzn-Transcribe-Preferred-Language"
+		encoder.SetHeader(locationName).String(string(v.PreferredLanguage))
+	}
+
 	if v.SessionId != nil {
 		locationName := "X-Amzn-Transcribe-Session-Id"
 		encoder.SetHeader(locationName).String(*v.SessionId)
@@ -208,9 +223,19 @@ func awsRestjson1_serializeOpHttpBindingsStartCallAnalyticsStreamTranscriptionIn
 		encoder.SetHeader(locationName).String(*v.VocabularyFilterName)
 	}
 
+	if v.VocabularyFilterNames != nil {
+		locationName := "X-Amzn-Transcribe-Vocabulary-Filter-Names"
+		encoder.SetHeader(locationName).String(*v.VocabularyFilterNames)
+	}
+
 	if v.VocabularyName != nil {
 		locationName := "X-Amzn-Transcribe-Vocabulary-Name"
 		encoder.SetHeader(locationName).String(*v.VocabularyName)
+	}
+
+	if v.VocabularyNames != nil {
+		locationName := "X-Amzn-Transcribe-Vocabulary-Names"
+		encoder.SetHeader(locationName).String(*v.VocabularyNames)
 	}
 
 	return nil
@@ -735,6 +760,13 @@ func awsRestjson1_serializeDocumentMedicalScribeConfigurationEvent(v *types.Medi
 		}
 	}
 
+	if v.MedicalScribeContext != nil {
+		ok := object.Key("MedicalScribeContext")
+		if err := awsRestjson1_serializeDocumentMedicalScribeContext(v.MedicalScribeContext, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.PostStreamAnalyticsSettings != nil {
 		ok := object.Key("PostStreamAnalyticsSettings")
 		if err := awsRestjson1_serializeDocumentMedicalScribePostStreamAnalyticsSettings(v.PostStreamAnalyticsSettings, ok); err != nil {
@@ -765,6 +797,20 @@ func awsRestjson1_serializeDocumentMedicalScribeConfigurationEvent(v *types.Medi
 	return nil
 }
 
+func awsRestjson1_serializeDocumentMedicalScribeContext(v *types.MedicalScribeContext, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.PatientContext != nil {
+		ok := object.Key("PatientContext")
+		if err := awsRestjson1_serializeDocumentMedicalScribePatientContext(v.PatientContext, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentMedicalScribeEncryptionSettings(v *types.MedicalScribeEncryptionSettings, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -779,6 +825,18 @@ func awsRestjson1_serializeDocumentMedicalScribeEncryptionSettings(v *types.Medi
 	if v.KmsKeyId != nil {
 		ok := object.Key("KmsKeyId")
 		ok.String(*v.KmsKeyId)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentMedicalScribePatientContext(v *types.MedicalScribePatientContext, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.Pronouns) > 0 {
+		ok := object.Key("Pronouns")
+		ok.String(string(v.Pronouns))
 	}
 
 	return nil

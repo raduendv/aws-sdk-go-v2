@@ -15,11 +15,11 @@ import (
 // databases by using backup files. You can create a backup of your on-premises
 // database, store it on Amazon Simple Storage Service (Amazon S3), and then
 // restore the backup file onto a new Amazon RDS DB instance running MySQL. For
-// more information, see [Importing Data into an Amazon RDS MySQL DB Instance]in the Amazon RDS User Guide.
+// more information, see [Restoring a backup into an Amazon RDS for MySQL DB instance]in the Amazon RDS User Guide.
 //
 // This operation doesn't apply to RDS Custom.
 //
-// [Importing Data into an Amazon RDS MySQL DB Instance]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/MySQL.Procedural.Importing.html
+// [Restoring a backup into an Amazon RDS for MySQL DB instance]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/MySQL.Procedural.Importing.html
 func (c *Client) RestoreDBInstanceFromS3(ctx context.Context, params *RestoreDBInstanceFromS3Input, optFns ...func(*Options)) (*RestoreDBInstanceFromS3Output, error) {
 	if params == nil {
 		params = &RestoreDBInstanceFromS3Input{}
@@ -100,6 +100,12 @@ type RestoreDBInstanceFromS3Input struct {
 	//
 	// This member is required.
 	SourceEngineVersion *string
+
+	// A list of additional storage volumes to modify or delete for the DB instance.
+	// You can modify or delete up to three additional storage volumes using the names
+	// rdsdbdata2 , rdsdbdata3 , and rdsdbdata4 . Additional storage volumes are
+	// supported for RDS for Oracle and RDS for SQL Server DB instances only.
+	AdditionalStorageVolumes []types.AdditionalStorageVolume
 
 	// The amount of storage (in gibibytes) to allocate initially for the DB instance.
 	// Follow the allocation rules specified in CreateDBInstance .
@@ -230,7 +236,7 @@ type RestoreDBInstanceFromS3Input struct {
 	// You can use this setting to enroll your DB instance into Amazon RDS Extended
 	// Support. With RDS Extended Support, you can run the selected major engine
 	// version on your DB instance past the end of standard support for that engine
-	// version. For more information, see [Using Amazon RDS Extended Support]in the Amazon RDS User Guide.
+	// version. For more information, see [Amazon RDS Extended Support Amazon RDS]in the Amazon RDS User Guide.
 	//
 	// This setting applies only to RDS for MySQL and RDS for PostgreSQL. For Amazon
 	// Aurora DB instances, the life cycle type is managed by the DB cluster.
@@ -240,7 +246,7 @@ type RestoreDBInstanceFromS3Input struct {
 	//
 	// Default: open-source-rds-extended-support
 	//
-	// [Using Amazon RDS Extended Support]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
+	// [Amazon RDS Extended Support Amazon RDS]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
 	EngineLifecycleSupport *string
 
 	// The version number of the database engine to use. Choose the latest minor
@@ -516,6 +522,13 @@ type RestoreDBInstanceFromS3Input struct {
 	// Default: io1 if the Iops parameter is specified; otherwise gp2
 	StorageType *string
 
+	// Tags to assign to resources associated with the DB instance.
+	//
+	// Valid Values:
+	//
+	//   - auto-backup - The DB instance's automated backup.
+	TagSpecifications []types.TagSpecification
+
 	// A list of tags to associate with this DB instance. For more information, see [Tagging Amazon RDS Resources]
 	// in the Amazon RDS User Guide.
 	//
@@ -637,16 +650,13 @@ func (c *Client) addOperationRestoreDBInstanceFromS3Middlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

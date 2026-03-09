@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: Container
+//
 // Retrieves container group definitions for the Amazon Web Services account and
 // Amazon Web Services Region. Use the pagination parameters to retrieve results in
 // a set of sequential pages.
@@ -52,7 +54,7 @@ func (c *Client) ListContainerGroupDefinitions(ctx context.Context, params *List
 type ListContainerGroupDefinitionsInput struct {
 
 	// The type of container group to retrieve. Container group type determines how
-	// Amazon GameLift deploys the container group on each fleet instance.
+	// Amazon GameLift Servers deploys the container group on each fleet instance.
 	ContainerGroupType types.ContainerGroupType
 
 	// The maximum number of results to return. Use this parameter with NextToken to
@@ -168,16 +170,13 @@ func (c *Client) addOperationListContainerGroupDefinitionsMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -53,6 +53,10 @@ type StartTrainedModelExportJobInput struct {
 	// The description of the trained model export job.
 	Description *string
 
+	// The version identifier of the trained model to export. This specifies which
+	// version of the trained model should be exported to the specified destination.
+	TrainedModelVersionIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
@@ -151,16 +155,13 @@ func (c *Client) addOperationStartTrainedModelExportJobMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

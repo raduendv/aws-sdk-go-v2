@@ -11,6 +11,10 @@ import (
 )
 
 // GetGlyphs returns the map's glyphs.
+//
+// For more information, see [Style labels with glyphs] in the Amazon Location Service Developer Guide.
+//
+// [Style labels with glyphs]: https://docs.aws.amazon.com/location/latest/developerguide/styling-labels-with-glyphs.html
 func (c *Client) GetGlyphs(ctx context.Context, params *GetGlyphsInput, optFns ...func(*Options)) (*GetGlyphsOutput, error) {
 	if params == nil {
 		params = &GetGlyphsInput{}
@@ -200,7 +204,7 @@ type GetGlyphsInput struct {
 	// A Unicode range of characters to download glyphs for. This must be aligned to
 	// multiples of 256.
 	//
-	// Example: 0-255.pdf
+	// Example: 0-255.pbf
 	//
 	// This member is required.
 	FontUnicodeRange *string
@@ -317,16 +321,13 @@ func (c *Client) addOperationGetGlyphsMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

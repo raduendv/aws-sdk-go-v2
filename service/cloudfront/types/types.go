@@ -200,6 +200,13 @@ type AnycastIpList struct {
 	// This member is required.
 	Status *string
 
+	// The IP address type for the Anycast static IP list.
+	IpAddressType IpAddressType
+
+	// The IPAM configuration for the Anycast static IP list, that contains the
+	// quantity and list of IPAM CIDR configurations.
+	IpamConfig *IpamConfig
+
 	noSmithyDocumentSerde
 }
 
@@ -277,7 +284,60 @@ type AnycastIpListSummary struct {
 	// This member is required.
 	Status *string
 
+	// The current version (ETag value) of the Anycast static IP list.
+	ETag *string
+
+	// The IP address type for the Anycast static IP list.
+	IpAddressType IpAddressType
+
+	// The IPAM configuration for the Anycast static IP list, that contains the
+	// quantity and list of IPAM CIDR configurations.
+	IpamConfig *IpamConfig
+
 	noSmithyDocumentSerde
+}
+
+// The CA certificates bundle location in Amazon S3.
+type CaCertificatesBundleS3Location struct {
+
+	// The S3 bucket.
+	//
+	// This member is required.
+	Bucket *string
+
+	// The location's key.
+	//
+	// This member is required.
+	Key *string
+
+	// The location's Region.
+	//
+	// This member is required.
+	Region *string
+
+	// The location's version.
+	Version *string
+
+	noSmithyDocumentSerde
+}
+
+// A CA certificates bundle source.
+//
+// The following types satisfy this interface:
+//
+//	CaCertificatesBundleSourceMemberCaCertificatesBundleS3Location
+type CaCertificatesBundleSource interface {
+	isCaCertificatesBundleSource()
+}
+
+// The CA certificates bundle location in Amazon S3.
+type CaCertificatesBundleSourceMemberCaCertificatesBundleS3Location struct {
+	Value CaCertificatesBundleS3Location
+
+	noSmithyDocumentSerde
+}
+
+func (*CaCertificatesBundleSourceMemberCaCertificatesBundleS3Location) isCaCertificatesBundleSource() {
 }
 
 // A complex type that describes how CloudFront processes requests.
@@ -303,6 +363,11 @@ type AnycastIpListSummary struct {
 // To add, change, or remove one or more cache behaviors, update the distribution
 // configuration and specify all of the cache behaviors that you want to include in
 // the updated distribution.
+//
+// If your minimum TTL is greater than 0, CloudFront will cache content for at
+// least the duration specified in the cache policy's minimum TTL, even if the
+// Cache-Control: no-cache , no-store , or private directives are present in the
+// origin headers.
 //
 // For more information about cache behaviors, see [Cache Behavior Settings] in the Amazon CloudFront
 // Developer Guide.
@@ -403,6 +468,10 @@ type CacheBehavior struct {
 	// [Serving Compressed Files]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html
 	Compress *bool
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// This field is deprecated. We recommend that you use the DefaultTTL field in a
 	// cache policy instead of this field. For more information, see [Creating cache policies]or [Using the managed cache policies] in the Amazon
 	// CloudFront Developer Guide.
@@ -414,6 +483,7 @@ type CacheBehavior struct {
 	// s-maxage , and Expires to objects. For more information, see [Managing How Long Content Stays in an Edge Cache (Expiration)] in the Amazon
 	// CloudFront Developer Guide.
 	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	// [Creating cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy
 	// [Using the managed cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
 	// [Managing How Long Content Stays in an Edge Cache (Expiration)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
@@ -464,6 +534,10 @@ type CacheBehavior struct {
 	// a cache behavior.
 	LambdaFunctionAssociations *LambdaFunctionAssociations
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// This field is deprecated. We recommend that you use the MaxTTL field in a cache
 	// policy instead of this field. For more information, see [Creating cache policies]or [Using the managed cache policies] in the Amazon
 	// CloudFront Developer Guide.
@@ -475,6 +549,7 @@ type CacheBehavior struct {
 	// , and Expires to objects. For more information, see [Managing How Long Content Stays in an Edge Cache (Expiration)] in the Amazon CloudFront
 	// Developer Guide.
 	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	// [Creating cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy
 	// [Using the managed cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
 	// [Managing How Long Content Stays in an Edge Cache (Expiration)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
@@ -482,6 +557,10 @@ type CacheBehavior struct {
 	// Deprecated: This member has been deprecated.
 	MaxTTL *int64
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// This field is deprecated. We recommend that you use the MinTTL field in a cache
 	// policy instead of this field. For more information, see [Creating cache policies]or [Using the managed cache policies] in the Amazon
 	// CloudFront Developer Guide.
@@ -495,6 +574,7 @@ type CacheBehavior struct {
 	// headers to your origin (under Headers , if you specify 1 for Quantity and * for
 	// Name ).
 	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	// [Creating cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy
 	// [Using the managed cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
 	// [Managing How Long Content Stays in an Edge Cache (Expiration)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
@@ -520,11 +600,17 @@ type CacheBehavior struct {
 	// The identifier for a response headers policy.
 	ResponseHeadersPolicyId *string
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// Indicates whether you want to distribute media files in the Microsoft Smooth
 	// Streaming format using the origin that is associated with this cache behavior.
 	// If so, specify true ; if not, specify false . If you specify true for
 	// SmoothStreaming , you can still distribute other content using this cache
 	// behavior if the content matches the value of PathPattern .
+	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	SmoothStreaming *bool
 
 	// A list of key groups that CloudFront can use to validate signed URLs or signed
@@ -542,6 +628,10 @@ type CacheBehavior struct {
 
 	// We recommend using TrustedKeyGroups instead of TrustedSigners .
 	//
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// A list of Amazon Web Services account IDs whose public keys CloudFront can use
 	// to validate signed URLs or signed cookies.
 	//
@@ -553,6 +643,7 @@ type CacheBehavior struct {
 	// signature. For more information, see [Serving private content]in the Amazon CloudFront Developer Guide.
 	//
 	// [Serving private content]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PrivateContent.html
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	TrustedSigners *TrustedSigners
 
 	noSmithyDocumentSerde
@@ -650,6 +741,12 @@ type CachePolicy struct {
 //
 //   - The default, minimum, and maximum time to live (TTL) values that you want
 //     objects to stay in the CloudFront cache.
+//
+// If your minimum TTL is greater than 0, CloudFront will cache content for at
+//
+//	least the duration specified in the cache policy's minimum TTL, even if the
+//	Cache-Control: no-cache , no-store , or private directives are present in the
+//	origin headers.
 //
 // The headers, cookies, and query strings that are included in the cache key are
 // also included in requests that CloudFront sends to the origin. CloudFront sends
@@ -985,32 +1082,32 @@ type CloudFrontOriginAccessIdentitySummary struct {
 	noSmithyDocumentSerde
 }
 
-// An alias (also called a CNAME) and the CloudFront distribution and Amazon Web
-// Services account ID that it's associated with. The distribution and account IDs
-// are partially hidden, which allows you to identify the distributions and
-// accounts that you own, but helps to protect the information of ones that you
-// don't own.
+// An alias (also called a CNAME) and the CloudFront standard distribution and
+// Amazon Web Services account ID that it's associated with. The standard
+// distribution and account IDs are partially hidden, which allows you to identify
+// the standard distributions and accounts that you own, and helps to protect the
+// information of ones that you don't own.
 type ConflictingAlias struct {
 
 	// The (partially hidden) ID of the Amazon Web Services account that owns the
-	// distribution that's associated with the alias.
+	// standard distribution that's associated with the alias.
 	AccountId *string
 
 	// An alias (also called a CNAME).
 	Alias *string
 
-	// The (partially hidden) ID of the CloudFront distribution associated with the
-	// alias.
+	// The (partially hidden) ID of the CloudFront standard distribution associated
+	// with the alias.
 	DistributionId *string
 
 	noSmithyDocumentSerde
 }
 
-// A list of aliases (also called CNAMEs) and the CloudFront distributions and
-// Amazon Web Services accounts that they are associated with. In the list, the
-// distribution and account IDs are partially hidden, which allows you to identify
-// the distributions and accounts that you own, but helps to protect the
-// information of ones that you don't own.
+// A list of aliases (also called CNAMEs) and the CloudFront standard
+// distributions and Amazon Web Services accounts that they are associated with. In
+// the list, the standard distribution and account IDs are partially hidden, which
+// allows you to identify the standard distributions and accounts that you own, but
+// helps to protect the information of ones that you don't own.
 type ConflictingAliasesList struct {
 
 	// Contains the conflicting aliases in the list.
@@ -1026,6 +1123,84 @@ type ConflictingAliasesList struct {
 
 	// The number of conflicting aliases returned in the response.
 	Quantity *int32
+
+	noSmithyDocumentSerde
+}
+
+// A connection function association.
+type ConnectionFunctionAssociation struct {
+
+	// The association's ID.
+	//
+	// This member is required.
+	Id *string
+
+	noSmithyDocumentSerde
+}
+
+// A connection function summary.
+type ConnectionFunctionSummary struct {
+
+	// The connection function Amazon Resource Name (ARN).
+	//
+	// This member is required.
+	ConnectionFunctionArn *string
+
+	// Contains configuration information about a CloudFront function.
+	//
+	// This member is required.
+	ConnectionFunctionConfig *FunctionConfig
+
+	// The connection function created time.
+	//
+	// This member is required.
+	CreatedTime *time.Time
+
+	// The connection function ID.
+	//
+	// This member is required.
+	Id *string
+
+	// The connection function last modified time.
+	//
+	// This member is required.
+	LastModifiedTime *time.Time
+
+	// The connection function name.
+	//
+	// This member is required.
+	Name *string
+
+	// The connection function stage.
+	//
+	// This member is required.
+	Stage FunctionStage
+
+	// The connection function status.
+	//
+	// This member is required.
+	Status *string
+
+	noSmithyDocumentSerde
+}
+
+// A connection function test result.
+type ConnectionFunctionTestResult struct {
+
+	// The connection function compute utilization.
+	ComputeUtilization *string
+
+	// The connection function error message.
+	ConnectionFunctionErrorMessage *string
+
+	// The connection function execution logs.
+	ConnectionFunctionExecutionLogs []string
+
+	// The connection function output.
+	ConnectionFunctionOutput *string
+
+	// The connection function summary.
+	ConnectionFunctionSummary *ConnectionFunctionSummary
 
 	noSmithyDocumentSerde
 }
@@ -1566,23 +1741,31 @@ type CustomOriginConfig struct {
 	// This member is required.
 	OriginProtocolPolicy OriginProtocolPolicy
 
+	// Specifies which IP protocol CloudFront uses when connecting to your origin. If
+	// your origin uses both IPv4 and IPv6 protocols, you can choose dualstack to help
+	// optimize reliability.
+	IpAddressType IpAddressType
+
 	// Specifies how long, in seconds, CloudFront persists its connection to the
-	// origin. The minimum timeout is 1 second, the maximum is 60 seconds, and the
+	// origin. The minimum timeout is 1 second, the maximum is 120 seconds, and the
 	// default (if you don't specify otherwise) is 5 seconds.
 	//
 	// For more information, see [Keep-alive timeout (custom origins only)] in the Amazon CloudFront Developer Guide.
 	//
-	// [Keep-alive timeout (custom origins only)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginKeepaliveTimeout
+	// [Keep-alive timeout (custom origins only)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html#DownloadDistValuesOriginKeepaliveTimeout
 	OriginKeepaliveTimeout *int32
+
+	// Configures mutual TLS authentication between CloudFront and your origin server.
+	OriginMtlsConfig *OriginMtlsConfig
 
 	// Specifies how long, in seconds, CloudFront waits for a response from the
 	// origin. This is also known as the origin response timeout. The minimum timeout
-	// is 1 second, the maximum is 60 seconds, and the default (if you don't specify
+	// is 1 second, the maximum is 120 seconds, and the default (if you don't specify
 	// otherwise) is 30 seconds.
 	//
-	// For more information, see [Response timeout (custom origins only)] in the Amazon CloudFront Developer Guide.
+	// For more information, see [Response timeout] in the Amazon CloudFront Developer Guide.
 	//
-	// [Response timeout (custom origins only)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginResponseTimeout
+	// [Response timeout]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html#DownloadDistValuesOriginResponseTimeout
 	OriginReadTimeout *int32
 
 	// Specifies the minimum SSL/TLS protocol that CloudFront uses when connecting to
@@ -1591,7 +1774,7 @@ type CustomOriginConfig struct {
 	//
 	// For more information, see [Minimum Origin SSL Protocol] in the Amazon CloudFront Developer Guide.
 	//
-	// [Minimum Origin SSL Protocol]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginSSLProtocols
+	// [Minimum Origin SSL Protocol]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html#DownloadDistValuesOriginSSLProtocols
 	OriginSslProtocols *OriginSslProtocols
 
 	noSmithyDocumentSerde
@@ -1601,6 +1784,11 @@ type CustomOriginConfig struct {
 // CacheBehavior element or if request URLs don't match any of the values of
 // PathPattern in CacheBehavior elements. You must create exactly one default
 // cache behavior.
+//
+// If your minimum TTL is greater than 0, CloudFront will cache content for at
+// least the duration specified in the cache policy's minimum TTL, even if the
+// Cache-Control: no-cache , no-store , or private directives are present in the
+// origin headers.
 type DefaultCacheBehavior struct {
 
 	// The value of ID for the origin that you want CloudFront to route requests to
@@ -1674,6 +1862,10 @@ type DefaultCacheBehavior struct {
 	// [Serving Compressed Files]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html
 	Compress *bool
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// This field is deprecated. We recommend that you use the DefaultTTL field in a
 	// cache policy instead of this field. For more information, see [Creating cache policies]or [Using the managed cache policies] in the Amazon
 	// CloudFront Developer Guide.
@@ -1685,6 +1877,7 @@ type DefaultCacheBehavior struct {
 	// s-maxage , and Expires to objects. For more information, see [Managing How Long Content Stays in an Edge Cache (Expiration)] in the Amazon
 	// CloudFront Developer Guide.
 	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	// [Creating cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy
 	// [Using the managed cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
 	// [Managing How Long Content Stays in an Edge Cache (Expiration)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
@@ -1735,6 +1928,10 @@ type DefaultCacheBehavior struct {
 	// a cache behavior.
 	LambdaFunctionAssociations *LambdaFunctionAssociations
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// This field is deprecated. We recommend that you use the MaxTTL field in a cache
 	// policy instead of this field. For more information, see [Creating cache policies]or [Using the managed cache policies] in the Amazon
 	// CloudFront Developer Guide.
@@ -1746,6 +1943,7 @@ type DefaultCacheBehavior struct {
 	// , and Expires to objects. For more information, see [Managing How Long Content Stays in an Edge Cache (Expiration)] in the Amazon CloudFront
 	// Developer Guide.
 	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	// [Creating cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy
 	// [Using the managed cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
 	// [Managing How Long Content Stays in an Edge Cache (Expiration)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
@@ -1753,6 +1951,10 @@ type DefaultCacheBehavior struct {
 	// Deprecated: This member has been deprecated.
 	MaxTTL *int64
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// This field is deprecated. We recommend that you use the MinTTL field in a cache
 	// policy instead of this field. For more information, see [Creating cache policies]or [Using the managed cache policies] in the Amazon
 	// CloudFront Developer Guide.
@@ -1766,6 +1968,7 @@ type DefaultCacheBehavior struct {
 	// headers to your origin (under Headers , if you specify 1 for Quantity and * for
 	// Name ).
 	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	// [Creating cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy
 	// [Using the managed cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
 	// [Managing How Long Content Stays in an Edge Cache (Expiration)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html
@@ -1791,11 +1994,17 @@ type DefaultCacheBehavior struct {
 	// The identifier for a response headers policy.
 	ResponseHeadersPolicyId *string
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// Indicates whether you want to distribute media files in the Microsoft Smooth
 	// Streaming format using the origin that is associated with this cache behavior.
 	// If so, specify true ; if not, specify false . If you specify true for
 	// SmoothStreaming , you can still distribute other content using this cache
 	// behavior if the content matches the value of PathPattern .
+	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	SmoothStreaming *bool
 
 	// A list of key groups that CloudFront can use to validate signed URLs or signed
@@ -1813,6 +2022,10 @@ type DefaultCacheBehavior struct {
 
 	// We recommend using TrustedKeyGroups instead of TrustedSigners .
 	//
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// A list of Amazon Web Services account IDs whose public keys CloudFront can use
 	// to validate signed URLs or signed cookies.
 	//
@@ -1824,6 +2037,7 @@ type DefaultCacheBehavior struct {
 	// signature. For more information, see [Serving private content]in the Amazon CloudFront Developer Guide.
 	//
 	// [Serving private content]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PrivateContent.html
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	TrustedSigners *TrustedSigners
 
 	noSmithyDocumentSerde
@@ -1935,21 +2149,43 @@ type DistributionConfig struct {
 	// This member is required.
 	Origins *Origins
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// A complex type that contains information about CNAMEs (alternate domain names),
 	// if any, for this distribution.
+	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	Aliases *Aliases
 
+	// To use this field for a multi-tenant distribution, use a connection group
+	// instead. For more information, see [ConnectionGroup].
+	//
 	// ID of the Anycast static IP list that is associated with the distribution.
+	//
+	// [ConnectionGroup]: https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ConnectionGroup.html
 	AnycastIpListId *string
 
 	// A complex type that contains zero or more CacheBehavior elements.
 	CacheBehaviors *CacheBehaviors
 
-	// The connection mode to filter distributions by.
+	// The distribution's connection function association.
+	ConnectionFunctionAssociation *ConnectionFunctionAssociation
+
+	// This field specifies whether the connection mode is through a standard
+	// distribution (direct) or a multi-tenant distribution with distribution tenants
+	// (tenant-only).
 	ConnectionMode ConnectionMode
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// The identifier of a continuous deployment policy. For more information, see
 	// CreateContinuousDeploymentPolicy .
+	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	ContinuousDeploymentPolicyId *string
 
 	// A complex type that controls the following:
@@ -2011,6 +2247,9 @@ type DistributionConfig struct {
 	// [Supported protocols and ciphers between viewers and CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html
 	HttpVersion HttpVersion
 
+	// To use this field for a multi-tenant distribution, use a connection group
+	// instead. For more information, see [ConnectionGroup].
+	//
 	// If you want CloudFront to respond to IPv6 DNS requests with an IPv6 address for
 	// your distribution, specify true . If you specify false , CloudFront responds to
 	// IPv6 DNS requests with the DNS response code NOERROR and with no IP addresses.
@@ -2044,6 +2283,7 @@ type DistributionConfig struct {
 	//
 	// [Routing Traffic to an Amazon CloudFront Web Distribution by Using Your Domain Name]: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html
 	// [Creating a Signed URL Using a Custom Policy]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-creating-signed-url-custom-policy.html
+	// [ConnectionGroup]: https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ConnectionGroup.html
 	IsIPV6Enabled *bool
 
 	// A complex type that controls whether access logs are written for the
@@ -2059,6 +2299,10 @@ type DistributionConfig struct {
 	// distribution.
 	OriginGroups *OriginGroups
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// The price class that corresponds with the maximum price that you want to pay
 	// for CloudFront service. If you specify PriceClass_All , CloudFront responds to
 	// requests for your objects from all CloudFront edge locations.
@@ -2074,24 +2318,42 @@ type DistributionConfig struct {
 	//
 	// [Choosing the Price Class for a CloudFront Distribution]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html
 	// [Amazon CloudFront Pricing]: http://aws.amazon.com/cloudfront/pricing/
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	PriceClass PriceClass
 
 	// A complex type that identifies ways in which you want to restrict distribution
 	// of your content.
 	Restrictions *Restrictions
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// A Boolean that indicates whether this is a staging distribution. When this
 	// value is true , this is a staging distribution. When this value is false , this
 	// is not a staging distribution.
+	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	Staging *bool
 
+	// This field only supports multi-tenant distributions. You can't specify this
+	// field for standard distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// A distribution tenant configuration.
+	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	TenantConfig *TenantConfig
 
 	// A complex type that determines the distribution's SSL/TLS configuration for
 	// communicating with viewers.
 	ViewerCertificate *ViewerCertificate
 
+	// The distribution's viewer mTLS configuration.
+	ViewerMtlsConfig *ViewerMtlsConfig
+
+	// Multi-tenant distributions only support WAF V2 web ACLs.
+	//
 	// A unique identifier that specifies the WAF web ACL, if any, to associate with
 	// this distribution. To specify a web ACL created using the latest version of WAF,
 	// use the ACL ARN, for example
@@ -2160,6 +2422,64 @@ type DistributionIdList struct {
 
 	// Contains the value that you should use in the Marker field of a subsequent
 	// request to continue listing distribution IDs where you left off.
+	NextMarker *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that pairs a CloudFront distribution ID with its owning Amazon Web
+// Services account ID.
+type DistributionIdOwner struct {
+
+	// The ID of the distribution.
+	//
+	// This member is required.
+	DistributionId *string
+
+	// The ID of the Amazon Web Services account that owns the distribution.
+	//
+	// This member is required.
+	OwnerAccountId *string
+
+	noSmithyDocumentSerde
+}
+
+// The list of distribution IDs and the Amazon Web Services accounts that they
+// belong to.
+type DistributionIdOwnerList struct {
+
+	// A flag that indicates whether more DistributionIdOwner objects remain to be
+	// listed. If your results were truncated, you can make a follow-up pagination
+	// request using the Marker request parameter to retrieve more results in the list.
+	//
+	// This member is required.
+	IsTruncated *bool
+
+	// Use this field when paginating results to indicate where to begin in your list
+	// of DistributionIdOwner objects. The response includes distributions in the list
+	// that occur after the marker. To get the next page of the list, set this field's
+	// value to the value of NextMarker from the current page's response.
+	//
+	// This member is required.
+	Marker *string
+
+	// The maximum number of DistributionIdOwner objects to return.
+	//
+	// This member is required.
+	MaxItems *int32
+
+	// Specifies the actual number of DistributionIdOwner objects included in the list
+	// for the current page.
+	//
+	// This member is required.
+	Quantity *int32
+
+	// The number of DistributionIdOwner objects.
+	Items []DistributionIdOwner
+
+	// A token used for pagination of results returned in the response. You can use
+	// the token from the previous request to define where the current request should
+	// begin.
 	NextMarker *string
 
 	noSmithyDocumentSerde
@@ -2292,8 +2612,14 @@ type DistributionSummary struct {
 	// This member is required.
 	Origins *Origins
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// A complex type that contains information about price class for this streaming
 	// distribution.
+	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	//
 	// This member is required.
 	PriceClass PriceClass
@@ -2343,7 +2669,12 @@ type DistributionSummary struct {
 	// ID of the Anycast static IP list that is associated with the distribution.
 	AnycastIpListId *string
 
-	// The connection mode to filter distributions by.
+	// The distribution's connection function association.
+	ConnectionFunctionAssociation *ConnectionFunctionAssociation
+
+	// This field specifies whether the connection mode is through a standard
+	// distribution (direct) or a multi-tenant distribution with distribution tenants
+	// (tenant-only).
 	ConnectionMode ConnectionMode
 
 	// The current version of the distribution.
@@ -2352,6 +2683,9 @@ type DistributionSummary struct {
 	// A complex type that contains information about origin groups for this
 	// distribution.
 	OriginGroups *OriginGroups
+
+	// The distribution's viewer mTLS configuration.
+	ViewerMtlsConfig *ViewerMtlsConfig
 
 	noSmithyDocumentSerde
 }
@@ -2856,6 +3190,10 @@ type FieldPatterns struct {
 	noSmithyDocumentSerde
 }
 
+// This field only supports standard distributions. You can't specify this field
+// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+// CloudFront Developer Guide.
+//
 // This field is deprecated. We recommend that you use a cache policy or an origin
 // request policy instead of this field.
 //
@@ -2870,6 +3208,7 @@ type FieldPatterns struct {
 // and HTTP headers.
 //
 // [Creating origin request policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html#origin-request-create-origin-request-policy
+// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 // [Creating cache policies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy
 type ForwardedValues struct {
 
@@ -3351,6 +3690,49 @@ type InvalidationSummary struct {
 	//
 	// This member is required.
 	Status *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for an IPAM CIDR that defines a specific IP address range, IPAM
+// pool, and associated Anycast IP address.
+type IpamCidrConfig struct {
+
+	// The CIDR that specifies the IP address range for this IPAM configuration.
+	//
+	// This member is required.
+	Cidr *string
+
+	// The Amazon Resource Name (ARN) of the IPAM pool that the CIDR block is assigned
+	// to.
+	//
+	// This member is required.
+	IpamPoolArn *string
+
+	// The specified Anycast IP address allocated from the IPAM pool for this CIDR
+	// configuration.
+	AnycastIp *string
+
+	// The current status of the IPAM CIDR configuration.
+	Status IpamCidrStatus
+
+	noSmithyDocumentSerde
+}
+
+// The configuration IPAM settings that includes the quantity of CIDR
+// configurations and the list of IPAM CIDR configurations.
+type IpamConfig struct {
+
+	// A list of IPAM CIDR configurations that define the IP address ranges, IPAM
+	// pools, and associated Anycast IP addresses.
+	//
+	// This member is required.
+	IpamCidrConfigs []IpamCidrConfig
+
+	// The number of IPAM CIDR configurations in the IpamCidrConfigs list.
+	//
+	// This member is required.
+	Quantity *int32
 
 	noSmithyDocumentSerde
 }
@@ -3872,6 +4254,19 @@ type Origin struct {
 	// [Using Origin Shield]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/origin-shield.html
 	OriginShield *OriginShield
 
+	// The time (in seconds) that a request from CloudFront to the origin can stay
+	// open and wait for a response. If the complete response isn't received from the
+	// origin by this time, CloudFront ends the connection.
+	//
+	// The value for ResponseCompletionTimeout must be equal to or greater than the
+	// value for OriginReadTimeout . If you don't set a value for
+	// ResponseCompletionTimeout , CloudFront doesn't enforce a maximum value.
+	//
+	// For more information, see [Response completion timeout] in the Amazon CloudFront Developer Guide.
+	//
+	// [Response completion timeout]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html#response-completion-timeout
+	ResponseCompletionTimeout *int32
+
 	// Use this type to specify an origin that is an Amazon S3 bucket that is not
 	// configured with static website hosting. To specify any other type of origin,
 	// including an Amazon S3 bucket that is configured with static website hosting,
@@ -4142,6 +4537,19 @@ type OriginGroups struct {
 
 	// The items (origin groups) in a distribution.
 	Items []OriginGroup
+
+	noSmithyDocumentSerde
+}
+
+// Configures mutual TLS authentication between CloudFront and your origin server.
+type OriginMtlsConfig struct {
+
+	// The Amazon Resource Name (ARN) of the client certificate stored in Amazon Web
+	// Services Certificate Manager (ACM) that CloudFront uses to authenticate with
+	// your origin using Mutual TLS.
+	//
+	// This member is required.
+	ClientCertificateArn *string
 
 	noSmithyDocumentSerde
 }
@@ -4613,6 +5021,10 @@ type Paths struct {
 
 // A public key that you can use with [signed URLs and signed cookies], or with [field-level encryption].
 //
+// CloudFront supports signed URLs and signed cookies with RSA 2048 or ECDSA 256
+// key signatures. Field-level encryption is only compatible with RSA 2048 key
+// signatures.
+//
 // [signed URLs and signed cookies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PrivateContent.html
 // [field-level encryption]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/field-level-encryption.html
 type PublicKey struct {
@@ -4639,6 +5051,10 @@ type PublicKey struct {
 }
 
 // Configuration information about a public key that you can use with [signed URLs and signed cookies], or with [field-level encryption].
+//
+// CloudFront supports signed URLs and signed cookies with RSA 2048 or ECDSA 256
+// key signatures. Field-level encryption is only compatible with RSA 2048 key
+// signatures.
 //
 // [signed URLs and signed cookies]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PrivateContent.html
 // [field-level encryption]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/field-level-encryption.html
@@ -5652,6 +6068,16 @@ type S3OriginConfig struct {
 	// This member is required.
 	OriginAccessIdentity *string
 
+	// Specifies how long, in seconds, CloudFront waits for a response from the
+	// origin. This is also known as the origin response timeout. The minimum timeout
+	// is 1 second, the maximum is 120 seconds, and the default (if you don't specify
+	// otherwise) is 30 seconds.
+	//
+	// For more information, see [Response timeout] in the Amazon CloudFront Developer Guide.
+	//
+	// [Response timeout]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html#DownloadDistValuesOriginResponseTimeout
+	OriginReadTimeout *int32
+
 	noSmithyDocumentSerde
 }
 
@@ -6067,7 +6493,13 @@ type Tags struct {
 	noSmithyDocumentSerde
 }
 
+// This field only supports multi-tenant distributions. You can't specify this
+// field for standard distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+// CloudFront Developer Guide.
+//
 // The configuration for a distribution tenant.
+//
+// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 type TenantConfig struct {
 
 	// The parameters that you specify for a distribution tenant.
@@ -6160,6 +6592,94 @@ type TrustedSigners struct {
 
 	// A list of Amazon Web Services account identifiers.
 	Items []string
+
+	noSmithyDocumentSerde
+}
+
+// A trust store.
+type TrustStore struct {
+
+	// The trust store's Amazon Resource Name (ARN).
+	Arn *string
+
+	// The trust store's ID.
+	Id *string
+
+	// The trust store's last modified time.
+	LastModifiedTime *time.Time
+
+	// The trust store's name.
+	Name *string
+
+	// The trust store's number of CA certificates.
+	NumberOfCaCertificates *int32
+
+	// The trust store's reason.
+	Reason *string
+
+	// The trust store's status.
+	Status TrustStoreStatus
+
+	noSmithyDocumentSerde
+}
+
+// A trust store configuration.
+type TrustStoreConfig struct {
+
+	// The trust store ID.
+	//
+	// This member is required.
+	TrustStoreId *string
+
+	// The configuration to use to advertise trust store CA names.
+	AdvertiseTrustStoreCaNames *bool
+
+	// The configuration to use to ignore certificate expiration.
+	IgnoreCertificateExpiry *bool
+
+	noSmithyDocumentSerde
+}
+
+// A trust store summary.
+type TrustStoreSummary struct {
+
+	// The trust store's Amazon Resource Name (ARN).
+	//
+	// This member is required.
+	Arn *string
+
+	// The version identifier for the current version of the trust store.
+	//
+	// This member is required.
+	ETag *string
+
+	// The trust store's ID.
+	//
+	// This member is required.
+	Id *string
+
+	// The trust store's last modified time.
+	//
+	// This member is required.
+	LastModifiedTime *time.Time
+
+	// The trust store's name.
+	//
+	// This member is required.
+	Name *string
+
+	// The trust store's number of CA certificates.
+	//
+	// This member is required.
+	NumberOfCaCertificates *int32
+
+	// The trust store's status.
+	//
+	// This member is required.
+	Status TrustStoreStatus
+
+	// The trust store's reason.
+	Reason *string
 
 	noSmithyDocumentSerde
 }
@@ -6277,12 +6797,17 @@ type ViewerCertificate struct {
 	//   - SSLSupportMethod
 	CloudFrontDefaultCertificate *bool
 
+	// This field only supports standard distributions. You can't specify this field
+	// for multi-tenant distributions. For more information, see [Unsupported features for SaaS Manager for Amazon CloudFront]in the Amazon
+	// CloudFront Developer Guide.
+	//
 	// If the distribution uses Aliases (alternate domain names or CNAMEs) and the
 	// SSL/TLS certificate is stored in [Identity and Access Management (IAM)], provide the ID of the IAM certificate.
 	//
 	// If you specify an IAM certificate ID, you must also specify values for
 	// MinimumProtocolVersion and SSLSupportMethod .
 	//
+	// [Unsupported features for SaaS Manager for Amazon CloudFront]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-config-options.html#unsupported-saas
 	// [Identity and Access Management (IAM)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html
 	IAMCertificateId *string
 
@@ -6324,15 +6849,27 @@ type ViewerCertificate struct {
 	//
 	//   - static-ip - Do not specify this value unless your distribution has been
 	//   enabled for this feature by the CloudFront team. If you have a use case that
-	//   requires static IP addresses for a distribution, contact CloudFront through the [Amazon Web Services Support Center]
+	//   requires static IP addresses for a distribution, contact CloudFront through the [Amazon Web ServicesSupport Center]
 	//   .
 	//
 	// If the distribution uses the CloudFront domain name such as
 	// d111111abcdef8.cloudfront.net , don't set a value for this field.
 	//
+	// [Amazon Web ServicesSupport Center]: https://console.aws.amazon.com/support/home
 	// [server name indication (SNI)]: https://en.wikipedia.org/wiki/Server_Name_Indication
-	// [Amazon Web Services Support Center]: https://console.aws.amazon.com/support/home
 	SSLSupportMethod SSLSupportMethod
+
+	noSmithyDocumentSerde
+}
+
+// A viewer mTLS configuration.
+type ViewerMtlsConfig struct {
+
+	// The viewer mTLS mode.
+	Mode ViewerMtlsMode
+
+	// The trust store configuration associated with the viewer mTLS configuration.
+	TrustStoreConfig *TrustStoreConfig
 
 	noSmithyDocumentSerde
 }
@@ -6370,6 +6907,9 @@ type VpcOrigin struct {
 	// This member is required.
 	VpcOriginEndpointConfig *VpcOriginEndpointConfig
 
+	// The account ID of the Amazon Web Services account that owns the VPC origin.
+	AccountId *string
+
 	noSmithyDocumentSerde
 }
 
@@ -6382,23 +6922,26 @@ type VpcOriginConfig struct {
 	VpcOriginId *string
 
 	// Specifies how long, in seconds, CloudFront persists its connection to the
-	// origin. The minimum timeout is 1 second, the maximum is 60 seconds, and the
+	// origin. The minimum timeout is 1 second, the maximum is 120 seconds, and the
 	// default (if you don't specify otherwise) is 5 seconds.
 	//
 	// For more information, see [Keep-alive timeout (custom origins only)] in the Amazon CloudFront Developer Guide.
 	//
-	// [Keep-alive timeout (custom origins only)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginKeepaliveTimeout
+	// [Keep-alive timeout (custom origins only)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html#DownloadDistValuesOriginKeepaliveTimeout
 	OriginKeepaliveTimeout *int32
 
 	// Specifies how long, in seconds, CloudFront waits for a response from the
 	// origin. This is also known as the origin response timeout. The minimum timeout
-	// is 1 second, the maximum is 60 seconds, and the default (if you don't specify
+	// is 1 second, the maximum is 120 seconds, and the default (if you don't specify
 	// otherwise) is 30 seconds.
 	//
-	// For more information, see [Response timeout (custom origins only)] in the Amazon CloudFront Developer Guide.
+	// For more information, see [Response timeout] in the Amazon CloudFront Developer Guide.
 	//
-	// [Response timeout (custom origins only)]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginResponseTimeout
+	// [Response timeout]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesOrigin.html#DownloadDistValuesOriginResponseTimeout
 	OriginReadTimeout *int32
+
+	// The account ID of the Amazon Web Services account that owns the VPC origin.
+	OwnerAccountId *string
 
 	noSmithyDocumentSerde
 }
@@ -6512,6 +7055,9 @@ type VpcOriginSummary struct {
 	// This member is required.
 	Status *string
 
+	// The account ID of the Amazon Web Services account that owns the VPC origin.
+	AccountId *string
+
 	noSmithyDocumentSerde
 }
 
@@ -6533,3 +7079,14 @@ type WebAclCustomization struct {
 }
 
 type noSmithyDocumentSerde = smithydocument.NoSerde
+
+// UnknownUnionMember is returned when a union member is returned over the wire,
+// but has an unknown tag.
+type UnknownUnionMember struct {
+	Tag   string
+	Value []byte
+
+	noSmithyDocumentSerde
+}
+
+func (*UnknownUnionMember) isCaCertificatesBundleSource() {}

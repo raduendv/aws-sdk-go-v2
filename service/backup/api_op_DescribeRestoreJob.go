@@ -46,6 +46,10 @@ type DescribeRestoreJobOutput struct {
 	// The size, in bytes, of the restored resource.
 	BackupSizeInBytes *int64
 
+	// The Amazon Resource Name (ARN) of the backup vault containing the recovery
+	// point being restored. This helps identify vault access policies and permissions.
+	BackupVaultArn *string
+
 	// The date and time that a job to restore a recovery point is completed, in Unix
 	// format and Coordinated Universal Time (UTC). The value of CompletionDate is
 	// accurate to milliseconds. For example, the value 1516925490.087 represents
@@ -81,6 +85,14 @@ type DescribeRestoreJobOutput struct {
 	// example, arn:aws:iam::123456789012:role/S3Access .
 	IamRoleArn *string
 
+	// This is a boolean value indicating whether the restore job is a parent
+	// (composite) restore job.
+	IsParent bool
+
+	// This is the unique identifier of the parent restore job for the selected
+	// restore job.
+	ParentJobId *string
+
 	// Contains an estimated percentage that is complete of a job at the time the job
 	// status was queried.
 	PercentDone *string
@@ -98,6 +110,10 @@ type DescribeRestoreJobOutput struct {
 
 	// Uniquely identifies the job that restores a recovery point.
 	RestoreJobId *string
+
+	// The Amazon Resource Name (ARN) of the original resource that was backed up.
+	// This provides context about what resource is being restored.
+	SourceResourceArn *string
 
 	// Status code specifying the state of the job that is initiated by Backup to
 	// restore a recovery point.
@@ -206,16 +222,13 @@ func (c *Client) addOperationDescribeRestoreJobMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

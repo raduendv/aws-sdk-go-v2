@@ -2,6 +2,25 @@
 
 package types
 
+type BrowserType string
+
+// Enum values for BrowserType
+const (
+	BrowserTypeChrome  BrowserType = "CHROME"
+	BrowserTypeFirefox BrowserType = "FIREFOX"
+)
+
+// Values returns all known values for BrowserType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (BrowserType) Values() []BrowserType {
+	return []BrowserType{
+		"CHROME",
+		"FIREFOX",
+	}
+}
+
 type CanaryRunState string
 
 // Enum values for CanaryRunState
@@ -39,6 +58,27 @@ func (CanaryRunStateReasonCode) Values() []CanaryRunStateReasonCode {
 	return []CanaryRunStateReasonCode{
 		"CANARY_FAILURE",
 		"EXECUTION_FAILURE",
+	}
+}
+
+type CanaryRunTestResult string
+
+// Enum values for CanaryRunTestResult
+const (
+	CanaryRunTestResultPassed  CanaryRunTestResult = "PASSED"
+	CanaryRunTestResultFailed  CanaryRunTestResult = "FAILED"
+	CanaryRunTestResultUnknown CanaryRunTestResult = "UNKNOWN"
+)
+
+// Values returns all known values for CanaryRunTestResult. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CanaryRunTestResult) Values() []CanaryRunTestResult {
+	return []CanaryRunTestResult{
+		"PASSED",
+		"FAILED",
+		"UNKNOWN",
 	}
 }
 
@@ -114,6 +154,23 @@ func (CanaryStateReasonCode) Values() []CanaryStateReasonCode {
 	}
 }
 
+type DependencyType string
+
+// Enum values for DependencyType
+const (
+	DependencyTypeLambdaLayer DependencyType = "LambdaLayer"
+)
+
+// Values returns all known values for DependencyType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DependencyType) Values() []DependencyType {
+	return []DependencyType{
+		"LambdaLayer",
+	}
+}
+
 type EncryptionMode string
 
 // Enum values for EncryptionMode
@@ -167,5 +224,24 @@ const (
 func (ResourceToTag) Values() []ResourceToTag {
 	return []ResourceToTag{
 		"lambda-function",
+	}
+}
+
+type RunType string
+
+// Enum values for RunType
+const (
+	RunTypeCanaryRun RunType = "CANARY_RUN"
+	RunTypeDryRun    RunType = "DRY_RUN"
+)
+
+// Values returns all known values for RunType. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RunType) Values() []RunType {
+	return []RunType{
+		"CANARY_RUN",
+		"DRY_RUN",
 	}
 }

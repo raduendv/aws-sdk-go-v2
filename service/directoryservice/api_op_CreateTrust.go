@@ -71,6 +71,9 @@ type CreateTrustInput struct {
 	// The IP addresses of the remote DNS server associated with RemoteDomainName.
 	ConditionalForwarderIpAddrs []string
 
+	// The IPv6 addresses of the remote DNS server associated with RemoteDomainName.
+	ConditionalForwarderIpv6Addrs []string
+
 	// Optional parameter to enable selective authentication for the trust.
 	SelectiveAuth types.SelectiveAuth
 
@@ -180,16 +183,13 @@ func (c *Client) addOperationCreateTrustMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

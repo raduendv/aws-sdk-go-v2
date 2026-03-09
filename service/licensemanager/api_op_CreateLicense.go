@@ -85,6 +85,12 @@ type CreateLicenseInput struct {
 	// Information about the license.
 	LicenseMetadata []types.Metadata
 
+	// Tags to add to the license. For more information about tagging support in
+	// License Manager, see the [TagResource]operation.
+	//
+	// [TagResource]: https://docs.aws.amazon.com/license-manager/latest/APIReference/API_TagResource.html
+	Tags []types.Tag
+
 	noSmithyDocumentSerde
 }
 
@@ -193,16 +199,13 @@ func (c *Client) addOperationCreateLicenseMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

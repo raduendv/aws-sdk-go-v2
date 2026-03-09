@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates the Amazon QuickSight settings in your Amazon Web Services account.
+// Updates the Amazon Quick Sight settings in your Amazon Web Services account.
 func (c *Client) UpdateAccountSettings(ctx context.Context, params *UpdateAccountSettingsInput, optFns ...func(*Options)) (*UpdateAccountSettingsOutput, error) {
 	if params == nil {
 		params = &UpdateAccountSettingsInput{}
@@ -28,7 +28,7 @@ func (c *Client) UpdateAccountSettings(ctx context.Context, params *UpdateAccoun
 
 type UpdateAccountSettingsInput struct {
 
-	// The ID for the Amazon Web Services account that contains the Amazon QuickSight
+	// The ID for the Amazon Web Services account that contains the Quick Sight
 	// settings that you want to list.
 	//
 	// This member is required.
@@ -36,19 +36,19 @@ type UpdateAccountSettingsInput struct {
 
 	// The default namespace for this Amazon Web Services account. Currently, the
 	// default is default . IAM users that register for the first time with Amazon
-	// QuickSight provide an email address that becomes associated with the default
+	// Quick Sight provide an email address that becomes associated with the default
 	// namespace.
 	//
 	// This member is required.
 	DefaultNamespace *string
 
-	// The email address that you want Amazon QuickSight to send notifications to
-	// regarding your Amazon Web Services account or Amazon QuickSight subscription.
+	// The email address that you want Quick Sight to send notifications to regarding
+	// your Amazon Web Services account or Quick Sight subscription.
 	NotificationEmail *string
 
-	// A boolean value that determines whether or not an Amazon QuickSight account can
-	// be deleted. A True value doesn't allow the account to be deleted and results in
-	// an error message if a user tries to make a DeleteAccountSubscription request. A
+	// A boolean value that determines whether or not an Quick Sight account can be
+	// deleted. A True value doesn't allow the account to be deleted and results in an
+	// error message if a user tries to make a DeleteAccountSubscription request. A
 	// False value will allow the account to be deleted.
 	TerminationProtectionEnabled bool
 
@@ -157,16 +157,13 @@ func (c *Client) addOperationUpdateAccountSettingsMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

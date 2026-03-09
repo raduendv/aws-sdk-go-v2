@@ -29,6 +29,9 @@ func (c *Client) ListApplications(ctx context.Context, params *ListApplicationsI
 
 type ListApplicationsInput struct {
 
+	// The type of application.
+	ApplicationType types.ApplicationType
+
 	// The maximum number of results to return per page.
 	MaxResults *int32
 
@@ -138,16 +141,13 @@ func (c *Client) addOperationListApplicationsMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

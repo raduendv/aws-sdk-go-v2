@@ -34,7 +34,7 @@ type SearchJobsInput struct {
 	// This member is required.
 	FarmId *string
 
-	// Defines how far into the scrollable list to start the return of results.
+	// The offset for the search results.
 	//
 	// This member is required.
 	ItemOffset *int32
@@ -44,13 +44,10 @@ type SearchJobsInput struct {
 	// This member is required.
 	QueueIds []string
 
-	// The filter expression, AND or OR , to use when searching among a group of search
-	// strings in a resource.
-	//
-	// You can use two groupings per search each within parenthesis () .
+	// The search terms for a resource.
 	FilterExpressions *types.SearchGroupedFilterExpressions
 
-	// Specifies the number of items per page for the resource.
+	// Specifies the number of results to return.
 	PageSize *int32
 
 	// The search terms for a resource.
@@ -71,7 +68,7 @@ type SearchJobsOutput struct {
 	// This member is required.
 	TotalResults *int32
 
-	// The next incremental starting point after the defined itemOffset .
+	// The next item offset for the search results.
 	NextItemOffset *int32
 
 	// Metadata pertaining to the operation's result.
@@ -171,16 +168,13 @@ func (c *Client) addOperationSearchJobsMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

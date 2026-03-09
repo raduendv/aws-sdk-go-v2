@@ -62,6 +62,18 @@ type CreateRoutingProfileInput struct {
 	// calculated based on longest idle time or time since their last inbound contact.
 	AgentAvailabilityTimer types.AgentAvailabilityTimer
 
+	// The manual assignment queues associated with the routing profile. If no queue
+	// is added, agents and supervisors can't pick or assign any contacts from this
+	// routing profile. The limit of 10 array members applies to the maximum number of
+	// RoutingProfileManualAssignmentQueueConfig objects that can be passed during a
+	// CreateRoutingProfile API request. It is different from the quota of 50 queues
+	// per routing profile per instance that is listed in Amazon Connect service
+	// quotas.
+	//
+	// Note: Use this config for chat, email, and task contacts. It does not support
+	// voice contacts.
+	ManualAssignmentQueueConfigs []types.RoutingProfileManualAssignmentQueueConfig
+
 	// The inbound queues associated with the routing profile. If no queue is added,
 	// the agent can make only outbound calls.
 	//
@@ -182,16 +194,13 @@ func (c *Client) addOperationCreateRoutingProfileMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

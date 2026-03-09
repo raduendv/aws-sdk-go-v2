@@ -90,6 +90,29 @@ func (EnrollmentStatus) Values() []EnrollmentStatus {
 	}
 }
 
+type GranularityType string
+
+// Enum values for GranularityType
+const (
+	// Metrics are aggregated daily, with each data point representing a single day's
+	// worth of efficiency data. Timestamps are formatted as YYYY-MM-DD.
+	GranularityTypeDaily GranularityType = "Daily"
+	// Metrics are aggregated monthly, with each data point representing a full
+	// month's worth of efficiency data. Timestamps are formatted as YYYY-MM.
+	GranularityTypeMonthly GranularityType = "Monthly"
+)
+
+// Values returns all known values for GranularityType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GranularityType) Values() []GranularityType {
+	return []GranularityType{
+		"Daily",
+		"Monthly",
+	}
+}
+
 type ImplementationEffort string
 
 // Enum values for ImplementationEffort
@@ -154,6 +177,27 @@ func (Order) Values() []Order {
 	}
 }
 
+type PaymentOption string
+
+// Enum values for PaymentOption
+const (
+	PaymentOptionAllUpfront     PaymentOption = "AllUpfront"
+	PaymentOptionPartialUpfront PaymentOption = "PartialUpfront"
+	PaymentOptionNoUpfront      PaymentOption = "NoUpfront"
+)
+
+// Values returns all known values for PaymentOption. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (PaymentOption) Values() []PaymentOption {
+	return []PaymentOption{
+		"AllUpfront",
+		"PartialUpfront",
+		"NoUpfront",
+	}
+}
+
 type ResourceType string
 
 // Enum values for ResourceType
@@ -173,8 +217,10 @@ const (
 	ResourceTypeElastiCacheReservedInstances ResourceType = "ElastiCacheReservedInstances"
 	ResourceTypeRdsDbInstanceStorage         ResourceType = "RdsDbInstanceStorage"
 	ResourceTypeRdsDbInstance                ResourceType = "RdsDbInstance"
+	ResourceTypeAuroraDbClusterStorage       ResourceType = "AuroraDbClusterStorage"
 	ResourceTypeDynamoDbReservedCapacity     ResourceType = "DynamoDbReservedCapacity"
 	ResourceTypeMemoryDbReservedInstances    ResourceType = "MemoryDbReservedInstances"
+	ResourceTypeNatGateway                   ResourceType = "NatGateway"
 )
 
 // Values returns all known values for ResourceType. Note that this can be
@@ -198,8 +244,10 @@ func (ResourceType) Values() []ResourceType {
 		"ElastiCacheReservedInstances",
 		"RdsDbInstanceStorage",
 		"RdsDbInstance",
+		"AuroraDbClusterStorage",
 		"DynamoDbReservedCapacity",
 		"MemoryDbReservedInstances",
+		"NatGateway",
 	}
 }
 
@@ -255,6 +303,25 @@ const (
 func (SummaryMetrics) Values() []SummaryMetrics {
 	return []SummaryMetrics{
 		"SavingsPercentage",
+	}
+}
+
+type Term string
+
+// Enum values for Term
+const (
+	TermOneYear    Term = "OneYear"
+	TermThreeYears Term = "ThreeYears"
+)
+
+// Values returns all known values for Term. Note that this can be expanded in the
+// future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Term) Values() []Term {
+	return []Term{
+		"OneYear",
+		"ThreeYears",
 	}
 }
 

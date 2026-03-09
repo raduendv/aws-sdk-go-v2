@@ -47,6 +47,10 @@ type UpdateIPSetInput struct {
 	// The updated Boolean value that specifies whether the IPSet is active or not.
 	Activate *bool
 
+	// The Amazon Web Services account ID that owns the Amazon S3 bucket specified in
+	// the location parameter.
+	ExpectedBucketOwner *string
+
 	// The updated URI of the file that contains the IPSet.
 	Location *string
 
@@ -151,16 +155,13 @@ func (c *Client) addOperationUpdateIPSetMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

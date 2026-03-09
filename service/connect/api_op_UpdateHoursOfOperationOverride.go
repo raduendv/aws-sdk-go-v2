@@ -54,11 +54,22 @@ type UpdateHoursOfOperationOverrideInput struct {
 	// The date from when the hours of operation override would be effective.
 	EffectiveFrom *string
 
-	// The date till when the hours of operation override would be effective.
+	// The date until the hours of operation override is effective.
 	EffectiveTill *string
 
 	// The name of the hours of operation override.
 	Name *string
+
+	// Whether the override will be defined as a standard or as a recurring event.
+	//
+	// For more information about how override types are applied, see [Build your list of overrides] in the
+	// Administrator Guide.
+	//
+	// [Build your list of overrides]: https://docs.aws.amazon.com/https:/docs.aws.amazon.com/connect/latest/adminguide/hours-of-operation-overrides.html
+	OverrideType types.OverrideType
+
+	// Configuration for a recurring event.
+	RecurrenceConfig *types.RecurrenceConfig
 
 	noSmithyDocumentSerde
 }
@@ -158,16 +169,13 @@ func (c *Client) addOperationUpdateHoursOfOperationOverrideMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

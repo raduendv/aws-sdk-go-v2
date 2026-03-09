@@ -23,10 +23,10 @@ import (
 //   - Deleted fields are not included in the ListFields response.
 //
 //   - Calling CreateCase with a deleted field throws a ValidationException
-//     denoting which field IDs in the request have been deleted.
+//     denoting which field identifiers in the request have been deleted.
 //
-//   - Calling GetCase with a deleted field ID returns the deleted field's value if
-//     one exists.
+//   - Calling GetCase with a deleted field identifier returns the deleted field's
+//     value if one exists.
 //
 //   - Calling UpdateCase with a deleted field ID throws a ValidationException if
 //     the case does not already contain a value for the deleted field. Otherwise it
@@ -173,16 +173,13 @@ func (c *Client) addOperationDeleteFieldMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

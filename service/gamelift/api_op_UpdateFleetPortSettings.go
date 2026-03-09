@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Container
+//
 // Updates permissions that allow inbound traffic to connect to game sessions in
 // the fleet.
 //
@@ -27,9 +29,9 @@ import (
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift fleets]
+// [Setting up Amazon GameLift Servers fleets]
 //
-// [Setting up Amazon GameLift fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
+// [Setting up Amazon GameLift Servers fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 func (c *Client) UpdateFleetPortSettings(ctx context.Context, params *UpdateFleetPortSettingsInput, optFns ...func(*Options)) (*UpdateFleetPortSettingsOutput, error) {
 	if params == nil {
 		params = &UpdateFleetPortSettingsInput{}
@@ -64,7 +66,7 @@ type UpdateFleetPortSettingsInput struct {
 
 type UpdateFleetPortSettingsOutput struct {
 
-	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift fleet
+	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift Servers fleet
 	// resource and uniquely identifies it. ARNs are unique across all Regions. Format
 	// is arn:aws:gamelift:::fleet/fleet-a1234567-b8c9-0d1e-2fa3-b45c6d7e8912 .
 	//
@@ -168,16 +170,13 @@ func (c *Client) addOperationUpdateFleetPortSettingsMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

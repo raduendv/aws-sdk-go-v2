@@ -33,7 +33,8 @@ type TagResourceInput struct {
 	// This member is required.
 	ResourceArn *string
 
-	// Specify the tags to add to the resource.
+	// Specify the tags to add to the resource. Tags can be specified as a key-value
+	// map.
 	//
 	// This member is required.
 	Tags map[string]string
@@ -136,16 +137,13 @@ func (c *Client) addOperationTagResourceMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

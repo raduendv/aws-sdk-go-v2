@@ -96,7 +96,7 @@ type GetFleetOutput struct {
 	// This member is required.
 	RoleArn *string
 
-	// The Auto Scaling status of the fleet.
+	// The status of the fleet.
 	//
 	// This member is required.
 	Status types.FleetStatus
@@ -119,6 +119,13 @@ type GetFleetOutput struct {
 	// displaying it on a webpage or any other system that might interpret the content
 	// of this field.
 	Description *string
+
+	// The script that runs as a worker is starting up that you can use to provide
+	// additional configuration for workers in your fleet.
+	HostConfiguration *types.HostConfiguration
+
+	// A message that communicates a suspended status of the fleet.
+	StatusMessage *string
 
 	// The number of target workers in the fleet.
 	TargetWorkerCount *int32
@@ -226,16 +233,13 @@ func (c *Client) addOperationGetFleetMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

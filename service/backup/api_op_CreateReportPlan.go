@@ -52,7 +52,7 @@ type CreateReportPlanInput struct {
 	// template. The report templates are:
 	//
 	//     RESOURCE_COMPLIANCE_REPORT | CONTROL_COMPLIANCE_REPORT | BACKUP_JOB_REPORT |
-	//     COPY_JOB_REPORT | RESTORE_JOB_REPORT
+	//     COPY_JOB_REPORT | RESTORE_JOB_REPORT | SCAN_JOB_REPORT
 	//
 	// If the report template is RESOURCE_COMPLIANCE_REPORT or
 	// CONTROL_COMPLIANCE_REPORT , this API resource also describes the report coverage
@@ -187,16 +187,13 @@ func (c *Client) addOperationCreateReportPlanMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

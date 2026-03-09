@@ -30,12 +30,13 @@ func (c *Client) ListResourceScans(ctx context.Context, params *ListResourceScan
 
 type ListResourceScansInput struct {
 
-	//  If the number of available results exceeds this maximum, the response includes
+	// If the number of available results exceeds this maximum, the response includes
 	// a NextToken value that you can use for the NextToken parameter to get the next
 	// set of results. The default value is 10. The maximum value is 100.
 	MaxResults *int32
 
-	// A string that identifies the next page of resource scan results.
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	// The scan type that you want to get summary information about. The default is
@@ -147,16 +148,13 @@ func (c *Client) addOperationListResourceScansMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -164,7 +162,7 @@ func (c *Client) addOperationListResourceScansMiddlewares(stack *middleware.Stac
 
 // ListResourceScansPaginatorOptions is the paginator options for ListResourceScans
 type ListResourceScansPaginatorOptions struct {
-	//  If the number of available results exceeds this maximum, the response includes
+	// If the number of available results exceeds this maximum, the response includes
 	// a NextToken value that you can use for the NextToken parameter to get the next
 	// set of results. The default value is 10. The maximum value is 100.
 	Limit int32

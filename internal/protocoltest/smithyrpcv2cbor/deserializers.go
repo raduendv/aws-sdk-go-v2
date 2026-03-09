@@ -10,7 +10,6 @@ import (
 	smithycbor "github.com/aws/smithy-go/encoding/cbor"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
@@ -18,14 +17,6 @@ import (
 	"strings"
 	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type smithyRpcv2cbor_deserializeOpEmptyInputOutput struct {
 }
@@ -37,11 +28,13 @@ func (*smithyRpcv2cbor_deserializeOpEmptyInputOutput) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpEmptyInputOutput) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -84,11 +77,13 @@ func (*smithyRpcv2cbor_deserializeOpFloat16) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpFloat16) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -147,11 +142,13 @@ func (*smithyRpcv2cbor_deserializeOpFractionalSeconds) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpFractionalSeconds) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -210,11 +207,13 @@ func (*smithyRpcv2cbor_deserializeOpGreetingWithErrors) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpGreetingWithErrors) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -273,11 +272,13 @@ func (*smithyRpcv2cbor_deserializeOpNoInputOutput) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpNoInputOutput) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -320,11 +321,13 @@ func (*smithyRpcv2cbor_deserializeOpOperationWithDefaults) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpOperationWithDefaults) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -383,11 +386,13 @@ func (*smithyRpcv2cbor_deserializeOpOptionalInputOutput) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpOptionalInputOutput) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -446,11 +451,13 @@ func (*smithyRpcv2cbor_deserializeOpRecursiveShapes) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpRecursiveShapes) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -509,11 +516,13 @@ func (*smithyRpcv2cbor_deserializeOpRpcV2CborDenseMaps) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpRpcV2CborDenseMaps) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -572,11 +581,13 @@ func (*smithyRpcv2cbor_deserializeOpRpcV2CborLists) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpRpcV2CborLists) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -635,11 +646,13 @@ func (*smithyRpcv2cbor_deserializeOpRpcV2CborSparseMaps) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpRpcV2CborSparseMaps) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -698,11 +711,13 @@ func (*smithyRpcv2cbor_deserializeOpSimpleScalarProperties) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpSimpleScalarProperties) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -761,11 +776,13 @@ func (*smithyRpcv2cbor_deserializeOpSparseNullsOperation) ID() string {
 func (m *smithyRpcv2cbor_deserializeOpSparseNullsOperation) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
 	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
 ) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
 	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
 	defer endTimer()
 	defer span.End()
-	out, metadata, err = next.HandleDeserialize(ctx, in)
+
 	if err != nil {
 		return out, metadata, err
 	}
@@ -2368,7 +2385,10 @@ func rpc2_deserializeOpErrorEmptyInputOutput(resp *smithyhttp.Response) error {
 	}
 
 	_ = v
-	switch string(typ) {
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
 
 	default:
 
@@ -2395,7 +2415,10 @@ func rpc2_deserializeOpErrorFloat16(resp *smithyhttp.Response) error {
 	}
 
 	_ = v
-	switch string(typ) {
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
 
 	default:
 
@@ -2422,7 +2445,10 @@ func rpc2_deserializeOpErrorFractionalSeconds(resp *smithyhttp.Response) error {
 	}
 
 	_ = v
-	switch string(typ) {
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
 
 	default:
 
@@ -2449,8 +2475,11 @@ func rpc2_deserializeOpErrorGreetingWithErrors(resp *smithyhttp.Response) error 
 	}
 
 	_ = v
-	switch string(typ) {
-	case "smithy.protocoltests.rpcv2Cbor#InvalidGreeting":
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
+	case "InvalidGreeting":
 		verr, err := deserializeCBOR_InvalidGreeting(v)
 		if err != nil {
 			return &smithy.DeserializationError{
@@ -2460,7 +2489,7 @@ func rpc2_deserializeOpErrorGreetingWithErrors(resp *smithyhttp.Response) error 
 		}
 
 		return verr
-	case "smithy.protocoltests.rpcv2Cbor#ComplexError":
+	case "ComplexError":
 		verr, err := deserializeCBOR_ComplexError(v)
 		if err != nil {
 			return &smithy.DeserializationError{
@@ -2495,7 +2524,10 @@ func rpc2_deserializeOpErrorNoInputOutput(resp *smithyhttp.Response) error {
 	}
 
 	_ = v
-	switch string(typ) {
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
 
 	default:
 
@@ -2522,8 +2554,11 @@ func rpc2_deserializeOpErrorOperationWithDefaults(resp *smithyhttp.Response) err
 	}
 
 	_ = v
-	switch string(typ) {
-	case "smithy.framework#ValidationException":
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
+	case "ValidationException":
 		verr, err := deserializeCBOR_ValidationException(v)
 		if err != nil {
 			return &smithy.DeserializationError{
@@ -2558,7 +2593,10 @@ func rpc2_deserializeOpErrorOptionalInputOutput(resp *smithyhttp.Response) error
 	}
 
 	_ = v
-	switch string(typ) {
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
 
 	default:
 
@@ -2585,7 +2623,10 @@ func rpc2_deserializeOpErrorRecursiveShapes(resp *smithyhttp.Response) error {
 	}
 
 	_ = v
-	switch string(typ) {
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
 
 	default:
 
@@ -2612,8 +2653,11 @@ func rpc2_deserializeOpErrorRpcV2CborDenseMaps(resp *smithyhttp.Response) error 
 	}
 
 	_ = v
-	switch string(typ) {
-	case "smithy.framework#ValidationException":
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
+	case "ValidationException":
 		verr, err := deserializeCBOR_ValidationException(v)
 		if err != nil {
 			return &smithy.DeserializationError{
@@ -2648,8 +2692,11 @@ func rpc2_deserializeOpErrorRpcV2CborLists(resp *smithyhttp.Response) error {
 	}
 
 	_ = v
-	switch string(typ) {
-	case "smithy.framework#ValidationException":
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
+	case "ValidationException":
 		verr, err := deserializeCBOR_ValidationException(v)
 		if err != nil {
 			return &smithy.DeserializationError{
@@ -2684,8 +2731,11 @@ func rpc2_deserializeOpErrorRpcV2CborSparseMaps(resp *smithyhttp.Response) error
 	}
 
 	_ = v
-	switch string(typ) {
-	case "smithy.framework#ValidationException":
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
+	case "ValidationException":
 		verr, err := deserializeCBOR_ValidationException(v)
 		if err != nil {
 			return &smithy.DeserializationError{
@@ -2720,7 +2770,10 @@ func rpc2_deserializeOpErrorSimpleScalarProperties(resp *smithyhttp.Response) er
 	}
 
 	_ = v
-	switch string(typ) {
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
 
 	default:
 
@@ -2747,7 +2800,10 @@ func rpc2_deserializeOpErrorSparseNullsOperation(resp *smithyhttp.Response) erro
 	}
 
 	_ = v
-	switch string(typ) {
+	// namespace can be mangled by service, so matching by error shape name
+	errorParts := strings.Split(typ, "#")
+	errorName := errorParts[len(errorParts)-1]
+	switch string(errorName) {
 
 	default:
 

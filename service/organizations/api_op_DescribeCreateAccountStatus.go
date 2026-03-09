@@ -13,9 +13,8 @@ import (
 
 // Retrieves the current status of an asynchronous request to create an account.
 //
-// This operation can be called only from the organization's management account or
-// by a member account that is a delegated administrator for an Amazon Web Services
-// service.
+// You can only call this operation from the management account or a member
+// account that is a delegated administrator.
 func (c *Client) DescribeCreateAccountStatus(ctx context.Context, params *DescribeCreateAccountStatusInput, optFns ...func(*Options)) (*DescribeCreateAccountStatusOutput, error) {
 	if params == nil {
 		params = &DescribeCreateAccountStatusInput{}
@@ -147,16 +146,13 @@ func (c *Client) addOperationDescribeCreateAccountStatusMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

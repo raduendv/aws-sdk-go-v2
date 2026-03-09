@@ -1330,6 +1330,26 @@ func (m *validateOpGetClusterCredentials) HandleInitialize(ctx context.Context, 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetIdentityCenterAuthToken struct {
+}
+
+func (*validateOpGetIdentityCenterAuthToken) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetIdentityCenterAuthToken) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetIdentityCenterAuthTokenInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetIdentityCenterAuthTokenInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetReservedNodeExchangeConfigurationOptions struct {
 }
 
@@ -1665,6 +1685,26 @@ func (m *validateOpModifyIntegration) HandleInitialize(ctx context.Context, in m
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpModifyIntegrationInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpModifyLakehouseConfiguration struct {
+}
+
+func (*validateOpModifyLakehouseConfiguration) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpModifyLakehouseConfiguration) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ModifyLakehouseConfigurationInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpModifyLakehouseConfigurationInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -2334,6 +2374,10 @@ func addOpGetClusterCredentialsValidationMiddleware(stack *middleware.Stack) err
 	return stack.Initialize.Add(&validateOpGetClusterCredentials{}, middleware.After)
 }
 
+func addOpGetIdentityCenterAuthTokenValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetIdentityCenterAuthToken{}, middleware.After)
+}
+
 func addOpGetReservedNodeExchangeConfigurationOptionsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetReservedNodeExchangeConfigurationOptions{}, middleware.After)
 }
@@ -2400,6 +2444,10 @@ func addOpModifyEventSubscriptionValidationMiddleware(stack *middleware.Stack) e
 
 func addOpModifyIntegrationValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpModifyIntegration{}, middleware.After)
+}
+
+func addOpModifyLakehouseConfigurationValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpModifyLakehouseConfiguration{}, middleware.After)
 }
 
 func addOpModifyRedshiftIdcApplicationValidationMiddleware(stack *middleware.Stack) error {
@@ -2480,6 +2528,21 @@ func addOpRotateEncryptionKeyValidationMiddleware(stack *middleware.Stack) error
 
 func addOpUpdatePartnerStatusValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdatePartnerStatus{}, middleware.After)
+}
+
+func validateConnect(v *types.Connect) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "Connect"}
+	if len(v.Authorization) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Authorization"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
 }
 
 func validateDeleteClusterSnapshotMessage(v *types.DeleteClusterSnapshotMessage) error {
@@ -2669,6 +2732,42 @@ func validateReadWriteAccess(v *types.ReadWriteAccess) error {
 	}
 }
 
+func validateRedshiftScopeUnion(v types.RedshiftScopeUnion) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RedshiftScopeUnion"}
+	switch uv := v.(type) {
+	case *types.RedshiftScopeUnionMemberConnect:
+		if err := validateConnect(&uv.Value); err != nil {
+			invalidParams.AddNested("[Connect]", err.(smithy.InvalidParamsError))
+		}
+
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateRedshiftServiceIntegrations(v []types.RedshiftScopeUnion) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RedshiftServiceIntegrations"}
+	for i := range v {
+		if err := validateRedshiftScopeUnion(v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateResizeClusterMessage(v *types.ResizeClusterMessage) error {
 	if v == nil {
 		return nil
@@ -2841,6 +2940,11 @@ func validateServiceIntegrationsUnion(v types.ServiceIntegrationsUnion) error {
 	case *types.ServiceIntegrationsUnionMemberLakeFormation:
 		if err := validateLakeFormationServiceIntegrations(uv.Value); err != nil {
 			invalidParams.AddNested("[LakeFormation]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.ServiceIntegrationsUnionMemberRedshift:
+		if err := validateRedshiftServiceIntegrations(uv.Value); err != nil {
+			invalidParams.AddNested("[Redshift]", err.(smithy.InvalidParamsError))
 		}
 
 	case *types.ServiceIntegrationsUnionMemberS3AccessGrants:
@@ -4036,6 +4140,21 @@ func validateOpGetClusterCredentialsInput(v *GetClusterCredentialsInput) error {
 	}
 }
 
+func validateOpGetIdentityCenterAuthTokenInput(v *GetIdentityCenterAuthTokenInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetIdentityCenterAuthTokenInput"}
+	if v.ClusterIds == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterIds"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetReservedNodeExchangeConfigurationOptionsInput(v *GetReservedNodeExchangeConfigurationOptionsInput) error {
 	if v == nil {
 		return nil
@@ -4301,6 +4420,21 @@ func validateOpModifyIntegrationInput(v *ModifyIntegrationInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ModifyIntegrationInput"}
 	if v.IntegrationArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("IntegrationArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpModifyLakehouseConfigurationInput(v *ModifyLakehouseConfigurationInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ModifyLakehouseConfigurationInput"}
+	if v.ClusterIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterIdentifier"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

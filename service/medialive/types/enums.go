@@ -536,6 +536,25 @@ func (AuthenticationScheme) Values() []AuthenticationScheme {
 	}
 }
 
+type Av1BitDepth string
+
+// Enum values for Av1BitDepth
+const (
+	Av1BitDepthDepth10 Av1BitDepth = "DEPTH_10"
+	Av1BitDepthDepth8  Av1BitDepth = "DEPTH_8"
+)
+
+// Values returns all known values for Av1BitDepth. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Av1BitDepth) Values() []Av1BitDepth {
+	return []Av1BitDepth{
+		"DEPTH_10",
+		"DEPTH_8",
+	}
+}
+
 type Av1GopSizeUnits string
 
 // Enum values for Av1GopSizeUnits
@@ -621,6 +640,25 @@ func (Av1LookAheadRateControl) Values() []Av1LookAheadRateControl {
 	}
 }
 
+type Av1RateControlMode string
+
+// Enum values for Av1RateControlMode
+const (
+	Av1RateControlModeCbr  Av1RateControlMode = "CBR"
+	Av1RateControlModeQvbr Av1RateControlMode = "QVBR"
+)
+
+// Values returns all known values for Av1RateControlMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Av1RateControlMode) Values() []Av1RateControlMode {
+	return []Av1RateControlMode{
+		"CBR",
+		"QVBR",
+	}
+}
+
 type Av1SceneChangeDetect string
 
 // Enum values for Av1SceneChangeDetect
@@ -637,6 +675,64 @@ func (Av1SceneChangeDetect) Values() []Av1SceneChangeDetect {
 	return []Av1SceneChangeDetect{
 		"DISABLED",
 		"ENABLED",
+	}
+}
+
+type Av1SpatialAq string
+
+// Enum values for Av1SpatialAq
+const (
+	Av1SpatialAqDisabled Av1SpatialAq = "DISABLED"
+	Av1SpatialAqEnabled  Av1SpatialAq = "ENABLED"
+)
+
+// Values returns all known values for Av1SpatialAq. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Av1SpatialAq) Values() []Av1SpatialAq {
+	return []Av1SpatialAq{
+		"DISABLED",
+		"ENABLED",
+	}
+}
+
+type Av1TemporalAq string
+
+// Enum values for Av1TemporalAq
+const (
+	Av1TemporalAqDisabled Av1TemporalAq = "DISABLED"
+	Av1TemporalAqEnabled  Av1TemporalAq = "ENABLED"
+)
+
+// Values returns all known values for Av1TemporalAq. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Av1TemporalAq) Values() []Av1TemporalAq {
+	return []Av1TemporalAq{
+		"DISABLED",
+		"ENABLED",
+	}
+}
+
+type Av1TimecodeInsertionBehavior string
+
+// Enum values for Av1TimecodeInsertionBehavior
+const (
+	Av1TimecodeInsertionBehaviorDisabled    Av1TimecodeInsertionBehavior = "DISABLED"
+	Av1TimecodeInsertionBehaviorMetadataObu Av1TimecodeInsertionBehavior = "METADATA_OBU"
+)
+
+// Values returns all known values for Av1TimecodeInsertionBehavior. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Av1TimecodeInsertionBehavior) Values() []Av1TimecodeInsertionBehavior {
+	return []Av1TimecodeInsertionBehavior{
+		"DISABLED",
+		"METADATA_OBU",
 	}
 }
 
@@ -790,6 +886,28 @@ func (BurnInBackgroundColor) Values() []BurnInBackgroundColor {
 	}
 }
 
+type BurnInDestinationSubtitleRows string
+
+// Enum values for BurnInDestinationSubtitleRows
+const (
+	BurnInDestinationSubtitleRowsRows16 BurnInDestinationSubtitleRows = "ROWS_16"
+	BurnInDestinationSubtitleRowsRows20 BurnInDestinationSubtitleRows = "ROWS_20"
+	BurnInDestinationSubtitleRowsRows24 BurnInDestinationSubtitleRows = "ROWS_24"
+)
+
+// Values returns all known values for BurnInDestinationSubtitleRows. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (BurnInDestinationSubtitleRows) Values() []BurnInDestinationSubtitleRows {
+	return []BurnInDestinationSubtitleRows{
+		"ROWS_16",
+		"ROWS_20",
+		"ROWS_24",
+	}
+}
+
 type BurnInFontColor string
 
 // Enum values for BurnInFontColor
@@ -904,6 +1022,25 @@ func (CdiInputResolution) Values() []CdiInputResolution {
 		"HD",
 		"FHD",
 		"UHD",
+	}
+}
+
+type ChannelAlertState string
+
+// Enum values for ChannelAlertState
+const (
+	ChannelAlertStateSet     ChannelAlertState = "SET"
+	ChannelAlertStateCleared ChannelAlertState = "CLEARED"
+)
+
+// Values returns all known values for ChannelAlertState. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ChannelAlertState) Values() []ChannelAlertState {
+	return []ChannelAlertState{
+		"SET",
+		"CLEARED",
 	}
 }
 
@@ -1119,6 +1256,25 @@ func (CloudWatchAlarmTemplateTreatMissingData) Values() []CloudWatchAlarmTemplat
 	}
 }
 
+type ClusterAlertState string
+
+// Enum values for ClusterAlertState
+const (
+	ClusterAlertStateSet     ClusterAlertState = "SET"
+	ClusterAlertStateCleared ClusterAlertState = "CLEARED"
+)
+
+// Values returns all known values for ClusterAlertState. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ClusterAlertState) Values() []ClusterAlertState {
+	return []ClusterAlertState{
+		"SET",
+		"CLEARED",
+	}
+}
+
 type ClusterState string
 
 // Enum values for ClusterState
@@ -1301,6 +1457,25 @@ func (ColorSpace) Values() []ColorSpace {
 		"HLG_2020",
 		"REC_601",
 		"REC_709",
+	}
+}
+
+type ConnectionMode string
+
+// Enum values for ConnectionMode
+const (
+	ConnectionModeCaller   ConnectionMode = "CALLER"
+	ConnectionModeListener ConnectionMode = "LISTENER"
+)
+
+// Values returns all known values for ConnectionMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConnectionMode) Values() []ConnectionMode {
+	return []ConnectionMode{
+		"CALLER",
+		"LISTENER",
 	}
 }
 
@@ -1637,6 +1812,28 @@ func (DvbSubDestinationShadowColor) Values() []DvbSubDestinationShadowColor {
 		"BLACK",
 		"NONE",
 		"WHITE",
+	}
+}
+
+type DvbSubDestinationSubtitleRows string
+
+// Enum values for DvbSubDestinationSubtitleRows
+const (
+	DvbSubDestinationSubtitleRowsRows16 DvbSubDestinationSubtitleRows = "ROWS_16"
+	DvbSubDestinationSubtitleRowsRows20 DvbSubDestinationSubtitleRows = "ROWS_20"
+	DvbSubDestinationSubtitleRowsRows24 DvbSubDestinationSubtitleRows = "ROWS_24"
+)
+
+// Values returns all known values for DvbSubDestinationSubtitleRows. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DvbSubDestinationSubtitleRows) Values() []DvbSubDestinationSubtitleRows {
+	return []DvbSubDestinationSubtitleRows{
+		"ROWS_16",
+		"ROWS_20",
+		"ROWS_24",
 	}
 }
 
@@ -2993,6 +3190,25 @@ func (H265FlickerAq) Values() []H265FlickerAq {
 	}
 }
 
+type H265GopBReference string
+
+// Enum values for H265GopBReference
+const (
+	H265GopBReferenceDisabled H265GopBReference = "DISABLED"
+	H265GopBReferenceEnabled  H265GopBReference = "ENABLED"
+)
+
+// Values returns all known values for H265GopBReference. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (H265GopBReference) Values() []H265GopBReference {
+	return []H265GopBReference{
+		"DISABLED",
+		"ENABLED",
+	}
+}
+
 type H265GopSizeUnits string
 
 // Enum values for H265GopSizeUnits
@@ -3192,6 +3408,25 @@ func (H265SceneChangeDetect) Values() []H265SceneChangeDetect {
 	}
 }
 
+type H265SubGopLength string
+
+// Enum values for H265SubGopLength
+const (
+	H265SubGopLengthDynamic H265SubGopLength = "DYNAMIC"
+	H265SubGopLengthFixed   H265SubGopLength = "FIXED"
+)
+
+// Values returns all known values for H265SubGopLength. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (H265SubGopLength) Values() []H265SubGopLength {
+	return []H265SubGopLength{
+		"DYNAMIC",
+		"FIXED",
+	}
+}
+
 type H265Tier string
 
 // Enum values for H265Tier
@@ -3309,6 +3544,27 @@ func (HlsAkamaiHttpTransferMode) Values() []HlsAkamaiHttpTransferMode {
 	}
 }
 
+type HlsAutoSelect string
+
+// Enum values for HlsAutoSelect
+const (
+	HlsAutoSelectNo   HlsAutoSelect = "NO"
+	HlsAutoSelectOmit HlsAutoSelect = "OMIT"
+	HlsAutoSelectYes  HlsAutoSelect = "YES"
+)
+
+// Values returns all known values for HlsAutoSelect. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (HlsAutoSelect) Values() []HlsAutoSelect {
+	return []HlsAutoSelect{
+		"NO",
+		"OMIT",
+		"YES",
+	}
+}
+
 type HlsCaptionLanguageSetting string
 
 // Enum values for HlsCaptionLanguageSetting
@@ -3365,6 +3621,27 @@ func (HlsCodecSpecification) Values() []HlsCodecSpecification {
 	return []HlsCodecSpecification{
 		"RFC_4281",
 		"RFC_6381",
+	}
+}
+
+type HlsDefault string
+
+// Enum values for HlsDefault
+const (
+	HlsDefaultNo   HlsDefault = "NO"
+	HlsDefaultOmit HlsDefault = "OMIT"
+	HlsDefaultYes  HlsDefault = "YES"
+)
+
+// Values returns all known values for HlsDefault. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (HlsDefault) Values() []HlsDefault {
+	return []HlsDefault{
+		"NO",
+		"OMIT",
+		"YES",
 	}
 }
 
@@ -4487,6 +4764,8 @@ const (
 	InputTypeMulticast              InputType = "MULTICAST"
 	InputTypeSmpte2110ReceiverGroup InputType = "SMPTE_2110_RECEIVER_GROUP"
 	InputTypeSdi                    InputType = "SDI"
+	InputTypeMediaconnectRouter     InputType = "MEDIACONNECT_ROUTER"
+	InputTypeSrtListener            InputType = "SRT_LISTENER"
 )
 
 // Values returns all known values for InputType. Note that this can be expanded
@@ -4509,6 +4788,8 @@ func (InputType) Values() []InputType {
 		"MULTICAST",
 		"SMPTE_2110_RECEIVER_GROUP",
 		"SDI",
+		"MEDIACONNECT_ROUTER",
+		"SRT_LISTENER",
 	}
 }
 
@@ -4528,6 +4809,25 @@ func (LastFrameClippingBehavior) Values() []LastFrameClippingBehavior {
 	return []LastFrameClippingBehavior{
 		"EXCLUDE_LAST_FRAME",
 		"INCLUDE_LAST_FRAME",
+	}
+}
+
+type LinkedChannelType string
+
+// Enum values for LinkedChannelType
+const (
+	LinkedChannelTypeFollowingChannel LinkedChannelType = "FOLLOWING_CHANNEL"
+	LinkedChannelTypePrimaryChannel   LinkedChannelType = "PRIMARY_CHANNEL"
+)
+
+// Values returns all known values for LinkedChannelType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (LinkedChannelType) Values() []LinkedChannelType {
+	return []LinkedChannelType{
+		"FOLLOWING_CHANNEL",
+		"PRIMARY_CHANNEL",
 	}
 }
 
@@ -5266,6 +5566,25 @@ func (MsSmoothH265PackagingType) Values() []MsSmoothH265PackagingType {
 	}
 }
 
+type MultiplexAlertState string
+
+// Enum values for MultiplexAlertState
+const (
+	MultiplexAlertStateSet     MultiplexAlertState = "SET"
+	MultiplexAlertStateCleared MultiplexAlertState = "CLEARED"
+)
+
+// Values returns all known values for MultiplexAlertState. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MultiplexAlertState) Values() []MultiplexAlertState {
+	return []MultiplexAlertState{
+		"SET",
+		"CLEARED",
+	}
+}
+
 type MultiplexState string
 
 // Enum values for MultiplexState
@@ -5595,6 +5914,25 @@ func (PipelineId) Values() []PipelineId {
 	}
 }
 
+type PipelineLockingMethod string
+
+// Enum values for PipelineLockingMethod
+const (
+	PipelineLockingMethodSourceTimecode PipelineLockingMethod = "SOURCE_TIMECODE"
+	PipelineLockingMethodVideoAlignment PipelineLockingMethod = "VIDEO_ALIGNMENT"
+)
+
+// Values returns all known values for PipelineLockingMethod. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (PipelineLockingMethod) Values() []PipelineLockingMethod {
+	return []PipelineLockingMethod{
+		"SOURCE_TIMECODE",
+		"VIDEO_ALIGNMENT",
+	}
+}
+
 type PreferredChannelPipeline string
 
 // Enum values for PreferredChannelPipeline
@@ -5833,6 +6171,25 @@ func (ReservationVideoQuality) Values() []ReservationVideoQuality {
 		"STANDARD",
 		"ENHANCED",
 		"PREMIUM",
+	}
+}
+
+type RouterEncryptionType string
+
+// Enum values for RouterEncryptionType
+const (
+	RouterEncryptionTypeAutomatic      RouterEncryptionType = "AUTOMATIC"
+	RouterEncryptionTypeSecretsManager RouterEncryptionType = "SECRETS_MANAGER"
+)
+
+// Values returns all known values for RouterEncryptionType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RouterEncryptionType) Values() []RouterEncryptionType {
+	return []RouterEncryptionType{
+		"AUTOMATIC",
+		"SECRETS_MANAGER",
 	}
 }
 

@@ -20,7 +20,7 @@ import (
 // If you want to list the channels to which a specific app instance user belongs,
 // see the [ListChannelMembershipsForAppInstanceUser]API.
 //
-// [ListChannelMembershipsForAppInstanceUser]: https://docs.aws.amazon.com/chime/latest/APIReference/API_messaging-chime_ListChannelMembershipsForAppInstanceUser.html
+// [ListChannelMembershipsForAppInstanceUser]: https://docs.aws.amazon.com/chime-sdk/latest/APIReference/API_messaging-chime_ListChannelMembershipsForAppInstanceUser.html
 func (c *Client) ListChannelMemberships(ctx context.Context, params *ListChannelMembershipsInput, optFns ...func(*Options)) (*ListChannelMembershipsOutput, error) {
 	if params == nil {
 		params = &ListChannelMembershipsInput{}
@@ -175,16 +175,13 @@ func (c *Client) addOperationListChannelMembershipsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

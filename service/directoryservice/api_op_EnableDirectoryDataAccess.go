@@ -11,7 +11,9 @@ import (
 )
 
 // Enables access to directory data via the Directory Service Data API for the
-// specified directory.
+// specified directory. For more information, see [Directory Service Data API Reference].
+//
+// [Directory Service Data API Reference]: https://docs.aws.amazon.com/directoryservicedata/latest/DirectoryServiceDataAPIReference/Welcome.html
 func (c *Client) EnableDirectoryDataAccess(ctx context.Context, params *EnableDirectoryDataAccessInput, optFns ...func(*Options)) (*EnableDirectoryDataAccessOutput, error) {
 	if params == nil {
 		params = &EnableDirectoryDataAccessInput{}
@@ -132,16 +134,13 @@ func (c *Client) addOperationEnableDirectoryDataAccessMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

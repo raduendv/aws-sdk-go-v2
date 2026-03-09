@@ -56,8 +56,7 @@ type TestAuthorizationInput struct {
 	PolicyNamesToSkip []string
 
 	// The principal. Valid principals are CertificateArn
-	// (arn:aws:iot:region:accountId:cert/certificateId), thingGroupArn
-	// (arn:aws:iot:region:accountId:thinggroup/groupName) and CognitoId (region:id).
+	// (arn:aws:iot:region:accountId:cert/certificateId) and CognitoId (region:id).
 	Principal *string
 
 	noSmithyDocumentSerde
@@ -162,16 +161,13 @@ func (c *Client) addOperationTestAuthorizationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

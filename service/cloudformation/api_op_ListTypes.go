@@ -11,8 +11,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Returns summary information about extension that have been registered with
-// CloudFormation.
+// Returns summary information about all extensions, including your private
+// resource types, modules, and Hooks as well as all public extensions from Amazon
+// Web Services and third-party publishers.
 func (c *Client) ListTypes(ctx context.Context, params *ListTypesInput, optFns ...func(*Options)) (*ListTypesOutput, error) {
 	if params == nil {
 		params = &ListTypesInput{}
@@ -55,11 +56,8 @@ type ListTypesInput struct {
 	// set of results.
 	MaxResults *int32
 
-	// If the previous paginated request didn't return all the remaining results, the
-	// response object's NextToken parameter value is set to a token. To retrieve the
-	// next set of results, call this action again and assign that token to the request
-	// object's NextToken parameter. If there are no remaining results, the previous
-	// response object's NextToken parameter is set to null .
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	// For resource types, the provisioning behavior of the resource type.
@@ -97,7 +95,7 @@ type ListTypesInput struct {
 	//
 	//   - PUBLIC : Extensions that are publicly visible and available to be activated
 	//   within any Amazon Web Services account. This includes extensions from Amazon Web
-	//   Services, in addition to third-party publishers.
+	//   Services and third-party publishers.
 	//
 	// The default is PRIVATE .
 	Visibility types.Visibility
@@ -208,16 +206,13 @@ func (c *Client) addOperationListTypesMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

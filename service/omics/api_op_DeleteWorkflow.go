@@ -10,7 +10,14 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes a workflow.
+// Deletes a workflow by specifying its ID. This operation returns a response with
+// no body if the deletion is successful.
+//
+// To verify that the workflow is deleted:
+//
+//   - Use ListWorkflows to confirm the workflow no longer appears in the list.
+//
+//   - Use GetWorkflow to verify the workflow cannot be found.
 func (c *Client) DeleteWorkflow(ctx context.Context, params *DeleteWorkflowInput, optFns ...func(*Options)) (*DeleteWorkflowOutput, error) {
 	if params == nil {
 		params = &DeleteWorkflowInput{}
@@ -134,16 +141,13 @@ func (c *Client) addOperationDeleteWorkflowMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -51,11 +51,21 @@ type DescribeLocationSmbOutput struct {
 	// server.
 	AuthenticationType types.SmbAuthenticationType
 
+	// Describes configuration information for a DataSync-managed secret, such as a
+	// Password or KerberosKeytab that DataSync uses to access a specific storage
+	// location, with a customer-managed KMS key.
+	CmkSecretConfig *types.CmkSecretConfig
+
 	// The time that the SMB location was created.
 	CreationTime *time.Time
 
-	// The IPv4 addresses for the DNS servers that your SMB file server belongs to.
-	// This element applies only if AuthenticationType is set to KERBEROS .
+	// Describes configuration information for a customer-managed secret, such as a
+	// Password or KerberosKeytab that DataSync uses to access a specific storage
+	// location, with a customer-managed KMS key.
+	CustomSecretConfig *types.CustomSecretConfig
+
+	// The IPv4 or IPv6 addresses for the DNS servers that your SMB file server
+	// belongs to. This element applies only if AuthenticationType is set to KERBEROS .
 	DnsIpAddresses []string
 
 	// The name of the Windows domain that the SMB file server belongs to. This
@@ -71,6 +81,12 @@ type DescribeLocationSmbOutput struct {
 
 	// The URI of the SMB location.
 	LocationUri *string
+
+	// Describes configuration information for a DataSync-managed secret, such as a
+	// Password or KerberosKeytab that DataSync uses to access a specific storage
+	// location. DataSync uses the default Amazon Web Services-managed KMS key to
+	// encrypt this secret in Secrets Manager.
+	ManagedSecretConfig *types.ManagedSecretConfig
 
 	// The SMB protocol version that DataSync uses to access your SMB file server.
 	MountOptions *types.SmbMountOptions
@@ -174,16 +190,13 @@ func (c *Client) addOperationDescribeLocationSmbMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

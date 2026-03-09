@@ -13,6 +13,21 @@ import (
 )
 
 // Creates a custom asset type.
+//
+// Prerequisites:
+//
+//   - The formsInput field is required, however, can be passed as empty (e.g.
+//     -forms-input {}) .
+//
+//   - You must have CreateAssetType permissions.
+//
+//   - The domain-identifier and owning-project-identifier must be valid and
+//     active.
+//
+//   - The name of the asset type must be unique within the domain — duplicate
+//     names will cause failure.
+//
+//   - JSON input must be valid — incorrect formatting causes Invalid JSON errors.
 func (c *Client) CreateAssetType(ctx context.Context, params *CreateAssetTypeInput, optFns ...func(*Options)) (*CreateAssetTypeOutput, error) {
 	if params == nil {
 		params = &CreateAssetTypeInput{}
@@ -200,16 +215,13 @@ func (c *Client) addOperationCreateAssetTypeMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

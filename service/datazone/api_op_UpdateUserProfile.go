@@ -52,7 +52,7 @@ type UpdateUserProfileInput struct {
 
 type UpdateUserProfileOutput struct {
 
-	// The details of the user profile in Amazon DataZone.
+	// The results of the UpdateUserProfile action.
 	Details types.UserProfileDetails
 
 	// The identifier of the Amazon DataZone domain in which a user profile is updated.
@@ -161,16 +161,13 @@ func (c *Client) addOperationUpdateUserProfileMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

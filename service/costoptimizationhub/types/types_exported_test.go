@@ -11,6 +11,9 @@ func ExampleResourceDetails_outputUsage() {
 	var union types.ResourceDetails
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.ResourceDetailsMemberAuroraDbClusterStorage:
+		_ = v.Value // Value is types.AuroraDbClusterStorage
+
 	case *types.ResourceDetailsMemberComputeSavingsPlans:
 		_ = v.Value // Value is types.ComputeSavingsPlans
 
@@ -43,6 +46,9 @@ func ExampleResourceDetails_outputUsage() {
 
 	case *types.ResourceDetailsMemberMemoryDbReservedInstances:
 		_ = v.Value // Value is types.MemoryDbReservedInstances
+
+	case *types.ResourceDetailsMemberNatGateway:
+		_ = v.Value // Value is types.NatGateway
 
 	case *types.ResourceDetailsMemberOpenSearchReservedInstances:
 		_ = v.Value // Value is types.OpenSearchReservedInstances
@@ -83,8 +89,10 @@ var _ *types.Ec2Instance
 var _ *types.Ec2InstanceSavingsPlans
 var _ *types.RdsDbInstanceStorage
 var _ *types.EcsService
+var _ *types.NatGateway
 var _ *types.RedshiftReservedInstances
 var _ *types.RdsDbInstance
 var _ *types.ElastiCacheReservedInstances
+var _ *types.AuroraDbClusterStorage
 var _ *types.LambdaFunction
 var _ *types.EbsVolume

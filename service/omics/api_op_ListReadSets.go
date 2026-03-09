@@ -11,7 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves a list of read sets.
+// Retrieves a list of read sets from a sequence store ID and returns the metadata
+// in JSON format.
 func (c *Client) ListReadSets(ctx context.Context, params *ListReadSetsInput, optFns ...func(*Options)) (*ListReadSetsOutput, error) {
 	if params == nil {
 		params = &ListReadSetsInput{}
@@ -154,16 +155,13 @@ func (c *Client) addOperationListReadSetsMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

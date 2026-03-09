@@ -42,7 +42,7 @@ type GetWhatsAppMessageMediaInput struct {
 	// phone-number-id-01234567890123456789012345678901 . Use [GetLinkedWhatsAppBusinessAccount] to find a phone
 	// number's id.
 	//
-	// [GetLinkedWhatsAppBusinessAccount]: https://docs.aws.amazon.com/social-messaging/latest/APIReference/API_GetLinkedWhatsAppBusinessAccountPhoneNumber.html
+	// [GetLinkedWhatsAppBusinessAccount]: https://docs.aws.amazon.com/social-messaging/latest/APIReference/API_GetLinkedWhatsAppBusinessAccount.html
 	//
 	// This member is required.
 	OriginationPhoneNumberId *string
@@ -61,7 +61,7 @@ type GetWhatsAppMessageMediaInput struct {
 
 type GetWhatsAppMessageMediaOutput struct {
 
-	// The file size of the media, in KB.
+	// The size of the media file, in KB.
 	FileSize *int64
 
 	// The MIME type of the media.
@@ -161,16 +161,13 @@ func (c *Client) addOperationGetWhatsAppMessageMediaMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

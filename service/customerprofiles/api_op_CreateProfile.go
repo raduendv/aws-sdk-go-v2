@@ -37,7 +37,7 @@ type CreateProfileInput struct {
 	// This member is required.
 	DomainName *string
 
-	// An account number that you have given to the customer.
+	// An account number that you have assigned to the customer.
 	AccountNumber *string
 
 	// Any additional information relevant to the customer’s profile.
@@ -68,6 +68,9 @@ type CreateProfileInput struct {
 	// The customer’s email address, which has not been specified as a personal or
 	// business address.
 	EmailAddress *string
+
+	// Object that defines the preferred methods of engagement, per channel.
+	EngagementPreferences *types.EngagementPreferences
 
 	// The customer’s first name.
 	FirstName *string
@@ -109,6 +112,9 @@ type CreateProfileInput struct {
 	// The customer’s phone number, which has not been specified as a mobile, home, or
 	// business number.
 	PhoneNumber *string
+
+	// The type of the profile.
+	ProfileType types.ProfileType
 
 	// The customer’s shipping address.
 	ShippingAddress *types.Address
@@ -217,16 +223,13 @@ func (c *Client) addOperationCreateProfileMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

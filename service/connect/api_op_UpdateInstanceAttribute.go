@@ -34,7 +34,11 @@ type UpdateInstanceAttributeInput struct {
 	// The type of attribute.
 	//
 	// Only allowlisted customers can consume USE_CUSTOM_TTS_VOICES. To access this
-	// feature, contact Amazon Web ServicesSupport for allowlisting.
+	// feature, contact Amazon Web Services Support for allowlisting.
+	//
+	// If you set the attribute type as MESSAGE_STREAMING , you need to update the Lex
+	// bot alias resource based policy to include the lex:RecognizeMessageAsync action
+	// for the connect instance ARN resource.
 	//
 	// This member is required.
 	AttributeType types.InstanceAttributeType
@@ -160,16 +164,13 @@ func (c *Client) addOperationUpdateInstanceAttributeMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

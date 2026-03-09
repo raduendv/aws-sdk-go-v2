@@ -13,6 +13,23 @@ import (
 )
 
 // Gets an Amazon DataZone asset type.
+//
+// Asset types define the categories and characteristics of different kinds of
+// data assets within Amazon DataZone.. They determine what metadata fields are
+// required, what operations are possible, and how the asset integrates with other
+// Amazon Web Services services. Asset types can range from built-in types like
+// Amazon S3 buckets and Amazon Web Services Glue tables to custom types defined
+// for specific organizational needs. Understanding asset types is crucial for
+// properly organizing and managing different kinds of data resources.
+//
+// Prerequisites:
+//
+//   - The asset type with identifier must exist in the domain.
+//     ResourceNotFoundException.
+//
+//   - You must have the GetAssetType permission.
+//
+//   - Ensure the domain-identifier value is correct and accessible.
 func (c *Client) GetAssetType(ctx context.Context, params *GetAssetTypeInput, optFns ...func(*Options)) (*GetAssetTypeOutput, error) {
 	if params == nil {
 		params = &GetAssetTypeInput{}
@@ -190,16 +207,13 @@ func (c *Client) addOperationGetAssetTypeMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

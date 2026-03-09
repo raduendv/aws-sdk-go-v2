@@ -38,6 +38,15 @@ type GetSinkInput struct {
 	// This member is required.
 	Identifier *string
 
+	// Specifies whether to include the tags associated with the sink in the response.
+	// When IncludeTags is set to true and the caller has the required permission,
+	// oam:ListTagsForResource , the API will return the tags for the specified
+	// resource. If the caller doesn't have the required permission,
+	// oam:ListTagsForResource , the API will raise an exception.
+	//
+	// The default value is false .
+	IncludeTags *bool
+
 	noSmithyDocumentSerde
 }
 
@@ -149,16 +158,13 @@ func (c *Client) addOperationGetSinkMiddlewares(stack *middleware.Stack, options
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

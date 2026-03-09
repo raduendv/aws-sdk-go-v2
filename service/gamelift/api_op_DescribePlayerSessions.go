@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Retrieves properties for one or more player sessions.
 //
 // This action can be used in the following ways:
@@ -25,9 +27,9 @@ import (
 //
 // To request player sessions, specify either a player session ID, game session
 // ID, or player ID. You can filter this request by player session status. If you
-// provide a specific PlayerSessionId or PlayerId , Amazon GameLift ignores the
-// filter criteria. Use the pagination parameters to retrieve results as a set of
-// sequential pages.
+// provide a specific PlayerSessionId or PlayerId , Amazon GameLift Servers ignores
+// the filter criteria. Use the pagination parameters to retrieve results as a set
+// of sequential pages.
 //
 // If successful, a PlayerSession object is returned for each session that matches
 // the request.
@@ -197,16 +199,13 @@ func (c *Client) addOperationDescribePlayerSessionsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

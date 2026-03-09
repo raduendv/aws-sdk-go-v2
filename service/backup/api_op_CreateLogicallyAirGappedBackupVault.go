@@ -66,6 +66,11 @@ type CreateLogicallyAirGappedBackupVaultInput struct {
 	// alphanumeric or '-_.' characters.
 	CreatorRequestId *string
 
+	// The ARN of the customer-managed KMS key to use for encrypting the logically
+	// air-gapped backup vault. If not specified, the vault will be encrypted with an
+	// Amazon Web Services-owned key managed by Amazon Web Services Backup.
+	EncryptionKeyArn *string
+
 	noSmithyDocumentSerde
 }
 
@@ -162,6 +167,9 @@ func (c *Client) addOperationCreateLogicallyAirGappedBackupVaultMiddlewares(stac
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
+	if err = addIdempotencyToken_opCreateLogicallyAirGappedBackupVaultMiddleware(stack, options); err != nil {
+		return err
+	}
 	if err = addOpCreateLogicallyAirGappedBackupVaultValidationMiddleware(stack); err != nil {
 		return err
 	}
@@ -183,19 +191,49 @@ func (c *Client) addOperationCreateLogicallyAirGappedBackupVaultMiddlewares(stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
+}
+
+type idempotencyToken_initializeOpCreateLogicallyAirGappedBackupVault struct {
+	tokenProvider IdempotencyTokenProvider
+}
+
+func (*idempotencyToken_initializeOpCreateLogicallyAirGappedBackupVault) ID() string {
+	return "OperationIdempotencyTokenAutoFill"
+}
+
+func (m *idempotencyToken_initializeOpCreateLogicallyAirGappedBackupVault) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	if m.tokenProvider == nil {
+		return next.HandleInitialize(ctx, in)
+	}
+
+	input, ok := in.Parameters.(*CreateLogicallyAirGappedBackupVaultInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("expected middleware input to be of type *CreateLogicallyAirGappedBackupVaultInput ")
+	}
+
+	if input.CreatorRequestId == nil {
+		t, err := m.tokenProvider.GetIdempotencyToken()
+		if err != nil {
+			return out, metadata, err
+		}
+		input.CreatorRequestId = &t
+	}
+	return next.HandleInitialize(ctx, in)
+}
+func addIdempotencyToken_opCreateLogicallyAirGappedBackupVaultMiddleware(stack *middleware.Stack, cfg Options) error {
+	return stack.Initialize.Add(&idempotencyToken_initializeOpCreateLogicallyAirGappedBackupVault{tokenProvider: cfg.IdempotencyTokenProvider}, middleware.Before)
 }
 
 func newServiceMetadataMiddleware_opCreateLogicallyAirGappedBackupVault(region string) *awsmiddleware.RegisterServiceMetadata {

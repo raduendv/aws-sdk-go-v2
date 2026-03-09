@@ -40,8 +40,7 @@ type DescribePipelineExecutionInput struct {
 
 type DescribePipelineExecutionOutput struct {
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	CreatedBy *types.UserContext
 
 	// The time when the pipeline execution was created.
@@ -50,12 +49,14 @@ type DescribePipelineExecutionOutput struct {
 	// If the execution failed, a message describing why.
 	FailureReason *string
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	LastModifiedBy *types.UserContext
 
 	// The time when the pipeline execution was modified last.
 	LastModifiedTime *time.Time
+
+	//  The MLflow configuration of the pipeline execution.
+	MLflowConfig *types.MLflowConfiguration
 
 	// The parallelism configuration applied to the pipeline.
 	ParallelismConfiguration *types.ParallelismConfiguration
@@ -77,6 +78,9 @@ type DescribePipelineExecutionOutput struct {
 
 	// Specifies the names of the experiment and trial created by a pipeline.
 	PipelineExperimentConfig *types.PipelineExperimentConfig
+
+	// The ID of the pipeline version.
+	PipelineVersionId *int64
 
 	// The selective execution configuration applied to the pipeline run.
 	SelectiveExecutionConfig *types.SelectiveExecutionConfig
@@ -175,16 +179,13 @@ func (c *Client) addOperationDescribePipelineExecutionMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

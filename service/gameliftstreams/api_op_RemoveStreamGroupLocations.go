@@ -10,16 +10,19 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	Removes a set of remote locations from this stream group. Amazon GameLift
+//	Removes a set of remote locations from this stream group. To remove a
 //
-// Streams works to release allocated compute resources in these location. Thus,
-// stream sessions can no longer start from these locations by using this stream
+// location, the stream group must be in ACTIVE status. When you remove a
+// location, Amazon GameLift Streams releases allocated compute resources in that
+// location. Stream sessions can no longer start from removed locations in a stream
 // group. Amazon GameLift Streams also deletes the content files of all associated
-// applications that were in Amazon GameLift Streams's internal S3 bucket at this
-// location.
+// applications that were in Amazon GameLift Streams's internal Amazon S3 bucket at
+// this location.
 //
-// You cannot remove the region where you initially created this stream group,
-// known as the primary location. However, you can set the stream capacity to zero.
+// You cannot remove the Amazon Web Services Region location where you initially
+// created this stream group, known as the primary location. However, you can set
+// the stream capacity to zero to avoid incurring costs for allocated compute
+// resources in that location.
 func (c *Client) RemoveStreamGroupLocations(ctx context.Context, params *RemoveStreamGroupLocationsInput, optFns ...func(*Options)) (*RemoveStreamGroupLocationsOutput, error) {
 	if params == nil {
 		params = &RemoveStreamGroupLocationsInput{}
@@ -39,19 +42,22 @@ type RemoveStreamGroupLocationsInput struct {
 
 	//  A stream group to remove the specified locations from.
 	//
-	// This value is a Amazon Resource Name (ARN) that uniquely identifies the stream
-	// group resource. Format example: sg-1AB2C3De4 .
+	// This value is an [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource.
+	// Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
+	// Example ID: sg-1AB2C3De4 .
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
 	// This member is required.
 	Identifier *string
 
-	//  A set of locations to remove this stream group.
+	//  A set of locations to remove this stream group. For example, us-east-1 .
 	//
-	// A set of location names. For example, us-east-1 . For a complete list of
-	// locations that Amazon GameLift Streams supports, refer to [Regions and quotas]in the Amazon
-	// GameLift Streams Developer Guide.
+	// For a complete list of locations that Amazon GameLift Streams supports, refer
+	// to [Regions, quotas, and limitations]in the Amazon GameLift Streams Developer Guide.
 	//
-	// [Regions and quotas]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
+	// [Regions, quotas, and limitations]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/regions-quotas.html
 	//
 	// This member is required.
 	Locations []string
@@ -154,16 +160,13 @@ func (c *Client) addOperationRemoveStreamGroupLocationsMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

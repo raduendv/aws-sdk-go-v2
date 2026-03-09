@@ -12,7 +12,8 @@ import (
 	"time"
 )
 
-// Returns a list of third-party applications in a specific security profile.
+// Returns a list of third-party applications or MCP Servers in a specific
+// security profile.
 func (c *Client) ListSecurityProfileApplications(ctx context.Context, params *ListSecurityProfileApplicationsInput, optFns ...func(*Options)) (*ListSecurityProfileApplicationsOutput, error) {
 	if params == nil {
 		params = &ListSecurityProfileApplicationsInput{}
@@ -161,16 +162,13 @@ func (c *Client) addOperationListSecurityProfileApplicationsMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

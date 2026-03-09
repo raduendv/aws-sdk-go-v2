@@ -4736,9 +4736,27 @@ func awsAwsjson11_serializeDocumentAndroidPaths(v []string, value smithyjson.Val
 	return nil
 }
 
+func awsAwsjson11_serializeDocumentAuxiliaryAppArnList(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
 func awsAwsjson11_serializeDocumentCreateRemoteAccessSessionConfiguration(v *types.CreateRemoteAccessSessionConfiguration, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.AuxiliaryApps != nil {
+		ok := object.Key("auxiliaryApps")
+		if err := awsAwsjson11_serializeDocumentAuxiliaryAppArnList(v.AuxiliaryApps, ok); err != nil {
+			return err
+		}
+	}
 
 	if len(v.BillingMethod) > 0 {
 		ok := object.Key("billingMethod")
@@ -4882,6 +4900,36 @@ func awsAwsjson11_serializeDocumentDeviceSelectionConfiguration(v *types.DeviceS
 		ok.Integer(*v.MaxDevices)
 	}
 
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentEnvironmentVariable(v *types.EnvironmentVariable, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Name != nil {
+		ok := object.Key("name")
+		ok.String(*v.Name)
+	}
+
+	if v.Value != nil {
+		ok := object.Key("value")
+		ok.String(*v.Value)
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentEnvironmentVariables(v []types.EnvironmentVariable, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsAwsjson11_serializeDocumentEnvironmentVariable(&v[i], av); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -5083,6 +5131,18 @@ func awsAwsjson11_serializeDocumentScheduleRunConfiguration(v *types.ScheduleRun
 		if err := awsAwsjson11_serializeDocumentDeviceProxy(v.DeviceProxy, ok); err != nil {
 			return err
 		}
+	}
+
+	if v.EnvironmentVariables != nil {
+		ok := object.Key("environmentVariables")
+		if err := awsAwsjson11_serializeDocumentEnvironmentVariables(v.EnvironmentVariables, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ExecutionRoleArn != nil {
+		ok := object.Key("executionRoleArn")
+		ok.String(*v.ExecutionRoleArn)
 	}
 
 	if v.ExtraDataPackageArn != nil {
@@ -5450,6 +5510,18 @@ func awsAwsjson11_serializeOpDocumentCreateProjectInput(v *CreateProjectInput, v
 		ok.Integer(*v.DefaultJobTimeoutMinutes)
 	}
 
+	if v.EnvironmentVariables != nil {
+		ok := object.Key("environmentVariables")
+		if err := awsAwsjson11_serializeDocumentEnvironmentVariables(v.EnvironmentVariables, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ExecutionRoleArn != nil {
+		ok := object.Key("executionRoleArn")
+		ok.String(*v.ExecutionRoleArn)
+	}
+
 	if v.Name != nil {
 		ok := object.Key("name")
 		ok.String(*v.Name)
@@ -5469,9 +5541,9 @@ func awsAwsjson11_serializeOpDocumentCreateRemoteAccessSessionInput(v *CreateRem
 	object := value.Object()
 	defer object.Close()
 
-	if v.ClientId != nil {
-		ok := object.Key("clientId")
-		ok.String(*v.ClientId)
+	if v.AppArn != nil {
+		ok := object.Key("appArn")
+		ok.String(*v.AppArn)
 	}
 
 	if v.Configuration != nil {
@@ -5506,29 +5578,9 @@ func awsAwsjson11_serializeOpDocumentCreateRemoteAccessSessionInput(v *CreateRem
 		ok.String(*v.ProjectArn)
 	}
 
-	if v.RemoteDebugEnabled != nil {
-		ok := object.Key("remoteDebugEnabled")
-		ok.Boolean(*v.RemoteDebugEnabled)
-	}
-
-	if v.RemoteRecordAppArn != nil {
-		ok := object.Key("remoteRecordAppArn")
-		ok.String(*v.RemoteRecordAppArn)
-	}
-
-	if v.RemoteRecordEnabled != nil {
-		ok := object.Key("remoteRecordEnabled")
-		ok.Boolean(*v.RemoteRecordEnabled)
-	}
-
 	if v.SkipAppResign != nil {
 		ok := object.Key("skipAppResign")
 		ok.Boolean(*v.SkipAppResign)
-	}
-
-	if v.SshPublicKey != nil {
-		ok := object.Key("sshPublicKey")
-		ok.String(*v.SshPublicKey)
 	}
 
 	return nil
@@ -5787,6 +5839,11 @@ func awsAwsjson11_serializeOpDocumentGetDevicePoolCompatibilityInput(v *GetDevic
 	if v.DevicePoolArn != nil {
 		ok := object.Key("devicePoolArn")
 		ok.String(*v.DevicePoolArn)
+	}
+
+	if v.ProjectArn != nil {
+		ok := object.Key("projectArn")
+		ok.String(*v.ProjectArn)
 	}
 
 	if v.Test != nil {
@@ -6808,6 +6865,18 @@ func awsAwsjson11_serializeOpDocumentUpdateProjectInput(v *UpdateProjectInput, v
 	if v.DefaultJobTimeoutMinutes != nil {
 		ok := object.Key("defaultJobTimeoutMinutes")
 		ok.Integer(*v.DefaultJobTimeoutMinutes)
+	}
+
+	if v.EnvironmentVariables != nil {
+		ok := object.Key("environmentVariables")
+		if err := awsAwsjson11_serializeDocumentEnvironmentVariables(v.EnvironmentVariables, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ExecutionRoleArn != nil {
+		ok := object.Key("executionRoleArn")
+		ok.String(*v.ExecutionRoleArn)
 	}
 
 	if v.Name != nil {

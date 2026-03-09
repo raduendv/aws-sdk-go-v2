@@ -103,6 +103,9 @@ type UpdateAppInput struct {
 	// The Amazon Resource Name (ARN) of the IAM service role for the Amplify app.
 	IamServiceRoleArn *string
 
+	// Describes the configuration details that apply to the jobs for an Amplify app.
+	JobConfig *types.JobConfig
+
 	// The name for an Amplify app.
 	Name *string
 
@@ -241,16 +244,13 @@ func (c *Client) addOperationUpdateAppMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

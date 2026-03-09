@@ -35,7 +35,8 @@ type DescribeGlobalSettingsInput struct {
 
 type DescribeGlobalSettingsOutput struct {
 
-	// The status of the flag isCrossAccountBackupEnabled .
+	// The status of the flags isCrossAccountBackupEnabled , isMpaEnabled ('Mpa'
+	// refers to multi-party approval), and isDelegatedAdministratorEnabled .
 	GlobalSettings map[string]string
 
 	// The date and time that the flag isCrossAccountBackupEnabled was last updated.
@@ -135,16 +136,13 @@ func (c *Client) addOperationDescribeGlobalSettingsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

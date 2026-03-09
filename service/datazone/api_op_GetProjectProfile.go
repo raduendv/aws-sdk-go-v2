@@ -65,6 +65,9 @@ type GetProjectProfileOutput struct {
 	// This member is required.
 	Name *string
 
+	// Specifies whether custom project resource tags are supported.
+	AllowCustomProjectResourceTags *bool
+
 	// The timestamp of when the project profile was created.
 	CreatedAt *time.Time
 
@@ -79,6 +82,13 @@ type GetProjectProfileOutput struct {
 
 	// The timestamp of when project profile was last updated.
 	LastUpdatedAt *time.Time
+
+	// The resource tags of the project profile.
+	ProjectResourceTags []types.ResourceTagParameter
+
+	// Field viewable through the UI that provides a project user with the allowed
+	// resource tag specifications.
+	ProjectResourceTagsDescription *string
 
 	// The status of the project profile.
 	Status types.Status
@@ -177,16 +187,13 @@ func (c *Client) addOperationGetProjectProfileMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

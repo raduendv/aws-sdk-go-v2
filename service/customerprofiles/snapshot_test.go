@@ -122,6 +122,18 @@ func TestCheckSnapshot_CreateDomain(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateDomainLayout(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateDomainLayout(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateDomainLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateEventStream(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateEventStream(context.Background(), nil, func(o *Options) {
@@ -170,6 +182,18 @@ func TestCheckSnapshot_CreateProfile(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateRecommender")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateSegmentDefinition(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateSegmentDefinition(context.Background(), nil, func(o *Options) {
@@ -206,6 +230,18 @@ func TestCheckSnapshot_CreateSegmentSnapshot(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateUploadJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateUploadJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateUploadJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteCalculatedAttributeDefinition(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteCalculatedAttributeDefinition(context.Background(), nil, func(o *Options) {
@@ -223,6 +259,30 @@ func TestCheckSnapshot_DeleteDomain(t *testing.T) {
 	_, err := svc.DeleteDomain(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteDomain")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteDomainLayout(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteDomainLayout(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteDomainLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteDomainObjectType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteDomainObjectType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteDomainObjectType")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -314,6 +374,18 @@ func TestCheckSnapshot_DeleteProfileObjectType(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteRecommender")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteSegmentDefinition(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteSegmentDefinition(context.Background(), nil, func(o *Options) {
@@ -398,6 +470,30 @@ func TestCheckSnapshot_GetDomain(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetDomainLayout(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDomainLayout(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetDomainLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetDomainObjectType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDomainObjectType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetDomainObjectType")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetEventStream(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetEventStream(context.Background(), nil, func(o *Options) {
@@ -458,6 +554,30 @@ func TestCheckSnapshot_GetMatches(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetObjectTypeAttributeStatistics(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetObjectTypeAttributeStatistics(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetObjectTypeAttributeStatistics")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetProfileHistoryRecord(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetProfileHistoryRecord(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetProfileHistoryRecord")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetProfileObjectType(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetProfileObjectType(context.Background(), nil, func(o *Options) {
@@ -475,6 +595,30 @@ func TestCheckSnapshot_GetProfileObjectTypeTemplate(t *testing.T) {
 	_, err := svc.GetProfileObjectTypeTemplate(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetProfileObjectTypeTemplate")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetProfileRecommendations(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetProfileRecommendations(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetProfileRecommendations")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetRecommender")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -542,6 +686,30 @@ func TestCheckSnapshot_GetSimilarProfiles(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetUploadJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetUploadJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetUploadJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetUploadJobPath(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetUploadJobPath(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetUploadJobPath")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetWorkflow(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetWorkflow(context.Background(), nil, func(o *Options) {
@@ -595,6 +763,30 @@ func TestCheckSnapshot_ListCalculatedAttributesForProfile(t *testing.T) {
 	_, err := svc.ListCalculatedAttributesForProfile(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListCalculatedAttributesForProfile")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListDomainLayouts(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListDomainLayouts(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListDomainLayouts")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListDomainObjectTypes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListDomainObjectTypes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListDomainObjectTypes")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -674,11 +866,35 @@ func TestCheckSnapshot_ListObjectTypeAttributes(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListObjectTypeAttributeValues(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListObjectTypeAttributeValues(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListObjectTypeAttributeValues")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListProfileAttributeValues(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListProfileAttributeValues(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListProfileAttributeValues")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListProfileHistoryRecords(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListProfileHistoryRecords(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListProfileHistoryRecords")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -722,6 +938,30 @@ func TestCheckSnapshot_ListProfileObjectTypeTemplates(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListRecommenderRecipes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListRecommenderRecipes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListRecommenderRecipes")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListRecommenders(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListRecommenders(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListRecommenders")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListRuleBasedMatches(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListRuleBasedMatches(context.Background(), nil, func(o *Options) {
@@ -758,6 +998,18 @@ func TestCheckSnapshot_ListTagsForResource(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListUploadJobs(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListUploadJobs(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListUploadJobs")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListWorkflows(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListWorkflows(context.Background(), nil, func(o *Options) {
@@ -775,6 +1027,18 @@ func TestCheckSnapshot_MergeProfiles(t *testing.T) {
 	_, err := svc.MergeProfiles(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "MergeProfiles")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_PutDomainObjectType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutDomainObjectType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutDomainObjectType")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -830,6 +1094,54 @@ func TestCheckSnapshot_SearchProfiles(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_StartRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StartRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "StartRecommender")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_StartUploadJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StartUploadJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "StartUploadJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_StopRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StopRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "StopRecommender")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_StopUploadJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StopUploadJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "StopUploadJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_TagResource(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.TagResource(context.Background(), nil, func(o *Options) {
@@ -878,6 +1190,18 @@ func TestCheckSnapshot_UpdateDomain(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateDomainLayout(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateDomainLayout(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateDomainLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateEventTrigger(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateEventTrigger(context.Background(), nil, func(o *Options) {
@@ -895,6 +1219,18 @@ func TestCheckSnapshot_UpdateProfile(t *testing.T) {
 	_, err := svc.UpdateProfile(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdateProfile")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateRecommender")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -961,6 +1297,18 @@ func TestUpdateSnapshot_CreateDomain(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateDomainLayout(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateDomainLayout(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateDomainLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateEventStream(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateEventStream(context.Background(), nil, func(o *Options) {
@@ -1009,6 +1357,18 @@ func TestUpdateSnapshot_CreateProfile(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateRecommender")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateSegmentDefinition(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateSegmentDefinition(context.Background(), nil, func(o *Options) {
@@ -1045,6 +1405,18 @@ func TestUpdateSnapshot_CreateSegmentSnapshot(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateUploadJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateUploadJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateUploadJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteCalculatedAttributeDefinition(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteCalculatedAttributeDefinition(context.Background(), nil, func(o *Options) {
@@ -1062,6 +1434,30 @@ func TestUpdateSnapshot_DeleteDomain(t *testing.T) {
 	_, err := svc.DeleteDomain(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteDomain")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteDomainLayout(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteDomainLayout(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteDomainLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteDomainObjectType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteDomainObjectType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteDomainObjectType")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1153,6 +1549,18 @@ func TestUpdateSnapshot_DeleteProfileObjectType(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteRecommender")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteSegmentDefinition(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteSegmentDefinition(context.Background(), nil, func(o *Options) {
@@ -1237,6 +1645,30 @@ func TestUpdateSnapshot_GetDomain(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetDomainLayout(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDomainLayout(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetDomainLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetDomainObjectType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDomainObjectType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetDomainObjectType")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetEventStream(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetEventStream(context.Background(), nil, func(o *Options) {
@@ -1297,6 +1729,30 @@ func TestUpdateSnapshot_GetMatches(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetObjectTypeAttributeStatistics(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetObjectTypeAttributeStatistics(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetObjectTypeAttributeStatistics")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetProfileHistoryRecord(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetProfileHistoryRecord(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetProfileHistoryRecord")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetProfileObjectType(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetProfileObjectType(context.Background(), nil, func(o *Options) {
@@ -1314,6 +1770,30 @@ func TestUpdateSnapshot_GetProfileObjectTypeTemplate(t *testing.T) {
 	_, err := svc.GetProfileObjectTypeTemplate(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetProfileObjectTypeTemplate")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetProfileRecommendations(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetProfileRecommendations(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetProfileRecommendations")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetRecommender")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1381,6 +1861,30 @@ func TestUpdateSnapshot_GetSimilarProfiles(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetUploadJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetUploadJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetUploadJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetUploadJobPath(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetUploadJobPath(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetUploadJobPath")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetWorkflow(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetWorkflow(context.Background(), nil, func(o *Options) {
@@ -1434,6 +1938,30 @@ func TestUpdateSnapshot_ListCalculatedAttributesForProfile(t *testing.T) {
 	_, err := svc.ListCalculatedAttributesForProfile(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListCalculatedAttributesForProfile")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListDomainLayouts(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListDomainLayouts(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListDomainLayouts")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListDomainObjectTypes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListDomainObjectTypes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListDomainObjectTypes")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1513,11 +2041,35 @@ func TestUpdateSnapshot_ListObjectTypeAttributes(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListObjectTypeAttributeValues(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListObjectTypeAttributeValues(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListObjectTypeAttributeValues")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListProfileAttributeValues(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListProfileAttributeValues(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListProfileAttributeValues")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListProfileHistoryRecords(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListProfileHistoryRecords(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListProfileHistoryRecords")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1561,6 +2113,30 @@ func TestUpdateSnapshot_ListProfileObjectTypeTemplates(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListRecommenderRecipes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListRecommenderRecipes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListRecommenderRecipes")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListRecommenders(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListRecommenders(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListRecommenders")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListRuleBasedMatches(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListRuleBasedMatches(context.Background(), nil, func(o *Options) {
@@ -1597,6 +2173,18 @@ func TestUpdateSnapshot_ListTagsForResource(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListUploadJobs(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListUploadJobs(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListUploadJobs")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListWorkflows(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListWorkflows(context.Background(), nil, func(o *Options) {
@@ -1614,6 +2202,18 @@ func TestUpdateSnapshot_MergeProfiles(t *testing.T) {
 	_, err := svc.MergeProfiles(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "MergeProfiles")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_PutDomainObjectType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutDomainObjectType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutDomainObjectType")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1669,6 +2269,54 @@ func TestUpdateSnapshot_SearchProfiles(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_StartRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StartRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "StartRecommender")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_StartUploadJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StartUploadJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "StartUploadJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_StopRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StopRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "StopRecommender")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_StopUploadJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StopUploadJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "StopUploadJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_TagResource(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.TagResource(context.Background(), nil, func(o *Options) {
@@ -1717,6 +2365,18 @@ func TestUpdateSnapshot_UpdateDomain(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_UpdateDomainLayout(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateDomainLayout(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateDomainLayout")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_UpdateEventTrigger(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateEventTrigger(context.Background(), nil, func(o *Options) {
@@ -1734,6 +2394,18 @@ func TestUpdateSnapshot_UpdateProfile(t *testing.T) {
 	_, err := svc.UpdateProfile(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateProfile")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateRecommender(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateRecommender(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateRecommender")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

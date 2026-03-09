@@ -49,6 +49,9 @@ type UpdateLicenseConfigurationInput struct {
 	// New hard limit of the number of available licenses.
 	LicenseCountHardLimit *bool
 
+	// License configuration expiry time.
+	LicenseExpiry *int64
+
 	// New license rule. The only rule that you can add after you create a license
 	// configuration is licenseAffinityToHost.
 	LicenseRules []string
@@ -157,16 +160,13 @@ func (c *Client) addOperationUpdateLicenseConfigurationMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

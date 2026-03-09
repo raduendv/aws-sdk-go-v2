@@ -218,6 +218,18 @@ func TestCheckSnapshot_CreateBulkImportJob(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateComputationModel(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateComputationModel(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateComputationModel")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateDashboard(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateDashboard(context.Background(), nil, func(o *Options) {
@@ -319,6 +331,30 @@ func TestCheckSnapshot_DeleteAssetModelCompositeModel(t *testing.T) {
 	_, err := svc.DeleteAssetModelCompositeModel(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteAssetModelCompositeModel")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteAssetModelInterfaceRelationship(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteAssetModelInterfaceRelationship(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteAssetModelInterfaceRelationship")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteComputationModel(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteComputationModel(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteComputationModel")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -470,6 +506,18 @@ func TestCheckSnapshot_DescribeAssetModelCompositeModel(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeAssetModelInterfaceRelationship(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeAssetModelInterfaceRelationship(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeAssetModelInterfaceRelationship")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeAssetProperty(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeAssetProperty(context.Background(), nil, func(o *Options) {
@@ -487,6 +535,30 @@ func TestCheckSnapshot_DescribeBulkImportJob(t *testing.T) {
 	_, err := svc.DescribeBulkImportJob(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeBulkImportJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeComputationModel(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeComputationModel(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeComputationModel")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeComputationModelExecutionSummary(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeComputationModelExecutionSummary(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeComputationModelExecutionSummary")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -523,6 +595,18 @@ func TestCheckSnapshot_DescribeDefaultEncryptionConfiguration(t *testing.T) {
 	_, err := svc.DescribeDefaultEncryptionConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeDefaultEncryptionConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeExecution(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeExecution(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeExecution")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -854,6 +938,42 @@ func TestCheckSnapshot_ListCompositionRelationships(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListComputationModelDataBindingUsages(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListComputationModelDataBindingUsages(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListComputationModelDataBindingUsages")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListComputationModelResolveToResources(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListComputationModelResolveToResources(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListComputationModelResolveToResources")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListComputationModels(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListComputationModels(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListComputationModels")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListDashboards(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListDashboards(context.Background(), nil, func(o *Options) {
@@ -878,11 +998,35 @@ func TestCheckSnapshot_ListDatasets(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListExecutions(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListExecutions(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListExecutions")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListGateways(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListGateways(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListGateways")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListInterfaceRelationships(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListInterfaceRelationships(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListInterfaceRelationships")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -943,6 +1087,18 @@ func TestCheckSnapshot_ListTimeSeries(t *testing.T) {
 	_, err := svc.ListTimeSeries(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListTimeSeries")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_PutAssetModelInterfaceRelationship(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutAssetModelInterfaceRelationship(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutAssetModelInterfaceRelationship")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1063,6 +1219,18 @@ func TestCheckSnapshot_UpdateAssetProperty(t *testing.T) {
 	_, err := svc.UpdateAssetProperty(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdateAssetProperty")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateComputationModel(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateComputationModel(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateComputationModel")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1297,6 +1465,18 @@ func TestUpdateSnapshot_CreateBulkImportJob(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateComputationModel(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateComputationModel(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateComputationModel")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateDashboard(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateDashboard(context.Background(), nil, func(o *Options) {
@@ -1398,6 +1578,30 @@ func TestUpdateSnapshot_DeleteAssetModelCompositeModel(t *testing.T) {
 	_, err := svc.DeleteAssetModelCompositeModel(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteAssetModelCompositeModel")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteAssetModelInterfaceRelationship(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteAssetModelInterfaceRelationship(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteAssetModelInterfaceRelationship")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteComputationModel(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteComputationModel(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteComputationModel")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1549,6 +1753,18 @@ func TestUpdateSnapshot_DescribeAssetModelCompositeModel(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeAssetModelInterfaceRelationship(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeAssetModelInterfaceRelationship(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeAssetModelInterfaceRelationship")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeAssetProperty(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeAssetProperty(context.Background(), nil, func(o *Options) {
@@ -1566,6 +1782,30 @@ func TestUpdateSnapshot_DescribeBulkImportJob(t *testing.T) {
 	_, err := svc.DescribeBulkImportJob(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeBulkImportJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeComputationModel(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeComputationModel(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeComputationModel")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeComputationModelExecutionSummary(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeComputationModelExecutionSummary(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeComputationModelExecutionSummary")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1602,6 +1842,18 @@ func TestUpdateSnapshot_DescribeDefaultEncryptionConfiguration(t *testing.T) {
 	_, err := svc.DescribeDefaultEncryptionConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeDefaultEncryptionConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeExecution(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeExecution(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeExecution")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1933,6 +2185,42 @@ func TestUpdateSnapshot_ListCompositionRelationships(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListComputationModelDataBindingUsages(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListComputationModelDataBindingUsages(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListComputationModelDataBindingUsages")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListComputationModelResolveToResources(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListComputationModelResolveToResources(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListComputationModelResolveToResources")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListComputationModels(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListComputationModels(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListComputationModels")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListDashboards(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListDashboards(context.Background(), nil, func(o *Options) {
@@ -1957,11 +2245,35 @@ func TestUpdateSnapshot_ListDatasets(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListExecutions(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListExecutions(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListExecutions")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListGateways(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListGateways(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListGateways")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListInterfaceRelationships(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListInterfaceRelationships(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListInterfaceRelationships")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2022,6 +2334,18 @@ func TestUpdateSnapshot_ListTimeSeries(t *testing.T) {
 	_, err := svc.ListTimeSeries(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListTimeSeries")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_PutAssetModelInterfaceRelationship(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutAssetModelInterfaceRelationship(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutAssetModelInterfaceRelationship")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2142,6 +2466,18 @@ func TestUpdateSnapshot_UpdateAssetProperty(t *testing.T) {
 	_, err := svc.UpdateAssetProperty(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateAssetProperty")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateComputationModel(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateComputationModel(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateComputationModel")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

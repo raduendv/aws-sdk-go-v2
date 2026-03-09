@@ -13,23 +13,13 @@ import (
 	smithyio "github.com/aws/smithy-go/io"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"math"
 	"strconv"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpBatchCreateRumMetricDefinitions struct {
 }
@@ -3489,6 +3479,15 @@ func awsRestjson1_deserializeDocumentAppMonitor(v **types.AppMonitor, value inte
 				sv.Name = ptr.String(jtv)
 			}
 
+		case "Platform":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AppMonitorPlatform to be of type string, got %T instead", value)
+				}
+				sv.Platform = types.AppMonitorPlatform(jtv)
+			}
+
 		case "State":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -3725,6 +3724,15 @@ func awsRestjson1_deserializeDocumentAppMonitorSummary(v **types.AppMonitorSumma
 					return fmt.Errorf("expected AppMonitorName to be of type string, got %T instead", value)
 				}
 				sv.Name = ptr.String(jtv)
+			}
+
+		case "Platform":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AppMonitorPlatform to be of type string, got %T instead", value)
+				}
+				sv.Platform = types.AppMonitorPlatform(jtv)
 			}
 
 		case "State":

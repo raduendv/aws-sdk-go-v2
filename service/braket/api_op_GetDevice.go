@@ -80,7 +80,7 @@ type GetDeviceOutput struct {
 	// This member is required.
 	ProviderName *string
 
-	// List of information about tasks and jobs queued on a device.
+	// The number of quantum tasks and hybrid jobs currently queued on the device.
 	DeviceQueueInfo []types.DeviceQueueInfo
 
 	// Metadata pertaining to the operation's result.
@@ -177,16 +177,13 @@ func (c *Client) addOperationGetDeviceMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

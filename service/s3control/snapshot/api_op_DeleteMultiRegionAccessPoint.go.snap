@@ -1,6 +1,5 @@
 DeleteMultiRegionAccessPoint
 	Initialize stack step
-		spanInitializeStart
 		S3Shared:ARNLookup
 		S3Control:BackfillInput
 		RegisterServiceMetadata
@@ -8,9 +7,7 @@ DeleteMultiRegionAccessPoint
 		legacyEndpointContextSetter
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		stashOperationInput
 		ResolveEndpoint
 		setArnFieldName
@@ -26,10 +23,11 @@ DeleteMultiRegionAccessPoint
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

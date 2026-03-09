@@ -19,16 +19,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpAnalyzeDocument struct {
 }
@@ -6068,6 +6059,40 @@ func awsAwsjson11_deserializeDocumentGeometry(v **types.Geometry, value interfac
 		case "Polygon":
 			if err := awsAwsjson11_deserializeDocumentPolygon(&sv.Polygon, value); err != nil {
 				return err
+			}
+
+		case "RotationAngle":
+			if value != nil {
+				switch jtv := value.(type) {
+				case json.Number:
+					f64, err := jtv.Float64()
+					if err != nil {
+						return err
+					}
+					sv.RotationAngle = ptr.Float32(float32(f64))
+
+				case string:
+					var f64 float64
+					switch {
+					case strings.EqualFold(jtv, "NaN"):
+						f64 = math.NaN()
+
+					case strings.EqualFold(jtv, "Infinity"):
+						f64 = math.Inf(1)
+
+					case strings.EqualFold(jtv, "-Infinity"):
+						f64 = math.Inf(-1)
+
+					default:
+						return fmt.Errorf("unknown JSON number value: %s", jtv)
+
+					}
+					sv.RotationAngle = ptr.Float32(float32(f64))
+
+				default:
+					return fmt.Errorf("expected Angle to be a JSON Number, got %T instead", value)
+
+				}
 			}
 
 		default:

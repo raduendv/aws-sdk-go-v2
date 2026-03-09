@@ -116,6 +116,9 @@ type DescribeOptimizationJobOutput struct {
 	// If the optimization job status is FAILED , the reason for the failure.
 	FailureReason *string
 
+	// The maximum number of instances to use for the optimization job.
+	MaxInstanceCount *int32
+
 	// The time when the optimization job finished processing.
 	OptimizationEndTime *time.Time
 
@@ -225,16 +228,13 @@ func (c *Client) addOperationDescribeOptimizationJobMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

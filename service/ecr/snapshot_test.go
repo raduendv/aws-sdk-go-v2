@@ -230,6 +230,30 @@ func TestCheckSnapshot_DeleteRepositoryPolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteSigningConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteSigningConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteSigningConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeregisterPullTimeUpdateExclusion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeregisterPullTimeUpdateExclusion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeregisterPullTimeUpdateExclusion")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeImageReplicationStatus(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeImageReplicationStatus(context.Background(), nil, func(o *Options) {
@@ -259,6 +283,18 @@ func TestCheckSnapshot_DescribeImageScanFindings(t *testing.T) {
 	_, err := svc.DescribeImageScanFindings(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeImageScanFindings")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeImageSigningStatus(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeImageSigningStatus(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeImageSigningStatus")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -410,6 +446,18 @@ func TestCheckSnapshot_GetRepositoryPolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetSigningConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetSigningConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetSigningConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_InitiateLayerUpload(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.InitiateLayerUpload(context.Background(), nil, func(o *Options) {
@@ -422,11 +470,35 @@ func TestCheckSnapshot_InitiateLayerUpload(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListImageReferrers(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListImageReferrers(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListImageReferrers")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListImages(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListImages(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListImages")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListPullTimeUpdateExclusions(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListPullTimeUpdateExclusions(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListPullTimeUpdateExclusions")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -542,6 +614,30 @@ func TestCheckSnapshot_PutReplicationConfiguration(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_PutSigningConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutSigningConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutSigningConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_RegisterPullTimeUpdateExclusion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RegisterPullTimeUpdateExclusion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "RegisterPullTimeUpdateExclusion")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_SetRepositoryPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.SetRepositoryPolicy(context.Background(), nil, func(o *Options) {
@@ -595,6 +691,18 @@ func TestCheckSnapshot_UntagResource(t *testing.T) {
 	_, err := svc.UntagResource(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UntagResource")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateImageStorageClass(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateImageStorageClass(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateImageStorageClass")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -817,6 +925,30 @@ func TestUpdateSnapshot_DeleteRepositoryPolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteSigningConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteSigningConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteSigningConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeregisterPullTimeUpdateExclusion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeregisterPullTimeUpdateExclusion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeregisterPullTimeUpdateExclusion")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeImageReplicationStatus(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeImageReplicationStatus(context.Background(), nil, func(o *Options) {
@@ -846,6 +978,18 @@ func TestUpdateSnapshot_DescribeImageScanFindings(t *testing.T) {
 	_, err := svc.DescribeImageScanFindings(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeImageScanFindings")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeImageSigningStatus(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeImageSigningStatus(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeImageSigningStatus")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -997,6 +1141,18 @@ func TestUpdateSnapshot_GetRepositoryPolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetSigningConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetSigningConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetSigningConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_InitiateLayerUpload(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.InitiateLayerUpload(context.Background(), nil, func(o *Options) {
@@ -1009,11 +1165,35 @@ func TestUpdateSnapshot_InitiateLayerUpload(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListImageReferrers(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListImageReferrers(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListImageReferrers")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListImages(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListImages(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListImages")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListPullTimeUpdateExclusions(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListPullTimeUpdateExclusions(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListPullTimeUpdateExclusions")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1129,6 +1309,30 @@ func TestUpdateSnapshot_PutReplicationConfiguration(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_PutSigningConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutSigningConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutSigningConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_RegisterPullTimeUpdateExclusion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RegisterPullTimeUpdateExclusion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "RegisterPullTimeUpdateExclusion")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_SetRepositoryPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.SetRepositoryPolicy(context.Background(), nil, func(o *Options) {
@@ -1182,6 +1386,18 @@ func TestUpdateSnapshot_UntagResource(t *testing.T) {
 	_, err := svc.UntagResource(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UntagResource")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateImageStorageClass(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateImageStorageClass(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateImageStorageClass")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

@@ -34,6 +34,8 @@ import (
 //
 // If the user is not assigned to a launch or experiment, they are served the
 // default variation.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) BatchEvaluateFeature(ctx context.Context, params *BatchEvaluateFeatureInput, optFns ...func(*Options)) (*BatchEvaluateFeatureOutput, error) {
 	if params == nil {
 		params = &BatchEvaluateFeatureInput{}
@@ -54,12 +56,16 @@ type BatchEvaluateFeatureInput struct {
 	// The name or ARN of the project that contains the feature being evaluated.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	// An array of structures, where each structure assigns a feature variation to one
 	// user session.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Requests []types.EvaluationRequest
 
 	noSmithyDocumentSerde
@@ -69,6 +75,8 @@ type BatchEvaluateFeatureOutput struct {
 
 	// An array of structures, where each structure displays the results of one
 	// feature evaluation assignment to one user session.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Results []types.EvaluationResult
 
 	// Metadata pertaining to the operation's result.
@@ -168,16 +176,13 @@ func (c *Client) addOperationBatchEvaluateFeatureMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

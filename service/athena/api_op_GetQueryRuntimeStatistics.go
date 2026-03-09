@@ -16,9 +16,9 @@ import (
 // from the Timeline section of the response object are available as soon as QueryExecutionStatus$State is
 // in a SUCCEEDED or FAILED state. The remaining non-timeline statistics in the
 // response (like stage-level input and output row count and data size) are updated
-// asynchronously and may not be available immediately after a query completes. The
-// non-timeline statistics are also not included when a query has row-level filters
-// defined in Lake Formation.
+// asynchronously and may not be available immediately after a query completes or,
+// in some cases, may not be returned. The non-timeline statistics are also not
+// included when a query has row-level filters defined in Lake Formation.
 func (c *Client) GetQueryRuntimeStatistics(ctx context.Context, params *GetQueryRuntimeStatisticsInput, optFns ...func(*Options)) (*GetQueryRuntimeStatisticsOutput, error) {
 	if params == nil {
 		params = &GetQueryRuntimeStatisticsInput{}
@@ -143,16 +143,13 @@ func (c *Client) addOperationGetQueryRuntimeStatisticsMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

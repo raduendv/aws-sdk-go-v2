@@ -11,6 +11,18 @@ import (
 )
 
 // Deletes an asset type in Amazon DataZone.
+//
+// Prerequisites:
+//
+//   - The asset type must exist in the domain.
+//
+//   - You must have DeleteAssetType permission.
+//
+//   - The asset type must not be in use (e.g., assigned to any asset). If used,
+//     deletion will fail.
+//
+//   - You should retrieve the asset type using get-asset-type to confirm its
+//     presence before deletion.
 func (c *Client) DeleteAssetType(ctx context.Context, params *DeleteAssetTypeInput, optFns ...func(*Options)) (*DeleteAssetTypeOutput, error) {
 	if params == nil {
 		params = &DeleteAssetTypeInput{}
@@ -136,16 +148,13 @@ func (c *Client) addOperationDeleteAssetTypeMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

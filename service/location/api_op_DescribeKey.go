@@ -13,6 +13,10 @@ import (
 )
 
 // Retrieves the API key resource details.
+//
+// For more information, see [Use API keys to authenticate] in the Amazon Location Service Developer Guide.
+//
+// [Use API keys to authenticate]: https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html
 func (c *Client) DescribeKey(ctx context.Context, params *DescribeKeyInput, optFns ...func(*Options)) (*DescribeKeyOutput, error) {
 	if params == nil {
 		params = &DescribeKeyInput{}
@@ -191,16 +195,13 @@ func (c *Client) addOperationDescribeKeyMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

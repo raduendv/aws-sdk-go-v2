@@ -131,6 +131,8 @@ const (
 	ComparisonOperatorGreaterThan        ComparisonOperator = "GREATER_THAN"
 	ComparisonOperatorLessThanEqualTo    ComparisonOperator = "LESS_THAN_EQUAL_TO"
 	ComparisonOperatorLessThan           ComparisonOperator = "LESS_THAN"
+	ComparisonOperatorAnyEquals          ComparisonOperator = "ANY_EQUALS"
+	ComparisonOperatorAllNotEquals       ComparisonOperator = "ALL_NOT_EQUALS"
 )
 
 // Values returns all known values for ComparisonOperator. Note that this can be
@@ -145,6 +147,8 @@ func (ComparisonOperator) Values() []ComparisonOperator {
 		"GREATER_THAN",
 		"LESS_THAN_EQUAL_TO",
 		"LESS_THAN",
+		"ANY_EQUALS",
+		"ALL_NOT_EQUALS",
 	}
 }
 
@@ -340,8 +344,9 @@ type Ec2MarketType string
 
 // Enum values for Ec2MarketType
 const (
-	Ec2MarketTypeOnDemand Ec2MarketType = "on-demand"
-	Ec2MarketTypeSpot     Ec2MarketType = "spot"
+	Ec2MarketTypeOnDemand    Ec2MarketType = "on-demand"
+	Ec2MarketTypeSpot        Ec2MarketType = "spot"
+	Ec2MarketTypeWaitAndSave Ec2MarketType = "wait-and-save"
 )
 
 // Values returns all known values for Ec2MarketType. Note that this can be
@@ -352,6 +357,7 @@ func (Ec2MarketType) Values() []Ec2MarketType {
 	return []Ec2MarketType{
 		"on-demand",
 		"spot",
+		"wait-and-save",
 	}
 }
 
@@ -402,6 +408,7 @@ const (
 	FleetStatusUpdateInProgress FleetStatus = "UPDATE_IN_PROGRESS"
 	FleetStatusCreateFailed     FleetStatus = "CREATE_FAILED"
 	FleetStatusUpdateFailed     FleetStatus = "UPDATE_FAILED"
+	FleetStatusSuspended        FleetStatus = "SUSPENDED"
 )
 
 // Values returns all known values for FleetStatus. Note that this can be expanded
@@ -415,6 +422,7 @@ func (FleetStatus) Values() []FleetStatus {
 		"UPDATE_IN_PROGRESS",
 		"CREATE_FAILED",
 		"UPDATE_FAILED",
+		"SUSPENDED",
 	}
 }
 
@@ -736,6 +744,25 @@ func (QueueStatus) Values() []QueueStatus {
 	}
 }
 
+type RangeConstraint string
+
+// Enum values for RangeConstraint
+const (
+	RangeConstraintContiguous    RangeConstraint = "CONTIGUOUS"
+	RangeConstraintNoncontiguous RangeConstraint = "NONCONTIGUOUS"
+)
+
+// Values returns all known values for RangeConstraint. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RangeConstraint) Values() []RangeConstraint {
+	return []RangeConstraint{
+		"CONTIGUOUS",
+		"NONCONTIGUOUS",
+	}
+}
+
 type RunAs string
 
 // Enum values for RunAs
@@ -800,6 +827,7 @@ type ServiceQuotaExceededExceptionReason string
 const (
 	ServiceQuotaExceededExceptionReasonServiceQuotaExceededException ServiceQuotaExceededExceptionReason = "SERVICE_QUOTA_EXCEEDED_EXCEPTION"
 	ServiceQuotaExceededExceptionReasonKmsKeyLimitExceeded           ServiceQuotaExceededExceptionReason = "KMS_KEY_LIMIT_EXCEEDED"
+	ServiceQuotaExceededExceptionReasonDependencyLimitExceeded       ServiceQuotaExceededExceptionReason = "DEPENDENCY_LIMIT_EXCEEDED"
 )
 
 // Values returns all known values for ServiceQuotaExceededExceptionReason. Note
@@ -811,6 +839,7 @@ func (ServiceQuotaExceededExceptionReason) Values() []ServiceQuotaExceededExcept
 	return []ServiceQuotaExceededExceptionReason{
 		"SERVICE_QUOTA_EXCEEDED_EXCEPTION",
 		"KMS_KEY_LIMIT_EXCEEDED",
+		"DEPENDENCY_LIMIT_EXCEEDED",
 	}
 }
 
@@ -964,10 +993,11 @@ type StepParameterType string
 
 // Enum values for StepParameterType
 const (
-	StepParameterTypeInt    StepParameterType = "INT"
-	StepParameterTypeFloat  StepParameterType = "FLOAT"
-	StepParameterTypeString StepParameterType = "STRING"
-	StepParameterTypePath   StepParameterType = "PATH"
+	StepParameterTypeInt      StepParameterType = "INT"
+	StepParameterTypeFloat    StepParameterType = "FLOAT"
+	StepParameterTypeString   StepParameterType = "STRING"
+	StepParameterTypePath     StepParameterType = "PATH"
+	StepParameterTypeChunkInt StepParameterType = "CHUNK_INT"
 )
 
 // Values returns all known values for StepParameterType. Note that this can be
@@ -980,6 +1010,7 @@ func (StepParameterType) Values() []StepParameterType {
 		"FLOAT",
 		"STRING",
 		"PATH",
+		"CHUNK_INT",
 	}
 }
 

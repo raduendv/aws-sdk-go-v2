@@ -190,6 +190,12 @@ type AssigneeContact struct {
 	// This member is required.
 	LastName *string
 
+	// Specifies the contact phone number of the assignee responsible for the
+	// opportunity or engagement. This field enables direct communication for
+	// time-sensitive matters and facilitates coordination between AWS and partner
+	// teams.
+	Phone *string
+
 	noSmithyDocumentSerde
 }
 
@@ -209,6 +215,10 @@ type AwsOpportunityCustomer struct {
 // Contains insights provided by AWS for the opportunity, offering recommendations
 // and analysis that can help the partner optimize their engagement and strategy.
 type AwsOpportunityInsights struct {
+
+	// Source-separated spend insights that provide independent analysis for AWS
+	// recommendations and partner estimates.
+	AwsProductsSpendInsightsBySource *AwsProductsSpendInsightsBySource
 
 	// Represents a score assigned by AWS to indicate the level of engagement and
 	// potential success for the opportunity. This score helps partners prioritize
@@ -258,6 +268,10 @@ type AwsOpportunityLifeCycle struct {
 // objectives, scope, and customer requirements.
 type AwsOpportunityProject struct {
 
+	// AWS partition where the opportunity will be deployed. Possible values: aws-eusc
+	// for AWS European Sovereign Cloud, null for all other partitions.
+	AwsPartition AwsPartition
+
 	// Indicates the expected spending by the customer over the course of the project.
 	// This value helps partners and AWS estimate the financial impact of the
 	// opportunity. Use the [AWS Pricing Calculator]to create an estimate of the customer’s total spend. If
@@ -283,6 +297,153 @@ type AwsOpportunityRelatedEntities struct {
 	// represent the partner's offerings that are being positioned as part of the
 	// overall AWS opportunity.
 	Solutions []string
+
+	noSmithyDocumentSerde
+}
+
+// Provides a comprehensive view of AwsOpportunitySummaryFullView template.
+type AwsOpportunitySummaryFullView struct {
+
+	// Represents the customer associated with the AWS opportunity. This field
+	// captures key details about the customer that are necessary for managing the
+	// opportunity.
+	Customer *AwsOpportunityCustomer
+
+	// Contains insights provided by AWS for the opportunity, offering recommendations
+	// and analysis that can help the partner optimize their engagement and strategy.
+	Insights *AwsOpportunityInsights
+
+	// Type of AWS involvement in the opportunity.
+	InvolvementType SalesInvolvementType
+
+	// Reason for changes in AWS involvement type for the opportunity.
+	InvolvementTypeChangeReason InvolvementTypeChangeReason
+
+	// Tracks the lifecycle of the AWS opportunity, including stages such as
+	// qualification, validation, and closure. This field helps partners understand the
+	// current status and progression of the opportunity.
+	LifeCycle *AwsOpportunityLifeCycle
+
+	// AWS team members involved in the opportunity.
+	OpportunityTeam []AwsTeamMember
+
+	// Source origin of the AWS opportunity.
+	Origin OpportunityOrigin
+
+	// Captures details about the project associated with the opportunity, including
+	// objectives, scope, and customer requirements.
+	Project *AwsOpportunityProject
+
+	// Represents other entities related to the AWS opportunity, such as AWS products,
+	// partner solutions, and marketplace offers. These associations help build a
+	// complete picture of the solution being sold.
+	RelatedEntityIds *AwsOpportunityRelatedEntities
+
+	// Identifier of the related partner opportunity.
+	RelatedOpportunityId *string
+
+	// Visibility level for the AWS opportunity.
+	Visibility Visibility
+
+	noSmithyDocumentSerde
+}
+
+// List of AWS services with program eligibility indicators (MAP, modernization
+// pathways), cost estimates, and optimization recommendations.
+type AwsProductDetails struct {
+
+	// List of program and pathway categories this product is eligible for.
+	//
+	// This member is required.
+	Categories []string
+
+	// List of specific optimization recommendations for this product.
+	//
+	// This member is required.
+	Optimizations []AwsProductOptimization
+
+	// AWS Partner Central product identifier used for opportunity association.
+	//
+	// This member is required.
+	ProductCode *string
+
+	// Baseline service cost before optimizations.
+	Amount *string
+
+	// Service cost after applying optimizations.
+	OptimizedAmount *string
+
+	// Service-specific cost reduction through optimizations.
+	PotentialSavingsAmount *string
+
+	// Pricing Calculator service code.
+	ServiceCode *string
+
+	noSmithyDocumentSerde
+}
+
+// Comprehensive spend analysis for a single source (AWS or Partner) including
+// total amounts, optimization savings, program category breakdowns, and detailed
+// product-level insights.
+type AwsProductInsights struct {
+
+	// Product-level details including costs and optimization recommendations.
+	//
+	// This member is required.
+	AwsProducts []AwsProductDetails
+
+	// ISO 4217 currency code.
+	//
+	// This member is required.
+	CurrencyCode CurrencyCode
+
+	// Time period for spend amounts.
+	//
+	// This member is required.
+	Frequency PaymentFrequency
+
+	// Spend amounts mapped to AWS programs and modernization pathways.
+	//
+	// This member is required.
+	TotalAmountByCategory map[string]string
+
+	// Total estimated spend for this source before optimizations.
+	TotalAmount *string
+
+	// Total estimated spend after applying recommended optimizations.
+	TotalOptimizedAmount *string
+
+	// Quantified savings achievable through implementing optimizations.
+	TotalPotentialSavingsAmount *string
+
+	noSmithyDocumentSerde
+}
+
+// Specific optimization strategies partners can implement to reduce costs.
+type AwsProductOptimization struct {
+
+	// Human-readable explanation of the optimization strategy.
+	//
+	// This member is required.
+	Description *string
+
+	// Quantified cost savings achievable by implementing this optimization.
+	//
+	// This member is required.
+	SavingsAmount *string
+
+	noSmithyDocumentSerde
+}
+
+// Source-separated spend insights that provide independent analysis for AWS
+// recommendations and partner estimates.
+type AwsProductsSpendInsightsBySource struct {
+
+	// AI-generated insights including recommended products from AWS.
+	AWS *AwsProductInsights
+
+	// Partner-sourced insights derived from Pricing Calculator URLs.
+	Partner *AwsProductInsights
 
 	noSmithyDocumentSerde
 }
@@ -349,6 +510,18 @@ type Contact struct {
 	noSmithyDocumentSerde
 }
 
+// Filter for opportunities based on creation date range.
+type CreatedDateFilter struct {
+
+	// Filter opportunities created after this date.
+	AfterCreatedDate *time.Time
+
+	// Filter opportunities created before this date.
+	BeforeCreatedDate *time.Time
+
+	noSmithyDocumentSerde
+}
+
 // An object that contains the customer's Account and Contact .
 type Customer struct {
 
@@ -406,6 +579,10 @@ type EngagementContextDetails struct {
 	// This member is required.
 	Type EngagementContextType
 
+	// The unique identifier of the engagement context. This ID is used to reference
+	// and manage the specific context within the engagement.
+	Id *string
+
 	// Contains the specific details of the Engagement context. The structure of this
 	// payload varies depending on the Type field.
 	Payload EngagementContextPayload
@@ -419,6 +596,7 @@ type EngagementContextDetails struct {
 // The following types satisfy this interface:
 //
 //	EngagementContextPayloadMemberCustomerProject
+//	EngagementContextPayloadMemberLead
 type EngagementContextPayload interface {
 	isEngagementContextPayload()
 }
@@ -433,6 +611,17 @@ type EngagementContextPayloadMemberCustomerProject struct {
 }
 
 func (*EngagementContextPayloadMemberCustomerProject) isEngagementContextPayload() {}
+
+// Contains detailed information about a lead when the context type is "Lead".
+// This field is present only when the Type in EngagementContextDetails is set to
+// "Lead".
+type EngagementContextPayloadMemberLead struct {
+	Value LeadContext
+
+	noSmithyDocumentSerde
+}
+
+func (*EngagementContextPayloadMemberLead) isEngagementContextPayload() {}
 
 // Contains details about the customer associated with the Engagement Invitation,
 // including company information and industry.
@@ -661,6 +850,11 @@ type EngagementSummary struct {
 	// The Amazon Resource Name (ARN) of the created Engagement.
 	Arn *string
 
+	// An array of context types associated with the engagement, such as
+	// "CustomerProject" or "Lead". This provides a quick overview of the types of
+	// contexts included in the engagement.
+	ContextTypes []EngagementContextType
+
 	// The date and time when the Engagement was created.
 	CreatedAt *time.Time
 
@@ -673,6 +867,14 @@ type EngagementSummary struct {
 	// The number of members in the Engagement.
 	MemberCount *int32
 
+	// The timestamp indicating when the engagement was last modified, in ISO 8601
+	// format (UTC). Example: "2023-05-01T20:37:46Z".
+	ModifiedAt *time.Time
+
+	// The AWS account ID of the user who last modified the engagement. This field
+	// helps track who made the most recent changes to the engagement.
+	ModifiedBy *string
+
 	// The title of the Engagement.
 	Title *string
 
@@ -684,12 +886,6 @@ type EngagementSummary struct {
 // of the project.
 type ExpectedCustomerSpend struct {
 
-	// Represents the estimated monthly revenue that the partner expects to earn from
-	// the opportunity. This helps in forecasting financial returns.
-	//
-	// This member is required.
-	Amount *string
-
 	// Indicates the currency in which the revenue estimate is provided. This helps in
 	// understanding the financial impact across different markets.
 	//
@@ -697,18 +893,23 @@ type ExpectedCustomerSpend struct {
 	CurrencyCode CurrencyCode
 
 	// Indicates how frequently the customer is expected to spend the projected
-	// amount. This can include values such as Monthly , Quarterly , or Annually . The
-	// default value is Monthly , representing recurring monthly spend.
+	// amount. Only the value Monthly is allowed for the Frequency field, representing
+	// recurring monthly spend.
 	//
 	// This member is required.
 	Frequency PaymentFrequency
 
 	// Specifies the name of the partner company that is expected to generate revenue
 	// from the opportunity. This field helps track the partner’s involvement in the
-	// opportunity.
+	// opportunity. This field only accepts the value AWS . If any other value is
+	// provided, the system will automatically set it to AWS .
 	//
 	// This member is required.
 	TargetCompany *string
+
+	// Represents the estimated monthly revenue that the partner expects to earn from
+	// the opportunity. This helps in forecasting financial returns.
+	Amount *string
 
 	// A URL providing additional information or context about the spend estimation.
 	EstimationUrl *string
@@ -757,6 +958,265 @@ type LastModifiedDate struct {
 	// filter to retrieve only those opportunities that were modified before a given
 	// timestamp.
 	BeforeLastModifiedDate *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// An object that contains a lead contact's details associated with the
+// engagement. This provides contact information for individuals involved in
+// lead-related activities.
+type LeadContact struct {
+
+	// The lead contact's business title or job role associated with the engagement.
+	//
+	// This member is required.
+	BusinessTitle *string
+
+	// The lead contact's email address associated with the engagement.
+	//
+	// This member is required.
+	Email *string
+
+	// The lead contact's first name associated with the engagement.
+	//
+	// This member is required.
+	FirstName *string
+
+	// The lead contact's last name associated with the engagement.
+	//
+	// This member is required.
+	LastName *string
+
+	// The lead contact's phone number associated with the engagement.
+	Phone *string
+
+	noSmithyDocumentSerde
+}
+
+// Provides comprehensive details about a lead associated with an engagement. This
+// structure contains information about lead qualification status, customer
+// details, and interaction history to facilitate lead management and tracking
+// within the engagement.
+type LeadContext struct {
+
+	// Contains detailed information about the customer associated with the lead,
+	// including company information, contact details, and other relevant customer
+	// data.
+	//
+	// This member is required.
+	Customer *LeadCustomer
+
+	// An array of interactions that have occurred with the lead, providing a history
+	// of communications, meetings, and other engagement activities related to the
+	// lead.
+	//
+	// This member is required.
+	Interactions []LeadInteraction
+
+	// Indicates the current qualification status of the lead, such as whether it has
+	// been qualified, disqualified, or is still under evaluation. This helps track the
+	// lead's progression through the qualification process.
+	QualificationStatus *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains detailed information about the customer associated with the lead,
+// including company details, industry classification, and AWS maturity level. This
+// information helps qualify and categorize the lead for appropriate engagement
+// strategies.
+type LeadCustomer struct {
+
+	// An object that contains an Address object's subset of fields.
+	//
+	// This member is required.
+	Address *AddressSummary
+
+	// The name of the lead customer's company. This field is essential for
+	// identifying and tracking the customer organization associated with the lead.
+	//
+	// This member is required.
+	CompanyName *string
+
+	// Indicates the customer's level of experience and adoption with AWS services.
+	// This assessment helps determine the appropriate engagement approach and solution
+	// complexity.
+	AwsMaturity *string
+
+	// Specifies the industry sector to which the lead customer's company belongs.
+	// This categorization helps in understanding the customer's business context and
+	// tailoring appropriate solutions.
+	Industry Industry
+
+	// Specifies the market segment classification of the lead customer, such as
+	// enterprise, mid-market, or small business. This segmentation helps in targeting
+	// appropriate solutions and engagement strategies.
+	MarketSegment MarketSegment
+
+	// The website URL of the lead customer's company. This provides additional
+	// context about the customer organization and helps verify company legitimacy and
+	// size.
+	WebsiteUrl *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents a specific interaction or touchpoint with a lead customer. This
+// structure captures details about communications, meetings, or other engagement
+// activities that help track the lead's progression and engagement history.
+type LeadInteraction struct {
+
+	// Contains contact information for the customer representative involved in the
+	// lead interaction, including their name, title, and contact details.
+	//
+	// This member is required.
+	Contact *LeadContact
+
+	// Describes the action taken by the customer during or as a result of the
+	// interaction, such as requesting information, scheduling a meeting, or expressing
+	// interest in a solution.
+	//
+	// This member is required.
+	CustomerAction *string
+
+	// The unique identifier of the specific source that generated the lead
+	// interaction. This ID provides traceability back to the original lead generation
+	// activity.
+	//
+	// This member is required.
+	SourceId *string
+
+	// The descriptive name of the source that generated the lead interaction,
+	// providing a human-readable identifier for the lead generation channel or
+	// activity.
+	//
+	// This member is required.
+	SourceName *string
+
+	// Specifies the type of source that generated the lead interaction, such as
+	// "Event", "Website", "Referral", or "Campaign". This categorization helps track
+	// lead generation effectiveness across different channels.
+	//
+	// This member is required.
+	SourceType *string
+
+	// Describes the business problem or challenge that the customer discussed during
+	// the interaction. This information helps qualify the lead and identify
+	// appropriate solutions.
+	BusinessProblem *string
+
+	// The date and time when the lead interaction occurred, in ISO 8601 format (UTC).
+	// This timestamp helps track the chronology of lead engagement activities.
+	InteractionDate *time.Time
+
+	// Describes the specific use case or business scenario discussed during the lead
+	// interaction. This helps categorize the customer's interests and potential
+	// solutions.
+	Usecase *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains customer information included in a lead invitation payload. This
+// structure provides essential details about the customer to help partners
+// evaluate the lead opportunity and determine their interest in engagement.
+type LeadInvitationCustomer struct {
+
+	// The name of the customer company associated with the lead invitation. This
+	// field identifies the target organization for the lead engagement opportunity.
+	//
+	// This member is required.
+	CompanyName *string
+
+	// The country code indicating the geographic location of the customer company.
+	// This information helps partners understand regional requirements and assess
+	// their ability to serve the customer effectively.
+	//
+	// This member is required.
+	CountryCode CountryCode
+
+	// Indicates the customer's level of experience and adoption with AWS services.
+	// This assessment helps partners understand the customer's cloud maturity and
+	// tailor their engagement approach accordingly.
+	AwsMaturity *string
+
+	// Specifies the industry sector of the customer company associated with the lead
+	// invitation. This categorization helps partners understand the customer's
+	// business context and assess solution fit.
+	Industry Industry
+
+	// Specifies the market segment classification of the customer, such as
+	// enterprise, mid-market, or small business. This segmentation helps partners
+	// determine the appropriate solution complexity and engagement strategy.
+	MarketSegment MarketSegment
+
+	// The website URL of the customer company. This provides additional context about
+	// the customer organization and helps partners verify company details and assess
+	// business size and legitimacy.
+	WebsiteUrl *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents interaction details included in a lead invitation payload. This
+// structure provides context about how the lead was generated and the customer's
+// engagement history to help partners assess the opportunity quality.
+type LeadInvitationInteraction struct {
+
+	// The business title or job role of the customer contact involved in the lead
+	// interaction. This helps partners identify the decision-making level and
+	// engagement approach for the lead.
+	//
+	// This member is required.
+	ContactBusinessTitle *string
+
+	// The unique identifier of the specific source that generated the lead
+	// interaction. This provides traceability to the original lead generation activity
+	// for reference and follow-up purposes.
+	//
+	// This member is required.
+	SourceId *string
+
+	// The descriptive name of the source that generated the lead interaction. This
+	// human-readable identifier helps partners understand the specific lead generation
+	// channel or campaign that created the opportunity.
+	//
+	// This member is required.
+	SourceName *string
+
+	// Specifies the type of source that generated the lead interaction, such as
+	// "Event", "Website", or "Campaign". This helps partners understand the lead
+	// generation channel and assess lead quality based on the source type.
+	//
+	// This member is required.
+	SourceType *string
+
+	// Describes the specific use case or business scenario associated with the lead
+	// interaction. This information helps partners understand the customer's interests
+	// and potential solution requirements.
+	Usecase *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents the data payload of an engagement invitation for a lead opportunity.
+// This contains detailed information about the customer and interaction history
+// that partners use to evaluate whether to accept the lead engagement invitation.
+type LeadInvitationPayload struct {
+
+	// Contains information about the customer associated with the lead invitation.
+	// This data helps partners understand the customer's profile, industry, and
+	// business context to assess the lead opportunity.
+	//
+	// This member is required.
+	Customer *LeadInvitationCustomer
+
+	// Describes the interaction details associated with the lead, including the
+	// source of the lead generation and customer engagement information. This context
+	// helps partners evaluate the lead quality and engagement approach.
+	//
+	// This member is required.
+	Interaction *LeadInvitationInteraction
 
 	noSmithyDocumentSerde
 }
@@ -821,8 +1281,10 @@ type LifeCycle struct {
 	// for the current opportunity, along with the timestamp.
 	NextStepsHistory []NextStepsHistory
 
-	// Indicates why an opportunity was sent back for further details. Partners must
-	// take corrective action based on the ReviewComments .
+	// Contains detailed feedback from Amazon Web Services when requesting additional
+	// information from partners. Provides specific guidance on what partners need to
+	// provide or clarify for opportunity validation, complementing the
+	// ReviewStatusReason field.
 	ReviewComments *string
 
 	// Indicates the review status of an opportunity referred by a partner. This field
@@ -873,10 +1335,11 @@ type LifeCycle struct {
 	//   - Rejected: Disqualified (read-only).
 	ReviewStatus ReviewStatus
 
-	// Indicates the reason a decision was made during the opportunity review process.
-	// This field combines the reasons for both disqualified and action required
-	// statuses, and provide clarity for why an opportunity was disqualified or
-	// requires further action.
+	// Code indicating the validation decision during the Amazon Web Services
+	// opportunity review. Applies when status is Rejected or Action Required . Used to
+	// document validation results for AWS Partner Referrals and indicate when
+	// additional information is needed from partners as part of the APN Customer
+	// Engagement (ACE) program.
 	ReviewStatusReason *string
 
 	// Specifies the current stage of the Opportunity 's lifecycle as it maps to Amazon
@@ -1146,6 +1609,57 @@ type ListEngagementFromOpportunityTaskSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Provides a summary of a task related to creating an opportunity from an
+// engagement. This structure contains key information about the task's status,
+// associated identifiers, and any failure details for opportunity creation
+// processes.
+type ListOpportunityFromEngagementTaskSummary struct {
+
+	// The unique identifier of the engagement context associated with the opportunity
+	// creation task. This links the task to specific contextual information within the
+	// engagement.
+	ContextId *string
+
+	// The unique identifier of the engagement from which the opportunity is being
+	// created. This field helps track the source of the opportunity creation task.
+	EngagementId *string
+
+	// A detailed message providing additional information about the task, especially
+	// useful in case of failures. This field may contain error details or other
+	// relevant information about the task's execution.
+	Message *string
+
+	// The unique identifier of the opportunity created as a result of the task. This
+	// field is populated when the task is completed successfully.
+	OpportunityId *string
+
+	// A code indicating the specific reason for a task failure. This field is
+	// populated when the task status is FAILED and provides a categorized reason for
+	// the failure.
+	ReasonCode ReasonCode
+
+	// The identifier of the resource snapshot job associated with this task, if a
+	// snapshot was created as part of the opportunity creation process.
+	ResourceSnapshotJobId *string
+
+	// The timestamp indicating when the task was initiated, in RFC 3339 format.
+	StartTime *time.Time
+
+	// The Amazon Resource Name (ARN) that uniquely identifies the task within AWS.
+	// This ARN can be used for referencing the task in other AWS services or APIs.
+	TaskArn *string
+
+	// The unique identifier of the task for creating an opportunity from an
+	// engagement.
+	TaskId *string
+
+	// The current status of the task. Valid values are COMPLETE, INPROGRESS, or
+	// FAILED.
+	TaskStatus TaskStatus
+
+	noSmithyDocumentSerde
+}
+
 //	Defines the sorting parameters for listing tasks. This structure allows for
 //
 // specifying the field to sort by and the order of sorting.
@@ -1405,10 +1919,22 @@ type OpportunitySummaryView struct {
 //
 // The following types satisfy this interface:
 //
+//	PayloadMemberLeadInvitation
 //	PayloadMemberOpportunityInvitation
 type Payload interface {
 	isPayload()
 }
+
+// Specifies the details of the lead invitation within the Engagement Invitation
+// payload. This data helps partners understand the lead context, customer
+// information, and interaction history for the lead opportunity from AWS.
+type PayloadMemberLeadInvitation struct {
+	Value LeadInvitationPayload
+
+	noSmithyDocumentSerde
+}
+
+func (*PayloadMemberLeadInvitation) isPayload() {}
 
 // Specifies the details of the opportunity invitation within the Engagement
 // Invitation payload. This data helps partners understand the context, scope, and
@@ -1459,6 +1985,10 @@ type Project struct {
 	// Cloud on AWS | Well-Architected | Windows | Workspaces/AppStream Accelerator
 	// Program | WWPS NDPP
 	ApnPrograms []string
+
+	// AWS partition where the opportunity will be deployed. Possible values: aws-eusc
+	// for AWS European Sovereign Cloud, null for all other partitions.
+	AwsPartition AwsPartition
 
 	// Name of the Opportunity 's competitor (if any). Use Other to submit a value not
 	// in the picklist.
@@ -1697,6 +2227,14 @@ func (*ReceiverMemberAccount) isReceiver() {}
 // Solutions , and AWSMarketplaceOffers .
 type RelatedEntityIdentifiers struct {
 
+	// Enables the association of AWS Marketplace offer sets with the Opportunity .
+	// Offer sets allow grouping multiple related marketplace offers together for
+	// comprehensive solution packaging. Each value is an Amazon Resource Name (ARN) in
+	// this format:
+	// arn:aws:aws-marketplace:us-east-1:999999999999:AWSMarketplace/OfferSet/offerset-sampleOfferSet32
+	// .
+	AwsMarketplaceOfferSets []string
+
 	// Takes one value per opportunity. Each value is an Amazon Resource Name (ARN),
 	// in this format: "offers":
 	// ["arn:aws:aws-marketplace:us-east-1:999999999999:AWSMarketplace/Offer/offer-sampleOffer32"]
@@ -1769,10 +2307,20 @@ type ResourceSnapshotJobSummary struct {
 //
 // The following types satisfy this interface:
 //
+//	ResourceSnapshotPayloadMemberAwsOpportunitySummaryFullView
 //	ResourceSnapshotPayloadMemberOpportunitySummary
 type ResourceSnapshotPayload interface {
 	isResourceSnapshotPayload()
 }
+
+// Provides a comprehensive view of AwsOpportunitySummaryFullView template.
+type ResourceSnapshotPayloadMemberAwsOpportunitySummaryFullView struct {
+	Value AwsOpportunitySummaryFullView
+
+	noSmithyDocumentSerde
+}
+
+func (*ResourceSnapshotPayloadMemberAwsOpportunitySummaryFullView) isResourceSnapshotPayload() {}
 
 // An object that contains an opportunity 's subset of fields.
 type ResourceSnapshotPayloadMemberOpportunitySummary struct {
@@ -1964,6 +2512,63 @@ type Tag struct {
 	noSmithyDocumentSerde
 }
 
+// Represents the updated payload of an engagement context. The structure of this
+// payload varies based on the context type being updated.
+//
+// The following types satisfy this interface:
+//
+//	UpdateEngagementContextPayloadMemberCustomerProject
+//	UpdateEngagementContextPayloadMemberLead
+type UpdateEngagementContextPayload interface {
+	isUpdateEngagementContextPayload()
+}
+
+// The CustomerProjects structure in Engagements offers a flexible framework for
+// managing customer-project relationships. It supports multiple customers per
+// Engagement and multiple projects per customer, while also allowing for customers
+// without projects and projects without specific customers.
+//
+// All Engagement members have full visibility of customers and their associated
+// projects, enabling the capture of relevant context even when project details are
+// not fully defined. This structure also facilitates targeted invitations,
+// allowing partners to focus on specific customers and their business problems
+// when sending Engagement invitations.
+type UpdateEngagementContextPayloadMemberCustomerProject struct {
+	Value CustomerProjectsContext
+
+	noSmithyDocumentSerde
+}
+
+func (*UpdateEngagementContextPayloadMemberCustomerProject) isUpdateEngagementContextPayload() {}
+
+// Contains updated information about a lead when the context type is "Lead". This
+// field is present only when updating a lead context within the engagement.
+type UpdateEngagementContextPayloadMemberLead struct {
+	Value UpdateLeadContext
+
+	noSmithyDocumentSerde
+}
+
+func (*UpdateEngagementContextPayloadMemberLead) isUpdateEngagementContextPayload() {}
+
+// Updates the context information for a lead with qualification status, customer
+// details, and interaction data.
+type UpdateLeadContext struct {
+
+	// Updated customer information associated with the lead.
+	//
+	// This member is required.
+	Customer *LeadCustomer
+
+	// Updated interaction details for the lead context.
+	Interaction *LeadInteraction
+
+	// The updated qualification status of the lead.
+	QualificationStatus *string
+
+	noSmithyDocumentSerde
+}
+
 // Indicates an invalid value for a field.
 //
 //   - REQUIRED_FIELD_MISSING: The request is missing a required field.
@@ -1992,6 +2597,11 @@ type Tag struct {
 //	entries.
 //
 // Fix: Reduce the number of values to match the expected limit.
+//
+//   - NOT_ENOUGH_VALUES: There are not enough values in a field that expects more
+//     entries.
+//
+// Fix: Increase the number of values to match the expected threshold.
 //
 //   - ACTION_NOT_PERMITTED: The action isn't permitted due to current state or
 //     permissions.
@@ -2035,7 +2645,8 @@ type UnknownUnionMember struct {
 	noSmithyDocumentSerde
 }
 
-func (*UnknownUnionMember) isEngagementContextPayload() {}
-func (*UnknownUnionMember) isPayload()                  {}
-func (*UnknownUnionMember) isReceiver()                 {}
-func (*UnknownUnionMember) isResourceSnapshotPayload()  {}
+func (*UnknownUnionMember) isEngagementContextPayload()       {}
+func (*UnknownUnionMember) isPayload()                        {}
+func (*UnknownUnionMember) isReceiver()                       {}
+func (*UnknownUnionMember) isResourceSnapshotPayload()        {}
+func (*UnknownUnionMember) isUpdateEngagementContextPayload() {}

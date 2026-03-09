@@ -33,7 +33,7 @@ type DeleteDataSetInput struct {
 	// This member is required.
 	AwsAccountId *string
 
-	// The ID for the dataset that you want to create. This ID is unique per Amazon
+	// The ID for the dataset that you want to delete. This ID is unique per Amazon
 	// Web Services Region for each Amazon Web Services account.
 	//
 	// This member is required.
@@ -47,7 +47,7 @@ type DeleteDataSetOutput struct {
 	// The Amazon Resource Name (ARN) of the dataset.
 	Arn *string
 
-	// The ID for the dataset that you want to create. This ID is unique per Amazon
+	// The ID for the dataset that you want to delete. This ID is unique per Amazon
 	// Web Services Region for each Amazon Web Services account.
 	DataSetId *string
 
@@ -151,16 +151,13 @@ func (c *Client) addOperationDeleteDataSetMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

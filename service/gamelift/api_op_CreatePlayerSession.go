@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Reserves an open player slot in a game session for a player. New player
 // sessions can be created in any game session with an open slot that is in ACTIVE
 // status and has a player creation policy of ACCEPT_ALL . You can add a group of
@@ -23,7 +25,7 @@ import (
 // PlayerSessions object is returned with a player session ID. The player
 // references the player session ID when sending a connection request to the game
 // session, and the game server can use it to validate the player reservation with
-// the Amazon GameLift service. Player sessions cannot be updated.
+// the Amazon GameLift Servers service. Player sessions cannot be updated.
 //
 // The maximum number of players per game session is 200. It is not adjustable.
 //
@@ -60,8 +62,8 @@ type CreatePlayerSessionInput struct {
 	// This member is required.
 	PlayerId *string
 
-	// Developer-defined information related to a player. Amazon GameLift does not use
-	// this data, so it can be formatted as needed for use in the game.
+	// Developer-defined information related to a player. Amazon GameLift Servers does
+	// not use this data, so it can be formatted as needed for use in the game.
 	PlayerData *string
 
 	noSmithyDocumentSerde
@@ -166,16 +168,13 @@ func (c *Client) addOperationCreatePlayerSessionMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

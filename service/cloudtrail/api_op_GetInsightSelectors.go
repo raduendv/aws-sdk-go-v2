@@ -13,9 +13,9 @@ import (
 
 // Describes the settings for the Insights event selectors that you configured for
 // your trail or event data store. GetInsightSelectors shows if CloudTrail
-// Insights event logging is enabled on the trail or event data store, and if it
-// is, which Insights types are enabled. If you run GetInsightSelectors on a trail
-// or event data store that does not have Insights events enabled, the operation
+// Insights logging is enabled and which Insights types are configured with
+// corresponding event categories. If you run GetInsightSelectors on a trail or
+// event data store that does not have Insights events enabled, the operation
 // throws the exception InsightNotEnabledException
 //
 // Specify either the EventDataStore parameter to get Insights event selectors for
@@ -78,9 +78,11 @@ type GetInsightSelectorsOutput struct {
 	//  The ARN of the source event data store that enabled Insights events.
 	EventDataStoreArn *string
 
-	// A JSON string that contains the Insight types you want to log on a trail or
-	// event data store. ApiErrorRateInsight and ApiCallRateInsight are supported as
-	// Insights types.
+	// Contains the Insights types that are enabled on a trail or event data store. It
+	// also specifies the event categories on which a particular Insight type is
+	// enabled. ApiCallRateInsight and ApiErrorRateInsight are valid Insight types.The
+	// EventCategory field can specify Management or Data events or both. For event
+	// data store, you can log Insights for management events only.
 	InsightSelectors []types.InsightSelector
 
 	//  The ARN of the destination event data store that logs Insights events.
@@ -181,16 +183,13 @@ func (c *Client) addOperationGetInsightSelectorsMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -52,6 +52,12 @@ type CreateApplicationInput struct {
 	// with the OpenSearch application.
 	IamIdentityCenterOptions *types.IamIdentityCenterOptionsInput
 
+	// The Amazon Resource Name (ARN) of the KMS key used to encrypt the application's
+	// data at rest. If provided, the application uses your customer-managed key for
+	// encryption. If omitted, the application uses an AWS-managed key. The KMS key
+	// must be in the same region as the application.
+	KmsKeyArn *string
+
 	// A list of tags attached to a domain.
 	TagList []types.Tag
 
@@ -81,6 +87,10 @@ type CreateApplicationOutput struct {
 
 	// The unique identifier assigned to the OpenSearch application.
 	Id *string
+
+	// The Amazon Resource Name (ARN) of the KMS key used to encrypt the application's
+	// data at rest.
+	KmsKeyArn *string
 
 	// The name of the OpenSearch application.
 	Name *string
@@ -185,16 +195,13 @@ func (c *Client) addOperationCreateApplicationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

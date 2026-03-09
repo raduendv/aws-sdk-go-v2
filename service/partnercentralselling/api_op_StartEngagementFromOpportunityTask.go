@@ -12,10 +12,14 @@ import (
 	"time"
 )
 
-// This action initiates the engagement process from an existing opportunity by
-// accepting the engagement invitation and creating a corresponding opportunity in
-// the partner’s system. Similar to StartEngagementByAcceptingInvitationTask , this
-// action is asynchronous and performs multiple steps before completion.
+// Similar to StartEngagementByAcceptingInvitationTask , this action is
+// asynchronous and performs multiple steps before completion. This action
+// orchestrates a comprehensive workflow that combines multiple API operations into
+// a single task to create and initiate an engagement from an existing opportunity.
+// It automatically executes a sequence of operations including GetOpportunity ,
+// CreateEngagement (if it doesn't exist), CreateResourceSnapshot ,
+// CreateResourceSnapshotJob , CreateEngagementInvitation (if not already
+// invited/accepted), and SubmitOpportunity .
 func (c *Client) StartEngagementFromOpportunityTask(ctx context.Context, params *StartEngagementFromOpportunityTaskInput, optFns ...func(*Options)) (*StartEngagementFromOpportunityTaskOutput, error) {
 	if params == nil {
 		params = &StartEngagementFromOpportunityTaskInput{}
@@ -59,7 +63,7 @@ type StartEngagementFromOpportunityTaskInput struct {
 	// This member is required.
 	Identifier *string
 
-	// A list of objects specifying each tag name and value.
+	// A map of the key-value pairs of the tag or tags to assign.
 	Tags []types.Tag
 
 	noSmithyDocumentSerde
@@ -203,16 +207,13 @@ func (c *Client) addOperationStartEngagementFromOpportunityTaskMiddlewares(stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

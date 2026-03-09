@@ -86,6 +86,18 @@ func TestCheckSnapshot_EncryptData(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GenerateAs2805KekValidation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GenerateAs2805KekValidation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GenerateAs2805KekValidation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GenerateCardValidationData(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GenerateCardValidationData(context.Background(), nil, func(o *Options) {
@@ -139,6 +151,18 @@ func TestCheckSnapshot_ReEncryptData(t *testing.T) {
 	_, err := svc.ReEncryptData(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ReEncryptData")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_TranslateKeyMaterial(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.TranslateKeyMaterial(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "TranslateKeyMaterial")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -229,6 +253,18 @@ func TestUpdateSnapshot_EncryptData(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GenerateAs2805KekValidation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GenerateAs2805KekValidation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GenerateAs2805KekValidation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GenerateCardValidationData(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GenerateCardValidationData(context.Background(), nil, func(o *Options) {
@@ -282,6 +318,18 @@ func TestUpdateSnapshot_ReEncryptData(t *testing.T) {
 	_, err := svc.ReEncryptData(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ReEncryptData")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_TranslateKeyMaterial(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.TranslateKeyMaterial(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "TranslateKeyMaterial")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

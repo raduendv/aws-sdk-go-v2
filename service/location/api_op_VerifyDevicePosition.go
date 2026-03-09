@@ -15,6 +15,12 @@ import (
 // Verifies the integrity of the device's position by determining if it was
 // reported behind a proxy, and by comparing it to an inferred position estimated
 // based on the device's state.
+//
+// The Location Integrity SDK provides enhanced features related to device
+// verification, and it is available for use by request. To get access to the SDK,
+// contact [Sales Support].
+//
+// [Sales Support]: https://aws.amazon.com/contact-us/sales-support/?pg=locationprice&cta=herobtn
 func (c *Client) VerifyDevicePosition(ctx context.Context, params *VerifyDevicePositionInput, optFns ...func(*Options)) (*VerifyDevicePositionOutput, error) {
 	if params == nil {
 		params = &VerifyDevicePositionInput{}
@@ -182,16 +188,13 @@ func (c *Client) addOperationVerifyDevicePositionMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

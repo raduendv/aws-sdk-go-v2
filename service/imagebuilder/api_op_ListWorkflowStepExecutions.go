@@ -36,7 +36,7 @@ type ListWorkflowStepExecutionsInput struct {
 	// This member is required.
 	WorkflowExecutionId *string
 
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	MaxResults *int32
 
 	// A token to specify where to start paginating. This is the nextToken from a
@@ -48,8 +48,8 @@ type ListWorkflowStepExecutionsInput struct {
 
 type ListWorkflowStepExecutionsOutput struct {
 
-	// The image build version resource ARN that's associated with the specified
-	// runtime instance of the workflow.
+	// The image build version resource Amazon Resource Name (ARN) that's associated
+	// with the specified runtime instance of the workflow.
 	ImageBuildVersionArn *string
 
 	// The output message from the list action, if applicable.
@@ -67,8 +67,8 @@ type ListWorkflowStepExecutionsOutput struct {
 	// instance of the workflow.
 	Steps []types.WorkflowStepMetadata
 
-	// The build version ARN for the Image Builder workflow resource that defines the
-	// steps for this runtime instance of the workflow.
+	// The build version Amazon Resource Name (ARN) for the Image Builder workflow
+	// resource that defines the steps for this runtime instance of the workflow.
 	WorkflowBuildVersionArn *string
 
 	// The unique identifier that Image Builder assigned to keep track of runtime
@@ -169,16 +169,13 @@ func (c *Client) addOperationListWorkflowStepExecutionsMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -187,7 +184,7 @@ func (c *Client) addOperationListWorkflowStepExecutionsMiddlewares(stack *middle
 // ListWorkflowStepExecutionsPaginatorOptions is the paginator options for
 // ListWorkflowStepExecutions
 type ListWorkflowStepExecutionsPaginatorOptions struct {
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	Limit int32
 
 	// Set to true if pagination should stop if the service returns a pagination token

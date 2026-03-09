@@ -12,6 +12,10 @@ import (
 )
 
 // Disassociates a set of queues from a routing profile.
+//
+// Up to 10 queue references can be disassociated in a single API call. More than
+// 10 queue references results in a single call results in an
+// InvalidParameterException.
 func (c *Client) DisassociateRoutingProfileQueues(ctx context.Context, params *DisassociateRoutingProfileQueuesInput, optFns ...func(*Options)) (*DisassociateRoutingProfileQueuesOutput, error) {
 	if params == nil {
 		params = &DisassociateRoutingProfileQueuesInput{}
@@ -37,15 +41,16 @@ type DisassociateRoutingProfileQueuesInput struct {
 	// This member is required.
 	InstanceId *string
 
-	// The queues to disassociate from this routing profile.
-	//
-	// This member is required.
-	QueueReferences []types.RoutingProfileQueueReference
-
 	// The identifier of the routing profile.
 	//
 	// This member is required.
 	RoutingProfileId *string
+
+	// The manual assignment queues to disassociate with this routing profile.
+	ManualAssignmentQueueReferences []types.RoutingProfileQueueReference
+
+	// The queues to disassociate from this routing profile.
+	QueueReferences []types.RoutingProfileQueueReference
 
 	noSmithyDocumentSerde
 }
@@ -145,16 +150,13 @@ func (c *Client) addOperationDisassociateRoutingProfileQueuesMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

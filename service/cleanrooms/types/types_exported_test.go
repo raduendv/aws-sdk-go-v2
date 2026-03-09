@@ -95,6 +95,28 @@ func ExampleAnalysisSourceMetadata_outputUsage() {
 
 var _ *types.AnalysisTemplateArtifactMetadata
 
+func ExampleChangeSpecification_outputUsage() {
+	var union types.ChangeSpecification
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.ChangeSpecificationMemberCollaboration:
+		_ = v.Value // Value is types.CollaborationChangeSpecification
+
+	case *types.ChangeSpecificationMemberMember:
+		_ = v.Value // Value is types.MemberChangeSpecification
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.CollaborationChangeSpecification
+var _ *types.MemberChangeSpecification
+
 func ExampleComputeConfiguration_outputUsage() {
 	var union types.ComputeConfiguration
 	// type switches can be used to check the union value
@@ -321,6 +343,9 @@ func ExamplePrivacyBudget_outputUsage() {
 	var union types.PrivacyBudget
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.PrivacyBudgetMemberAccessBudget:
+		_ = v.Value // Value is types.AccessBudget
+
 	case *types.PrivacyBudgetMemberDifferentialPrivacy:
 		_ = v.Value // Value is types.DifferentialPrivacyPrivacyBudget
 
@@ -333,12 +358,16 @@ func ExamplePrivacyBudget_outputUsage() {
 	}
 }
 
+var _ *types.AccessBudget
 var _ *types.DifferentialPrivacyPrivacyBudget
 
 func ExamplePrivacyBudgetTemplateParametersInput_outputUsage() {
 	var union types.PrivacyBudgetTemplateParametersInput
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.PrivacyBudgetTemplateParametersInputMemberAccessBudget:
+		_ = v.Value // Value is types.AccessBudgetsPrivacyTemplateParametersInput
+
 	case *types.PrivacyBudgetTemplateParametersInputMemberDifferentialPrivacy:
 		_ = v.Value // Value is types.DifferentialPrivacyTemplateParametersInput
 
@@ -351,12 +380,16 @@ func ExamplePrivacyBudgetTemplateParametersInput_outputUsage() {
 	}
 }
 
+var _ *types.AccessBudgetsPrivacyTemplateParametersInput
 var _ *types.DifferentialPrivacyTemplateParametersInput
 
 func ExamplePrivacyBudgetTemplateParametersOutput_outputUsage() {
 	var union types.PrivacyBudgetTemplateParametersOutput
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.PrivacyBudgetTemplateParametersOutputMemberAccessBudget:
+		_ = v.Value // Value is types.AccessBudgetsPrivacyTemplateParametersOutput
+
 	case *types.PrivacyBudgetTemplateParametersOutputMemberDifferentialPrivacy:
 		_ = v.Value // Value is types.DifferentialPrivacyTemplateParametersOutput
 
@@ -369,12 +402,16 @@ func ExamplePrivacyBudgetTemplateParametersOutput_outputUsage() {
 	}
 }
 
+var _ *types.AccessBudgetsPrivacyTemplateParametersOutput
 var _ *types.DifferentialPrivacyTemplateParametersOutput
 
 func ExamplePrivacyBudgetTemplateUpdateParameters_outputUsage() {
 	var union types.PrivacyBudgetTemplateUpdateParameters
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.PrivacyBudgetTemplateUpdateParametersMemberAccessBudget:
+		_ = v.Value // Value is types.AccessBudgetsPrivacyTemplateUpdateParameters
+
 	case *types.PrivacyBudgetTemplateUpdateParametersMemberDifferentialPrivacy:
 		_ = v.Value // Value is types.DifferentialPrivacyTemplateUpdateParameters
 
@@ -387,6 +424,7 @@ func ExamplePrivacyBudgetTemplateUpdateParameters_outputUsage() {
 	}
 }
 
+var _ *types.AccessBudgetsPrivacyTemplateUpdateParameters
 var _ *types.DifferentialPrivacyTemplateUpdateParameters
 
 func ExamplePrivacyImpact_outputUsage() {
@@ -406,6 +444,24 @@ func ExamplePrivacyImpact_outputUsage() {
 }
 
 var _ *types.DifferentialPrivacyPrivacyImpact
+
+func ExampleProtectedJobComputeConfiguration_outputUsage() {
+	var union types.ProtectedJobComputeConfiguration
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.ProtectedJobComputeConfigurationMemberWorker:
+		_ = v.Value // Value is types.ProtectedJobWorkerComputeConfiguration
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.ProtectedJobWorkerComputeConfiguration
 
 func ExampleProtectedJobConfigurationDetails_outputUsage() {
 	var union types.ProtectedJobConfigurationDetails
@@ -615,6 +671,24 @@ func ExampleSnowflakeTableSchema_outputUsage() {
 
 var _ []types.SnowflakeTableSchemaV1
 
+func ExampleSyntheticDataParameters_outputUsage() {
+	var union types.SyntheticDataParameters
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.SyntheticDataParametersMemberMlSyntheticDataParameters:
+		_ = v.Value // Value is types.MLSyntheticDataParameters
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.MLSyntheticDataParameters
+
 func ExampleTableReference_outputUsage() {
 	var union types.TableReference
 	// type switches can be used to check the union value
@@ -640,3 +714,21 @@ func ExampleTableReference_outputUsage() {
 var _ *types.GlueTableReference
 var _ *types.SnowflakeTableReference
 var _ *types.AthenaTableReference
+
+func ExampleWorkerComputeConfigurationProperties_outputUsage() {
+	var union types.WorkerComputeConfigurationProperties
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.WorkerComputeConfigurationPropertiesMemberSpark:
+		_ = v.Value // Value is map[string]string
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ map[string]string

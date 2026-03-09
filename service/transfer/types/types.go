@@ -7,10 +7,31 @@ import (
 	"time"
 )
 
+// Contains the configuration details for asynchronous Message Disposition
+// Notification (MDN) responses in AS2 connectors. This configuration specifies
+// where asynchronous MDN responses should be sent and which servers should handle
+// them.
+type As2AsyncMdnConnectorConfig struct {
+
+	// A list of server identifiers that can handle asynchronous MDN responses. You
+	// can specify between 1 and 10 server IDs.
+	ServerIds []string
+
+	// The URL endpoint where asynchronous MDN responses should be sent.
+	Url *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains the details for an AS2 connector object. The connector object is used
 // for AS2 outbound processes, to connect the Transfer Family customer with the
 // trading partner.
 type As2ConnectorConfig struct {
+
+	// Configuration settings for asynchronous Message Disposition Notification (MDN)
+	// responses. This allows you to configure where asynchronous MDN responses should
+	// be sent and which servers should handle them.
+	AsyncMdnConfig *As2AsyncMdnConnectorConfig
 
 	// Provides Basic authentication support to the AS2 Connectors API. To use Basic
 	// authentication, you must provide the name or Amazon Resource Name (ARN) of a
@@ -66,6 +87,9 @@ type As2ConnectorConfig struct {
 	// server) to determine whether the partner response for transfers is synchronous
 	// or asynchronous. Specify either of the following values:
 	//
+	//   - ASYNC : The system expects an asynchronous MDN response, confirming that the
+	//   file was transferred successfully (or not).
+	//
 	//   - SYNC : The system expects a synchronous MDN response, confirming that the
 	//   file was transferred successfully (or not).
 	//
@@ -97,6 +121,28 @@ type As2ConnectorConfig struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration structure that defines how traffic is routed from the connector
+// to the SFTP server. Contains VPC Lattice settings when using VPC_LATTICE egress
+// type for private connectivity through customer VPCs.
+//
+// The following types satisfy this interface:
+//
+//	ConnectorEgressConfigMemberVpcLattice
+type ConnectorEgressConfig interface {
+	isConnectorEgressConfig()
+}
+
+// VPC_LATTICE configuration for routing connector traffic through customer VPCs.
+// Enables private connectivity to SFTP servers without requiring public internet
+// access or complex network configurations.
+type ConnectorEgressConfigMemberVpcLattice struct {
+	Value ConnectorVpcLatticeEgressConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*ConnectorEgressConfigMemberVpcLattice) isConnectorEgressConfig() {}
+
 // A structure that contains the details for files transferred using an SFTP
 // connector, during a single transfer.
 type ConnectorFileTransferResult struct {
@@ -117,6 +163,26 @@ type ConnectorFileTransferResult struct {
 
 	// For transfers that fail, this parameter describes the reason for the failure.
 	FailureMessage *string
+
+	noSmithyDocumentSerde
+}
+
+// VPC_LATTICE egress configuration that specifies the Resource Configuration ARN
+// and port for connecting to SFTP servers through customer VPCs. Requires a valid
+// Resource Configuration with appropriate network access.
+type ConnectorVpcLatticeEgressConfig struct {
+
+	// ARN of the VPC_LATTICE Resource Configuration that defines the target SFTP
+	// server location. Must point to a valid Resource Configuration in the customer's
+	// VPC with appropriate network connectivity to the SFTP server.
+	//
+	// This member is required.
+	ResourceConfigurationArn *string
+
+	// Port number for connecting to the SFTP server through VPC_LATTICE. Defaults to
+	// 22 if not specified. Must match the port on which the target SFTP server is
+	// listening.
+	PortNumber *int32
 
 	noSmithyDocumentSerde
 }
@@ -197,6 +263,19 @@ type CustomDirectoriesType struct {
 	//
 	// This member is required.
 	TemporaryFilesDirectory *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents a custom HTTP header that can be included in AS2 messages. Each
+// header consists of a key-value pair.
+type CustomHttpHeader struct {
+
+	// The name of the custom HTTP header.
+	Key *string
+
+	// The value of the custom HTTP header.
+	Value *string
 
 	noSmithyDocumentSerde
 }
@@ -329,7 +408,8 @@ type DescribedAccess struct {
 	//
 	// A HomeDirectory example is /bucket_name/home/mydirectory .
 	//
-	// The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH .
+	// You can use the HomeDirectory parameter for HomeDirectoryType when it is set to
+	// either PATH or LOGICAL .
 	HomeDirectory *string
 
 	// Logical directory mappings that specify what Amazon S3 or Amazon EFS paths and
@@ -570,6 +650,20 @@ type DescribedConnector struct {
 	// This member is required.
 	Arn *string
 
+	// Type of egress configuration for the connector. SERVICE_MANAGED uses Transfer
+	// Family managed NAT gateways, while VPC_LATTICE routes traffic through customer
+	// VPCs using VPC Lattice.
+	//
+	// This member is required.
+	EgressType ConnectorEgressType
+
+	// Current status of the connector. PENDING indicates creation/update in progress,
+	// ACTIVE means ready for operations, and ERRORED indicates a failure requiring
+	// attention.
+	//
+	// This member is required.
+	Status ConnectorStatus
+
 	// Connectors are used to send files using either the AS2 or SFTP protocol. For
 	// the access role, provide the Amazon Resource Name (ARN) of the Identity and
 	// Access Management role to use.
@@ -607,6 +701,19 @@ type DescribedConnector struct {
 	// The unique identifier for the connector.
 	ConnectorId *string
 
+	// Current egress configuration of the connector, showing how traffic is routed to
+	// the SFTP server. Contains VPC Lattice settings when using VPC_LATTICE egress
+	// type.
+	//
+	// When using the VPC_LATTICE egress type, Transfer Family uses a managed Service
+	// Network to simplify the resource sharing process.
+	EgressConfig DescribedConnectorEgressConfig
+
+	// Error message providing details when the connector is in ERRORED status.
+	// Contains information to help troubleshoot connector creation or operation
+	// failures.
+	ErrorMessage *string
+
 	// The Amazon Resource Name (ARN) of the Identity and Access Management (IAM) role
 	// that allows a connector to turn on CloudWatch logging for Amazon S3 events. When
 	// set, you can view connector activity in your CloudWatch logs.
@@ -626,7 +733,52 @@ type DescribedConnector struct {
 	Tags []Tag
 
 	// The URL of the partner's AS2 or SFTP endpoint.
+	//
+	// When creating AS2 connectors or service-managed SFTP connectors (connectors
+	// without egress configuration), you must provide a URL to specify the remote
+	// server endpoint. For VPC Lattice type connectors, the URL must be null.
 	Url *string
+
+	noSmithyDocumentSerde
+}
+
+// Response structure containing the current egress configuration details for the
+// connector. Shows how traffic is currently routed from the connector to the SFTP
+// server.
+//
+// The following types satisfy this interface:
+//
+//	DescribedConnectorEgressConfigMemberVpcLattice
+type DescribedConnectorEgressConfig interface {
+	isDescribedConnectorEgressConfig()
+}
+
+// VPC_LATTICE configuration details in the response, showing the current Resource
+// Configuration ARN and port settings for VPC-based connectivity.
+type DescribedConnectorEgressConfigMemberVpcLattice struct {
+	Value DescribedConnectorVpcLatticeEgressConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*DescribedConnectorEgressConfigMemberVpcLattice) isDescribedConnectorEgressConfig() {}
+
+// VPC_LATTICE egress configuration details in the response, containing the
+// Resource Configuration ARN and port number currently configured for the
+// connector.
+type DescribedConnectorVpcLatticeEgressConfig struct {
+
+	// ARN of the VPC_LATTICE Resource Configuration currently used by the connector.
+	// This Resource Configuration defines the network path to the SFTP server through
+	// the customer's VPC.
+	//
+	// This member is required.
+	ResourceConfigurationArn *string
+
+	// Port number currently configured for SFTP connections through VPC_LATTICE.
+	// Shows the port on which the connector attempts to connect to the target SFTP
+	// server.
+	PortNumber *int32
 
 	noSmithyDocumentSerde
 }
@@ -883,6 +1035,23 @@ type DescribedServer struct {
 	// function in the Function parameter for the IdentityProviderDetails data type.
 	IdentityProviderType IdentityProviderType
 
+	// Specifies whether to use IPv4 only, or to use dual-stack (IPv4 and IPv6) for
+	// your Transfer Family endpoint. The default value is IPV4 .
+	//
+	// The IpAddressType parameter has the following limitations:
+	//
+	//   - It cannot be changed while the server is online. You must stop the server
+	//   before modifying this parameter.
+	//
+	//   - It cannot be updated to DUALSTACK if the server has AddressAllocationIds
+	//   specified.
+	//
+	// When using DUALSTACK as the IpAddressType , you cannot set the
+	// AddressAllocationIds parameter for the [EndpointDetails] for the server.
+	//
+	// [EndpointDetails]: https://docs.aws.amazon.com/transfer/latest/APIReference/API_EndpointDetails.html
+	IpAddressType IpAddressType
+
 	// The Amazon Resource Name (ARN) of the Identity and Access Management (IAM) role
 	// that allows a server to turn on Amazon CloudWatch logging for Amazon S3 or
 	// Amazon EFS events. When set, you can view user activity in your CloudWatch logs.
@@ -906,6 +1075,10 @@ type DescribedServer struct {
 
 	// The protocol settings that are configured for your server.
 	//
+	// Avoid placing Network Load Balancers (NLBs) or NAT gateways in front of
+	// Transfer Family servers, as this increases costs and can cause performance
+	// issues, including reduced connection limits for FTPS. For more details, see [Avoid placing NLBs and NATs in front of Transfer Family].
+	//
 	//   - To indicate passive mode (for FTP and FTPS protocols), use the PassiveIp
 	//   parameter. Enter a single dotted-quad IPv4 address, such as the external IP
 	//   address of a firewall, router, or load balancer.
@@ -925,6 +1098,8 @@ type DescribedServer struct {
 	//
 	//   - As2Transports indicates the transport method for the AS2 messages.
 	//   Currently, only HTTP is supported.
+	//
+	// [Avoid placing NLBs and NATs in front of Transfer Family]: https://docs.aws.amazon.com/transfer/latest/userguide/infrastructure-security.html#nlb-considerations
 	ProtocolDetails *ProtocolDetails
 
 	// Specifies the file transfer protocol or protocols over which your file transfer
@@ -959,7 +1134,11 @@ type DescribedServer struct {
 	Protocols []Protocol
 
 	// Specifies whether or not performance for your Amazon S3 directories is
-	// optimized. This is disabled by default.
+	// optimized.
+	//
+	//   - If using the console, this is enabled by default.
+	//
+	//   - If using the API or CLI, this is disabled by default.
 	//
 	// By default, home directory mappings have a TYPE of DIRECTORY . If you enable
 	// this option, you would then need to explicitly set the HomeDirectoryMapEntry Type
@@ -1032,7 +1211,8 @@ type DescribedUser struct {
 	//
 	// A HomeDirectory example is /bucket_name/home/mydirectory .
 	//
-	// The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH .
+	// You can use the HomeDirectory parameter for HomeDirectoryType when it is set to
+	// either PATH or LOGICAL .
 	HomeDirectory *string
 
 	// Logical directory mappings that specify what Amazon S3 or Amazon EFS paths and
@@ -1124,9 +1304,18 @@ type DescribedWebApp struct {
 	// the default value.
 	AccessEndpoint *string
 
+	// The endpoint configuration details for the web app, including VPC settings if
+	// the endpoint is hosted within a VPC.
+	DescribedEndpointDetails DescribedWebAppEndpointDetails
+
 	// A structure that contains the details for the identity provider used by the web
 	// app.
 	DescribedIdentityProviderDetails DescribedWebAppIdentityProviderDetails
+
+	// The type of endpoint hosting the web app. Valid values are PUBLIC for publicly
+	// accessible endpoints and VPC for VPC-hosted endpoints that provide network
+	// isolation.
+	EndpointType WebAppEndpointType
 
 	// Key-value pairs that can be used to group and search for web apps. Tags are
 	// metadata attached to web apps for any purpose.
@@ -1177,6 +1366,26 @@ type DescribedWebAppCustomization struct {
 	noSmithyDocumentSerde
 }
 
+// Contains the endpoint configuration details for a web app, including VPC
+// configuration when the endpoint is hosted within a VPC.
+//
+// The following types satisfy this interface:
+//
+//	DescribedWebAppEndpointDetailsMemberVpc
+type DescribedWebAppEndpointDetails interface {
+	isDescribedWebAppEndpointDetails()
+}
+
+// The VPC configuration details when the web app endpoint is hosted within a VPC.
+// This includes the VPC ID, subnet IDs, and VPC endpoint ID.
+type DescribedWebAppEndpointDetailsMemberVpc struct {
+	Value DescribedWebAppVpcConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*DescribedWebAppEndpointDetailsMemberVpc) isDescribedWebAppEndpointDetails() {}
+
 // Returns a structure that contains the identity provider details for your web
 // app.
 //
@@ -1196,6 +1405,24 @@ type DescribedWebAppIdentityProviderDetailsMemberIdentityCenterConfig struct {
 }
 
 func (*DescribedWebAppIdentityProviderDetailsMemberIdentityCenterConfig) isDescribedWebAppIdentityProviderDetails() {
+}
+
+// Contains the VPC configuration details for a web app endpoint, including the
+// VPC identifier, subnet IDs, and VPC endpoint ID used for hosting the endpoint.
+type DescribedWebAppVpcConfig struct {
+
+	// The list of subnet IDs within the VPC where the web app endpoint is deployed.
+	// These subnets must be in the same VPC and provide network connectivity for the
+	// endpoint.
+	SubnetIds []string
+
+	// The identifier of the VPC endpoint created for the web app.
+	VpcEndpointId *string
+
+	// The identifier of the VPC where the web app endpoint is hosted.
+	VpcId *string
+
+	noSmithyDocumentSerde
 }
 
 // Describes the properties of the specified workflow
@@ -1290,6 +1517,10 @@ type EndpointDetails struct {
 	//
 	//   - Call the UpdateServer API to set or change this parameter.
 	//
+	//   - You can't set address allocation IDs for servers that have an IpAddressType
+	//   set to DUALSTACK You can only set this property if IpAddressType is set to
+	//   IPV4 .
+	//
 	// [Address]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_Address.html
 	// [Create an internet-facing endpoint for your server]: https://docs.aws.amazon.com/transfer/latest/userguide/create-server-in-vpc.html#create-internet-facing-endpoint
 	// [DescribeAddresses]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeAddresses.html
@@ -1297,6 +1528,13 @@ type EndpointDetails struct {
 
 	// A list of security groups IDs that are available to attach to your server's
 	// endpoint.
+	//
+	// While SecurityGroupIds appears in the response syntax for consistency with
+	// CreateServer and UpdateServer operations, this field is not populated in
+	// DescribeServer responses. Security groups are managed at the VPC endpoint level
+	// and can be modified outside of the Transfer Family service. To retrieve current
+	// security group information, use the EC2 DescribeVpcEndpoints API with the
+	// VpcEndpointId returned in the response.
 	//
 	// This property can only be set when EndpointType is set to VPC .
 	//
@@ -1547,7 +1785,8 @@ type ListedAccess struct {
 	//
 	// A HomeDirectory example is /bucket_name/home/mydirectory .
 	//
-	// The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH .
+	// You can use the HomeDirectory parameter for HomeDirectoryType when it is set to
+	// either PATH or LOGICAL .
 	HomeDirectory *string
 
 	// The type of landing directory (folder) that you want your users' home directory
@@ -1659,6 +1898,10 @@ type ListedConnector struct {
 	ConnectorId *string
 
 	// The URL of the partner's AS2 or SFTP endpoint.
+	//
+	// When creating AS2 connectors or service-managed SFTP connectors (connectors
+	// without egress configuration), you must provide a URL to specify the remote
+	// server endpoint. For VPC Lattice type connectors, the URL must be null.
 	Url *string
 
 	noSmithyDocumentSerde
@@ -1827,7 +2070,8 @@ type ListedUser struct {
 	//
 	// A HomeDirectory example is /bucket_name/home/mydirectory .
 	//
-	// The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH .
+	// You can use the HomeDirectory parameter for HomeDirectoryType when it is set to
+	// either PATH or LOGICAL .
 	HomeDirectory *string
 
 	// The type of landing directory (folder) that you want your users' home directory
@@ -1886,6 +2130,10 @@ type ListedWebApp struct {
 	// interact with the Transfer Family web app. You can specify a custom URL or use
 	// the default value.
 	AccessEndpoint *string
+
+	// The type of endpoint hosting the web app. Valid values are PUBLIC for publicly
+	// accessible endpoints and VPC for VPC-hosted endpoints.
+	EndpointType WebAppEndpointType
 
 	// The WebAppEndpoint is the unique URL for your Transfer Family web app. This is
 	// the value that you use when you configure Origins on CloudFront.
@@ -1967,6 +2215,16 @@ type ProtocolDetails struct {
 	// Family server for the change to take effect. For details on using passive mode
 	// (PASV) in a NAT environment, see [Configuring your FTPS server behind a firewall or NAT with Transfer Family].
 	//
+	// Additionally, avoid placing Network Load Balancers (NLBs) or NAT gateways in
+	// front of Transfer Family servers. This configuration increases costs and can
+	// cause performance issues. When NLBs or NATs are in the communication path,
+	// Transfer Family cannot accurately recognize client IP addresses, which impacts
+	// connection sharding and limits FTPS servers to only 300 simultaneous connections
+	// instead of 10,000. If you must use an NLB, use port 21 for health checks and
+	// enable TLS session resumption by setting TlsSessionResumptionMode = ENFORCED .
+	// For optimal performance, migrate to VPC endpoints with Elastic IP addresses
+	// instead of using NLBs. For more details, see [Avoid placing NLBs and NATs in front of Transfer Family].
+	//
 	// Special values
 	//
 	// The AUTO and 0.0.0.0 are special values for the PassiveIp parameter. The value
@@ -1984,6 +2242,7 @@ type ProtocolDetails struct {
 	// response.
 	//
 	// [Configuring your FTPS server behind a firewall or NAT with Transfer Family]: http://aws.amazon.com/blogs/storage/configuring-your-ftps-server-behind-a-firewall-or-nat-with-aws-transfer-family/
+	// [Avoid placing NLBs and NATs in front of Transfer Family]: https://docs.aws.amazon.com/transfer/latest/userguide/infrastructure-security.html#nlb-considerations
 	PassiveIp *string
 
 	// Use the SetStatOption to ignore the error that is generated when the client
@@ -2087,7 +2346,11 @@ type S3InputFileLocation struct {
 type S3StorageOptions struct {
 
 	// Specifies whether or not performance for your Amazon S3 directories is
-	// optimized. This is disabled by default.
+	// optimized.
+	//
+	//   - If using the console, this is enabled by default.
+	//
+	//   - If using the API or CLI, this is disabled by default.
 	//
 	// By default, home directory mappings have a TYPE of DIRECTORY . If you enable
 	// this option, you would then need to explicitly set the HomeDirectoryMapEntry Type
@@ -2131,7 +2394,10 @@ type ServiceMetadata struct {
 type SftpConnectorConfig struct {
 
 	// Specify the number of concurrent connections that your connector creates to the
-	// remote server. The default value is 5 (this is also the maximum value allowed).
+	// remote server. The default value is 1 . The maximum values is 5 .
+	//
+	// If you are using the Amazon Web Services Management Console, the default value
+	// is 5 .
 	//
 	// This parameter specifies the number of active connections that your connector
 	// can establish with the remote server at the same time. Increasing this value can
@@ -2146,6 +2412,11 @@ type SftpConnectorConfig struct {
 	// TrustedHostKeys is optional for CreateConnector . If not provided, you can use
 	// TestConnection to retrieve the server host key during the initial connection
 	// attempt, and subsequently update the connector with the observed host key.
+	//
+	// When creating connectors with egress config (VPC_LATTICE type connectors),
+	// since host name is not something we can verify, the only accepted trusted host
+	// key format is key-type key-body without the host name. For example: ssh-rsa
+	// AAAAB3Nza...<long-string-for-public-key>
 	//
 	// The three standard SSH public key format elements are <key type> , <body base64>
 	// , and an optional <comment> , with spaces between each element. Specify only the
@@ -2166,10 +2437,14 @@ type SftpConnectorConfig struct {
 	//
 	// This prints the public host key to standard output.
 	//
-	//     ftp.host.com ssh-rsa AAAAB3Nza...<long-string-for-public-key
+	//     ftp.host.com ssh-rsa AAAAB3Nza...<long-string-for-public-key>
 	//
 	// Copy and paste this string into the TrustedHostKeys field for the
 	// create-connector command or into the Trusted host keys field in the console.
+	//
+	// For VPC Lattice type connectors (VPC_LATTICE), remove the hostname from the key
+	// and use only the key-type key-body format. In this example, it should be:
+	// ssh-rsa AAAAB3Nza...<long-string-for-public-key>
 	TrustedHostKeys []string
 
 	// The identifier for the secret (in Amazon Web Services Secrets Manager) that
@@ -2270,6 +2545,65 @@ type TagStepDetails struct {
 	noSmithyDocumentSerde
 }
 
+// Structure for updating the egress configuration of an existing connector.
+// Allows modification of how traffic is routed from the connector to the SFTP
+// server, including VPC_LATTICE settings.
+//
+// The following types satisfy this interface:
+//
+//	UpdateConnectorEgressConfigMemberVpcLattice
+type UpdateConnectorEgressConfig interface {
+	isUpdateConnectorEgressConfig()
+}
+
+// VPC_LATTICE configuration updates for the connector. Use this to modify the
+// Resource Configuration ARN or port number for VPC-based connectivity.
+type UpdateConnectorEgressConfigMemberVpcLattice struct {
+	Value UpdateConnectorVpcLatticeEgressConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*UpdateConnectorEgressConfigMemberVpcLattice) isUpdateConnectorEgressConfig() {}
+
+// VPC_LATTICE egress configuration updates for modifying how the connector routes
+// traffic through customer VPCs. Changes to these settings may require connector
+// restart to take effect.
+type UpdateConnectorVpcLatticeEgressConfig struct {
+
+	// Updated port number for SFTP connections through VPC_LATTICE. Change this if
+	// the target SFTP server port has been modified or if connecting to a different
+	// server endpoint.
+	PortNumber *int32
+
+	// Updated ARN of the VPC_LATTICE Resource Configuration. Use this to change the
+	// target SFTP server location or modify the network path through the customer's
+	// VPC infrastructure.
+	ResourceConfigurationArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains the endpoint configuration details for updating a web app, including
+// VPC settings for endpoints hosted within a VPC.
+//
+// The following types satisfy this interface:
+//
+//	UpdateWebAppEndpointDetailsMemberVpc
+type UpdateWebAppEndpointDetails interface {
+	isUpdateWebAppEndpointDetails()
+}
+
+// The VPC configuration details for updating a web app endpoint hosted within a
+// VPC. This includes the subnet IDs for endpoint deployment.
+type UpdateWebAppEndpointDetailsMemberVpc struct {
+	Value UpdateWebAppVpcConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*UpdateWebAppEndpointDetailsMemberVpc) isUpdateWebAppEndpointDetails() {}
+
 // A structure that describes the values to use for the IAM Identity Center
 // settings when you update a web app.
 type UpdateWebAppIdentityCenterConfig struct {
@@ -2300,6 +2634,17 @@ type UpdateWebAppIdentityProviderDetailsMemberIdentityCenterConfig struct {
 func (*UpdateWebAppIdentityProviderDetailsMemberIdentityCenterConfig) isUpdateWebAppIdentityProviderDetails() {
 }
 
+// Contains the VPC configuration settings for updating a web app endpoint,
+// including the subnet IDs where the endpoint should be deployed.
+type UpdateWebAppVpcConfig struct {
+
+	// The list of subnet IDs within the VPC where the web app endpoint should be
+	// deployed during the update operation.
+	SubnetIds []string
+
+	noSmithyDocumentSerde
+}
+
 // Specifies the user name, server ID, and session ID for a workflow.
 type UserDetails struct {
 
@@ -2319,6 +2664,25 @@ type UserDetails struct {
 
 	noSmithyDocumentSerde
 }
+
+// Contains the endpoint configuration for a web app, including VPC settings when
+// the endpoint is hosted within a VPC.
+//
+// The following types satisfy this interface:
+//
+//	WebAppEndpointDetailsMemberVpc
+type WebAppEndpointDetails interface {
+	isWebAppEndpointDetails()
+}
+
+// The VPC configuration for hosting the web app endpoint within a VPC.
+type WebAppEndpointDetailsMemberVpc struct {
+	Value WebAppVpcConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*WebAppEndpointDetailsMemberVpc) isWebAppEndpointDetails() {}
 
 // A union that contains the IdentityCenterConfig object.
 //
@@ -2362,6 +2726,26 @@ type WebAppUnitsMemberProvisioned struct {
 }
 
 func (*WebAppUnitsMemberProvisioned) isWebAppUnits() {}
+
+// Contains the VPC configuration settings for hosting a web app endpoint,
+// including the VPC ID, subnet IDs, and security group IDs for access control.
+type WebAppVpcConfig struct {
+
+	// The list of security group IDs that control access to the web app endpoint.
+	// These security groups determine which sources can access the endpoint based on
+	// IP addresses and port configurations.
+	SecurityGroupIds []string
+
+	// The list of subnet IDs within the VPC where the web app endpoint will be
+	// deployed. These subnets must be in the same VPC specified in the VpcId
+	// parameter.
+	SubnetIds []string
+
+	// The identifier of the VPC where the web app endpoint will be hosted.
+	VpcId *string
+
+	noSmithyDocumentSerde
+}
 
 // Specifies the workflow ID for the workflow to assign and the execution role
 // that's used for executing the workflow.
@@ -2487,7 +2871,13 @@ type UnknownUnionMember struct {
 	noSmithyDocumentSerde
 }
 
+func (*UnknownUnionMember) isConnectorEgressConfig()                  {}
+func (*UnknownUnionMember) isDescribedConnectorEgressConfig()         {}
+func (*UnknownUnionMember) isDescribedWebAppEndpointDetails()         {}
 func (*UnknownUnionMember) isDescribedWebAppIdentityProviderDetails() {}
+func (*UnknownUnionMember) isUpdateConnectorEgressConfig()            {}
+func (*UnknownUnionMember) isUpdateWebAppEndpointDetails()            {}
 func (*UnknownUnionMember) isUpdateWebAppIdentityProviderDetails()    {}
+func (*UnknownUnionMember) isWebAppEndpointDetails()                  {}
 func (*UnknownUnionMember) isWebAppIdentityProviderDetails()          {}
 func (*UnknownUnionMember) isWebAppUnits()                            {}

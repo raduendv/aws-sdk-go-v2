@@ -11,9 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2
+//
 // Retrieves a fresh set of credentials for use when uploading a new set of game
-// build files to Amazon GameLift's Amazon S3. This is done as part of the build
-// creation process; see [CreateBuild].
+// build files to Amazon GameLift Servers's Amazon S3. This is done as part of the
+// build creation process; see [CreateBuild].
 //
 // To request new credentials, specify the build ID as returned with an initial
 // CreateBuild request. If successful, a new set of credentials are returned, along
@@ -158,16 +160,13 @@ func (c *Client) addOperationRequestUploadCredentialsMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

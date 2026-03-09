@@ -56,13 +56,19 @@ type GetScopeOutput struct {
 	// This member is required.
 	ScopeId *string
 
-	// The status of a scope. The status can be one of the following: SUCCEEDED ,
-	// IN_PROGRESS , or FAILED .
+	// The status for a scope. The status can be one of the following: SUCCEEDED ,
+	// IN_PROGRESS , FAILED , DEACTIVATING , or DEACTIVATED .
+	//
+	// A status of DEACTIVATING means that you've requested a scope to be deactivated
+	// and Network Flow Monitor is in the process of deactivating the scope. A status
+	// of DEACTIVATED means that the deactivating process is complete.
 	//
 	// This member is required.
 	Status types.ScopeStatus
 
-	// The targets for a scope
+	// The targets to define the scope to be monitored. A target is an array of
+	// targetResources, which are currently Region-account pairs, defined by
+	// targetResource constructs.
 	//
 	// This member is required.
 	Targets []types.TargetResource
@@ -164,16 +170,13 @@ func (c *Client) addOperationGetScopeMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

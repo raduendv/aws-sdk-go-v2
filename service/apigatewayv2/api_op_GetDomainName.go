@@ -45,11 +45,17 @@ type GetDomainNameOutput struct {
 	// The name of the DomainName resource.
 	DomainName *string
 
+	// The ARN of the DomainName resource.
+	DomainNameArn *string
+
 	// The domain name configurations.
 	DomainNameConfigurations []types.DomainNameConfiguration
 
 	// The mutual TLS authentication configuration for a custom domain name.
 	MutualTlsAuthentication *types.MutualTlsAuthentication
+
+	// The routing mode.
+	RoutingMode types.RoutingMode
 
 	// The collection of tags associated with a domain name.
 	Tags map[string]string
@@ -148,16 +154,13 @@ func (c *Client) addOperationGetDomainNameMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

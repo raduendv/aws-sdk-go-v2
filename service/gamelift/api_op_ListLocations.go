@@ -11,7 +11,24 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Lists all custom and Amazon Web Services locations.
+//	This API works with the following fleet types: Anywhere
+//
+// Lists all custom and Amazon Web Services locations where Amazon GameLift
+// Servers can host game servers.
+//
+// Note that if you call this API using a location that doesn't have a service
+// endpoint, such as one that can only be a remote location in a multi-location
+// fleet, the API returns an error.
+//
+// Consult the table of supported locations in [Amazon GameLift Servers service locations] to identify home Regions that
+// support single and multi-location fleets.
+//
+// # Learn more
+//
+// [Service locations]
+//
+// [Amazon GameLift Servers service locations]: https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-regions.html
+// [Service locations]: https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-regions.html
 func (c *Client) ListLocations(ctx context.Context, params *ListLocationsInput, optFns ...func(*Options)) (*ListLocationsOutput, error) {
 	if params == nil {
 		params = &ListLocationsInput{}
@@ -29,7 +46,10 @@ func (c *Client) ListLocations(ctx context.Context, params *ListLocationsInput, 
 
 type ListLocationsInput struct {
 
-	// Filters the list for AWS or CUSTOM locations.
+	// Filters the list for AWS or CUSTOM locations. Use this parameter to narrow down
+	// results to only Amazon Web Services-managed locations (Amazon EC2 or container)
+	// or only your custom locations (such as an Amazon GameLift Servers Anywhere
+	// fleet).
 	Filters []types.LocationFilter
 
 	// The maximum number of results to return. Use this parameter with NextToken to
@@ -46,7 +66,9 @@ type ListLocationsInput struct {
 
 type ListLocationsOutput struct {
 
-	// A collection of locations.
+	// A collection of locations, including both Amazon Web Services and custom
+	// locations. Each location includes a name and ping beacon information that can be
+	// used to measure network latency between player devices and the location.
 	Locations []types.LocationModel
 
 	// A token that indicates where to resume retrieving results on the next call to
@@ -145,16 +167,13 @@ func (c *Client) addOperationListLocationsMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

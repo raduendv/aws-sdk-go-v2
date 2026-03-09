@@ -12,6 +12,7 @@
         "api_op_ApplyGuardrail.go",
         "api_op_Converse.go",
         "api_op_ConverseStream.go",
+        "api_op_CountTokens.go",
         "api_op_GetAsyncInvoke.go",
         "api_op_InvokeModel.go",
         "api_op_InvokeModelWithResponseStream.go",
@@ -42,7 +43,7 @@
         "types/types_exported_test.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/bedrockruntime",
     "unstable": false
 }

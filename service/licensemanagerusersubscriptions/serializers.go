@@ -1661,6 +1661,11 @@ func awsRestjson1_serializeDocumentActiveDirectoryIdentityProvider(v *types.Acti
 		ok.String(*v.DirectoryId)
 	}
 
+	if v.IsSharedActiveDirectory != nil {
+		ok := object.Key("IsSharedActiveDirectory")
+		ok.Boolean(*v.IsSharedActiveDirectory)
+	}
+
 	return nil
 }
 
@@ -1678,6 +1683,13 @@ func awsRestjson1_serializeDocumentActiveDirectorySettings(v *types.ActiveDirect
 	if v.DomainIpv4List != nil {
 		ok := object.Key("DomainIpv4List")
 		if err := awsRestjson1_serializeDocumentIpV4List(v.DomainIpv4List, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.DomainIpv6List != nil {
+		ok := object.Key("DomainIpv6List")
+		if err := awsRestjson1_serializeDocumentIpV6List(v.DomainIpv6List, ok); err != nil {
 			return err
 		}
 	}
@@ -1783,6 +1795,17 @@ func awsRestjson1_serializeDocumentIdentityProvider(v types.IdentityProvider, va
 }
 
 func awsRestjson1_serializeDocumentIpV4List(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentIpV6List(v []string, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
 

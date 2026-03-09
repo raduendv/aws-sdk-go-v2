@@ -13,7 +13,7 @@ import (
 
 // Creates a new entitlement. Entitlements control access to specific applications
 // within a stack, based on user attributes. Entitlements apply to SAML 2.0
-// federated user identities. Amazon AppStream 2.0 user pool and streaming URL
+// federated user identities. WorkSpaces Applications user pool and streaming URL
 // users are entitled to all applications in a stack. Entitlements don't apply to
 // the desktop stream view application, or to applications managed by a dynamic app
 // provider using the Dynamic Application Framework.
@@ -159,16 +159,13 @@ func (c *Client) addOperationCreateEntitlementMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

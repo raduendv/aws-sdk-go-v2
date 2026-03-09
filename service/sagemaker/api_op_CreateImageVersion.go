@@ -33,7 +33,7 @@ type CreateImageVersionInput struct {
 	// The registry path of the container image to use as the starting point for this
 	// version. The path is an Amazon ECR URI in the following format:
 	//
-	//     .dkr.ecr..amazonaws.com/
+	//     <acct-id>.dkr.ecr.<region>.amazonaws.com/<repo-name[:tag] or [@digest]>
 	//
 	// This member is required.
 	BaseImage *string
@@ -202,16 +202,13 @@ func (c *Client) addOperationCreateImageVersionMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

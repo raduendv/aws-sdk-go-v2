@@ -37,7 +37,8 @@ type UpdatePricingRuleInput struct {
 	//  The new description for the pricing rule.
 	Description *string
 
-	//  The new modifier to show pricing plan rates as a percentage.
+	//  The new modifier to show pricing plan rates as a percentage. Your entry will
+	// be rounded to the nearest 2 decimal places.
 	ModifierPercentage *float64
 
 	//  The new name of the pricing rule. The name must be unique to each pricing
@@ -202,16 +203,13 @@ func (c *Client) addOperationUpdatePricingRuleMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -109,6 +109,9 @@ func ExampleCustomFileSystem_outputUsage() {
 	case *types.CustomFileSystemMemberFSxLustreFileSystem:
 		_ = v.Value // Value is types.FSxLustreFileSystem
 
+	case *types.CustomFileSystemMemberS3FileSystem:
+		_ = v.Value // Value is types.S3FileSystem
+
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
 
@@ -120,6 +123,7 @@ func ExampleCustomFileSystem_outputUsage() {
 
 var _ *types.FSxLustreFileSystem
 var _ *types.EFSFileSystem
+var _ *types.S3FileSystem
 
 func ExampleCustomFileSystemConfig_outputUsage() {
 	var union types.CustomFileSystemConfig
@@ -131,6 +135,9 @@ func ExampleCustomFileSystemConfig_outputUsage() {
 	case *types.CustomFileSystemConfigMemberFSxLustreFileSystemConfig:
 		_ = v.Value // Value is types.FSxLustreFileSystemConfig
 
+	case *types.CustomFileSystemConfigMemberS3FileSystemConfig:
+		_ = v.Value // Value is types.S3FileSystemConfig
+
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
 
@@ -141,7 +148,38 @@ func ExampleCustomFileSystemConfig_outputUsage() {
 }
 
 var _ *types.FSxLustreFileSystemConfig
+var _ *types.S3FileSystemConfig
 var _ *types.EFSFileSystemConfig
+
+func ExampleEventMetadata_outputUsage() {
+	var union types.EventMetadata
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.EventMetadataMemberCluster:
+		_ = v.Value // Value is types.ClusterMetadata
+
+	case *types.EventMetadataMemberInstance:
+		_ = v.Value // Value is types.InstanceMetadata
+
+	case *types.EventMetadataMemberInstanceGroup:
+		_ = v.Value // Value is types.InstanceGroupMetadata
+
+	case *types.EventMetadataMemberInstanceGroupScaling:
+		_ = v.Value // Value is types.InstanceGroupScalingMetadata
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.ClusterMetadata
+var _ *types.InstanceGroupMetadata
+var _ *types.InstanceMetadata
+var _ *types.InstanceGroupScalingMetadata
 
 func ExampleMetricSpecification_outputUsage() {
 	var union types.MetricSpecification
@@ -178,6 +216,9 @@ func ExampleOptimizationConfig_outputUsage() {
 	case *types.OptimizationConfigMemberModelShardingConfig:
 		_ = v.Value // Value is types.ModelShardingConfig
 
+	case *types.OptimizationConfigMemberModelSpeculativeDecodingConfig:
+		_ = v.Value // Value is types.ModelSpeculativeDecodingConfig
+
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
 
@@ -190,6 +231,7 @@ func ExampleOptimizationConfig_outputUsage() {
 var _ *types.ModelCompilationConfig
 var _ *types.ModelQuantizationConfig
 var _ *types.ModelShardingConfig
+var _ *types.ModelSpeculativeDecodingConfig
 
 func ExampleScalingPolicy_outputUsage() {
 	var union types.ScalingPolicy

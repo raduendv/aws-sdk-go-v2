@@ -112,7 +112,11 @@ type DescribeExecutionOutput struct {
 	//
 	//   - special characters " # % \ ^ | ~ ` $ & , ; : /
 	//
-	//   - control characters ( U+0000-001F , U+007F-009F )
+	//   - control characters ( U+0000-001F , U+007F-009F , U+FFFE-FFFF )
+	//
+	//   - surrogates ( U+D800-DFFF )
+	//
+	//   - invalid characters ( U+10FFFF )
 	//
 	// To enable logging with CloudWatch Logs, the name should only contain 0-9, A-Z,
 	// a-z, - and _.
@@ -207,6 +211,13 @@ type DescribeExecutionOutput struct {
 	StopDate *time.Time
 
 	// The X-Ray trace header that was passed to the execution.
+	//
+	// For X-Ray traces, all Amazon Web Services services use the X-Amzn-Trace-Id
+	// header from the HTTP request. Using the header is the preferred mechanism to
+	// identify a trace. StartExecution and StartSyncExecution API operations can also
+	// use traceHeader from the body of the request payload. If both sources are
+	// provided, Step Functions will use the header value (preferred) over the value in
+	// the request body.
 	TraceHeader *string
 
 	// Metadata pertaining to the operation's result.
@@ -303,16 +314,13 @@ func (c *Client) addOperationDescribeExecutionMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

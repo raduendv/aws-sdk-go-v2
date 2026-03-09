@@ -292,7 +292,7 @@ type DataLakeSettings struct {
 
 	// A key-value map that provides an additional configuration on your data lake.
 	// CROSS_ACCOUNT_VERSION is the key you can configure in the Parameters field.
-	// Accepted values for the CrossAccountVersion key are 1, 2, 3, and 4.
+	// Accepted values for the CrossAccountVersion key are 1, 2, 3, 4 and 5.
 	Parameters map[string]string
 
 	// A list of Lake Formation principals with only view access to the resources,
@@ -700,6 +700,11 @@ type QueryPlanningContext struct {
 // A structure used as a protocol between query engines and Lake Formation or
 // Glue. Contains both a Lake Formation generated authorization identifier and
 // information from the request's authorization context.
+//
+// For more information about how to utilize QuerySessionContext, see [Lake Formation workflow for application integration API operations] in the
+// developer guide.
+//
+// [Lake Formation workflow for application integration API operations]: https://docs.aws.amazon.com/lake-formation/latest/dg/api-overview.html
 type QuerySessionContext struct {
 
 	// An opaque string-string map passed by the query engine.
@@ -721,6 +726,36 @@ type QuerySessionContext struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration for enabling trusted identity propagation with Redshift Connect.
+type RedshiftConnect struct {
+
+	// The authorization status for Redshift Connect. Valid values are ENABLED or
+	// DISABLED.
+	//
+	// This member is required.
+	Authorization ServiceAuthorization
+
+	noSmithyDocumentSerde
+}
+
+// A union structure representing different Redshift integration scopes.
+//
+// The following types satisfy this interface:
+//
+//	RedshiftScopeUnionMemberRedshiftConnect
+type RedshiftScopeUnion interface {
+	isRedshiftScopeUnion()
+}
+
+// Configuration for Redshift Connect integration.
+type RedshiftScopeUnionMemberRedshiftConnect struct {
+	Value RedshiftConnect
+
+	noSmithyDocumentSerde
+}
+
+func (*RedshiftScopeUnionMemberRedshiftConnect) isRedshiftScopeUnion() {}
+
 // A structure for the resource.
 type Resource struct {
 
@@ -741,7 +776,7 @@ type Resource struct {
 	// and Revoke database permissions to a principal.
 	Database *DatabaseResource
 
-	// The LF-tag key and values attached to a resource.
+	// The LF-Tag key and values attached to a resource.
 	LFTag *LFTagKeyResource
 
 	// LF-Tag expression resource. A logical expression composed of one or more LF-Tag
@@ -767,6 +802,10 @@ type Resource struct {
 // A structure containing information about an Lake Formation resource.
 type ResourceInfo struct {
 
+	// The Amazon Web Services account that owns the Glue tables associated with
+	// specific Amazon S3 locations.
+	ExpectedResourceOwnerAccount *string
+
 	//  Indicates whether the data access of tables pointing to the location can be
 	// managed by both Lake Formation permissions as well as Amazon S3 bucket policies.
 	HybridAccessEnabled *bool
@@ -779,6 +818,19 @@ type ResourceInfo struct {
 
 	// The IAM role that registered a resource.
 	RoleArn *string
+
+	// Indicates whether the registered role has sufficient permissions to access
+	// registered Amazon S3 location. Verification Status can be one of the following:
+	//
+	//   - VERIFIED - Registered role has sufficient permissions to access registered
+	//   Amazon S3 location.
+	//
+	//   - NOT_VERIFIED - Registered role does not have sufficient permissions to
+	//   access registered Amazon S3 location.
+	//
+	//   - VERIFICATION_FAILED - Unable to verify if the registered role can access
+	//   the registered Amazon S3 location.
+	VerificationStatus VerificationStatus
 
 	// Whether or not the resource is a federated resource.
 	WithFederation *bool
@@ -801,6 +853,24 @@ type RowFilter struct {
 
 	noSmithyDocumentSerde
 }
+
+// A union structure representing different service integration types.
+//
+// The following types satisfy this interface:
+//
+//	ServiceIntegrationUnionMemberRedshift
+type ServiceIntegrationUnion interface {
+	isServiceIntegrationUnion()
+}
+
+// Redshift service integration configuration.
+type ServiceIntegrationUnionMemberRedshift struct {
+	Value []RedshiftScopeUnion
+
+	noSmithyDocumentSerde
+}
+
+func (*ServiceIntegrationUnionMemberRedshift) isServiceIntegrationUnion() {}
 
 // A structure describing the configuration and details of a storage optimizer.
 type StorageOptimizer struct {
@@ -942,6 +1012,30 @@ type TaggedTable struct {
 	noSmithyDocumentSerde
 }
 
+// A temporary set of credentials for an Lake Formation user. These credentials
+// are scoped down to only access the raw data sources that the user has access to.
+//
+// The temporary security credentials consist of an access key and a session
+// token. The access key consists of an access key ID and a secret key. When the
+// credentials are created, they are associated with an IAM access control policy
+// that limits what the user can do when using the credentials.
+type TemporaryCredentials struct {
+
+	// The access key ID for the temporary credentials.
+	AccessKeyId *string
+
+	// The date and time when the temporary credentials expire.
+	Expiration *time.Time
+
+	// The secret key for the temporary credentials.
+	SecretAccessKey *string
+
+	// The session token for the temporary credentials.
+	SessionToken *string
+
+	noSmithyDocumentSerde
+}
+
 // A structure that contains information about a transaction.
 type TransactionDescription struct {
 
@@ -1010,3 +1104,15 @@ type WriteOperation struct {
 }
 
 type noSmithyDocumentSerde = smithydocument.NoSerde
+
+// UnknownUnionMember is returned when a union member is returned over the wire,
+// but has an unknown tag.
+type UnknownUnionMember struct {
+	Tag   string
+	Value []byte
+
+	noSmithyDocumentSerde
+}
+
+func (*UnknownUnionMember) isRedshiftScopeUnion()      {}
+func (*UnknownUnionMember) isServiceIntegrationUnion() {}

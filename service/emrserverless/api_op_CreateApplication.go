@@ -55,6 +55,15 @@ type CreateApplicationInput struct {
 	// amount of time being idle.
 	AutoStopConfiguration *types.AutoStopConfig
 
+	// The configuration object that allows encrypting local disks.
+	DiskEncryptionConfiguration *types.DiskEncryptionConfiguration
+
+	// The IAM Identity Center Configuration accepts the Identity Center instance
+	// parameter required to enable trusted identity propagation. This configuration
+	// allows identity propagation between integrated services and the Identity Center
+	// instance.
+	IdentityCenterConfiguration *types.IdentityCenterConfigurationInput
+
 	// The image configuration for all worker types. You can either set this parameter
 	// or imageConfiguration for each worker type in workerTypeSpecifications .
 	ImageConfiguration *types.ImageConfigurationInput
@@ -65,6 +74,9 @@ type CreateApplicationInput struct {
 	// The interactive configuration object that enables the interactive use cases to
 	// use when running an application.
 	InteractiveConfiguration *types.InteractiveConfiguration
+
+	// The configuration object that enables job level cost allocation.
+	JobLevelCostAllocationConfiguration *types.JobLevelCostAllocationConfiguration
 
 	// The maximum capacity to allocate when the application is created. This is
 	// cumulative across all workers at any given point in time, not just when an
@@ -218,16 +230,13 @@ func (c *Client) addOperationCreateApplicationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

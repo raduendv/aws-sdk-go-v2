@@ -15,13 +15,16 @@ import (
 // no longer stream this application by using that stream group's allocated compute
 // resources. Any streams in process will continue until they terminate, which
 // helps avoid interrupting an end-user's stream. Amazon GameLift Streams will not
-// initiate new streams using this stream group. The disassociate action does not
-// affect the stream capacity of a stream group.
+// initiate new streams in the stream group using the disassociated application.
+// The disassociate action does not affect the stream capacity of a stream group.
+// To disassociate an application, the stream group must be in ACTIVE status.
 //
-// You can only disassociate an application if it's not a default application of
-// the stream group. Check DefaultApplicationIdentifier by calling [GetStreamGroup].
+// If you disassociate the default application, Amazon GameLift Streams will
+// automatically choose a new default application from the remaining associated
+// applications. To change which application is the default application, call [UpdateStreamGroup]and
+// specify a new DefaultApplicationIdentifier .
 //
-// [GetStreamGroup]: https://docs.aws.amazon.com/gameliftstreams/latest/apireference/API_GetStreamGroup.html
+// [UpdateStreamGroup]: https://docs.aws.amazon.com/gameliftstreams/latest/apireference/API_UpdateStreamGroup.html
 func (c *Client) DisassociateApplications(ctx context.Context, params *DisassociateApplicationsInput, optFns ...func(*Options)) (*DisassociateApplicationsOutput, error) {
 	if params == nil {
 		params = &DisassociateApplicationsInput{}
@@ -42,9 +45,9 @@ type DisassociateApplicationsInput struct {
 	// A set of applications that you want to disassociate from the stream group.
 	//
 	// This value is a set of either [Amazon Resource Names (ARN)] or IDs that uniquely identify application
-	// resources. Format example: ARN-
-	// arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6 or ID-
-	// a-9ZY8X7Wv6 .
+	// resources. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:application/a-9ZY8X7Wv6 . Example
+	// ID: a-9ZY8X7Wv6 .
 	//
 	// [Amazon Resource Names (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
@@ -54,9 +57,9 @@ type DisassociateApplicationsInput struct {
 	// A stream group to disassociate these applications from.
 	//
 	// This value is an [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource.
-	// Format example: ARN-
-	// arn:aws:gameliftstreams:us-west-2:123456789012:streamgroup/sg-1AB2C3De4 or ID-
-	// sg-1AB2C3De4 .
+	// Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
+	// Example ID: sg-1AB2C3De4 .
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
@@ -70,17 +73,14 @@ type DisassociateApplicationsOutput struct {
 
 	// A set of applications that are disassociated from this stream group.
 	//
-	// This value is a set of either [Amazon Resource Names (ARN)] or IDs that uniquely identify application
-	// resources. Format example: ARN-
-	// arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6 or ID-
-	// a-9ZY8X7Wv6 .
+	// This value is a set of [Amazon Resource Names (ARNs)] that uniquely identify application resources. Example
+	// ARN: arn:aws:gameliftstreams:us-west-2:111122223333:application/a-9ZY8X7Wv6 .
 	//
-	// [Amazon Resource Names (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
+	// [Amazon Resource Names (ARNs)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	ApplicationArns []string
 
-	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource. Format example:
-	// ARN- arn:aws:gameliftstreams:us-west-2:123456789012:streamgroup/sg-1AB2C3De4 or
-	// ID- sg-1AB2C3De4 .
+	// An [Amazon Resource Name (ARN)] that uniquely identifies the stream group resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	Arn *string
@@ -179,16 +179,13 @@ func (c *Client) addOperationDisassociateApplicationsMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

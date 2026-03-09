@@ -1262,6 +1262,18 @@ func TestCheckSnapshot_GetClusterCredentialsWithIAM(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetIdentityCenterAuthToken(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetIdentityCenterAuthToken(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetIdentityCenterAuthToken")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetReservedNodeExchangeConfigurationOptions(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetReservedNodeExchangeConfigurationOptions(context.Background(), nil, func(o *Options) {
@@ -1471,6 +1483,18 @@ func TestCheckSnapshot_ModifyIntegration(t *testing.T) {
 	_, err := svc.ModifyIntegration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ModifyIntegration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ModifyLakehouseConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ModifyLakehouseConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ModifyLakehouseConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2929,6 +2953,18 @@ func TestUpdateSnapshot_GetClusterCredentialsWithIAM(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetIdentityCenterAuthToken(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetIdentityCenterAuthToken(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetIdentityCenterAuthToken")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetReservedNodeExchangeConfigurationOptions(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetReservedNodeExchangeConfigurationOptions(context.Background(), nil, func(o *Options) {
@@ -3138,6 +3174,18 @@ func TestUpdateSnapshot_ModifyIntegration(t *testing.T) {
 	_, err := svc.ModifyIntegration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ModifyIntegration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ModifyLakehouseConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ModifyLakehouseConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ModifyLakehouseConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

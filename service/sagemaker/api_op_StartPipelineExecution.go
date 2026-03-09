@@ -40,6 +40,9 @@ type StartPipelineExecutionInput struct {
 	// This member is required.
 	PipelineName *string
 
+	//  The MLflow experiment name of the pipeline execution.
+	MlflowExperimentName *string
+
 	// This configuration, if specified, overrides the parallelism configuration of
 	// the parent pipeline for this specific run.
 	ParallelismConfiguration *types.ParallelismConfiguration
@@ -52,6 +55,9 @@ type StartPipelineExecutionInput struct {
 
 	// Contains a list of pipeline parameters. This list can be empty.
 	PipelineParameters []types.Parameter
+
+	// The ID of the pipeline version to start execution from.
+	PipelineVersionId *int64
 
 	// The selective execution configuration applied to the pipeline run.
 	SelectiveExecutionConfig *types.SelectiveExecutionConfig
@@ -161,16 +167,13 @@ func (c *Client) addOperationStartPipelineExecutionMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

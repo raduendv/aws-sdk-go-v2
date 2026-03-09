@@ -7,6 +7,123 @@ import (
 	"time"
 )
 
+// The branding configuration output including custom images metadata, localized
+// strings, color theme, and terms of service.
+type BrandingConfiguration struct {
+
+	// The color theme for components on the web portal.
+	//
+	// This member is required.
+	ColorTheme ColorTheme
+
+	// Metadata for the favicon image file, including the MIME type, file extension,
+	// and upload timestamp.
+	//
+	// This member is required.
+	Favicon *ImageMetadata
+
+	// A map of localized text strings for different languages, allowing the portal to
+	// display content in the user's preferred language.
+	//
+	// This member is required.
+	LocalizedStrings map[string]LocalizedBrandingStrings
+
+	// Metadata for the logo image file, including the MIME type, file extension, and
+	// upload timestamp.
+	//
+	// This member is required.
+	Logo *ImageMetadata
+
+	// Metadata for the wallpaper image file, including the MIME type, file extension,
+	// and upload timestamp.
+	//
+	// This member is required.
+	Wallpaper *ImageMetadata
+
+	// The terms of service text in Markdown format that users must accept before
+	// accessing the portal.
+	//
+	// This value conforms to the media type: text/markdown
+	TermsOfService *string
+
+	noSmithyDocumentSerde
+}
+
+// The input configuration for creating branding settings.
+type BrandingConfigurationCreateInput struct {
+
+	// The color theme for components on the web portal. Choose Light if you upload a
+	// dark wallpaper, or Dark for a light wallpaper.
+	//
+	// This member is required.
+	ColorTheme ColorTheme
+
+	// The favicon image for the portal. Provide either a binary image file or an S3
+	// URI pointing to the image file. Maximum 100 KB in JPEG, PNG, or ICO format.
+	//
+	// This member is required.
+	Favicon IconImageInput
+
+	// A map of localized text strings for different supported languages. Each locale
+	// must provide the required fields browserTabTitle and welcomeText .
+	//
+	// This member is required.
+	LocalizedStrings map[string]LocalizedBrandingStrings
+
+	// The logo image for the portal. Provide either a binary image file or an S3 URI
+	// pointing to the image file. Maximum 100 KB in JPEG, PNG, or ICO format.
+	//
+	// This member is required.
+	Logo IconImageInput
+
+	// The wallpaper image for the portal. Provide either a binary image file or an S3
+	// URI pointing to the image file. Maximum 5 MB in JPEG or PNG format.
+	//
+	// This member is required.
+	Wallpaper WallpaperImageInput
+
+	// The terms of service text in Markdown format. Users will be presented with the
+	// terms of service after successfully signing in.
+	//
+	// This value conforms to the media type: text/markdown
+	TermsOfService *string
+
+	noSmithyDocumentSerde
+}
+
+// The input configuration for updating branding settings. All fields are optional
+// when updating existing branding.
+type BrandingConfigurationUpdateInput struct {
+
+	// The color theme for components on the web portal. Choose Light if you upload a
+	// dark wallpaper, or Dark for a light wallpaper.
+	ColorTheme ColorTheme
+
+	// The favicon image for the portal. Provide either a binary image file or an S3
+	// URI pointing to the image file. Maximum 100 KB in JPEG, PNG, or ICO format.
+	Favicon IconImageInput
+
+	// A map of localized text strings for different supported languages. Each locale
+	// must provide the required fields browserTabTitle and welcomeText .
+	LocalizedStrings map[string]LocalizedBrandingStrings
+
+	// The logo image for the portal. Provide either a binary image file or an S3 URI
+	// pointing to the image file. Maximum 100 KB in JPEG, PNG, or ICO format.
+	Logo IconImageInput
+
+	// The terms of service text in Markdown format. To remove existing terms of
+	// service, provide an empty string.
+	//
+	// This value conforms to the media type: text/markdown
+	TermsOfService *string
+
+	// The wallpaper image for the portal. Provide either a binary image file or an S3
+	// URI pointing to the image file. Maximum 5 MB in JPEG or PNG format.
+	Wallpaper WallpaperImageInput
+
+	noSmithyDocumentSerde
+}
+
 // The browser settings resource that can be associated with a web portal. Once
 // associated with a web portal, browser settings control how the browser will
 // behave once a user starts a streaming session for the web portal.
@@ -30,6 +147,11 @@ type BrowserSettings struct {
 	// The customer managed key used to encrypt sensitive information in the browser
 	// settings.
 	CustomerManagedKey *string
+
+	// The policy that specifies which URLs end users are allowed to access or which
+	// URLs or domain categories they are restricted from accessing for enhanced
+	// security.
+	WebContentFilteringPolicy *WebContentFilteringPolicy
 
 	noSmithyDocumentSerde
 }
@@ -207,6 +329,69 @@ type DataProtectionSettingsSummary struct {
 	noSmithyDocumentSerde
 }
 
+// The filter that specifies the events to monitor.
+//
+// The following types satisfy this interface:
+//
+//	EventFilterMemberAll
+//	EventFilterMemberInclude
+type EventFilter interface {
+	isEventFilter()
+}
+
+// The filter that monitors all of the available events, including any new events
+// emitted in the future.
+type EventFilterMemberAll struct {
+	Value Unit
+
+	noSmithyDocumentSerde
+}
+
+func (*EventFilterMemberAll) isEventFilter() {}
+
+// The filter that monitors only the listed set of events. New events are not
+// auto-monitored.
+type EventFilterMemberInclude struct {
+	Value []Event
+
+	noSmithyDocumentSerde
+}
+
+func (*EventFilterMemberInclude) isEventFilter() {}
+
+// The input for an icon image (logo or favicon). Provide either a binary image
+// file or an S3 URI pointing to the image file. Maximum 100 KB in JPEG, PNG, or
+// ICO format.
+//
+// The following types satisfy this interface:
+//
+//	IconImageInputMemberBlob
+//	IconImageInputMemberS3Uri
+type IconImageInput interface {
+	isIconImageInput()
+}
+
+// The image provided as a binary image file.
+//
+// This value conforms to the media type: image/*
+type IconImageInputMemberBlob struct {
+	Value []byte
+
+	noSmithyDocumentSerde
+}
+
+func (*IconImageInputMemberBlob) isIconImageInput() {}
+
+// The S3 URI pointing to the image file. The URI must use the format
+// s3://bucket-name/key-name . You must have read access to the S3 object.
+type IconImageInputMemberS3Uri struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*IconImageInputMemberS3Uri) isIconImageInput() {}
+
 // The identity provider.
 type IdentityProvider struct {
 
@@ -305,6 +490,27 @@ type IdentityProviderSummary struct {
 
 	// The identity provider type.
 	IdentityProviderType IdentityProviderType
+
+	noSmithyDocumentSerde
+}
+
+// Metadata information about an uploaded image file.
+type ImageMetadata struct {
+
+	// The file extension of the image.
+	//
+	// This member is required.
+	FileExtension *string
+
+	// The timestamp when the image was last uploaded.
+	//
+	// This member is required.
+	LastUploadTimestamp *time.Time
+
+	// The MIME type of the image.
+	//
+	// This member is required.
+	MimeType MimeType
 
 	noSmithyDocumentSerde
 }
@@ -446,6 +652,55 @@ type IpRule struct {
 	noSmithyDocumentSerde
 }
 
+// Localized text strings for a specific language that customize the web portal.
+type LocalizedBrandingStrings struct {
+
+	// The text displayed in the browser tab title.
+	//
+	// This member is required.
+	BrowserTabTitle *string
+
+	// The welcome text displayed on the sign-in page.
+	//
+	// This member is required.
+	WelcomeText *string
+
+	// The text displayed on the contact button. This field is optional and defaults
+	// to "Contact us".
+	ContactButtonText *string
+
+	// A contact link URL. The URL must start with https:// or mailto: . If not
+	// provided, the contact button will be hidden from the web portal screen.
+	ContactLink *string
+
+	// The text displayed during session loading. This field is optional and defaults
+	// to "Loading your session".
+	LoadingText *string
+
+	// The text displayed on the login button. This field is optional and defaults to
+	// "Sign In".
+	LoginButtonText *string
+
+	// The description text for the login section. This field is optional and defaults
+	// to "Sign in to your session".
+	LoginDescription *string
+
+	// The title text for the login section. This field is optional and defaults to
+	// "Sign In".
+	LoginTitle *string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration of the log.
+type LogConfiguration struct {
+
+	// The configuration for delivering the logs to S3.
+	S3 *S3LogConfiguration
+
+	noSmithyDocumentSerde
+}
+
 // A network settings resource that can be associated with a web portal. Once
 // associated with a web portal, network settings define how streaming instances
 // will connect with your specified VPC.
@@ -543,6 +798,10 @@ type Portal struct {
 	// The ARN of the network settings that is associated with the web portal.
 	NetworkSettingsArn *string
 
+	// The custom domain of the web portal that users access in order to start
+	// streaming sessions.
+	PortalCustomDomain *string
+
 	// The endpoint URL of the web portal that users access in order to start
 	// streaming sessions.
 	PortalEndpoint *string
@@ -552,6 +811,9 @@ type Portal struct {
 
 	// The renderer that is used in streaming sessions.
 	RendererType RendererType
+
+	// The ARN of the session logger that is assocaited with the portal.
+	SessionLoggerArn *string
 
 	// A message that explains why the web portal is in its current status.
 	StatusReason *string
@@ -618,6 +880,10 @@ type PortalSummary struct {
 	// The ARN of the network settings that is associated with the web portal.
 	NetworkSettingsArn *string
 
+	// The custom domain of the web portal that users access in order to start
+	// streaming sessions.
+	PortalCustomDomain *string
+
 	// The endpoint URL of the web portal that users access in order to start
 	// streaming sessions.
 	PortalEndpoint *string
@@ -627,6 +893,9 @@ type PortalSummary struct {
 
 	// The renderer that is used in streaming sessions.
 	RendererType RendererType
+
+	// The ARN of the session logger that is assocaited with the portal.
+	SessionLoggerArn *string
 
 	// The ARN of the trust that is associated with this web portal.
 	TrustStoreArn *string
@@ -656,6 +925,35 @@ type RedactionPlaceHolder struct {
 	noSmithyDocumentSerde
 }
 
+// The S3 log configuration.
+type S3LogConfiguration struct {
+
+	// The S3 bucket name where logs are delivered.
+	//
+	// This member is required.
+	Bucket *string
+
+	// The folder structure that defines the organizational structure for log files in
+	// S3.
+	//
+	// This member is required.
+	FolderStructure FolderStructure
+
+	// The format of the LogFile that is written to S3.
+	//
+	// This member is required.
+	LogFileFormat LogFileFormat
+
+	// The expected bucket owner of the target S3 bucket. The caller must have
+	// permissions to write to the target bucket.
+	BucketOwner *string
+
+	// The S3 path prefix that determines where log files are stored.
+	KeyPrefix *string
+
+	noSmithyDocumentSerde
+}
+
 // Information about a secure browser session.
 type Session struct {
 
@@ -679,6 +977,58 @@ type Session struct {
 
 	// The username of the session.
 	Username *string
+
+	noSmithyDocumentSerde
+}
+
+// The session logger resource.
+type SessionLogger struct {
+
+	// The ARN of the session logger resource.
+	//
+	// This member is required.
+	SessionLoggerArn *string
+
+	// The additional encryption context of the session logger.
+	AdditionalEncryptionContext map[string]string
+
+	// The associated portal ARN.
+	AssociatedPortalArns []string
+
+	// The date the session logger resource was created.
+	CreationDate *time.Time
+
+	// The custom managed key of the session logger.
+	CustomerManagedKey *string
+
+	// The human-readable display name.
+	DisplayName *string
+
+	// The filter that specifies which events to monitor.
+	EventFilter EventFilter
+
+	// The configuration that specifies where logs are fowarded.
+	LogConfiguration *LogConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The summary of the session logger resource.
+type SessionLoggerSummary struct {
+
+	// The ARN of the session logger resource.
+	//
+	// This member is required.
+	SessionLoggerArn *string
+
+	// The date the session logger resource was created.
+	CreationDate *time.Time
+
+	// The human-readable display name.
+	DisplayName *string
+
+	// The configuration that specifies where the logs are fowarded.
+	LogConfiguration *LogConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -822,6 +1172,10 @@ type UserSettings struct {
 	// A list of web portal ARNs that this user settings is associated with.
 	AssociatedPortalArns []string
 
+	// The branding configuration output that customizes the appearance of the web
+	// portal for end users.
+	BrandingConfiguration *BrandingConfiguration
+
 	// The configuration that specifies which cookies should be synchronized from the
 	// end user's local browser to the remote browser.
 	CookieSynchronizationConfiguration *CookieSynchronizationConfiguration
@@ -869,6 +1223,10 @@ type UserSettings struct {
 	// streaming session.
 	UploadAllowed EnabledType
 
+	// Specifies whether the user can use WebAuthn redirection for passwordless login
+	// to websites within the streaming session.
+	WebAuthnAllowed EnabledType
+
 	noSmithyDocumentSerde
 }
 
@@ -879,6 +1237,10 @@ type UserSettingsSummary struct {
 	//
 	// This member is required.
 	UserSettingsArn *string
+
+	// The branding configuration output that customizes the appearance of the web
+	// portal for end users.
+	BrandingConfiguration *BrandingConfiguration
 
 	// The configuration that specifies which cookies should be synchronized from the
 	// end user's local browser to the remote browser.
@@ -923,6 +1285,10 @@ type UserSettingsSummary struct {
 	// streaming session.
 	UploadAllowed EnabledType
 
+	// Specifies whether the user can use WebAuthn redirection for passwordless login
+	// to websites within the streaming session.
+	WebAuthnAllowed EnabledType
+
 	noSmithyDocumentSerde
 }
 
@@ -942,4 +1308,70 @@ type ValidationExceptionField struct {
 	noSmithyDocumentSerde
 }
 
+// The input for a wallpaper image. Provide the image as either a binary image
+// file or an S3 URI. Maximum 5 MB in JPEG or PNG format.
+//
+// The following types satisfy this interface:
+//
+//	WallpaperImageInputMemberBlob
+//	WallpaperImageInputMemberS3Uri
+type WallpaperImageInput interface {
+	isWallpaperImageInput()
+}
+
+// The image provided as a binary image file.
+//
+// This value conforms to the media type: image/*
+type WallpaperImageInputMemberBlob struct {
+	Value []byte
+
+	noSmithyDocumentSerde
+}
+
+func (*WallpaperImageInputMemberBlob) isWallpaperImageInput() {}
+
+// The S3 URI pointing to the image file. The URI must use the format
+// s3://bucket-name/key-name . You must have read access to the S3 object.
+type WallpaperImageInputMemberS3Uri struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*WallpaperImageInputMemberS3Uri) isWallpaperImageInput() {}
+
+// The policy that specifies which URLs end users are allowed to access or which
+// URLs or domain categories they are restricted from accessing for enhanced
+// security.
+type WebContentFilteringPolicy struct {
+
+	// URLs and domains that are always accessible to end users.
+	AllowedUrls []string
+
+	// Categories of websites that are blocked on the end user’s browsers.
+	BlockedCategories []Category
+
+	// URLs and domains that end users cannot access.
+	BlockedUrls []string
+
+	noSmithyDocumentSerde
+}
+
+type Unit struct {
+	noSmithyDocumentSerde
+}
+
 type noSmithyDocumentSerde = smithydocument.NoSerde
+
+// UnknownUnionMember is returned when a union member is returned over the wire,
+// but has an unknown tag.
+type UnknownUnionMember struct {
+	Tag   string
+	Value []byte
+
+	noSmithyDocumentSerde
+}
+
+func (*UnknownUnionMember) isEventFilter()         {}
+func (*UnknownUnionMember) isIconImageInput()      {}
+func (*UnknownUnionMember) isWallpaperImageInput() {}

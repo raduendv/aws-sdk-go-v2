@@ -13,6 +13,14 @@ import (
 )
 
 // Gets a metadata generation run in Amazon DataZone.
+//
+// Prerequisites:
+//
+//   - Valid domain and run identifier.
+//
+//   - The metadata generation run must exist.
+//
+//   - User must have read access to the metadata run.
 func (c *Client) GetMetadataGenerationRun(ctx context.Context, params *GetMetadataGenerationRunInput, optFns ...func(*Options)) (*GetMetadataGenerationRunOutput, error) {
 	if params == nil {
 		params = &GetMetadataGenerationRunInput{}
@@ -40,6 +48,9 @@ type GetMetadataGenerationRunInput struct {
 	//
 	// This member is required.
 	Identifier *string
+
+	// The type of the metadata generation run.
+	Type types.MetadataGenerationRunType
 
 	noSmithyDocumentSerde
 }
@@ -76,7 +87,16 @@ type GetMetadataGenerationRunOutput struct {
 	Target *types.MetadataGenerationRunTarget
 
 	// The type of metadata generation run.
+	//
+	// Deprecated: This field is going to be deprecated, please use the 'types' field
+	// to provide the MetadataGenerationRun types
 	Type types.MetadataGenerationRunType
+
+	// The type stats included in the metadata generation run output details.
+	TypeStats []types.MetadataGenerationRunTypeStat
+
+	// The types of the metadata generation run.
+	Types []types.MetadataGenerationRunType
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -172,16 +192,13 @@ func (c *Client) addOperationGetMetadataGenerationRunMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

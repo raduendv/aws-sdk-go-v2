@@ -37,6 +37,15 @@ type DescribeHostedConnectionsInput struct {
 	// This member is required.
 	ConnectionId *string
 
+	// The maximum number of results to return with a single call. To retrieve the
+	// remaining results, make another call with the returned nextToken value.
+	//
+	// If MaxResults is given a value larger than 100, only 100 results are returned.
+	MaxResults *int32
+
+	// The token for the next page of results.
+	NextToken *string
+
 	noSmithyDocumentSerde
 }
 
@@ -44,6 +53,10 @@ type DescribeHostedConnectionsOutput struct {
 
 	// The connections.
 	Connections []types.Connection
+
+	// The token to use to retrieve the next page of results. This value is null when
+	// there are no more results to return.
+	NextToken *string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -139,16 +152,13 @@ func (c *Client) addOperationDescribeHostedConnectionsMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

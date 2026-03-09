@@ -19,16 +19,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpAcceptDirectConnectGatewayAssociationProposal struct {
 }
@@ -7702,6 +7693,19 @@ func awsAwsjson11_deserializeDocumentBGPPeer(v **types.BGPPeer, value interface{
 				sv.Asn = int32(i64)
 			}
 
+		case "asnLong":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected LongAsn to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AsnLong = ptr.Int64(i64)
+			}
+
 		case "authKey":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -8011,6 +8015,15 @@ func awsAwsjson11_deserializeDocumentConnection(v **types.Connection, value inte
 					return fmt.Errorf("expected OwnerAccount to be of type string, got %T instead", value)
 				}
 				sv.OwnerAccount = ptr.String(jtv)
+			}
+
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
 			}
 
 		case "partnerName":
@@ -8861,6 +8874,15 @@ func awsAwsjson11_deserializeDocumentInterconnect(v **types.Interconnect, value 
 				sv.Bandwidth = ptr.String(jtv)
 			}
 
+		case "encryptionMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EncryptionMode to be of type string, got %T instead", value)
+				}
+				sv.EncryptionMode = ptr.String(jtv)
+			}
+
 		case "hasLogicalRedundancy":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -8938,6 +8960,29 @@ func awsAwsjson11_deserializeDocumentInterconnect(v **types.Interconnect, value 
 					return fmt.Errorf("expected LocationCode to be of type string, got %T instead", value)
 				}
 				sv.Location = ptr.String(jtv)
+			}
+
+		case "macSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected MacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.MacSecCapable = ptr.Bool(jtv)
+			}
+
+		case "macSecKeys":
+			if err := awsAwsjson11_deserializeDocumentMacSecKeyList(&sv.MacSecKeys, value); err != nil {
+				return err
+			}
+
+		case "portEncryptionStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PortEncryptionStatus to be of type string, got %T instead", value)
+				}
+				sv.PortEncryptionStatus = ptr.String(jtv)
 			}
 
 		case "providerName":
@@ -10063,6 +10108,19 @@ func awsAwsjson11_deserializeDocumentVirtualInterface(v **types.VirtualInterface
 				sv.Asn = int32(i64)
 			}
 
+		case "asnLong":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected LongAsn to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AsnLong = ptr.Int64(i64)
+			}
+
 		case "authKey":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -10656,6 +10714,15 @@ func awsAwsjson11_deserializeOpDocumentAllocateConnectionOnInterconnectOutput(v 
 				sv.OwnerAccount = ptr.String(jtv)
 			}
 
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
+			}
+
 		case "partnerName":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -10888,6 +10955,15 @@ func awsAwsjson11_deserializeOpDocumentAllocateHostedConnectionOutput(v **Alloca
 				sv.OwnerAccount = ptr.String(jtv)
 			}
 
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
+			}
+
 		case "partnerName":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -11015,6 +11091,19 @@ func awsAwsjson11_deserializeOpDocumentAllocatePrivateVirtualInterfaceOutput(v *
 					return err
 				}
 				sv.Asn = int32(i64)
+			}
+
+		case "asnLong":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected LongAsn to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AsnLong = ptr.Int64(i64)
 			}
 
 		case "authKey":
@@ -11284,6 +11373,19 @@ func awsAwsjson11_deserializeOpDocumentAllocatePublicVirtualInterfaceOutput(v **
 					return err
 				}
 				sv.Asn = int32(i64)
+			}
+
+		case "asnLong":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected LongAsn to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AsnLong = ptr.Int64(i64)
 			}
 
 		case "authKey":
@@ -11694,6 +11796,15 @@ func awsAwsjson11_deserializeOpDocumentAssociateConnectionWithLagOutput(v **Asso
 				sv.OwnerAccount = ptr.String(jtv)
 			}
 
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
+			}
+
 		case "partnerName":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -11926,6 +12037,15 @@ func awsAwsjson11_deserializeOpDocumentAssociateHostedConnectionOutput(v **Assoc
 				sv.OwnerAccount = ptr.String(jtv)
 			}
 
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
+			}
+
 		case "partnerName":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -12098,6 +12218,19 @@ func awsAwsjson11_deserializeOpDocumentAssociateVirtualInterfaceOutput(v **Assoc
 					return err
 				}
 				sv.Asn = int32(i64)
+			}
+
+		case "asnLong":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected LongAsn to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AsnLong = ptr.Int64(i64)
 			}
 
 		case "authKey":
@@ -12708,6 +12841,15 @@ func awsAwsjson11_deserializeOpDocumentCreateConnectionOutput(v **CreateConnecti
 				sv.OwnerAccount = ptr.String(jtv)
 			}
 
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
+			}
+
 		case "partnerName":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -12937,6 +13079,15 @@ func awsAwsjson11_deserializeOpDocumentCreateInterconnectOutput(v **CreateInterc
 				sv.Bandwidth = ptr.String(jtv)
 			}
 
+		case "encryptionMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EncryptionMode to be of type string, got %T instead", value)
+				}
+				sv.EncryptionMode = ptr.String(jtv)
+			}
+
 		case "hasLogicalRedundancy":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -13014,6 +13165,29 @@ func awsAwsjson11_deserializeOpDocumentCreateInterconnectOutput(v **CreateInterc
 					return fmt.Errorf("expected LocationCode to be of type string, got %T instead", value)
 				}
 				sv.Location = ptr.String(jtv)
+			}
+
+		case "macSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected MacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.MacSecCapable = ptr.Bool(jtv)
+			}
+
+		case "macSecKeys":
+			if err := awsAwsjson11_deserializeDocumentMacSecKeyList(&sv.MacSecKeys, value); err != nil {
+				return err
+			}
+
+		case "portEncryptionStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PortEncryptionStatus to be of type string, got %T instead", value)
+				}
+				sv.PortEncryptionStatus = ptr.String(jtv)
 			}
 
 		case "providerName":
@@ -13330,6 +13504,19 @@ func awsAwsjson11_deserializeOpDocumentCreatePrivateVirtualInterfaceOutput(v **C
 				sv.Asn = int32(i64)
 			}
 
+		case "asnLong":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected LongAsn to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AsnLong = ptr.Int64(i64)
+			}
+
 		case "authKey":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -13597,6 +13784,19 @@ func awsAwsjson11_deserializeOpDocumentCreatePublicVirtualInterfaceOutput(v **Cr
 					return err
 				}
 				sv.Asn = int32(i64)
+			}
+
+		case "asnLong":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected LongAsn to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AsnLong = ptr.Int64(i64)
 			}
 
 		case "authKey":
@@ -14041,6 +14241,15 @@ func awsAwsjson11_deserializeOpDocumentDeleteConnectionOutput(v **DeleteConnecti
 					return fmt.Errorf("expected OwnerAccount to be of type string, got %T instead", value)
 				}
 				sv.OwnerAccount = ptr.String(jtv)
+			}
+
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
 			}
 
 		case "partnerName":
@@ -14573,6 +14782,15 @@ func awsAwsjson11_deserializeOpDocumentDescribeConnectionsOnInterconnectOutput(v
 				return err
 			}
 
+		case "nextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PaginationToken to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -14607,6 +14825,15 @@ func awsAwsjson11_deserializeOpDocumentDescribeConnectionsOutput(v **DescribeCon
 		case "connections":
 			if err := awsAwsjson11_deserializeDocumentConnectionList(&sv.Connections, value); err != nil {
 				return err
+			}
+
+		case "nextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PaginationToken to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
 			}
 
 		default:
@@ -14870,6 +15097,15 @@ func awsAwsjson11_deserializeOpDocumentDescribeHostedConnectionsOutput(v **Descr
 				return err
 			}
 
+		case "nextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PaginationToken to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -14942,6 +15178,15 @@ func awsAwsjson11_deserializeOpDocumentDescribeInterconnectsOutput(v **DescribeI
 				return err
 			}
 
+		case "nextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PaginationToken to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -14976,6 +15221,15 @@ func awsAwsjson11_deserializeOpDocumentDescribeLagsOutput(v **DescribeLagsOutput
 		case "lags":
 			if err := awsAwsjson11_deserializeDocumentLagList(&sv.Lags, value); err != nil {
 				return err
+			}
+
+		case "nextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PaginationToken to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
 			}
 
 		default:
@@ -15233,6 +15487,15 @@ func awsAwsjson11_deserializeOpDocumentDescribeVirtualInterfacesOutput(v **Descr
 
 	for key, value := range shape {
 		switch key {
+		case "nextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PaginationToken to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
+			}
+
 		case "virtualInterfaces":
 			if err := awsAwsjson11_deserializeDocumentVirtualInterfaceList(&sv.VirtualInterfaces, value); err != nil {
 				return err
@@ -15414,6 +15677,15 @@ func awsAwsjson11_deserializeOpDocumentDisassociateConnectionFromLagOutput(v **D
 					return fmt.Errorf("expected OwnerAccount to be of type string, got %T instead", value)
 				}
 				sv.OwnerAccount = ptr.String(jtv)
+			}
+
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
 			}
 
 		case "partnerName":
@@ -15872,6 +16144,15 @@ func awsAwsjson11_deserializeOpDocumentUpdateConnectionOutput(v **UpdateConnecti
 				sv.OwnerAccount = ptr.String(jtv)
 			}
 
+		case "partnerInterconnectMacSecCapable":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected PartnerInterconnectMacSecCapable to be of type *bool, got %T instead", value)
+				}
+				sv.PartnerInterconnectMacSecCapable = ptr.Bool(jtv)
+			}
+
 		case "partnerName":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -16287,6 +16568,19 @@ func awsAwsjson11_deserializeOpDocumentUpdateVirtualInterfaceAttributesOutput(v 
 					return err
 				}
 				sv.Asn = int32(i64)
+			}
+
+		case "asnLong":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected LongAsn to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AsnLong = ptr.Int64(i64)
 			}
 
 		case "authKey":

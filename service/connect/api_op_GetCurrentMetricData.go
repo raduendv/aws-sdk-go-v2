@@ -17,6 +17,27 @@ import (
 // For a description of each metric, see [Metrics definitions] in the Amazon Connect Administrator
 // Guide.
 //
+// When you make a successful API request, you can expect the following metric
+// values in the response:
+//
+//   - Metric value is null: The calculation cannot be performed due to divide by
+//     zero or insufficient data
+//
+//   - Metric value is a number (including 0) of defined type: The number provided
+//     is the calculation result
+//
+//   - MetricResult list is empty: The request cannot find any data in the system
+//
+// The following guidelines can help you work with the API:
+//
+//   - Each dimension in the metric response must contain a value
+//
+//   - Each item in MetricResult must include all requested metrics
+//
+//   - If the response is slow due to large result sets, try these approaches:
+//
+//   - Add filters to reduce the amount of data returned
+//
 // [Metrics definitions]: https://docs.aws.amazon.com/connect/latest/adminguide/metrics-definitions.html
 func (c *Client) GetCurrentMetricData(ctx context.Context, params *GetCurrentMetricDataInput, optFns ...func(*Options)) (*GetCurrentMetricDataOutput, error) {
 	if params == nil {
@@ -35,9 +56,12 @@ func (c *Client) GetCurrentMetricData(ctx context.Context, params *GetCurrentMet
 
 type GetCurrentMetricDataInput struct {
 
-	// The metrics to retrieve. Specify the name and unit for each metric. The
-	// following metrics are available. For a description of all the metrics, see [Metrics definitions]in
-	// the Amazon Connect Administrator Guide.
+	// The metrics to retrieve. Specify the name or metricId, and unit for each
+	// metric. The following metrics are available. For a description of all the
+	// metrics, see [Metrics definitions]in the Amazon Connect Administrator Guide.
+	//
+	// MetricId should be used to reference custom metrics or out of the box metrics
+	// as Arn. If using MetricId, the limit is 10 MetricId per request.
 	//
 	// AGENTS_AFTER_CONTACT_WORK Unit: COUNT
 	//
@@ -78,6 +102,17 @@ type GetCurrentMetricDataInput struct {
 	// CONTACTS_SCHEDULED Unit: COUNT
 	//
 	// Name in real-time metrics report: [Scheduled]
+	//
+	// ESTIMATED_WAIT_TIME Unit: SECONDS
+	//
+	// This metric supports filter and grouping combination only used for core routing
+	// purpose. Valid filter and grouping use cases:
+	//
+	//   - Filter by a list of [Queues] and a list of [Channels], group by [“QUEUE”,
+	//   “CHANNEL”]
+	//
+	//   - Filter by a singleton list of [Queue], a singleton list of [Channel], a
+	//   list of [RoutingStepExpression], group by [“ROUTING_STEP_EXPRESSION”].
 	//
 	// OLDEST_CONTACT_AGE Unit: SECONDS
 	//
@@ -134,10 +169,23 @@ type GetCurrentMetricDataInput struct {
 	//
 	//   - RoutingStepExpressions: 50
 	//
+	//   - AgentStatuses: 50
+	//
+	//   - Subtypes: 10
+	//
+	//   - ValidationTestTypes: 10
+	//
 	// Metric data is retrieved only for the resources associated with the queues or
 	// routing profiles, and by any channels included in the filter. (You cannot filter
 	// by both queue AND routing profile.) You can include both resource IDs and
 	// resource ARNs in the same request.
+	//
+	// When using AgentStatuses as filter make sure Queues is added as primary filter.
+	//
+	// When using Subtypes as filter make sure Queues is added as primary filter.
+	//
+	// When using ValidationTestTypes as filter make sure Queues is added as primary
+	// filter.
 	//
 	// When using the RoutingStepExpression filter, you need to pass exactly one
 	// QueueId . The filter is also case sensitive so when using the
@@ -157,18 +205,29 @@ type GetCurrentMetricDataInput struct {
 	// This member is required.
 	InstanceId *string
 
-	// The grouping applied to the metrics returned. For example, when grouped by QUEUE
-	// , the metrics returned apply to each queue rather than aggregated for all
+	// Defines the level of aggregation for metrics data by a dimension(s). Its
+	// similar to sorting items into buckets based on a common characteristic, then
+	// counting or calculating something for each bucket. For example, when grouped by
+	// QUEUE , the metrics returned apply to each queue rather than aggregated for all
 	// queues.
+	//
+	// The grouping list is an ordered list, with the first item in the list defined
+	// as the primary grouping. If no grouping is included in the request, the
+	// aggregation happens at the instance-level.
 	//
 	//   - If you group by CHANNEL , you should include a Channels filter. VOICE, CHAT,
 	//   and TASK channels are supported.
 	//
+	//   - If you group by AGENT_STATUS , you must include the QUEUE as the primary
+	//   grouping and use queue filter. When you group by AGENT_STATUS , the only
+	//   metric available is the AGENTS_ONLINE metric.
+	//
+	//   - If you group by SUBTYPE or VALIDATION_TEST_TYPE as secondary grouping then
+	//   you must include QUEUE as primary grouping and use Queue as filter
+	//
 	//   - If you group by ROUTING_PROFILE , you must include either a queue or routing
 	//   profile filter. In addition, a routing profile filter is required for metrics
 	//   CONTACTS_SCHEDULED , CONTACTS_IN_QUEUE , and OLDEST_CONTACT_AGE .
-	//
-	//   - If no Grouping is included in the request, a summary of metrics is returned.
 	//
 	//   - When using the RoutingStepExpression filter, group by
 	//   ROUTING_STEP_EXPRESSION is required.
@@ -309,16 +368,13 @@ func (c *Client) addOperationGetCurrentMetricDataMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

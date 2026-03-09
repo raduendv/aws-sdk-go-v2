@@ -42,6 +42,9 @@ type DescribeConfigurationRecordersInput struct {
 	Arn *string
 
 	// A list of names of the configuration recorders that you want to specify.
+	//
+	// When making a request to this operation, you can only specify one configuration
+	// recorder.
 	ConfigurationRecorderNames []string
 
 	// For service-linked configuration recorders, you can use the service principal
@@ -148,16 +151,13 @@ func (c *Client) addOperationDescribeConfigurationRecordersMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

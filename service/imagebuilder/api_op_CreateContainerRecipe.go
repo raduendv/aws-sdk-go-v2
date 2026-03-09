@@ -38,13 +38,6 @@ type CreateContainerRecipeInput struct {
 	// This member is required.
 	ClientToken *string
 
-	// Components for build and test that are included in the container recipe.
-	// Recipes require a minimum of one build component, and can have a maximum of 20
-	// build and test components in any combination.
-	//
-	// This member is required.
-	Components []types.ComponentConfiguration
-
 	// The type of container to create.
 	//
 	// This member is required.
@@ -82,6 +75,9 @@ type CreateContainerRecipeInput struct {
 	// This member is required.
 	TargetRepository *types.TargetContainerRepository
 
+	// The components included in the container recipe.
+	Components []types.ComponentConfiguration
+
 	// The description of the container recipe.
 	Description *string
 
@@ -99,7 +95,11 @@ type CreateContainerRecipeInput struct {
 	// testing container images.
 	InstanceConfiguration *types.InstanceConfiguration
 
-	// Identifies which KMS key is used to encrypt the Dockerfile template.
+	// The Amazon Resource Name (ARN) that uniquely identifies which KMS key is used
+	// to encrypt the Dockerfile template. This can be either the Key ARN or the Alias
+	// ARN. For more information, see [Key identifiers (KeyId)]in the Key Management Service Developer Guide.
+	//
+	// [Key identifiers (KeyId)]: https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id-key-ARN
 	KmsKeyId *string
 
 	// Specifies the operating system platform when you use a custom base image.
@@ -122,6 +122,9 @@ type CreateContainerRecipeOutput struct {
 	// Returns the Amazon Resource Name (ARN) of the container recipe that the request
 	// created.
 	ContainerRecipeArn *string
+
+	// The resource ARNs with different wildcard variations of semantic versioning.
+	LatestVersionReferences *types.LatestVersionReferences
 
 	// The request ID that uniquely identifies this request.
 	RequestId *string
@@ -223,16 +226,13 @@ func (c *Client) addOperationCreateContainerRecipeMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -63,6 +63,11 @@ type CreateUserSettingsInput struct {
 	// The additional encryption context of the user settings.
 	AdditionalEncryptionContext map[string]string
 
+	// The branding configuration input that customizes the appearance of the web
+	// portal for end users. This includes a custom logo, favicon, wallpaper, localized
+	// strings, color theme, and an optional terms of service.
+	BrandingConfigurationInput *types.BrandingConfigurationCreateInput
+
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
 	// of the request. Idempotency ensures that an API request completes only once.
 	// With an idempotent request, if the original request completes successfully,
@@ -103,6 +108,10 @@ type CreateUserSettingsInput struct {
 	// administrators do not modify these settings, end users retain control over their
 	// toolbar preferences.
 	ToolbarConfiguration *types.ToolbarConfiguration
+
+	// Specifies whether the user can use WebAuthn redirection for passwordless login
+	// to websites within the streaming session.
+	WebAuthnAllowed types.EnabledType
 
 	noSmithyDocumentSerde
 }
@@ -211,16 +220,13 @@ func (c *Client) addOperationCreateUserSettingsMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

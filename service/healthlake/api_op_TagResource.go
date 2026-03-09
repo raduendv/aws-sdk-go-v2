@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Adds a user specified key and value tag to a data store.
+// Add a user-specifed key and value tag to a data store.
 func (c *Client) TagResource(ctx context.Context, params *TagResourceInput, optFns ...func(*Options)) (*TagResourceOutput, error) {
 	if params == nil {
 		params = &TagResourceInput{}
@@ -29,13 +29,13 @@ func (c *Client) TagResource(ctx context.Context, params *TagResourceInput, optF
 
 type TagResourceInput struct {
 
-	//  The Amazon Resource Name(ARN)that gives AWS HealthLake access to the data
-	// store which tags are being added to.
+	// The Amazon Resource Name (ARN) that grants access to the data store tags are
+	// being added to.
 	//
 	// This member is required.
 	ResourceARN *string
 
-	//  The user specified key and value pair tags being added to a data store.
+	// The user-specified key and value pair tags being added to a data store.
 	//
 	// This member is required.
 	Tags []types.Tag
@@ -138,16 +138,13 @@ func (c *Client) addOperationTagResourceMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

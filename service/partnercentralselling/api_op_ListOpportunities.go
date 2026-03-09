@@ -15,10 +15,10 @@ import (
 // well as sort options. This feature is available to partners from [Partner Central]using the
 // ListOpportunities API action.
 //
-// To synchronize your system with Amazon Web Services, only list the
+// To synchronize your system with Amazon Web Services, list only the
 // opportunities that were newly created or updated. We recommend you rely on
 // events emitted by the service into your Amazon Web Services account’s Amazon
-// EventBridge default event bus, you can also use the ListOpportunities action.
+// EventBridge default event bus. You can also use the ListOpportunities action.
 //
 // We recommend the following approach:
 //
@@ -57,6 +57,9 @@ type ListOpportunitiesInput struct {
 	//
 	// This member is required.
 	Catalog *string
+
+	// Filter opportunities by creation date criteria.
+	CreatedDate *types.CreatedDateFilter
 
 	// Filters the opportunities based on the customer's company name. This allows
 	// partners to search for opportunities associated with a specific customer by
@@ -209,16 +212,13 @@ func (c *Client) addOperationListOpportunitiesMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

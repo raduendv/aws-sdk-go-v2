@@ -10,7 +10,14 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes a workflow run group.
+// Deletes a run group and returns a response with no body if the operation is
+// successful.
+//
+// To verify that the run group is deleted:
+//
+//   - Use ListRunGroups to confirm the workflow no longer appears in the list.
+//
+//   - Use GetRunGroup to verify the workflow cannot be found.
 func (c *Client) DeleteRunGroup(ctx context.Context, params *DeleteRunGroupInput, optFns ...func(*Options)) (*DeleteRunGroupOutput, error) {
 	if params == nil {
 		params = &DeleteRunGroupInput{}
@@ -134,16 +141,13 @@ func (c *Client) addOperationDeleteRunGroupMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

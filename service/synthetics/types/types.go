@@ -54,6 +54,15 @@ type BaseScreenshot struct {
 	noSmithyDocumentSerde
 }
 
+// A structure that specifies the browser type to use for a canary run.
+type BrowserConfig struct {
+
+	// The browser type associated with this browser configuration.
+	BrowserType BrowserType
+
+	noSmithyDocumentSerde
+}
+
 // This structure contains all information about one canary in your account.
 type Canary struct {
 
@@ -65,9 +74,18 @@ type Canary struct {
 	// this canary. Artifacts include the log file, screenshots, and HAR files.
 	ArtifactS3Location *string
 
+	// A structure that specifies the browser type to use for a canary run. CloudWatch
+	// Synthetics supports running canaries on both CHROME and FIREFOX browsers.
+	//
+	// If not specified, browserConfigs defaults to Chrome.
+	BrowserConfigs []BrowserConfig
+
 	// This structure contains information about the canary's Lambda handler and where
 	// its code is stored by CloudWatch Synthetics.
 	Code *CanaryCodeOutput
+
+	// Returns the dry run configurations for a canary.
+	DryRunConfig *DryRunConfigOutput
 
 	// The ARN of the Lambda function that is used as your canary's engine. For more
 	// information about Lambda ARN format, see [Resources and Conditions for Lambda Actions].
@@ -75,11 +93,28 @@ type Canary struct {
 	// [Resources and Conditions for Lambda Actions]: https://docs.aws.amazon.com/lambda/latest/dg/lambda-api-permissions-ref.html
 	EngineArn *string
 
+	// A list of engine configurations for the canary, one for each browser type that
+	// the canary is configured to run on.
+	//
+	// All runtime versions syn-nodejs-puppeteer-11.0 and above, and
+	// syn-nodejs-playwright-3.0 and above, use engineConfigs only. You can no longer
+	// use engineArn in these versions.
+	//
+	// Runtime versions older than syn-nodejs-puppeteer-11.0 and
+	// syn-nodejs-playwright-3.0 continue to support engineArn to ensure backward
+	// compatibility.
+	EngineConfigs []EngineConfig
+
 	// The ARN of the IAM role used to run the canary. This role must include
 	// lambda.amazonaws.com as a principal in the trust policy.
 	ExecutionRoleArn *string
 
 	// The number of days to retain data about failed runs of this canary.
+	//
+	// This setting affects the range of information returned by [GetCanaryRuns], as well as the
+	// range of information displayed in the Synthetics console.
+	//
+	// [GetCanaryRuns]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_GetCanaryRuns.html
 	FailureRetentionPeriodInDays *int32
 
 	// The unique ID of this canary.
@@ -116,6 +151,11 @@ type Canary struct {
 	Status *CanaryStatus
 
 	// The number of days to retain data about successful runs of this canary.
+	//
+	// This setting affects the range of information returned by [GetCanaryRuns], as well as the
+	// range of information displayed in the Synthetics console.
+	//
+	// [GetCanaryRuns]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_GetCanaryRuns.html
 	SuccessRetentionPeriodInDays *int32
 
 	// The list of key-value pairs that are associated with the canary.
@@ -131,6 +171,18 @@ type Canary struct {
 	// visual monitoring comparison.
 	VisualReference *VisualReferenceOutput
 
+	// A list of visual reference configurations for the canary, one for each browser
+	// type that the canary is configured to run on. Visual references are used for
+	// visual monitoring comparisons.
+	//
+	// syn-nodejs-puppeteer-11.0 and above, and syn-nodejs-playwright-3.0 and above,
+	// only supports visualReferences . visualReference field is not supported.
+	//
+	// Versions older than syn-nodejs-puppeteer-11.0 supports both visualReference and
+	// visualReferences for backward compatibility. It is recommended to use
+	// visualReferences for consistency and future compatibility.
+	VisualReferences []VisualReferenceOutput
+
 	// If this canary is to test an endpoint in a VPC, this structure contains
 	// information about the subnets and security groups of the VPC endpoint. For more
 	// information, see [Running a Canary in a VPC].
@@ -143,9 +195,9 @@ type Canary struct {
 
 // Use this structure to input your script code for the canary. This structure
 // contains the Lambda handler with the location where the canary should start
-// running the script. If the script is stored in an S3 bucket, the bucket name,
-// key, and version are also included. If the script was passed into the canary
-// directly, the script code is contained in the value of Zipfile .
+// running the script. If the script is stored in an Amazon S3 bucket, the bucket
+// name, key, and version are also included. If the script was passed into the
+// canary directly, the script code is contained in the value of Zipfile .
 //
 // If you are uploading your canary scripts with an Amazon S3 bucket, your zip
 // file should include your script in a certain folder structure.
@@ -153,12 +205,32 @@ type Canary struct {
 //   - For Node.js canaries, the folder structure must be
 //     nodejs/node_modules/myCanaryFilename.js For more information, see [Packaging your Node.js canary files]
 //
-//   - For Python canaries, the folder structure must be python/myCanaryFilename.p
-//     or python/myFolder/myCanaryFilename.py For more information, see [Packaging your Python canary files]
+//   - For Python canaries, the folder structure must be
+//     python/myCanaryFilename.py or python/myFolder/myCanaryFilename.py For more
+//     information, see [Packaging your Python canary files]
 //
 // [Packaging your Node.js canary files]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_WritingCanary_Nodejs.html#CloudWatch_Synthetics_Canaries_package
 // [Packaging your Python canary files]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_WritingCanary_Python.html#CloudWatch_Synthetics_Canaries_WritingCanary_Python_package
 type CanaryCodeInput struct {
+
+	// BlueprintTypes is a list of templates that enable simplified canary creation.
+	// You can create canaries for common monitoring scenarios by providing only a JSON
+	// configuration file instead of writing custom scripts. The only supported value
+	// is multi-checks .
+	//
+	// Multi-checks monitors HTTP/DNS/SSL/TCP endpoints with built-in authentication
+	// schemes (Basic, API Key, OAuth, SigV4) and assertion capabilities. When you
+	// specify BlueprintTypes , the Handler field cannot be specified since the
+	// blueprint provides a pre-defined entry point.
+	//
+	// BlueprintTypes is supported only on canaries for syn-nodejs-3.0 runtime or
+	// later.
+	BlueprintTypes []string
+
+	// A list of dependencies that should be used for running this canary. Specify the
+	// dependencies as a key-value pair, where the key is the type of dependency and
+	// the value is the dependency reference.
+	Dependencies []Dependency
 
 	// The entry point to use for the source code when running the canary. For
 	// canaries that use the syn-python-selenium-1.0 runtime or a syn-nodejs.puppeteer
@@ -168,27 +240,29 @@ type CanaryCodeInput struct {
 	// can specify a folder where canary scripts reside as
 	// folder/fileName.functionName .
 	//
-	// This member is required.
+	// This field is required when you don't specify BlueprintTypes and is not allowed
+	// when you specify BlueprintTypes .
 	Handler *string
 
-	// If your canary script is located in S3, specify the bucket name here. Do not
-	// include s3:// as the start of the bucket name.
+	// If your canary script is located in Amazon S3, specify the bucket name here. Do
+	// not include s3:// as the start of the bucket name.
 	S3Bucket *string
 
-	// The S3 key of your script. For more information, see [Working with Amazon S3 Objects].
+	// The Amazon S3 key of your script. For more information, see [Working with Amazon S3 Objects].
 	//
 	// [Working with Amazon S3 Objects]: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingObjects.html
 	S3Key *string
 
-	// The S3 version ID of your script.
+	// The Amazon S3 version ID of your script.
 	S3Version *string
 
 	// If you input your canary script directly into the canary instead of referring
-	// to an S3 location, the value of this parameter is the base64-encoded contents of
-	// the .zip file that contains the script. It must be smaller than 225 Kb.
+	// to an Amazon S3 location, the value of this parameter is the base64-encoded
+	// contents of the .zip file that contains the script. It must be smaller than 225
+	// Kb.
 	//
-	// For large canary scripts, we recommend that you use an S3 location instead of
-	// inputting it directly with this parameter.
+	// For large canary scripts, we recommend that you use an Amazon S3 location
+	// instead of inputting it directly with this parameter.
 	ZipFile []byte
 
 	noSmithyDocumentSerde
@@ -198,11 +272,43 @@ type CanaryCodeInput struct {
 // its code is stored by CloudWatch Synthetics.
 type CanaryCodeOutput struct {
 
+	// BlueprintTypes is a list of templates that enable simplified canary creation.
+	// You can create canaries for common monitoring scenarios by providing only a JSON
+	// configuration file instead of writing custom scripts. The only supported value
+	// is multi-checks .
+	//
+	// Multi-checks monitors HTTP/DNS/SSL/TCP endpoints with built-in authentication
+	// schemes (Basic, API Key, OAuth, SigV4) and assertion capabilities. When you
+	// specify BlueprintTypes , the Handler field cannot be specified since the
+	// blueprint provides a pre-defined entry point.
+	//
+	// BlueprintTypes is supported only on canaries for syn-nodejs-3.0 runtime or
+	// later.
+	BlueprintTypes []string
+
+	// A list of dependencies that are used for running this canary. The dependencies
+	// are specified as a key-value pair, where the key is the type of dependency and
+	// the value is the dependency reference.
+	Dependencies []Dependency
+
 	// The entry point to use for the source code when running the canary.
+	//
+	// This field is required when you don't specify BlueprintTypes and is not allowed
+	// when you specify BlueprintTypes .
 	Handler *string
 
 	// The ARN of the Lambda layer where Synthetics stores the canary script code.
 	SourceLocationArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Returns the dry run configurations set for a canary.
+type CanaryDryRunConfigOutput struct {
+
+	// The DryRunId associated with an existing canary’s dry run. You can use this
+	// DryRunId to retrieve information about the dry run.
+	DryRunId *string
 
 	noSmithyDocumentSerde
 }
@@ -227,11 +333,23 @@ type CanaryRun struct {
 	// the log file, screenshots, and HAR files.
 	ArtifactS3Location *string
 
+	// The browser type associated with this canary run.
+	BrowserType BrowserType
+
+	// Returns the dry run configurations for a canary.
+	DryRunConfig *CanaryDryRunConfigOutput
+
 	// A unique ID that identifies this canary run.
 	Id *string
 
 	// The name of the canary.
 	Name *string
+
+	// The count in number of the retry attempt.
+	RetryAttempt *int32
+
+	// The ID of the scheduled canary run.
+	ScheduledRunId *string
 
 	// The status of this run.
 	Status *CanaryRunStatus
@@ -266,11 +384,19 @@ type CanaryRunConfigInput struct {
 	// reserved environment variables as the keys for your environment variables. For
 	// more information about reserved keys, see [Runtime environment variables].
 	//
-	// The environment variables keys and values are not encrypted. Do not store
-	// sensitive information in this field.
+	// Environment variable keys and values are encrypted at rest using Amazon Web
+	// Services owned KMS keys. However, the environment variables are not encrypted on
+	// the client side. Do not store sensitive information in them.
 	//
 	// [Runtime environment variables]: https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime
 	EnvironmentVariables map[string]string
+
+	// Specifies the amount of ephemeral storage (in MB) to allocate for the canary
+	// run during execution. This temporary storage is used for storing canary run
+	// artifacts (which are uploaded to an Amazon S3 bucket at the end of the run), and
+	// any canary browser operations. This temporary storage is cleared after the run
+	// is completed. Default storage value is 1024 MB.
+	EphemeralStorage *int32
 
 	// The maximum amount of memory available to the canary while it is running, in
 	// MB. This value must be a multiple of 64.
@@ -292,6 +418,13 @@ type CanaryRunConfigOutput struct {
 	// Displays whether this canary run used active X-Ray tracing.
 	ActiveTracing *bool
 
+	// Specifies the amount of ephemeral storage (in MB) to allocate for the canary
+	// run during execution. This temporary storage is used for storing canary run
+	// artifacts (which are uploaded to an Amazon S3 bucket at the end of the run), and
+	// any canary browser operations. This temporary storage is cleared after the run
+	// is completed. Default storage value is 1024 MB.
+	EphemeralStorage *int32
+
 	// The maximum amount of memory available to the canary while it is running, in
 	// MB. This value must be a multiple of 64.
 	MemoryInMB *int32
@@ -311,9 +444,27 @@ type CanaryRunStatus struct {
 	// If run of the canary failed, this field contains the reason for the error.
 	StateReason *string
 
-	// If this value is CANARY_FAILURE , an exception occurred in the canary code. If
-	// this value is EXECUTION_FAILURE , an exception occurred in CloudWatch Synthetics.
+	// If this value is CANARY_FAILURE , either the canary script failed or Synthetics
+	// ran into a fatal error when running the canary. For example, a canary timeout
+	// misconfiguration setting can cause the canary to timeout before Synthetics can
+	// evaluate its status.
+	//
+	// If this value is EXECUTION_FAILURE , a non-critical failure occurred such as
+	// failing to save generated debug artifacts (for example, screenshots or har
+	// files).
+	//
+	// If both types of failures occurred, the CANARY_FAILURE takes precedence. To
+	// understand the exact error, use the [StateReason]API.
+	//
+	// [StateReason]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_CanaryRunStatus.html
 	StateReasonCode CanaryRunStateReasonCode
+
+	// Specifies the status of canary script for this run. When Synthetics tries to
+	// determine the status but fails, the result is marked as UNKNOWN . For the
+	// overall status of canary run, see [State].
+	//
+	// [State]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_CanaryRunStatus.html
+	TestResult CanaryRunTestResult
 
 	noSmithyDocumentSerde
 }
@@ -323,6 +474,9 @@ type CanaryRunTimeline struct {
 
 	// The end time of the run.
 	Completed *time.Time
+
+	// The time at which the metrics will be generated for this run or retries.
+	MetricTimestampForRunAndRetries *time.Time
 
 	// The start time of the run.
 	Started *time.Time
@@ -361,6 +515,9 @@ type CanaryScheduleInput struct {
 	// making runs until you stop it. If you omit this field, the default of 0 is used.
 	DurationInSeconds *int64
 
+	// A structure that contains the retry configuration for a canary
+	RetryConfig *RetryConfigInput
+
 	noSmithyDocumentSerde
 }
 
@@ -392,6 +549,9 @@ type CanaryScheduleOutput struct {
 	// [Scheduling canary runs using cron]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_cron.html
 	Expression *string
 
+	// A structure that contains the retry configuration for a canary
+	RetryConfig *RetryConfigOutput
+
 	noSmithyDocumentSerde
 }
 
@@ -401,11 +561,11 @@ type CanaryStatus struct {
 	// The current state of the canary.
 	State CanaryState
 
-	// If the canary has insufficient permissions to run, this field provides more
-	// details.
+	// If the canary creation or update failed, this field provides details on the
+	// failure.
 	StateReason *string
 
-	// If the canary cannot run or has failed, this field displays the reason.
+	// If the canary creation or update failed, this field displays the reason code.
 	StateReasonCode CanaryStateReasonCode
 
 	noSmithyDocumentSerde
@@ -426,6 +586,50 @@ type CanaryTimeline struct {
 
 	// The date and time that the canary's most recent run ended.
 	LastStopped *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// A structure that contains information about a dependency for a canary.
+type Dependency struct {
+
+	// The dependency reference. For Lambda layers, this is the ARN of the Lambda
+	// layer. For more information about Lambda ARN format, see [Lambda].
+	//
+	// [Lambda]: https://docs.aws.amazon.com/lambda/latest/api/API_Layer.html
+	//
+	// This member is required.
+	Reference *string
+
+	// The type of dependency. Valid value is LambdaLayer .
+	Type DependencyType
+
+	noSmithyDocumentSerde
+}
+
+// Returns the dry run configurations set for a canary.
+type DryRunConfigOutput struct {
+
+	// The DryRunId associated with an existing canary’s dry run. You can use this
+	// DryRunId to retrieve information about the dry run.
+	DryRunId *string
+
+	// Returns the last execution status for a canary's dry run.
+	LastDryRunExecutionStatus *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure of engine configurations for the canary, one for each browser type
+// that the canary is configured to run on.
+type EngineConfig struct {
+
+	// The browser type associated with this engine configuration.
+	BrowserType BrowserType
+
+	// Each engine configuration contains the ARN of the Lambda function that is used
+	// as the canary's engine for a specific browser type.
+	EngineArn *string
 
 	noSmithyDocumentSerde
 }
@@ -465,6 +669,37 @@ type GroupSummary struct {
 
 	// The name of the group.
 	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// This structure contains information about the canary's retry configuration.
+//
+// The default account level concurrent execution limit from Lambda is 1000. When
+// you have more than 1000 canaries, it's possible there are more than 1000 Lambda
+// invocations due to retries and the console might hang. For more information on
+// the Lambda execution limit, see [Understanding Lambda function scaling].
+//
+// For canary with MaxRetries = 2 , you need to set the
+// CanaryRunConfigInput.TimeoutInSeconds to less than 600 seconds to avoid
+// validation errors.
+//
+// [Understanding Lambda function scaling]: https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html#:~:text=As%20your%20functions%20receive%20more,functions%20in%20an%20AWS%20Region
+type RetryConfigInput struct {
+
+	// The maximum number of retries. The value must be less than or equal to 2.
+	//
+	// This member is required.
+	MaxRetries *int32
+
+	noSmithyDocumentSerde
+}
+
+// This structure contains information about the canary's retry configuration.
+type RetryConfigOutput struct {
+
+	// The maximum number of retries. The value must be less than or equal to 2.
+	MaxRetries *int32
 
 	noSmithyDocumentSerde
 }
@@ -543,6 +778,9 @@ type VisualReferenceInput struct {
 	// be used for visual monitoring, remove it from this array.
 	BaseScreenshots []BaseScreenshot
 
+	// The browser type associated with this visual reference.
+	BrowserType BrowserType
+
 	noSmithyDocumentSerde
 }
 
@@ -562,6 +800,9 @@ type VisualReferenceOutput struct {
 	// An array of screenshots that are used as the baseline for comparisons during
 	// visual monitoring.
 	BaseScreenshots []BaseScreenshot
+
+	// The browser type associated with this visual reference.
+	BrowserType BrowserType
 
 	noSmithyDocumentSerde
 }

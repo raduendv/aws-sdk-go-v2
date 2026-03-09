@@ -33,7 +33,7 @@ import (
 // level quota of 99 phone numbers, and in any 180 day period you release 99, claim
 // 99, and then release 99, you will have exceeded the 200% limit. At that point
 // you are blocked from claiming any more numbers until you open an Amazon Web
-// ServicesSupport ticket.
+// Services Support ticket.
 //
 // [DescribePhoneNumber]: https://docs.aws.amazon.com/connect/latest/APIReference/API_DescribePhoneNumber.html
 func (c *Client) ImportPhoneNumber(ctx context.Context, params *ImportPhoneNumberInput, optFns ...func(*Options)) (*ImportPhoneNumberOutput, error) {
@@ -191,16 +191,13 @@ func (c *Client) addOperationImportPhoneNumberMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

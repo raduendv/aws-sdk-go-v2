@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Updates the configuration of a game session queue, which determines how the
 // queue processes new game session requests. To update settings, specify the queue
 // name to be updated and provide the new settings. When updating destinations,
@@ -69,9 +71,9 @@ type UpdateGameSessionQueueInput struct {
 
 	// A set of policies that enforce a sliding cap on player latency when processing
 	// game sessions placement requests. Use multiple policies to gradually relax the
-	// cap over time if Amazon GameLift can't make a placement. Policies are evaluated
-	// in order starting with the lowest maximum latency value. When updating policies,
-	// provide a complete collection of policies.
+	// cap over time if Amazon GameLift Servers can't make a placement. Policies are
+	// evaluated in order starting with the lowest maximum latency value. When updating
+	// policies, provide a complete collection of policies.
 	PlayerLatencyPolicies []types.PlayerLatencyPolicy
 
 	// Custom settings to use when prioritizing destinations and locations for game
@@ -84,6 +86,8 @@ type UpdateGameSessionQueueInput struct {
 	// The maximum time, in seconds, that a new game session placement request remains
 	// in the queue. When a request exceeds this time, the game session placement
 	// changes to a TIMED_OUT status.
+	//
+	// The minimum value is 10 and the maximum value is 600.
 	TimeoutInSeconds *int32
 
 	noSmithyDocumentSerde
@@ -188,16 +192,13 @@ func (c *Client) addOperationUpdateGameSessionQueueMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

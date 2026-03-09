@@ -250,6 +250,26 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpStartCanaryDryRun struct {
+}
+
+func (*validateOpStartCanaryDryRun) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpStartCanaryDryRun) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*StartCanaryDryRunInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpStartCanaryDryRunInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpStartCanary struct {
 }
 
@@ -398,6 +418,10 @@ func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
 }
 
+func addOpStartCanaryDryRunValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpStartCanaryDryRun{}, middleware.After)
+}
+
 func addOpStartCanaryValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpStartCanary{}, middleware.After)
 }
@@ -455,8 +479,10 @@ func validateCanaryCodeInput(v *types.CanaryCodeInput) error {
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "CanaryCodeInput"}
-	if v.Handler == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("Handler"))
+	if v.Dependencies != nil {
+		if err := validateDependencies(v.Dependencies); err != nil {
+			invalidParams.AddNested("Dependencies", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -472,6 +498,58 @@ func validateCanaryScheduleInput(v *types.CanaryScheduleInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "CanaryScheduleInput"}
 	if v.Expression == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Expression"))
+	}
+	if v.RetryConfig != nil {
+		if err := validateRetryConfigInput(v.RetryConfig); err != nil {
+			invalidParams.AddNested("RetryConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateDependencies(v []types.Dependency) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "Dependencies"}
+	for i := range v {
+		if err := validateDependency(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateDependency(v *types.Dependency) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "Dependency"}
+	if v.Reference == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Reference"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateRetryConfigInput(v *types.RetryConfigInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RetryConfigInput"}
+	if v.MaxRetries == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("MaxRetries"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -492,6 +570,23 @@ func validateVisualReferenceInput(v *types.VisualReferenceInput) error {
 	}
 	if v.BaseCanaryRunId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("BaseCanaryRunId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateVisualReferences(v []types.VisualReferenceInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "VisualReferences"}
+	for i := range v {
+		if err := validateVisualReferenceInput(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -709,6 +804,36 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	}
 }
 
+func validateOpStartCanaryDryRunInput(v *StartCanaryDryRunInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StartCanaryDryRunInput"}
+	if v.Name == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Name"))
+	}
+	if v.Code != nil {
+		if err := validateCanaryCodeInput(v.Code); err != nil {
+			invalidParams.AddNested("Code", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.VisualReference != nil {
+		if err := validateVisualReferenceInput(v.VisualReference); err != nil {
+			invalidParams.AddNested("VisualReference", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.VisualReferences != nil {
+		if err := validateVisualReferences(v.VisualReferences); err != nil {
+			invalidParams.AddNested("VisualReferences", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpStartCanaryInput(v *StartCanaryInput) error {
 	if v == nil {
 		return nil
@@ -796,6 +921,11 @@ func validateOpUpdateCanaryInput(v *UpdateCanaryInput) error {
 	if v.VisualReference != nil {
 		if err := validateVisualReferenceInput(v.VisualReference); err != nil {
 			invalidParams.AddNested("VisualReference", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.VisualReferences != nil {
+		if err := validateVisualReferences(v.VisualReferences); err != nil {
+			invalidParams.AddNested("VisualReferences", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

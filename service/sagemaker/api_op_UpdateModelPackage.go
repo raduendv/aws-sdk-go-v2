@@ -85,6 +85,9 @@ type UpdateModelPackageInput struct {
 	//  A structure describing the current state of the model in its life cycle.
 	ModelLifeCycle *types.ModelLifeCycle
 
+	//  The package registration type of the model package input.
+	ModelPackageRegistrationType types.ModelPackageRegistrationType
+
 	// The URI of the source for the model package.
 	SourceUri *string
 
@@ -192,16 +195,13 @@ func (c *Client) addOperationUpdateModelPackageMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

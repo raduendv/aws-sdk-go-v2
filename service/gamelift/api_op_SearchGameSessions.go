@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Retrieves all active game sessions that match a set of search criteria and
 // sorts them into a specified order.
 //
@@ -61,19 +63,24 @@ import (
 //
 // For examples of searching game sessions, see the ones below, and also see [Search game sessions by game property].
 //
-//   - maximumSessions -- Maximum number of player sessions allowed for a game
-//     session.
+// Avoid using periods (".") in property keys if you plan to search for game
 //
-//   - creationTimeMillis -- Value indicating when a game session was created. It
-//     is expressed in Unix time as milliseconds.
+//	sessions by properties. Property keys containing periods cannot be searched and
+//	will be filtered out from search results due to search index limitations.
 //
-//   - playerSessionCount -- Number of players currently connected to a game
-//     session. This value changes rapidly as players join the session or drop out.
+//	- maximumSessions -- Maximum number of player sessions allowed for a game
+//	session.
 //
-//   - hasAvailablePlayerSessions -- Boolean value indicating whether a game
-//     session has reached its maximum number of players. It is highly recommended that
-//     all search requests include this filter attribute to optimize search performance
-//     and return only sessions that players can join.
+//	- creationTimeMillis -- Value indicating when a game session was created. It
+//	is expressed in Unix time as milliseconds.
+//
+//	- playerSessionCount -- Number of players currently connected to a game
+//	session. This value changes rapidly as players join the session or drop out.
+//
+//	- hasAvailablePlayerSessions -- Boolean value indicating whether a game
+//	session has reached its maximum number of players. It is highly recommended that
+//	all search requests include this filter attribute to optimize search performance
+//	and return only sessions that players can join.
 //
 // Returned values for playerSessionCount and hasAvailablePlayerSessions change
 // quickly as players join sessions and others drop out. Results should be
@@ -290,16 +297,13 @@ func (c *Client) addOperationSearchGameSessionsMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

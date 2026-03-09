@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes an ephemeris
+// Delete an ephemeris.
 func (c *Client) DeleteEphemeris(ctx context.Context, params *DeleteEphemerisInput, optFns ...func(*Options)) (*DeleteEphemerisOutput, error) {
 	if params == nil {
 		params = &DeleteEphemerisInput{}
@@ -135,16 +135,13 @@ func (c *Client) addOperationDeleteEphemerisMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

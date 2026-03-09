@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes the Amazon QuickSight user that is associated with the identity of the
+// Deletes the Amazon Quick Sight user that is associated with the identity of the
 // IAM user or role that's making the call. The IAM user isn't deleted as a result
 // of this call.
 func (c *Client) DeleteUser(ctx context.Context, params *DeleteUserInput, optFns ...func(*Options)) (*DeleteUserOutput, error) {
@@ -31,8 +31,8 @@ func (c *Client) DeleteUser(ctx context.Context, params *DeleteUserInput, optFns
 type DeleteUserInput struct {
 
 	// The ID for the Amazon Web Services account that the user is in. Currently, you
-	// use the ID for the Amazon Web Services account that contains your Amazon
-	// QuickSight account.
+	// use the ID for the Amazon Web Services account that contains your Amazon Quick
+	// Sight account.
 	//
 	// This member is required.
 	AwsAccountId *string
@@ -152,16 +152,13 @@ func (c *Client) addOperationDeleteUserMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

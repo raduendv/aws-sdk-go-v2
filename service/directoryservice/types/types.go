@@ -7,6 +7,179 @@ import (
 	"time"
 )
 
+// Contains detailed information about a directory assessment, including
+// configuration parameters, status, and validation results.
+type Assessment struct {
+
+	// The unique identifier of the directory assessment.
+	AssessmentId *string
+
+	// The IP addresses of the DNS servers or domain controllers in your self-managed
+	// AD environment.
+	CustomerDnsIps []string
+
+	// The identifier of the directory associated with this assessment.
+	DirectoryId *string
+
+	// The fully qualified domain name (FQDN) of the Active Directory domain being
+	// assessed.
+	DnsName *string
+
+	// The date and time when the assessment status was last updated.
+	LastUpdateDateTime *time.Time
+
+	// The type of assessment report generated. Valid values are CUSTOMER and SYSTEM .
+	ReportType *string
+
+	// The security groups identifiers attached to the network interfaces.
+	SecurityGroupIds []string
+
+	// The identifiers of the self-managed AD instances used to perform the assessment.
+	SelfManagedInstanceIds []string
+
+	// The date and time when the assessment was initiated.
+	StartTime *time.Time
+
+	// The current status of the assessment. Valid values include SUCCESS , FAILED ,
+	// PENDING , and IN_PROGRESS .
+	Status *string
+
+	// A detailed status code providing additional information about the assessment
+	// state.
+	StatusCode *string
+
+	// A human-readable description of the current assessment status, including any
+	// error details or progress information.
+	StatusReason *string
+
+	// A list of subnet identifiers in the Amazon VPC in which the hybrid directory is
+	// created.
+	SubnetIds []string
+
+	// The version of the assessment framework used to evaluate your self-managed AD
+	// environment.
+	Version *string
+
+	// Contains Amazon VPC information for the StartADAssessment operation.
+	VpcId *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains configuration parameters required to perform a directory assessment.
+type AssessmentConfiguration struct {
+
+	// A list of IP addresses for the DNS servers or domain controllers in your
+	// self-managed AD that are tested during the assessment.
+	//
+	// This member is required.
+	CustomerDnsIps []string
+
+	// The fully qualified domain name (FQDN) of the self-managed AD domain to assess.
+	//
+	// This member is required.
+	DnsName *string
+
+	// The identifiers of the self-managed instances with SSM that are used to perform
+	// connectivity and validation tests.
+	//
+	// This member is required.
+	InstanceIds []string
+
+	// Contains VPC information for the CreateDirectory, CreateMicrosoftAD, or CreateHybridAD operation.
+	//
+	// This member is required.
+	VpcSettings *DirectoryVpcSettings
+
+	// By default, the service attaches a security group to allow network access to
+	// the self-managed nodes in your Amazon VPC. You can optionally supply your own
+	// security group that allows network traffic to and from your self-managed domain
+	// controllers outside of your Amazon VPC.
+	SecurityGroupIds []string
+
+	noSmithyDocumentSerde
+}
+
+// Contains the results of validation tests performed against a specific domain
+// controller during a directory assessment.
+type AssessmentReport struct {
+
+	// The IP address of the domain controller that was tested during the assessment.
+	DomainControllerIp *string
+
+	// A list of validation results for different test categories performed against
+	// this domain controller.
+	Validations []AssessmentValidation
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about a directory assessment, providing a
+// high-level overview without detailed validation results.
+type AssessmentSummary struct {
+
+	// The unique identifier of the directory assessment.
+	AssessmentId *string
+
+	// The IP addresses of the DNS servers or domain controllers in your self-managed
+	// AD environment.
+	CustomerDnsIps []string
+
+	// The identifier of the directory associated with this assessment.
+	DirectoryId *string
+
+	// The fully qualified domain name (FQDN) of the Active Directory domain being
+	// assessed.
+	DnsName *string
+
+	// The date and time when the assessment status was last updated.
+	LastUpdateDateTime *time.Time
+
+	// The type of assessment report generated. Valid values include CUSTOMER and
+	// SYSTEM .
+	ReportType *string
+
+	// The date and time when the assessment was initiated.
+	StartTime *time.Time
+
+	// The current status of the assessment. Valid values include SUCCESS , FAILED ,
+	// PENDING , and IN_PROGRESS .
+	Status *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a specific validation test performed during a
+// directory assessment.
+type AssessmentValidation struct {
+
+	// The category of the validation test.
+	Category *string
+
+	// The date and time when the validation test was completed or last updated.
+	LastUpdateDateTime *time.Time
+
+	// The name of the specific validation test performed within the category.
+	Name *string
+
+	// The date and time when the validation test was started.
+	StartTime *time.Time
+
+	// The result status of the validation test. Valid values include SUCCESS , FAILED
+	// , PENDING , and IN_PROGRESS .
+	Status *string
+
+	// A detailed status code providing additional information about the validation
+	// result.
+	StatusCode *string
+
+	// A human-readable description of the validation result, including any error
+	// details or recommendations.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
 // Represents a named directory attribute.
 type Attribute struct {
 
@@ -130,6 +303,11 @@ type ConditionalForwarder struct {
 	// to.
 	DnsIpAddrs []string
 
+	// The IPv6 addresses of the remote DNS server associated with RemoteDomainName.
+	// This is the IPv6 address of the DNS server that your conditional forwarder
+	// points to.
+	DnsIpv6Addrs []string
+
 	// The fully qualified domain name (FQDN) of the remote domains pointed to by the
 	// conditional forwarder.
 	RemoteDomainName *string
@@ -142,15 +320,8 @@ type ConditionalForwarder struct {
 	noSmithyDocumentSerde
 }
 
-// Contains information for the ConnectDirectory operation when an AD Connector directory is being
-// created.
+// Contains connection settings for creating an AD Connector with the ConnectDirectory action.
 type DirectoryConnectSettings struct {
-
-	// A list of one or more IP addresses of DNS servers or domain controllers in your
-	// self-managed directory.
-	//
-	// This member is required.
-	CustomerDnsIps []string
 
 	// The user name of an account in your self-managed directory that is used to
 	// connect to the directory. This account must have the following permissions:
@@ -174,17 +345,28 @@ type DirectoryConnectSettings struct {
 	// This member is required.
 	VpcId *string
 
+	// The IP addresses of DNS servers or domain controllers in your self-managed
+	// directory.
+	CustomerDnsIps []string
+
+	// The IPv6 addresses of DNS servers or domain controllers in your self-managed
+	// directory.
+	CustomerDnsIpsV6 []string
+
 	noSmithyDocumentSerde
 }
 
 // Contains information about an AD Connector directory.
 type DirectoryConnectSettingsDescription struct {
 
-	// A list of the Availability Zones that the directory is in.
+	// The Availability Zones that the directory is in.
 	AvailabilityZones []string
 
 	// The IP addresses of the AD Connector servers.
 	ConnectIps []string
+
+	// The IPv6 addresses of the AD Connector servers.
+	ConnectIpsV6 []string
 
 	// The user name of the service account in your self-managed directory.
 	CustomerUserName *string
@@ -204,17 +386,16 @@ type DirectoryConnectSettingsDescription struct {
 // Contains information about an Directory Service directory.
 type DirectoryDescription struct {
 
-	// The access URL for the directory, such as http://.awsapps.com . If no alias has
-	// been created for the directory, is the directory identifier, such as
-	// d-XXXXXXXXXX .
+	// The access URL for the directory, such as http://.awsapps.com . If no alias
+	// exists, is the directory identifier, such as d-XXXXXXXXXX .
 	AccessUrl *string
 
-	// The alias for the directory. If no alias has been created for the directory,
-	// the alias is the directory identifier, such as d-XXXXXXXXXX .
+	// The alias for the directory. If no alias exists, the alias is the directory
+	// identifier, such as d-XXXXXXXXXX .
 	Alias *string
 
-	// A DirectoryConnectSettingsDescription object that contains additional information about an AD Connector directory.
-	// This member is only present if the directory is an AD Connector directory.
+	// DirectoryConnectSettingsDescription object that contains additional information about an AD Connector directory.
+	// Present only for AD Connector directories.
 	ConnectSettings *DirectoryConnectSettingsDescription
 
 	// The description for the directory.
@@ -230,18 +411,32 @@ type DirectoryDescription struct {
 	// The IP addresses of the DNS servers for the directory. For a Simple AD or
 	// Microsoft AD directory, these are the IP addresses of the Simple AD or Microsoft
 	// AD directory servers. For an AD Connector directory, these are the IP addresses
-	// of the DNS servers or domain controllers in your self-managed directory to which
-	// the AD Connector is connected.
+	// of self-managed directory to which the AD Connector is connected.
 	DnsIpAddrs []string
+
+	// The IPv6 addresses of the DNS servers for the directory. For a Simple AD or
+	// Microsoft AD directory, these are the IPv6 addresses of the Simple AD or
+	// Microsoft AD directory servers. For an AD Connector directory, these are the
+	// IPv6 addresses of the DNS servers or domain controllers in your self-managed
+	// directory to which the AD Connector is connected.
+	DnsIpv6Addrs []string
 
 	// The edition associated with this directory.
 	Edition DirectoryEdition
 
-	// Specifies when the directory was created.
+	// Contains information about the hybrid directory configuration for the
+	// directory, including Amazon Web Services System Manager managed node identifiers
+	// and DNS IPs.
+	HybridSettings *HybridSettingsDescription
+
+	// The date and time when the directory was created.
 	LaunchTime *time.Time
 
 	// The fully qualified name of the directory.
 	Name *string
+
+	// The network type of the directory.
+	NetworkType NetworkType
 
 	// The operating system (OS) version of the directory.
 	OsVersion OSVersion
@@ -249,8 +444,7 @@ type DirectoryDescription struct {
 	// Describes the Managed Microsoft AD directory in the directory owner account.
 	OwnerDirectoryDescription *OwnerDirectoryDescription
 
-	// A RadiusSettings object that contains information about the RADIUS server configured for this
-	// directory.
+	// Information about the RadiusSettings object configured for this directory.
 	RadiusSettings *RadiusSettings
 
 	// The status of the RADIUS MFA server connection.
@@ -279,14 +473,14 @@ type DirectoryDescription struct {
 	// The directory size.
 	Size DirectorySize
 
-	// Indicates if single sign-on is enabled for the directory. For more information,
-	// see EnableSsoand DisableSso.
+	// Indicates whether single sign-on is enabled for the directory. For more
+	// information, see EnableSsoand DisableSso.
 	SsoEnabled bool
 
 	// The current stage of the directory.
 	Stage DirectoryStage
 
-	// The date and time that the stage was last updated.
+	// The date and time when the stage was last updated.
 	StageLastUpdatedDateTime *time.Time
 
 	// Additional information about the directory stage.
@@ -295,9 +489,8 @@ type DirectoryDescription struct {
 	// The directory type.
 	Type DirectoryType
 
-	// A DirectoryVpcSettingsDescription object that contains additional information about a directory. This member
-	// is only present if the directory is a Simple AD or Managed Microsoft AD
-	// directory.
+	// A DirectoryVpcSettingsDescription object that contains additional information about a directory. Present only
+	// for Simple AD and Managed Microsoft AD directories.
 	VpcSettings *DirectoryVpcSettingsDescription
 
 	noSmithyDocumentSerde
@@ -336,7 +529,16 @@ type DirectoryLimits struct {
 	noSmithyDocumentSerde
 }
 
-// Contains VPC information for the CreateDirectory or CreateMicrosoftAD operation.
+// Contains the directory size configuration for update operations.
+type DirectorySizeUpdateSettings struct {
+
+	// The target directory size for the update operation.
+	DirectorySize DirectorySize
+
+	noSmithyDocumentSerde
+}
+
+// Contains VPC information for the CreateDirectory, CreateMicrosoftAD, or CreateHybridAD operation.
 type DirectoryVpcSettings struct {
 
 	// The identifiers of the subnets for the directory servers. The two subnets must
@@ -383,6 +585,9 @@ type DomainController struct {
 
 	// The IP address of the domain controller.
 	DnsIpAddr *string
+
+	// The IPv6 address of the domain controller.
+	DnsIpv6Addr *string
 
 	// Identifies a specific domain controller in the directory.
 	DomainControllerId *string
@@ -431,14 +636,129 @@ type EventTopic struct {
 	noSmithyDocumentSerde
 }
 
-// IP address block. This is often the address block of the DNS server used for
-// your self-managed domain.
+// Use to recover to the hybrid directory administrator account credentials.
+type HybridAdministratorAccountUpdate struct {
+
+	// The Amazon Resource Name (ARN) of the Amazon Web Services Secrets Manager
+	// secret that contains the credentials for the AD administrator user, and enables
+	// hybrid domain controllers to join the managed AD domain. For example:
+	//
+	//     {"customerAdAdminDomainUsername":"carlos_salazar","customerAdAdminDomainPassword":"ExamplePassword123!"}.
+	//
+	// This member is required.
+	SecretArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains configuration settings for self-managed instances with SSM used in
+// hybrid directory operations.
+type HybridCustomerInstancesSettings struct {
+
+	// The IP addresses of the DNS servers or domain controllers in your self-managed
+	// AD environment.
+	//
+	// This member is required.
+	CustomerDnsIps []string
+
+	// The identifiers of the self-managed instances with SSM used in hybrid directory.
+	//
+	// This member is required.
+	InstanceIds []string
+
+	noSmithyDocumentSerde
+}
+
+// Describes the current hybrid directory configuration settings for a directory.
+type HybridSettingsDescription struct {
+
+	// The IP addresses of the DNS servers in your self-managed AD environment.
+	SelfManagedDnsIpAddrs []string
+
+	// The identifiers of the self-managed instances with SSM used for hybrid
+	// directory operations.
+	SelfManagedInstanceIds []string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about update activities for different components of a
+// hybrid directory.
+type HybridUpdateActivities struct {
+
+	// A list of update activities related to hybrid directory administrator account
+	// changes.
+	HybridAdministratorAccount []HybridUpdateInfoEntry
+
+	// A list of update activities related to the self-managed instances with SSM in
+	// the self-managed instances with SSM hybrid directory configuration.
+	SelfManagedInstances []HybridUpdateInfoEntry
+
+	noSmithyDocumentSerde
+}
+
+// Contains detailed information about a specific update activity for a hybrid
+// directory component.
+type HybridUpdateInfoEntry struct {
+
+	// The identifier of the assessment performed to validate this update
+	// configuration.
+	AssessmentId *string
+
+	// Specifies if the update was initiated by the customer or Amazon Web Services.
+	InitiatedBy *string
+
+	// The date and time when the update activity status was last updated.
+	LastUpdatedDateTime *time.Time
+
+	// The new configuration values being applied in this update.
+	NewValue *HybridUpdateValue
+
+	// The previous configuration values before this update was applied.
+	PreviousValue *HybridUpdateValue
+
+	// The date and time when the update activity was initiated.
+	StartTime *time.Time
+
+	// The current status of the update activity. Valid values include UPDATED ,
+	// UPDATING , and UPDATE_FAILED .
+	Status UpdateStatus
+
+	// A human-readable description of the update status, including any error details
+	// or progress information.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains the configuration values for a hybrid directory update, including
+// Amazon Web Services System Manager managed node and DNS information.
+type HybridUpdateValue struct {
+
+	// The IP addresses of the DNS servers or domain controllers in the hybrid
+	// directory configuration.
+	DnsIps []string
+
+	// The identifiers of the self-managed instances with SSM in the hybrid directory
+	// configuration.
+	InstanceIds []string
+
+	noSmithyDocumentSerde
+}
+
+// Contains the IP address block. This is often the address block of the DNS
+// server used for your self-managed domain.
 type IpRoute struct {
 
-	// IP address block using CIDR format, for example 10.0.0.0/24. This is often the
-	// address block of the DNS server used for your self-managed domain. For a single
-	// IP address use a CIDR address block with /32. For example 10.0.0.0/32.
+	// IP address block in CIDR format, such as 10.0.0.0/24. This is often the address
+	// block of the DNS server used for your self-managed domain. For a single IP
+	// address, use a CIDR address block with /32. For example, 10.0.0.0/32.
 	CidrIp *string
+
+	// IPv6 address block in CIDR format, such as 2001:db8::/32. This is often the
+	// address block of the DNS server used for your self-managed domain. For a single
+	// IPv6 address, use a CIDR address block with /128. For example, 2001:db8::1/128.
+	CidrIpv6 *string
 
 	// Description of the address block.
 	Description *string
@@ -454,6 +774,9 @@ type IpRouteInfo struct {
 
 	// IP address block in the IpRoute.
 	CidrIp *string
+
+	// IPv6 address block in the IpRoute.
+	CidrIpv6 *string
 
 	// Description of the IpRouteInfo.
 	Description *string
@@ -502,17 +825,30 @@ type LogSubscription struct {
 	noSmithyDocumentSerde
 }
 
+// Contains the network configuration for directory update operations.
+type NetworkUpdateSettings struct {
+
+	// IPv6 addresses of DNS servers or domain controllers in the self-managed
+	// directory. Required only when updating an AD Connector directory.
+	CustomerDnsIpsV6 []string
+
+	// The target network type for the directory update.
+	NetworkType NetworkType
+
+	noSmithyDocumentSerde
+}
+
 // OS version that the directory needs to be updated to.
 type OSUpdateSettings struct {
 
-	//  OS version that the directory needs to be updated to.
+	// OS version that the directory needs to be updated to.
 	OSVersion OSVersion
 
 	noSmithyDocumentSerde
 }
 
-// Describes the directory owner account details that have been shared to the
-// directory consumer account.
+// Contains the directory owner account details shared with the directory consumer
+// account.
 type OwnerDirectoryDescription struct {
 
 	// Identifier of the directory owner account.
@@ -524,10 +860,16 @@ type OwnerDirectoryDescription struct {
 	// IP address of the directory’s domain controllers.
 	DnsIpAddrs []string
 
-	// A RadiusSettings object that contains information about the RADIUS server.
+	// IPv6 addresses of the directory’s domain controllers.
+	DnsIpv6Addrs []string
+
+	// Network type of the directory in the directory owner account.
+	NetworkType NetworkType
+
+	// Information about the RadiusSettings object server configuration.
 	RadiusSettings *RadiusSettings
 
-	// Information about the status of the RADIUS server.
+	// The status of the RADIUS server.
 	RadiusStatus RadiusStatus
 
 	// Information about the VPC settings for the directory.
@@ -555,10 +897,13 @@ type RadiusSettings struct {
 	// retried after the initial attempt.
 	RadiusRetries int32
 
-	// An array of strings that contains the fully qualified domain name (FQDN) or IP
-	// addresses of the RADIUS server endpoints, or the FQDN or IP addresses of your
-	// RADIUS server load balancer.
+	// The fully qualified domain name (FQDN) or IP addresses of the RADIUS server
+	// endpoints, or the FQDN or IP addresses of your RADIUS server load balancer.
 	RadiusServers []string
+
+	// The IPv6 addresses of the RADIUS server endpoints or RADIUS server load
+	// balancer.
+	RadiusServersIpv6 []string
 
 	// The amount of time, in seconds, to wait for the RADIUS server to respond.
 	RadiusTimeout *int32
@@ -600,7 +945,7 @@ type RegionDescription struct {
 	// The date and time that the Region status was last updated.
 	StatusLastUpdatedDateTime *time.Time
 
-	// Contains VPC information for the CreateDirectory or CreateMicrosoftAD operation.
+	// Contains VPC information for the CreateDirectory, CreateMicrosoftAD, or CreateHybridAD operation.
 	VpcSettings *DirectoryVpcSettings
 
 	noSmithyDocumentSerde

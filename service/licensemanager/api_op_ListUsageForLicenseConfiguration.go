@@ -40,14 +40,12 @@ type ListUsageForLicenseConfigurationInput struct {
 	// Filters to scope the results. The following filters and logical operators are
 	// supported:
 	//
-	//   - resourceArn - The ARN of the license configuration resource. Logical
-	//   operators are EQUALS | NOT_EQUALS .
+	//   - resourceArn - The ARN of the license configuration resource.
 	//
 	//   - resourceType - The resource type ( EC2_INSTANCE | EC2_HOST | EC2_AMI |
-	//   SYSTEMS_MANAGER_MANAGED_INSTANCE ). Logical operators are EQUALS | NOT_EQUALS .
+	//   SYSTEMS_MANAGER_MANAGED_INSTANCE ).
 	//
-	//   - resourceAccount - The ID of the account that owns the resource. Logical
-	//   operators are EQUALS | NOT_EQUALS .
+	//   - resourceAccount - The ID of the account that owns the resource.
 	Filters []types.Filter
 
 	// Maximum number of results to return in a single call.
@@ -161,16 +159,13 @@ func (c *Client) addOperationListUsageForLicenseConfigurationMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

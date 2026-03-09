@@ -160,6 +160,23 @@ type CreateServerInput struct {
 	// function in the Function parameter for the IdentityProviderDetails data type.
 	IdentityProviderType types.IdentityProviderType
 
+	// Specifies whether to use IPv4 only, or to use dual-stack (IPv4 and IPv6) for
+	// your Transfer Family endpoint. The default value is IPV4 .
+	//
+	// The IpAddressType parameter has the following limitations:
+	//
+	//   - It cannot be changed while the server is online. You must stop the server
+	//   before modifying this parameter.
+	//
+	//   - It cannot be updated to DUALSTACK if the server has AddressAllocationIds
+	//   specified.
+	//
+	// When using DUALSTACK as the IpAddressType , you cannot set the
+	// AddressAllocationIds parameter for the [EndpointDetails] for the server.
+	//
+	// [EndpointDetails]: https://docs.aws.amazon.com/transfer/latest/APIReference/API_EndpointDetails.html
+	IpAddressType types.IpAddressType
+
 	// The Amazon Resource Name (ARN) of the Identity and Access Management (IAM) role
 	// that allows a server to turn on Amazon CloudWatch logging for Amazon S3 or
 	// Amazon EFS events. When set, you can view user activity in your CloudWatch logs.
@@ -183,6 +200,10 @@ type CreateServerInput struct {
 
 	// The protocol settings that are configured for your server.
 	//
+	// Avoid placing Network Load Balancers (NLBs) or NAT gateways in front of
+	// Transfer Family servers, as this increases costs and can cause performance
+	// issues, including reduced connection limits for FTPS. For more details, see [Avoid placing NLBs and NATs in front of Transfer Family].
+	//
 	//   - To indicate passive mode (for FTP and FTPS protocols), use the PassiveIp
 	//   parameter. Enter a single dotted-quad IPv4 address, such as the external IP
 	//   address of a firewall, router, or load balancer.
@@ -202,6 +223,8 @@ type CreateServerInput struct {
 	//
 	//   - As2Transports indicates the transport method for the AS2 messages.
 	//   Currently, only HTTP is supported.
+	//
+	// [Avoid placing NLBs and NATs in front of Transfer Family]: https://docs.aws.amazon.com/transfer/latest/userguide/infrastructure-security.html#nlb-considerations
 	ProtocolDetails *types.ProtocolDetails
 
 	// Specifies the file transfer protocol or protocols over which your file transfer
@@ -236,7 +259,11 @@ type CreateServerInput struct {
 	Protocols []types.Protocol
 
 	// Specifies whether or not performance for your Amazon S3 directories is
-	// optimized. This is disabled by default.
+	// optimized.
+	//
+	//   - If using the console, this is enabled by default.
+	//
+	//   - If using the API or CLI, this is disabled by default.
 	//
 	// By default, home directory mappings have a TYPE of DIRECTORY . If you enable
 	// this option, you would then need to explicitly set the HomeDirectoryMapEntry Type
@@ -378,16 +405,13 @@ func (c *Client) addOperationCreateServerMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

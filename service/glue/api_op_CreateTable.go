@@ -35,20 +35,22 @@ type CreateTableInput struct {
 	// This member is required.
 	DatabaseName *string
 
-	// The TableInput object that defines the metadata table to create in the catalog.
-	//
-	// This member is required.
-	TableInput *types.TableInput
-
 	// The ID of the Data Catalog in which to create the Table . If none is supplied,
 	// the Amazon Web Services account ID is used by default.
 	CatalogId *string
+
+	// The unique identifier for the table within the specified database that will be
+	// created in the Glue Data Catalog.
+	Name *string
 
 	// Specifies an OpenTableFormatInput structure when creating an open format table.
 	OpenTableFormatInput *types.OpenTableFormatInput
 
 	// A list of partition indexes, PartitionIndex structures, to create in the table.
 	PartitionIndexes []types.PartitionIndex
+
+	// The TableInput object that defines the metadata table to create in the catalog.
+	TableInput *types.TableInput
 
 	// The ID of the transaction.
 	TransactionId *string
@@ -151,16 +153,13 @@ func (c *Client) addOperationCreateTableMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

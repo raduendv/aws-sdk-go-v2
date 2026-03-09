@@ -10,6 +10,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: Container
+//
 // Deletes all resources and information related to a container fleet and shuts
 // down currently running fleet instances, including those in remote locations. The
 // container fleet must be in ACTIVE status to be deleted.
@@ -19,9 +21,9 @@ import (
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift Fleets]
+// [Setting up Amazon GameLift Servers Fleets]
 //
-// [Setting up Amazon GameLift Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
+// [Setting up Amazon GameLift Servers Fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 func (c *Client) DeleteContainerFleet(ctx context.Context, params *DeleteContainerFleetInput, optFns ...func(*Options)) (*DeleteContainerFleetOutput, error) {
 	if params == nil {
 		params = &DeleteContainerFleetInput{}
@@ -143,16 +145,13 @@ func (c *Client) addOperationDeleteContainerFleetMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

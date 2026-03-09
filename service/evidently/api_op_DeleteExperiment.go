@@ -15,6 +15,8 @@ import (
 //
 // To stop an experiment without deleting it, use [StopExperiment].
 //
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
+//
 // [StopExperiment]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_StopExperiment.html
 func (c *Client) DeleteExperiment(ctx context.Context, params *DeleteExperimentInput, optFns ...func(*Options)) (*DeleteExperimentOutput, error) {
 	if params == nil {
@@ -36,11 +38,15 @@ type DeleteExperimentInput struct {
 	// The name of the experiment to delete.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Experiment *string
 
 	// The name or ARN of the project that contains the experiment to delete.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	noSmithyDocumentSerde
@@ -141,16 +147,13 @@ func (c *Client) addOperationDeleteExperimentMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

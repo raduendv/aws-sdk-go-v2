@@ -50,6 +50,26 @@ func (m *validateOpCreateInvoiceUnit) HandleInitialize(ctx context.Context, in m
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateProcurementPortalPreference struct {
+}
+
+func (*validateOpCreateProcurementPortalPreference) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateProcurementPortalPreference) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateProcurementPortalPreferenceInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateProcurementPortalPreferenceInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeleteInvoiceUnit struct {
 }
 
@@ -65,6 +85,46 @@ func (m *validateOpDeleteInvoiceUnit) HandleInitialize(ctx context.Context, in m
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDeleteInvoiceUnitInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteProcurementPortalPreference struct {
+}
+
+func (*validateOpDeleteProcurementPortalPreference) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteProcurementPortalPreference) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteProcurementPortalPreferenceInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteProcurementPortalPreferenceInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetInvoicePDF struct {
+}
+
+func (*validateOpGetInvoicePDF) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetInvoicePDF) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetInvoicePDFInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetInvoicePDFInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -90,6 +150,46 @@ func (m *validateOpGetInvoiceUnit) HandleInitialize(ctx context.Context, in midd
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetProcurementPortalPreference struct {
+}
+
+func (*validateOpGetProcurementPortalPreference) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetProcurementPortalPreference) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetProcurementPortalPreferenceInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetProcurementPortalPreferenceInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpListInvoiceSummaries struct {
+}
+
+func (*validateOpListInvoiceSummaries) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListInvoiceSummaries) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListInvoiceSummariesInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListInvoiceSummariesInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpListTagsForResource struct {
 }
 
@@ -105,6 +205,26 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListTagsForResourceInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpPutProcurementPortalPreference struct {
+}
+
+func (*validateOpPutProcurementPortalPreference) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpPutProcurementPortalPreference) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*PutProcurementPortalPreferenceInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpPutProcurementPortalPreferenceInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -170,6 +290,26 @@ func (m *validateOpUpdateInvoiceUnit) HandleInitialize(ctx context.Context, in m
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateProcurementPortalPreferenceStatus struct {
+}
+
+func (*validateOpUpdateProcurementPortalPreferenceStatus) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateProcurementPortalPreferenceStatus) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateProcurementPortalPreferenceStatusInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateProcurementPortalPreferenceStatusInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 func addOpBatchGetInvoiceProfileValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpBatchGetInvoiceProfile{}, middleware.After)
 }
@@ -178,16 +318,40 @@ func addOpCreateInvoiceUnitValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateInvoiceUnit{}, middleware.After)
 }
 
+func addOpCreateProcurementPortalPreferenceValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateProcurementPortalPreference{}, middleware.After)
+}
+
 func addOpDeleteInvoiceUnitValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteInvoiceUnit{}, middleware.After)
+}
+
+func addOpDeleteProcurementPortalPreferenceValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteProcurementPortalPreference{}, middleware.After)
+}
+
+func addOpGetInvoicePDFValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetInvoicePDF{}, middleware.After)
 }
 
 func addOpGetInvoiceUnitValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetInvoiceUnit{}, middleware.After)
 }
 
+func addOpGetProcurementPortalPreferenceValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetProcurementPortalPreference{}, middleware.After)
+}
+
+func addOpListInvoiceSummariesValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListInvoiceSummaries{}, middleware.After)
+}
+
 func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
+}
+
+func addOpPutProcurementPortalPreferenceValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpPutProcurementPortalPreference{}, middleware.After)
 }
 
 func addOpTagResourceValidationMiddleware(stack *middleware.Stack) error {
@@ -200,6 +364,113 @@ func addOpUntagResourceValidationMiddleware(stack *middleware.Stack) error {
 
 func addOpUpdateInvoiceUnitValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateInvoiceUnit{}, middleware.After)
+}
+
+func addOpUpdateProcurementPortalPreferenceStatusValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateProcurementPortalPreferenceStatus{}, middleware.After)
+}
+
+func validateBillingPeriod(v *types.BillingPeriod) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "BillingPeriod"}
+	if v.Month == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Month"))
+	}
+	if v.Year == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Year"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateDateInterval(v *types.DateInterval) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DateInterval"}
+	if v.StartDate == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("StartDate"))
+	}
+	if v.EndDate == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EndDate"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateEinvoiceDeliveryPreference(v *types.EinvoiceDeliveryPreference) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "EinvoiceDeliveryPreference"}
+	if v.EinvoiceDeliveryDocumentTypes == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EinvoiceDeliveryDocumentTypes"))
+	}
+	if len(v.Protocol) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Protocol"))
+	}
+	if v.PurchaseOrderDataSources == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("PurchaseOrderDataSources"))
+	}
+	if len(v.ConnectionTestingMethod) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ConnectionTestingMethod"))
+	}
+	if v.EinvoiceDeliveryActivationDate == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EinvoiceDeliveryActivationDate"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateInvoiceSummariesFilter(v *types.InvoiceSummariesFilter) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "InvoiceSummariesFilter"}
+	if v.TimeInterval != nil {
+		if err := validateDateInterval(v.TimeInterval); err != nil {
+			invalidParams.AddNested("TimeInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.BillingPeriod != nil {
+		if err := validateBillingPeriod(v.BillingPeriod); err != nil {
+			invalidParams.AddNested("BillingPeriod", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateInvoiceSummariesSelector(v *types.InvoiceSummariesSelector) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "InvoiceSummariesSelector"}
+	if len(v.ResourceType) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ResourceType"))
+	}
+	if v.Value == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Value"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
 }
 
 func validateResourceTag(v *types.ResourceTag) error {
@@ -229,6 +500,30 @@ func validateResourceTagList(v []types.ResourceTag) error {
 		if err := validateResourceTag(&v[i]); err != nil {
 			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateTestEnvPreferenceInput(v *types.TestEnvPreferenceInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "TestEnvPreferenceInput"}
+	if len(v.BuyerDomain) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("BuyerDomain"))
+	}
+	if v.BuyerIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("BuyerIdentifier"))
+	}
+	if len(v.SupplierDomain) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("SupplierDomain"))
+	}
+	if v.SupplierIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SupplierIdentifier"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -278,6 +573,57 @@ func validateOpCreateInvoiceUnitInput(v *CreateInvoiceUnitInput) error {
 	}
 }
 
+func validateOpCreateProcurementPortalPreferenceInput(v *CreateProcurementPortalPreferenceInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateProcurementPortalPreferenceInput"}
+	if len(v.ProcurementPortalName) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ProcurementPortalName"))
+	}
+	if len(v.BuyerDomain) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("BuyerDomain"))
+	}
+	if v.BuyerIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("BuyerIdentifier"))
+	}
+	if len(v.SupplierDomain) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("SupplierDomain"))
+	}
+	if v.SupplierIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SupplierIdentifier"))
+	}
+	if v.TestEnvPreference != nil {
+		if err := validateTestEnvPreferenceInput(v.TestEnvPreference); err != nil {
+			invalidParams.AddNested("TestEnvPreference", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.EinvoiceDeliveryEnabled == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EinvoiceDeliveryEnabled"))
+	}
+	if v.EinvoiceDeliveryPreference != nil {
+		if err := validateEinvoiceDeliveryPreference(v.EinvoiceDeliveryPreference); err != nil {
+			invalidParams.AddNested("EinvoiceDeliveryPreference", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.PurchaseOrderRetrievalEnabled == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("PurchaseOrderRetrievalEnabled"))
+	}
+	if v.Contacts == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Contacts"))
+	}
+	if v.ResourceTags != nil {
+		if err := validateResourceTagList(v.ResourceTags); err != nil {
+			invalidParams.AddNested("ResourceTags", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpDeleteInvoiceUnitInput(v *DeleteInvoiceUnitInput) error {
 	if v == nil {
 		return nil
@@ -285,6 +631,36 @@ func validateOpDeleteInvoiceUnitInput(v *DeleteInvoiceUnitInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DeleteInvoiceUnitInput"}
 	if v.InvoiceUnitArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("InvoiceUnitArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteProcurementPortalPreferenceInput(v *DeleteProcurementPortalPreferenceInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteProcurementPortalPreferenceInput"}
+	if v.ProcurementPortalPreferenceArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ProcurementPortalPreferenceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetInvoicePDFInput(v *GetInvoicePDFInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetInvoicePDFInput"}
+	if v.InvoiceId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("InvoiceId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -308,6 +684,45 @@ func validateOpGetInvoiceUnitInput(v *GetInvoiceUnitInput) error {
 	}
 }
 
+func validateOpGetProcurementPortalPreferenceInput(v *GetProcurementPortalPreferenceInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetProcurementPortalPreferenceInput"}
+	if v.ProcurementPortalPreferenceArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ProcurementPortalPreferenceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpListInvoiceSummariesInput(v *ListInvoiceSummariesInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListInvoiceSummariesInput"}
+	if v.Selector == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Selector"))
+	} else if v.Selector != nil {
+		if err := validateInvoiceSummariesSelector(v.Selector); err != nil {
+			invalidParams.AddNested("Selector", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Filter != nil {
+		if err := validateInvoiceSummariesFilter(v.Filter); err != nil {
+			invalidParams.AddNested("Filter", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	if v == nil {
 		return nil
@@ -315,6 +730,40 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ListTagsForResourceInput"}
 	if v.ResourceArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpPutProcurementPortalPreferenceInput(v *PutProcurementPortalPreferenceInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "PutProcurementPortalPreferenceInput"}
+	if v.ProcurementPortalPreferenceArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ProcurementPortalPreferenceArn"))
+	}
+	if v.TestEnvPreference != nil {
+		if err := validateTestEnvPreferenceInput(v.TestEnvPreference); err != nil {
+			invalidParams.AddNested("TestEnvPreference", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.EinvoiceDeliveryEnabled == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EinvoiceDeliveryEnabled"))
+	}
+	if v.EinvoiceDeliveryPreference != nil {
+		if err := validateEinvoiceDeliveryPreference(v.EinvoiceDeliveryPreference); err != nil {
+			invalidParams.AddNested("EinvoiceDeliveryPreference", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.PurchaseOrderRetrievalEnabled == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("PurchaseOrderRetrievalEnabled"))
+	}
+	if v.Contacts == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Contacts"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -370,6 +819,21 @@ func validateOpUpdateInvoiceUnitInput(v *UpdateInvoiceUnitInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "UpdateInvoiceUnitInput"}
 	if v.InvoiceUnitArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("InvoiceUnitArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateProcurementPortalPreferenceStatusInput(v *UpdateProcurementPortalPreferenceStatusInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateProcurementPortalPreferenceStatusInput"}
+	if v.ProcurementPortalPreferenceArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ProcurementPortalPreferenceArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

@@ -19,6 +19,11 @@ import (
 // don't need to create profiles, partnerships or capabilities. Just create and
 // configure a transformer, and then run the StartTransformerJob API to process
 // your files.
+//
+// The system stores transformer jobs for 30 days. During that period, you can run [GetTransformerJob]
+// and supply its transformerId and transformerJobId to return details of the job.
+//
+// [GetTransformerJob]: https://docs.aws.amazon.com/b2bi/latest/APIReference/API_GetTransformerJob.html
 func (c *Client) StartTransformerJob(ctx context.Context, params *StartTransformerJobInput, optFns ...func(*Options)) (*StartTransformerJobOutput, error) {
 	if params == nil {
 		params = &StartTransformerJobInput{}
@@ -163,16 +168,13 @@ func (c *Client) addOperationStartTransformerJobMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

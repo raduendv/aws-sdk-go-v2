@@ -48,6 +48,11 @@ type UpdateBrowserSettingsInput struct {
 	// Amazon Web Services SDK.
 	ClientToken *string
 
+	// The policy that specifies which URLs end users are allowed to access or which
+	// URLs or domain categories they are restricted from accessing for enhanced
+	// security.
+	WebContentFilteringPolicy *types.WebContentFilteringPolicy
+
 	noSmithyDocumentSerde
 }
 
@@ -155,16 +160,13 @@ func (c *Client) addOperationUpdateBrowserSettingsMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

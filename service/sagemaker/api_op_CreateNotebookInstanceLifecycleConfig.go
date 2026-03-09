@@ -30,6 +30,11 @@ import (
 //
 // For information about notebook instance lifestyle configurations, see [Step 2.1: (Optional) Customize a Notebook Instance].
 //
+// Lifecycle configuration scripts execute with root access and the notebook
+// instance's IAM execution role privileges. Grant this permission only to trusted
+// principals. See [Customize a Notebook Instance Using a Lifecycle Configuration Script]for security best practices.
+//
+// [Customize a Notebook Instance Using a Lifecycle Configuration Script]: https://docs.aws.amazon.com/sagemaker/latest/dg/notebook-lifecycle-config.html
 // [Step 2.1: (Optional) Customize a Notebook Instance]: https://docs.aws.amazon.com/sagemaker/latest/dg/notebook-lifecycle-config.html
 func (c *Client) CreateNotebookInstanceLifecycleConfig(ctx context.Context, params *CreateNotebookInstanceLifecycleConfigInput, optFns ...func(*Options)) (*CreateNotebookInstanceLifecycleConfigOutput, error) {
 	if params == nil {
@@ -171,16 +176,13 @@ func (c *Client) addOperationCreateNotebookInstanceLifecycleConfigMiddlewares(st
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

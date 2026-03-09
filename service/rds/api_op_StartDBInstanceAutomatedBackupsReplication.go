@@ -73,6 +73,9 @@ type StartDBInstanceAutomatedBackupsReplicationInput struct {
 	// [Signature Version 4 Signing Process]: https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
 	PreSignedUrl *string
 
+	// A list of tags to associate with the replicated automated backups.
+	Tags []types.Tag
+
 	noSmithyDocumentSerde
 }
 
@@ -177,16 +180,13 @@ func (c *Client) addOperationStartDBInstanceAutomatedBackupsReplicationMiddlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

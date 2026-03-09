@@ -65,6 +65,12 @@ type UpdateSolutionInput struct {
 	// [Configuring automatic training]: https://docs.aws.amazon.com/personalize/latest/dg/solution-config-auto-training.html
 	PerformAutoTraining *bool
 
+	// Whether to perform incremental training updates on your model. When enabled,
+	// this allows the model to learn from new data more frequently without requiring
+	// full retraining, which enables near real-time personalization. This parameter is
+	// supported only for solutions that use the semantic-similarity recipe.
+	PerformIncrementalUpdate *bool
+
 	// The new configuration details of the solution.
 	SolutionUpdateConfig *types.SolutionUpdateConfig
 
@@ -170,16 +176,13 @@ func (c *Client) addOperationUpdateSolutionMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

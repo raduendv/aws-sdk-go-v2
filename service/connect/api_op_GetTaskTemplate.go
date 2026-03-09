@@ -97,8 +97,8 @@ type GetTaskTemplateOutput struct {
 	// The timestamp when the task template was last modified.
 	LastModifiedTime *time.Time
 
-	// ContactFlowId for the flow that will be run if this template is used to create
-	// a self-assigned task
+	// The ContactFlowId for the flow that will be run if this template is used to
+	// create a self-assigned task.
 	SelfAssignFlowId *string
 
 	// Marks a template as ACTIVE or INACTIVE for a task to refer to it. Tasks can
@@ -204,16 +204,13 @@ func (c *Client) addOperationGetTaskTemplateMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

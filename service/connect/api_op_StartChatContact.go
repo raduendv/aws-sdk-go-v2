@@ -28,7 +28,7 @@ import (
 //
 // If you use the ChatDurationInMinutes parameter and receive a 400 error, your
 // account may not support the ability to configure custom chat durations. For more
-// information, contact Amazon Web ServicesSupport.
+// information, contact Amazon Web Services Support.
 //
 // For more information about chat, see the following topics in the Amazon Connect
 // Administrator Guide:
@@ -106,9 +106,16 @@ type StartChatContactInput struct {
 	// customer number from your CRM.
 	CustomerId *string
 
-	// The initial message to be sent to the newly created chat. If you have a Lex bot
-	// in your flow, the initial message is not delivered to the Lex bot.
+	// A list of participant types to automatically disconnect when the end customer
+	// ends the chat session, allowing them to continue through disconnect flows such
+	// as surveys or feedback forms.
+	DisconnectOnCustomerExit []types.DisconnectOnCustomerExitParticipantType
+
+	// The initial message to be sent to the newly created chat.
 	InitialMessage *types.ChatMessage
+
+	//  The configuration of the participant.
+	ParticipantConfiguration *types.ParticipantConfiguration
 
 	// Enable persistent chats. For more information about enabling persistent chat,
 	// and for example use cases and how to configure for them, see [Enable persistent chat].
@@ -272,16 +279,13 @@ func (c *Client) addOperationStartChatContactMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

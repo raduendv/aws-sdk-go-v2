@@ -219,11 +219,15 @@ func resolveBaseEndpoint(cfg aws.Config, o *Options) {
 	}
 }
 
-func bindRegion(region string) *string {
+func bindRegion(region string) (*string, error) {
 	if region == "" {
-		return nil
+		return nil, nil
 	}
-	return aws.String(endpoints.MapFIPSRegion(region))
+	if !rulesfn.IsValidHostLabel(region, true) {
+		return nil, fmt.Errorf("invalid input region %s", region)
+	}
+
+	return aws.String(endpoints.MapFIPSRegion(region)), nil
 }
 
 // EndpointParameters provides the parameters that influence how endpoints are
@@ -335,8 +339,44 @@ func (r *resolver) ResolveEndpoint(
 		return endpoint, fmt.Errorf("endpoint parameters are not valid, %w", err)
 	}
 	_UseDualStack := *params.UseDualStack
+	_ = _UseDualStack
 	_UseFIPS := *params.UseFIPS
+	_ = _UseFIPS
 
+	if !(params.Endpoint != nil) {
+		if exprVal := params.Region; exprVal != nil {
+			_Region := *exprVal
+			_ = _Region
+			if exprVal := awsrulesfn.GetPartition(_Region); exprVal != nil {
+				_PartitionResult := *exprVal
+				_ = _PartitionResult
+				if _PartitionResult.Name == "aws-us-gov" {
+					if _UseFIPS == true {
+						if _UseDualStack == true {
+							uriString := func() string {
+								var out strings.Builder
+								out.WriteString("https://events.")
+								out.WriteString(_Region)
+								out.WriteString(".")
+								out.WriteString(_PartitionResult.DualStackDnsSuffix)
+								return out.String()
+							}()
+
+							uri, err := url.Parse(uriString)
+							if err != nil {
+								return endpoint, fmt.Errorf("Failed to parse uri: %s", uriString)
+							}
+
+							return smithyendpoints.Endpoint{
+								URI:     *uri,
+								Headers: http.Header{},
+							}, nil
+						}
+					}
+				}
+			}
+		}
+	}
 	if exprVal := params.EndpointId; exprVal != nil {
 		_EndpointId := *exprVal
 		_ = _EndpointId
@@ -616,10 +656,15 @@ type endpointParamsBinder interface {
 	bindEndpointParams(*EndpointParameters)
 }
 
-func bindEndpointParams(ctx context.Context, input interface{}, options Options) *EndpointParameters {
+func bindEndpointParams(ctx context.Context, input interface{}, options Options) (*EndpointParameters, error) {
 	params := &EndpointParameters{}
 
-	params.Region = bindRegion(options.Region)
+	region, err := bindRegion(options.Region)
+	if err != nil {
+		return nil, err
+	}
+	params.Region = region
+
 	params.UseDualStack = aws.Bool(options.EndpointOptions.UseDualStackEndpoint == aws.DualStackEndpointStateEnabled)
 	params.UseFIPS = aws.Bool(options.EndpointOptions.UseFIPSEndpoint == aws.FIPSEndpointStateEnabled)
 	params.Endpoint = options.BaseEndpoint
@@ -628,7 +673,7 @@ func bindEndpointParams(ctx context.Context, input interface{}, options Options)
 		b.bindEndpointParams(params)
 	}
 
-	return params
+	return params, nil
 }
 
 type resolveEndpointV2Middleware struct {
@@ -658,7 +703,10 @@ func (m *resolveEndpointV2Middleware) HandleFinalize(ctx context.Context, in mid
 		return out, metadata, fmt.Errorf("expected endpoint resolver to not be nil")
 	}
 
-	params := bindEndpointParams(ctx, getOperationInput(ctx), m.options)
+	params, err := bindEndpointParams(ctx, getOperationInput(ctx), m.options)
+	if err != nil {
+		return out, metadata, fmt.Errorf("failed to bind endpoint params, %w", err)
+	}
 	endpt, err := timeOperationMetric(ctx, "client.call.resolve_endpoint_duration",
 		func() (smithyendpoints.Endpoint, error) {
 			return m.options.EndpointResolverV2.ResolveEndpoint(ctx, *params)

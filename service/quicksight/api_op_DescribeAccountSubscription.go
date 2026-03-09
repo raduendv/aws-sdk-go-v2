@@ -12,9 +12,9 @@ import (
 )
 
 // Use the DescribeAccountSubscription operation to receive a description of an
-// Amazon QuickSight account's subscription. A successful API call returns an
-// AccountInfo object that includes an account's name, subscription status,
-// authentication type, edition, and notification email address.
+// Quick Sight account's subscription. A successful API call returns an AccountInfo
+// object that includes an account's name, subscription status, authentication
+// type, edition, and notification email address.
 func (c *Client) DescribeAccountSubscription(ctx context.Context, params *DescribeAccountSubscriptionInput, optFns ...func(*Options)) (*DescribeAccountSubscriptionOutput, error) {
 	if params == nil {
 		params = &DescribeAccountSubscriptionInput{}
@@ -32,8 +32,7 @@ func (c *Client) DescribeAccountSubscription(ctx context.Context, params *Descri
 
 type DescribeAccountSubscriptionInput struct {
 
-	// The Amazon Web Services account ID associated with your Amazon QuickSight
-	// account.
+	// The Amazon Web Services account ID associated with your Quick Sight account.
 	//
 	// This member is required.
 	AwsAccountId *string
@@ -45,16 +44,16 @@ type DescribeAccountSubscriptionOutput struct {
 
 	// A structure that contains the following elements:
 	//
-	//   - Your Amazon QuickSight account name.
+	//   - Your Quick Sight account name.
 	//
-	//   - The edition of Amazon QuickSight that your account is using.
+	//   - The edition of Quick Sight that your account is using.
 	//
-	//   - The notification email address that is associated with the Amazon
-	//   QuickSight account.
+	//   - The notification email address that is associated with the Amazon Quick
+	//   Sight account.
 	//
-	//   - The authentication type of the Amazon QuickSight account.
+	//   - The authentication type of the Quick Sight account.
 	//
-	//   - The status of the Amazon QuickSight account's subscription.
+	//   - The status of the Quick Sight account's subscription.
 	AccountInfo *types.AccountInfo
 
 	// The Amazon Web Services request ID for this operation.
@@ -157,16 +156,13 @@ func (c *Client) addOperationDescribeAccountSubscriptionMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

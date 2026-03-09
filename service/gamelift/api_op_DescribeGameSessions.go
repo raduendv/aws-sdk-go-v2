@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Retrieves a set of one or more game sessions in a specific fleet location. You
 // can optionally filter the results by current game session status.
 //
@@ -42,7 +44,7 @@ import (
 // with DescribeGameSessions should only be used for games in development with low
 // game session usage.
 //
-// Available in Amazon GameLift Local.
+// Available in Amazon GameLift Servers Local.
 //
 // # Learn more
 //
@@ -203,16 +205,13 @@ func (c *Client) addOperationDescribeGameSessionsMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

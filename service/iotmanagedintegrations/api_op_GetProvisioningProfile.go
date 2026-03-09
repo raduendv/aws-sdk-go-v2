@@ -46,7 +46,7 @@ type GetProvisioningProfileOutput struct {
 	// The id of the claim certificate.
 	ClaimCertificate *string
 
-	// The provisioning profile id..
+	// The provisioning profile id.
 	Id *string
 
 	// The name of the provisioning template.
@@ -153,16 +153,13 @@ func (c *Client) addOperationGetProvisioningProfileMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

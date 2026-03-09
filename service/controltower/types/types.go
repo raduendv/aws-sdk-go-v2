@@ -168,6 +168,10 @@ type DriftStatusSummary struct {
 	//   status for the enabled control.
 	DriftStatus DriftStatus
 
+	// An object that categorizes the different types of drift detected for the
+	// enabled control.
+	Types *EnabledControlDriftTypes
+
 	noSmithyDocumentSerde
 }
 
@@ -197,6 +201,9 @@ type EnabledBaselineDetails struct {
 	// The enabled version of the Baseline .
 	BaselineVersion *string
 
+	// The drift status of the enabled baseline.
+	DriftStatusSummary *EnabledBaselineDriftStatusSummary
+
 	// Shows the parameters that are applied when enabling this Baseline .
 	Parameters []EnabledBaselineParameterSummary
 
@@ -204,6 +211,56 @@ type EnabledBaselineDetails struct {
 	// (OU) level, from which the child EnabledBaseline inherits its configuration.
 	// The value is returned by GetEnabledBaseline .
 	ParentIdentifier *string
+
+	noSmithyDocumentSerde
+}
+
+// The drift summary of the enabled baseline. Amazon Web Services Control Tower
+// reports inheritance drift when an enabled baseline configuration of a member
+// account is different than the configuration that applies to the OU. Amazon Web
+// Services Control Tower reports this type of drift for a parent or child enabled
+// baseline. One way to repair this drift by resetting the parent enabled baseline,
+// on the OU.
+//
+// For example, you may see this type of drift if you move accounts between OUs,
+// but the accounts are not yet (re-)enrolled.
+type EnabledBaselineDriftStatusSummary struct {
+
+	// The types of drift that can be detected for an enabled baseline. Amazon Web
+	// Services Control Tower detects inheritance drift on enabled baselines that apply
+	// at the OU level.
+	Types *EnabledBaselineDriftTypes
+
+	noSmithyDocumentSerde
+}
+
+// The types of drift that can be detected for an enabled baseline.
+//
+//   - Amazon Web Services Control Tower detects inheritance drift on the enabled
+//     baselines that target OUs: AWSControlTowerBaseline and BackupBaseline .
+//
+//   - Amazon Web Services Control Tower does not detect drift on the baselines
+//     that apply to your landing zone: IdentityCenterBaseline , AuditBaseline ,
+//     LogArchiveBaseline , BackupCentralVaultBaseline , or BackupAdminBaseline . For
+//     more information, see [Types of baselines].
+//
+// Baselines enabled on an OU are inherited by its member accounts as child
+// EnabledBaseline resources. The baseline on the OU serves as the parent
+// EnabledBaseline , which governs the configuration of each child EnabledBaseline .
+//
+// If the baseline configuration of a member account in an OU does not match the
+// configuration of the parent OU, the parent and child baseline is in a state of
+// inheritance drift. This drift could occur in the AWSControlTowerBaseline or the
+// BackupBaseline related to that account.
+//
+// [Types of baselines]: https://docs.aws.amazon.com/controltower/latest/userguide/types-of-baselines.html
+type EnabledBaselineDriftTypes struct {
+
+	// At least one account within the target OU does not match the baseline
+	// configuration defined on that OU. An account is in inheritance drift when it
+	// does not match the configuration of a parent OU, possibly a new parent OU, if
+	// the account is moved.
+	Inheritance *EnabledBaselineInheritanceDrift
 
 	noSmithyDocumentSerde
 }
@@ -216,12 +273,29 @@ type EnabledBaselineFilter struct {
 	// Identifiers for the Baseline objects returned as part of the filter operation.
 	BaselineIdentifiers []string
 
+	// A list of EnabledBaselineDriftStatus items for enabled baselines.
+	InheritanceDriftStatuses []EnabledBaselineDriftStatus
+
 	// An optional filter that sets up a list of parentIdentifiers to filter the
 	// results of the ListEnabledBaseline output.
 	ParentIdentifiers []string
 
+	// A list of EnablementStatus items.
+	Statuses []EnablementStatus
+
 	// Identifiers for the targets of the Baseline filter operation.
 	TargetIdentifiers []string
+
+	noSmithyDocumentSerde
+}
+
+// The inheritance drift summary for the enabled baseline. Inheritance drift
+// occurs when any accounts in the target OU do not match the baseline
+// configuration defined on that OU.
+type EnabledBaselineInheritanceDrift struct {
+
+	// The inheritance drift status for enabled baselines.
+	Status EnabledBaselineDriftStatus
 
 	noSmithyDocumentSerde
 }
@@ -284,6 +358,9 @@ type EnabledBaselineSummary struct {
 	// The enabled version of the baseline.
 	BaselineVersion *string
 
+	// The drift status of the enabled baseline.
+	DriftStatusSummary *EnabledBaselineDriftStatusSummary
+
 	// An ARN that represents an object returned by ListEnabledBaseline , to describe
 	// an enabled baseline.
 	ParentIdentifier *string
@@ -309,6 +386,10 @@ type EnabledControlDetails struct {
 	// Array of EnabledControlParameter objects.
 	Parameters []EnabledControlParameterSummary
 
+	// The ARN of the parent enabled control from which this control inherits its
+	// configuration, if applicable.
+	ParentIdentifier *string
+
 	// The deployment summary of the enabled control.
 	StatusSummary *EnablementStatusSummary
 
@@ -324,6 +405,21 @@ type EnabledControlDetails struct {
 	noSmithyDocumentSerde
 }
 
+// Defines the various categories of drift that can occur for an enabled control
+// resource.
+type EnabledControlDriftTypes struct {
+
+	// Indicates drift related to inheritance configuration between parent and child
+	// controls.
+	Inheritance *EnabledControlInheritanceDrift
+
+	// Indicates drift related to the underlying Amazon Web Services resources managed
+	// by the control.
+	Resource *EnabledControlResourceDrift
+
+	noSmithyDocumentSerde
+}
+
 // A structure that returns a set of control identifiers, the control status for
 // each control in the set, and the drift status for each control in the set.
 type EnabledControlFilter struct {
@@ -334,8 +430,31 @@ type EnabledControlFilter struct {
 	// A list of DriftStatus items.
 	DriftStatuses []DriftStatus
 
+	// Filters enabled controls by their inheritance drift status, allowing you to
+	// find controls with specific inheritance-related drift conditions.
+	InheritanceDriftStatuses []DriftStatus
+
+	// Filters enabled controls by their parent control identifiers, allowing you to
+	// find child controls of specific parent controls.
+	ParentIdentifiers []string
+
+	// Filters enabled controls by their resource drift status, allowing you to find
+	// controls with specific resource-related drift conditions.
+	ResourceDriftStatuses []DriftStatus
+
 	// A list of EnablementStatus items.
 	Statuses []EnablementStatus
+
+	noSmithyDocumentSerde
+}
+
+// Represents drift information related to control inheritance between
+// organizational units.
+type EnabledControlInheritanceDrift struct {
+
+	// The status of inheritance drift for the enabled control, indicating whether
+	// inheritance configuration matches expectations.
+	Status DriftStatus
 
 	noSmithyDocumentSerde
 }
@@ -372,6 +491,17 @@ type EnabledControlParameterSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Represents drift information related to the underlying Amazon Web Services
+// resources managed by the control.
+type EnabledControlResourceDrift struct {
+
+	// The status of resource drift for the enabled control, indicating whether the
+	// underlying resources match the expected configuration.
+	Status DriftStatus
+
+	noSmithyDocumentSerde
+}
+
 // Returns a summary of information about an enabled control.
 type EnabledControlSummary struct {
 
@@ -383,6 +513,10 @@ type EnabledControlSummary struct {
 
 	// The drift status of the enabled control.
 	DriftStatusSummary *DriftStatusSummary
+
+	// The ARN of the parent enabled control from which this control inherits its
+	// configuration, if applicable.
+	ParentIdentifier *string
 
 	// A short description of the status of the enabled control.
 	StatusSummary *EnablementStatusSummary
@@ -438,6 +572,10 @@ type LandingZoneDetail struct {
 
 	// The latest available version of the landing zone.
 	LatestAvailableVersion *string
+
+	// The types of remediation actions configured for the landing zone, such as
+	// automatic drift correction or compliance enforcement.
+	RemediationTypes []RemediationType
 
 	// The landing zone deployment status. One of ACTIVE , PROCESSING , FAILED .
 	Status LandingZoneStatus

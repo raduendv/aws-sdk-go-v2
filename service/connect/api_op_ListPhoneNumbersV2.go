@@ -46,8 +46,8 @@ type ListPhoneNumbersV2Input struct {
 	// The identifier of the Amazon Connect instance that phone numbers are claimed
 	// to. You can [find the instance ID]in the Amazon Resource Name (ARN) of the instance. If both TargetArn
 	// and InstanceId are not provided, this API lists numbers claimed to all the
-	// Amazon Connect instances belonging to your account in the same AWS Region as the
-	// request.
+	// Amazon Connect instances belonging to your account in the same Amazon Web
+	// Services Region as the request.
 	//
 	// [find the instance ID]: https://docs.aws.amazon.com/connect/latest/adminguide/find-instance-arn.html
 	InstanceId *string
@@ -179,16 +179,13 @@ func (c *Client) addOperationListPhoneNumbersV2Middlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

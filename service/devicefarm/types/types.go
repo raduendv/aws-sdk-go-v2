@@ -162,6 +162,10 @@ type CPU struct {
 // Configuration settings for a remote access session, including billing method.
 type CreateRemoteAccessSessionConfiguration struct {
 
+	// A list of upload ARNs for app packages to be installed onto your device.
+	// (Maximum 3)
+	AuxiliaryApps []string
+
 	// The billing method for the remote access session.
 	BillingMethod BillingMethod
 
@@ -276,6 +280,8 @@ type Device struct {
 	// Remote debugging is [no longer supported].
 	//
 	// [no longer supported]: https://docs.aws.amazon.com/devicefarm/latest/developerguide/history.html
+	//
+	// Deprecated: Direct Device Access is no longer available.
 	RemoteDebugEnabled *bool
 
 	// The resolution of the device.
@@ -609,6 +615,22 @@ type DeviceSelectionResult struct {
 	// The maximum number of devices to be selected by a device filter and included in
 	// a test run.
 	MaxDevices *int32
+
+	noSmithyDocumentSerde
+}
+
+// Information about an environment variable for a project or a run.
+type EnvironmentVariable struct {
+
+	// The name of the environment variable.
+	//
+	// This member is required.
+	Name *string
+
+	// The value of the environment variable.
+	//
+	// This member is required.
+	Value *string
 
 	noSmithyDocumentSerde
 }
@@ -1034,6 +1056,12 @@ type Project struct {
 	// it times out. The default value is 150 minutes.
 	DefaultJobTimeoutMinutes *int32
 
+	// Environment variables associated with the project.
+	EnvironmentVariables []EnvironmentVariable
+
+	// The IAM execution role associated with the project.
+	ExecutionRoleArn *string
+
 	// The project's name.
 	Name *string
 
@@ -1074,8 +1102,26 @@ type RecurringCharge struct {
 	noSmithyDocumentSerde
 }
 
+// Represents the remote endpoints for viewing and controlling a device during a
+// remote access session.
+type RemoteAccessEndpoints struct {
+
+	// URL for viewing and interacting with the device during the remote access
+	// session.
+	InteractiveEndpoint *string
+
+	// URL for controlling the device using WebDriver-compliant clients, like Appium,
+	// during the remote access session.
+	RemoteDriverEndpoint *string
+
+	noSmithyDocumentSerde
+}
+
 // Represents information about the remote access session.
 type RemoteAccessSession struct {
+
+	// The ARN for the app to be installed onto your device.
+	AppUpload *string
 
 	// The Amazon Resource Name (ARN) of the remote access session.
 	Arn *string
@@ -1085,14 +1131,6 @@ type RemoteAccessSession struct {
 	//
 	// [AWS Device Farm terminology]: https://docs.aws.amazon.com/devicefarm/latest/developerguide/welcome.html#welcome-terminology
 	BillingMethod BillingMethod
-
-	// Unique identifier of your client for the remote access session. Only returned
-	// if remote debugging is enabled for the remote access session.
-	//
-	// Remote debugging is [no longer supported].
-	//
-	// [no longer supported]: https://docs.aws.amazon.com/devicefarm/latest/developerguide/history.html
-	ClientId *string
 
 	// The date and time the remote access session was created.
 	Created *time.Time
@@ -1115,31 +1153,25 @@ type RemoteAccessSession struct {
 	// [no longer supported]: https://docs.aws.amazon.com/devicefarm/latest/developerguide/history.html
 	DeviceUdid *string
 
-	// The endpoint for the remote access sesssion.
+	// The endpoint for the remote access session. This field is deprecated, and is
+	// replaced by the new endpoints.interactiveEndpoint field.
+	//
+	// Deprecated: This field is deprecated, and is replaced by the new
+	// endpoints.interactiveEndpoint field.
 	Endpoint *string
 
-	// IP address of the EC2 host where you need to connect to remotely debug devices.
-	// Only returned if remote debugging is enabled for the remote access session.
-	//
-	// Remote debugging is [no longer supported].
-	//
-	// [no longer supported]: https://docs.aws.amazon.com/devicefarm/latest/developerguide/history.html
-	HostAddress *string
+	// Represents the remote endpoints for viewing and controlling a device during a
+	// remote access session.
+	Endpoints *RemoteAccessEndpoints
 
 	// The ARN of the instance.
 	InstanceArn *string
 
-	// The interaction mode of the remote access session. Valid values are:
+	// The interaction mode of the remote access session. Changing the interactive
+	// mode of remote access sessions is no longer available.
 	//
-	//   - INTERACTIVE: You can interact with the iOS device by viewing, touching, and
-	//   rotating the screen. You cannot run XCUITest framework-based tests in this mode.
-	//
-	//   - NO_VIDEO: You are connected to the device, but cannot interact with it or
-	//   view the screen. This mode has the fastest test execution speed. You can run
-	//   XCUITest framework-based tests in this mode.
-	//
-	//   - VIDEO_ONLY: You can view the screen, but cannot touch or rotate it. You can
-	//   run XCUITest framework-based tests and watch the screen in this mode.
+	// Deprecated: Changing the interactive mode of Remote Access sessions is no
+	// longer available.
 	InteractionMode InteractionMode
 
 	// A message about the remote access session.
@@ -1147,21 +1179,6 @@ type RemoteAccessSession struct {
 
 	// The name of the remote access session.
 	Name *string
-
-	// This flag is set to true if remote debugging is enabled for the remote access
-	// session.
-	//
-	// Remote debugging is [no longer supported].
-	//
-	// [no longer supported]: https://docs.aws.amazon.com/devicefarm/latest/developerguide/history.html
-	RemoteDebugEnabled *bool
-
-	// The ARN for the app to be recorded in the remote access session.
-	RemoteRecordAppArn *string
-
-	// This flag is set to true if remote recording is enabled for the remote access
-	// session.
-	RemoteRecordEnabled *bool
 
 	// The result of the remote access session. Can be any of the following:
 	//
@@ -1355,9 +1372,15 @@ type Run struct {
 	// The results of a device filter used to select the devices for a test run.
 	DeviceSelectionResult *DeviceSelectionResult
 
+	// Environment variables associated with the run.
+	EnvironmentVariables []EnvironmentVariable
+
 	// For fuzz tests, this is the number of events, between 1 and 10000, that the UI
 	// fuzz test should perform.
 	EventCount *int32
+
+	// The IAM role associated with the run.
+	ExecutionRoleArn *string
 
 	// The number of minutes the job executes before it times out.
 	JobTimeoutMinutes *int32
@@ -1584,6 +1607,12 @@ type ScheduleRunConfiguration struct {
 
 	// The device proxy to be configured on the device for the run.
 	DeviceProxy *DeviceProxy
+
+	// Environment variables associated with the run.
+	EnvironmentVariables []EnvironmentVariable
+
+	// An IAM role to be assumed by the test host for the run.
+	ExecutionRoleArn *string
 
 	// The ARN of the extra data for the run. The extra data is a .zip file that AWS
 	// Device Farm extracts to external data for Android or the app's sandbox for iOS.

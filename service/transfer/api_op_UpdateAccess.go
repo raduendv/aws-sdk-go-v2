@@ -61,7 +61,8 @@ type UpdateAccessInput struct {
 	//
 	// A HomeDirectory example is /bucket_name/home/mydirectory .
 	//
-	// The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH .
+	// You can use the HomeDirectory parameter for HomeDirectoryType when it is set to
+	// either PATH or LOGICAL .
 	HomeDirectory *string
 
 	// Logical directory mappings that specify what Amazon S3 or Amazon EFS paths and
@@ -247,16 +248,13 @@ func (c *Client) addOperationUpdateAccessMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -18,7 +18,8 @@ import (
 //   - Amazon EC2 instances in an account that are Underprovisioned ,
 //     Overprovisioned , or Optimized .
 //
-//   - Auto Scaling groups in an account that are NotOptimized , or Optimized .
+//   - EC2Amazon EC2 Auto Scaling groups in an account that are NotOptimized , or
+//     Optimized .
 //
 //   - Amazon EBS volumes in an account that are NotOptimized , or Optimized .
 //
@@ -26,6 +27,12 @@ import (
 //
 //   - Amazon ECS services in an account that are Underprovisioned ,
 //     Overprovisioned , or Optimized .
+//
+//   - Commercial software licenses in an account that are InsufficientMetrics ,
+//     NotOptimized or Optimized .
+//
+//   - Amazon Aurora and Amazon RDS databases in an account that are
+//     Underprovisioned , Overprovisioned , Optimized , or NotOptimized .
 func (c *Client) GetRecommendationSummaries(ctx context.Context, params *GetRecommendationSummariesInput, optFns ...func(*Options)) (*GetRecommendationSummariesOutput, error) {
 	if params == nil {
 		params = &GetRecommendationSummariesInput{}
@@ -167,16 +174,13 @@ func (c *Client) addOperationGetRecommendationSummariesMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

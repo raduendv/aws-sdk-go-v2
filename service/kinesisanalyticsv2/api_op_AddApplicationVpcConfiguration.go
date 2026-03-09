@@ -75,7 +75,7 @@ type AddApplicationVpcConfigurationOutput struct {
 	// updates the ApplicationVersionId each time you update the application.
 	ApplicationVersionId *int64
 
-	// Operation ID for tracking AddApplicationVpcConfiguration request
+	// The operation ID that can be used to track the request.
 	OperationId *string
 
 	// The parameters of the new VPC configuration.
@@ -175,16 +175,13 @@ func (c *Client) addOperationAddApplicationVpcConfigurationMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

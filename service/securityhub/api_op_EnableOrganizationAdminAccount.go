@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	awsmiddleware "github.com/aws/aws-sdk-go-v2/aws/middleware"
+	"github.com/aws/aws-sdk-go-v2/service/securityhub/types"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
@@ -35,10 +36,23 @@ type EnableOrganizationAdminAccountInput struct {
 	// This member is required.
 	AdminAccountId *string
 
+	// The feature for which the delegated admin account is enabled. Defaults to
+	// Security Hub if not specified.
+	Feature types.SecurityHubFeature
+
 	noSmithyDocumentSerde
 }
 
 type EnableOrganizationAdminAccountOutput struct {
+
+	// The Amazon Web Services account identifier of the account to designate as the
+	// Security Hub administrator account.
+	AdminAccountId *string
+
+	// The feature where the delegated administrator is enabled. The default is
+	// Security Hub CSPM if no delegated administrator is specified in the request.
+	Feature types.SecurityHubFeature
+
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
 
@@ -133,16 +147,13 @@ func (c *Client) addOperationEnableOrganizationAdminAccountMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

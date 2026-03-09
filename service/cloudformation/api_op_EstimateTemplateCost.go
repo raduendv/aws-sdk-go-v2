@@ -35,16 +35,17 @@ type EstimateTemplateCostInput struct {
 	// A list of Parameter structures that specify input parameters.
 	Parameters []types.Parameter
 
-	// Structure containing the template body with a minimum length of 1 byte and a
+	// Structure that contains the template body with a minimum length of 1 byte and a
 	// maximum length of 51,200 bytes.
 	//
 	// Conditional: You must pass TemplateBody or TemplateURL . If both are passed,
 	// only TemplateBody is used.
 	TemplateBody *string
 
-	// The URL of a file containing the template body. The URL must point to a
+	// The URL of a file that contains the template body. The URL must point to a
 	// template that's located in an Amazon S3 bucket or a Systems Manager document.
-	// The location for an Amazon S3 bucket must start with https:// .
+	// The location for an Amazon S3 bucket must start with https:// . URLs from S3
+	// static websites are not supported.
 	//
 	// Conditional: You must pass TemplateURL or TemplateBody . If both are passed,
 	// only TemplateBody is used.
@@ -151,16 +152,13 @@ func (c *Client) addOperationEstimateTemplateCostMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

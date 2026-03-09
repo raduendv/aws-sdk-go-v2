@@ -338,6 +338,18 @@ func TestCheckSnapshot_DescribeResourcePolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeResponsibilityTransfer(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeResponsibilityTransfer(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeResponsibilityTransfer")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DetachPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DetachPolicy(context.Background(), nil, func(o *Options) {
@@ -422,6 +434,18 @@ func TestCheckSnapshot_InviteAccountToOrganization(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_InviteOrganizationToTransferResponsibility(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.InviteOrganizationToTransferResponsibility(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "InviteOrganizationToTransferResponsibility")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_LeaveOrganization(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.LeaveOrganization(context.Background(), nil, func(o *Options) {
@@ -451,6 +475,18 @@ func TestCheckSnapshot_ListAccountsForParent(t *testing.T) {
 	_, err := svc.ListAccountsForParent(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListAccountsForParent")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListAccountsWithInvalidEffectivePolicy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAccountsWithInvalidEffectivePolicy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListAccountsWithInvalidEffectivePolicy")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -518,6 +554,18 @@ func TestCheckSnapshot_ListDelegatedServicesForAccount(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListEffectivePolicyValidationErrors(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListEffectivePolicyValidationErrors(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListEffectivePolicyValidationErrors")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListHandshakesForAccount(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListHandshakesForAccount(context.Background(), nil, func(o *Options) {
@@ -542,11 +590,35 @@ func TestCheckSnapshot_ListHandshakesForOrganization(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListInboundResponsibilityTransfers(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListInboundResponsibilityTransfers(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListInboundResponsibilityTransfers")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListOrganizationalUnitsForParent(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListOrganizationalUnitsForParent(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListOrganizationalUnitsForParent")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListOutboundResponsibilityTransfers(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListOutboundResponsibilityTransfers(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListOutboundResponsibilityTransfers")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -686,6 +758,18 @@ func TestCheckSnapshot_TagResource(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_TerminateResponsibilityTransfer(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.TerminateResponsibilityTransfer(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "TerminateResponsibilityTransfer")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UntagResource(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UntagResource(context.Background(), nil, func(o *Options) {
@@ -715,6 +799,18 @@ func TestCheckSnapshot_UpdatePolicy(t *testing.T) {
 	_, err := svc.UpdatePolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdatePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateResponsibilityTransfer(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateResponsibilityTransfer(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateResponsibilityTransfer")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -997,6 +1093,18 @@ func TestUpdateSnapshot_DescribeResourcePolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeResponsibilityTransfer(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeResponsibilityTransfer(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeResponsibilityTransfer")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DetachPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DetachPolicy(context.Background(), nil, func(o *Options) {
@@ -1081,6 +1189,18 @@ func TestUpdateSnapshot_InviteAccountToOrganization(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_InviteOrganizationToTransferResponsibility(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.InviteOrganizationToTransferResponsibility(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "InviteOrganizationToTransferResponsibility")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_LeaveOrganization(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.LeaveOrganization(context.Background(), nil, func(o *Options) {
@@ -1110,6 +1230,18 @@ func TestUpdateSnapshot_ListAccountsForParent(t *testing.T) {
 	_, err := svc.ListAccountsForParent(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListAccountsForParent")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListAccountsWithInvalidEffectivePolicy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAccountsWithInvalidEffectivePolicy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListAccountsWithInvalidEffectivePolicy")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1177,6 +1309,18 @@ func TestUpdateSnapshot_ListDelegatedServicesForAccount(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListEffectivePolicyValidationErrors(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListEffectivePolicyValidationErrors(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListEffectivePolicyValidationErrors")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListHandshakesForAccount(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListHandshakesForAccount(context.Background(), nil, func(o *Options) {
@@ -1201,11 +1345,35 @@ func TestUpdateSnapshot_ListHandshakesForOrganization(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListInboundResponsibilityTransfers(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListInboundResponsibilityTransfers(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListInboundResponsibilityTransfers")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListOrganizationalUnitsForParent(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListOrganizationalUnitsForParent(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListOrganizationalUnitsForParent")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListOutboundResponsibilityTransfers(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListOutboundResponsibilityTransfers(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListOutboundResponsibilityTransfers")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1345,6 +1513,18 @@ func TestUpdateSnapshot_TagResource(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_TerminateResponsibilityTransfer(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.TerminateResponsibilityTransfer(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "TerminateResponsibilityTransfer")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_UntagResource(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UntagResource(context.Background(), nil, func(o *Options) {
@@ -1374,6 +1554,18 @@ func TestUpdateSnapshot_UpdatePolicy(t *testing.T) {
 	_, err := svc.UpdatePolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdatePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateResponsibilityTransfer(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateResponsibilityTransfer(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateResponsibilityTransfer")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

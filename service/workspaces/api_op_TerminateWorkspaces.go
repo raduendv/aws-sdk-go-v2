@@ -15,7 +15,7 @@ import (
 //
 // Terminating a WorkSpace is a permanent action and cannot be undone. The user's
 // data is destroyed. If you need to archive any user data, contact Amazon Web
-// ServicesSupport before terminating the WorkSpace.
+// Services Support before terminating the WorkSpace.
 //
 // You can terminate a WorkSpace that is in any state except SUSPENDED .
 //
@@ -163,16 +163,13 @@ func (c *Client) addOperationTerminateWorkspacesMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

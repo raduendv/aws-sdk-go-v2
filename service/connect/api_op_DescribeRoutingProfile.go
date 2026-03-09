@@ -12,6 +12,12 @@ import (
 )
 
 // Describes the specified routing profile.
+//
+// DescribeRoutingProfile does not populate AssociatedQueueIds in its response.
+// The example Response Syntax shown on this page is incorrect; we are working to
+// update it. [SearchRoutingProfiles]does include AssociatedQueueIds.
+//
+// [SearchRoutingProfiles]: https://docs.aws.amazon.com/connect/latest/APIReference/API_SearchRoutingProfiles.html
 func (c *Client) DescribeRoutingProfile(ctx context.Context, params *DescribeRoutingProfileInput, optFns ...func(*Options)) (*DescribeRoutingProfileOutput, error) {
 	if params == nil {
 		params = &DescribeRoutingProfileInput{}
@@ -144,16 +150,13 @@ func (c *Client) addOperationDescribeRoutingProfileMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

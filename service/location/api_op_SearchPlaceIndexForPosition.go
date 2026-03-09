@@ -11,6 +11,26 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+// This operation is no longer current and may be deprecated in the future. We
+// recommend you upgrade to ReverseGeocodeReverseGeocode or SearchNearbySearchNearby unless you require Grab
+// data.
+//
+//   - SearchPlaceIndexForPosition is part of a previous Amazon Location Service
+//     Places API (version 1) which has been superseded by a more intuitive, powerful,
+//     and complete API (version 2).
+//
+//   - The version 2 ReverseGeocode operation gives better results in the address
+//     reverse-geocoding use case, while the version 2 SearchNearby operation gives
+//     better results when searching for businesses and points of interest near a
+//     specific location.
+//
+//   - If you are using an Amazon Web Services SDK or the Amazon Web Services CLI,
+//     note that the Places API version 2 is found under geo-places or geo_places ,
+//     not under location .
+//
+//   - Since Grab is not yet fully supported in Places API version 2, we recommend
+//     you continue using API version 1 when using Grab.
+//
 // Reverse geocodes a given coordinate and returns a legible address. Allows you
 // to search for Places or points of interest near a given position.
 func (c *Client) SearchPlaceIndexForPosition(ctx context.Context, params *SearchPlaceIndexForPositionInput, optFns ...func(*Options)) (*SearchPlaceIndexForPositionOutput, error) {
@@ -49,7 +69,7 @@ type SearchPlaceIndexForPositionInput struct {
 
 	// The optional [API key] to authorize the request.
 	//
-	// [API key]: https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html
+	// [API key]: https://docs.aws.amazon.com/location/previous/developerguide/using-apikeys.html
 	Key *string
 
 	// The preferred language used to return results. The value must be a valid [BCP 47]
@@ -191,16 +211,13 @@ func (c *Client) addOperationSearchPlaceIndexForPositionMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

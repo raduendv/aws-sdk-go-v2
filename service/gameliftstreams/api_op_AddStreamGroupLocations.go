@@ -11,11 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	Add locations that can host stream sessions. You configure locations and their
+//	Add locations that can host stream sessions. To add a location, the stream
 //
-// corresponding capacity for each stream group. Creating a stream group in a
-// location that's nearest to your end users can help minimize latency and improve
-// quality.
+// group must be in ACTIVE status. You configure locations and their corresponding
+// capacity for each stream group. Creating a stream group in a location that's
+// nearest to your end users can help minimize latency and improve quality.
 //
 // This operation provisions stream capacity at the specified locations. By
 // default, all locations have 1 or 2 capacity, depending on the stream class
@@ -42,8 +42,12 @@ type AddStreamGroupLocationsInput struct {
 
 	//  A stream group to add the specified locations to.
 	//
-	// This value is a Amazon Resource Name (ARN) that uniquely identifies the stream
-	// group resource. Format example: sg-1AB2C3De4 .
+	// This value is an [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource.
+	// Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
+	// Example ID: sg-1AB2C3De4 .
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
 	// This member is required.
 	Identifier *string
@@ -58,8 +62,12 @@ type AddStreamGroupLocationsInput struct {
 
 type AddStreamGroupLocationsOutput struct {
 
-	// This value is the Amazon Resource Name (ARN) that uniquely identifies the
-	// stream group resource. Format example: sg-1AB2C3De4 .
+	// This value is an [Amazon Resource Name (ARN)] or ID that uniquely identifies the stream group resource.
+	// Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
+	// Example ID: sg-1AB2C3De4 .
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
 	// This member is required.
 	Identifier *string
@@ -69,18 +77,18 @@ type AddStreamGroupLocationsOutput struct {
 	//
 	// A location can be in one of the following states:
 	//
-	//   - ACTIVATING: Amazon GameLift Streams is preparing the location. You cannot
+	//   - ACTIVATING : Amazon GameLift Streams is preparing the location. You cannot
 	//   stream from, scale the capacity of, or remove this location yet.
 	//
-	//   - ACTIVE: The location is provisioned with initial capacity. You can now
+	//   - ACTIVE : The location is provisioned with initial capacity. You can now
 	//   stream from, scale the capacity of, or remove this location.
 	//
-	//   - ERROR: Amazon GameLift Streams failed to set up this location. The
-	//   StatusReason field describes the error. You can remove this location and try to
-	//   add it again.
+	//   - ERROR : Amazon GameLift Streams failed to set up this location. The
+	//   StatusReason field describes the error. You can remove this location and try
+	//   to add it again.
 	//
-	//   - REMOVING: Amazon GameLift Streams is working to remove this location. It
-	//   releases all provisioned capacity for this location in this stream group.
+	//   - REMOVING : Amazon GameLift Streams is working to remove this location. This
+	//   will release all provisioned capacity for this location in this stream group.
 	//
 	// This member is required.
 	Locations []types.LocationState
@@ -179,16 +187,13 @@ func (c *Client) addOperationAddStreamGroupLocationsMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

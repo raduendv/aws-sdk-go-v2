@@ -110,6 +110,9 @@ type CreateAppInput struct {
 	// The Amazon Resource Name (ARN) of the IAM service role for the Amplify app.
 	IamServiceRoleArn *string
 
+	// Describes the configuration details that apply to the jobs for an Amplify app.
+	JobConfig *types.JobConfig
+
 	// The OAuth token for a third-party source control system for an Amplify app. The
 	// OAuth token is used to create a webhook and a read-only deploy key using SSH
 	// cloning. The OAuth token is not stored.
@@ -251,16 +254,13 @@ func (c *Client) addOperationCreateAppMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,14 +11,27 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Create a scope of resources that you want to be available for Network Flow
-// Monitor to generate metrics for, when you have active agents on those resources
-// sending metrics reports to the Network Flow Monitor backend. This call returns a
-// scope ID to identify the scope.
+// In Network Flow Monitor, you specify a scope for the service to generate
+// metrics for. By using the scope, Network Flow Monitor can generate a topology of
+// all the resources to measure performance metrics for. When you create a scope,
+// you enable permissions for Network Flow Monitor.
 //
-// When you create a scope, you enable permissions for Network Flow Monitor. The
-// scope is set to the resources for the Amazon Web Services that enables the
-// feature.
+// A scope is a Region-account pair or multiple Region-account pairs. Network Flow
+// Monitor uses your scope to determine all the resources (the topology) where
+// Network Flow Monitor will gather network flow performance metrics for you. To
+// provide performance metrics, Network Flow Monitor uses the data that is sent by
+// the Network Flow Monitor agents you install on the resources.
+//
+// To define the Region-account pairs for your scope, the Network Flow Monitor API
+// uses the following constucts, which allow for future flexibility in defining
+// scopes:
+//
+//   - Targets, which are arrays of targetResources.
+//
+//   - Target resources, which are Region-targetIdentifier pairs.
+//
+//   - Target identifiers, made up of a targetID (currently always an account ID)
+//     and a targetType (currently always an account).
 func (c *Client) CreateScope(ctx context.Context, params *CreateScopeInput, optFns ...func(*Options)) (*CreateScopeOutput, error) {
 	if params == nil {
 		params = &CreateScopeInput{}
@@ -36,8 +49,9 @@ func (c *Client) CreateScope(ctx context.Context, params *CreateScopeInput, optF
 
 type CreateScopeInput struct {
 
-	// The targets to define the scope to be monitored. Currently, a target is an
-	// Amazon Web Services account.
+	// The targets to define the scope to be monitored. A target is an array of
+	// targetResources, which are currently Region-account pairs, defined by
+	// targetResource constructs.
 	//
 	// This member is required.
 	Targets []types.TargetResource
@@ -67,8 +81,12 @@ type CreateScopeOutput struct {
 	// This member is required.
 	ScopeId *string
 
-	// The status for a call to create a scope. The status can be one of the
-	// following: SUCCEEDED , IN_PROGRESS , or FAILED .
+	// The status for a scope. The status can be one of the following: SUCCEEDED ,
+	// IN_PROGRESS , FAILED , DEACTIVATING , or DEACTIVATED .
+	//
+	// A status of DEACTIVATING means that you've requested a scope to be deactivated
+	// and Network Flow Monitor is in the process of deactivating the scope. A status
+	// of DEACTIVATED means that the deactivating process is complete.
 	//
 	// This member is required.
 	Status types.ScopeStatus
@@ -173,16 +191,13 @@ func (c *Client) addOperationCreateScopeMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

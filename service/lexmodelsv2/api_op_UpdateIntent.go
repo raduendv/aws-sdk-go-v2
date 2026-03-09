@@ -84,6 +84,9 @@ type UpdateIntentInput struct {
 	// intent.
 	IntentConfirmationSetting *types.IntentConfirmationSetting
 
+	// The new display name for the intent.
+	IntentDisplayName *string
+
 	// New configuration settings for connecting to an Amazon Kendra index.
 	KendraConfiguration *types.KendraConfiguration
 
@@ -146,6 +149,9 @@ type UpdateIntentOutput struct {
 	// The updated prompts that Amazon Lex sends to the user to confirm the completion
 	// of an intent.
 	IntentConfirmationSetting *types.IntentConfirmationSetting
+
+	// The updated display name of the intent.
+	IntentDisplayName *string
 
 	// The identifier of the intent that was updated.
 	IntentId *string
@@ -277,16 +283,13 @@ func (c *Client) addOperationUpdateIntentMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

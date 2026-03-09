@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	For use by AWS Ground Station Agent and shouldn't be called directly.
+// For use by AWS Ground Station Agent and shouldn't be called directly.
 //
 // Gets the latest configuration information for a registered agent.
 func (c *Client) GetAgentConfiguration(ctx context.Context, params *GetAgentConfigurationInput, optFns ...func(*Options)) (*GetAgentConfigurationOutput, error) {
@@ -140,16 +140,13 @@ func (c *Client) addOperationGetAgentConfigurationMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

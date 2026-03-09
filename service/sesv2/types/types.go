@@ -573,8 +573,14 @@ type DedicatedIp struct {
 	// This member is required.
 	Ip *string
 
-	// Indicates how complete the dedicated IP warm-up process is. When this value
-	// equals 1, the address has completed the warm-up process and is ready for use.
+	// Indicates the progress of your dedicated IP warm-up:
+	//
+	//   - 0-100 – For standard dedicated IP addresses, this shows the warm-up
+	//   completion percentage. A value of 100 means the IP address is fully warmed up
+	//   and ready for use.
+	//
+	//   - -1 – Appears for IP addresses in managed dedicated pools where Amazon SES
+	//   automatically handles the warm-up process, making the percentage not applicable.
 	//
 	// This member is required.
 	WarmupPercentage *int32
@@ -587,6 +593,10 @@ type DedicatedIp struct {
 	//
 	//   - DONE – The dedicated IP warm-up process is complete, and the IP address is
 	//   ready to use.
+	//
+	//   - NOT_APPLICABLE – The warm-up status doesn't apply to this IP address. This
+	//   status is used for IP addresses in managed dedicated IP pools, where Amazon SES
+	//   automatically handles the warm-up process.
 	//
 	// This member is required.
 	WarmupStatus WarmupStatus
@@ -754,6 +764,10 @@ type DkimAttributes struct {
 	//   replicating signing attributes from a parent identity in Asia Pacific (Mumbai)
 	//   region using Deterministic Easy-DKIM (DEED).
 	//
+	//   - AWS_SES_AP_SOUTH_2 – Indicates that DKIM was configured for the identity by
+	//   replicating signing attributes from a parent identity in Asia Pacific
+	//   (Hyderabad) region using Deterministic Easy-DKIM (DEED).
+	//
 	//   - AWS_SES_EU_WEST_3 – Indicates that DKIM was configured for the identity by
 	//   replicating signing attributes from a parent identity in Europe (Paris) region
 	//   using Deterministic Easy-DKIM (DEED).
@@ -778,6 +792,10 @@ type DkimAttributes struct {
 	//   by replicating signing attributes from a parent identity in Asia Pacific (Seoul)
 	//   region using Deterministic Easy-DKIM (DEED).
 	//
+	//   - AWS_SES_ME_CENTRAL_1 – Indicates that DKIM was configured for the identity
+	//   by replicating signing attributes from a parent identity in Middle East (UAE)
+	//   region using Deterministic Easy-DKIM (DEED).
+	//
 	//   - AWS_SES_ME_SOUTH_1 – Indicates that DKIM was configured for the identity by
 	//   replicating signing attributes from a parent identity in Middle East (Bahrain)
 	//   region using Deterministic Easy-DKIM (DEED).
@@ -798,6 +816,10 @@ type DkimAttributes struct {
 	//   by replicating signing attributes from a parent identity in Canada (Central)
 	//   region using Deterministic Easy-DKIM (DEED).
 	//
+	//   - AWS_SES_CA_WEST_1 – Indicates that DKIM was configured for the identity by
+	//   replicating signing attributes from a parent identity in Canada (Calgary) region
+	//   using Deterministic Easy-DKIM (DEED).
+	//
 	//   - AWS_SES_AP_SOUTHEAST_1 – Indicates that DKIM was configured for the identity
 	//   by replicating signing attributes from a parent identity in Asia Pacific
 	//   (Singapore) region using Deterministic Easy-DKIM (DEED).
@@ -810,8 +832,16 @@ type DkimAttributes struct {
 	//   by replicating signing attributes from a parent identity in Asia Pacific
 	//   (Jakarta) region using Deterministic Easy-DKIM (DEED).
 	//
+	//   - AWS_SES_AP_SOUTHEAST_5 – Indicates that DKIM was configured for the identity
+	//   by replicating signing attributes from a parent identity in Asia Pacific
+	//   (Malaysia) region using Deterministic Easy-DKIM (DEED).
+	//
 	//   - AWS_SES_EU_CENTRAL_1 – Indicates that DKIM was configured for the identity
 	//   by replicating signing attributes from a parent identity in Europe (Frankfurt)
+	//   region using Deterministic Easy-DKIM (DEED).
+	//
+	//   - AWS_SES_EU_CENTRAL_2 – Indicates that DKIM was configured for the identity
+	//   by replicating signing attributes from a parent identity in Europe (Zurich)
 	//   region using Deterministic Easy-DKIM (DEED).
 	//
 	//   - AWS_SES_US_EAST_1 – Indicates that DKIM was configured for the identity by
@@ -837,6 +867,20 @@ type DkimAttributes struct {
 	// signed using DKIM. If the value is false , then the messages that you send from
 	// the identity aren't DKIM-signed.
 	SigningEnabled bool
+
+	// The hosted zone where Amazon SES publishes the DKIM public key TXT records for
+	// this email identity. This value indicates the DNS zone that customers must
+	// reference when configuring their CNAME records for DKIM authentication.
+	//
+	// When configuring DKIM for your domain, create CNAME records in your DNS that
+	// point to the selectors in this hosted zone. For example:
+	//
+	//     selector1._domainkey.yourdomain.com CNAME selector1.
+	//
+	//     selector2._domainkey.yourdomain.com CNAME selector2.
+	//
+	//     selector3._domainkey.yourdomain.com CNAME selector3.
+	SigningHostedZone *string
 
 	// Describes whether or not Amazon SES has successfully located the DKIM records
 	// in the DNS records for the domain. The status can be one of the following:
@@ -910,6 +954,10 @@ type DkimSigningAttributes struct {
 	//   parent identity in Asia Pacific (Mumbai) region using Deterministic Easy-DKIM
 	//   (DEED).
 	//
+	//   - AWS_SES_AP_SOUTH_2 – Configure DKIM for the identity by replicating from a
+	//   parent identity in Asia Pacific (Hyderabad) region using Deterministic Easy-DKIM
+	//   (DEED).
+	//
 	//   - AWS_SES_EU_WEST_3 – Configure DKIM for the identity by replicating from a
 	//   parent identity in Europe (Paris) region using Deterministic Easy-DKIM (DEED).
 	//
@@ -928,6 +976,10 @@ type DkimSigningAttributes struct {
 	//
 	//   - AWS_SES_AP_NORTHEAST_2 – Configure DKIM for the identity by replicating from
 	//   a parent identity in Asia Pacific (Seoul) region using Deterministic Easy-DKIM
+	//   (DEED).
+	//
+	//   - AWS_SES_ME_CENTRAL_1 – Configure DKIM for the identity by replicating from a
+	//   parent identity in Middle East (UAE) region using Deterministic Easy-DKIM
 	//   (DEED).
 	//
 	//   - AWS_SES_ME_SOUTH_1 – Configure DKIM for the identity by replicating from a
@@ -949,6 +1001,9 @@ type DkimSigningAttributes struct {
 	//   - AWS_SES_CA_CENTRAL_1 – Configure DKIM for the identity by replicating from a
 	//   parent identity in Canada (Central) region using Deterministic Easy-DKIM (DEED).
 	//
+	//   - AWS_SES_CA_WEST_1 – Configure DKIM for the identity by replicating from a
+	//   parent identity in Canada (Calgary) region using Deterministic Easy-DKIM (DEED).
+	//
 	//   - AWS_SES_AP_SOUTHEAST_1 – Configure DKIM for the identity by replicating from
 	//   a parent identity in Asia Pacific (Singapore) region using Deterministic
 	//   Easy-DKIM (DEED).
@@ -961,9 +1016,16 @@ type DkimSigningAttributes struct {
 	//   a parent identity in Asia Pacific (Jakarta) region using Deterministic Easy-DKIM
 	//   (DEED).
 	//
+	//   - AWS_SES_AP_SOUTHEAST_5 – Configure DKIM for the identity by replicating from
+	//   a parent identity in Asia Pacific (Malaysia) region using Deterministic
+	//   Easy-DKIM (DEED).
+	//
 	//   - AWS_SES_EU_CENTRAL_1 – Configure DKIM for the identity by replicating from a
 	//   parent identity in Europe (Frankfurt) region using Deterministic Easy-DKIM
 	//   (DEED).
+	//
+	//   - AWS_SES_EU_CENTRAL_2 – Configure DKIM for the identity by replicating from a
+	//   parent identity in Europe (Zurich) region using Deterministic Easy-DKIM (DEED).
 	//
 	//   - AWS_SES_US_EAST_1 – Configure DKIM for the identity by replicating from a
 	//   parent identity in US East (N. Virginia) region using Deterministic Easy-DKIM
@@ -1110,6 +1172,44 @@ type DomainIspPlacement struct {
 	noSmithyDocumentSerde
 }
 
+// Contains individual validation checks performed on an email address.
+type EmailAddressInsightsMailboxEvaluations struct {
+
+	// Checks that the domain exists, has valid DNS records, and is conﬁgured to
+	// receive email.
+	HasValidDnsRecords *EmailAddressInsightsVerdict
+
+	// Checks that the email address follows proper RFC standards and contains valid
+	// characters in the correct format.
+	HasValidSyntax *EmailAddressInsightsVerdict
+
+	// Checks disposable or temporary email addresses that could negatively impact
+	// your sender reputation.
+	IsDisposable *EmailAddressInsightsVerdict
+
+	// Checks if the input appears to be random text.
+	IsRandomInput *EmailAddressInsightsVerdict
+
+	// Identiﬁes role-based addresses (such as admin@, support@, or info@) that may
+	// have lower engagement rates.
+	IsRoleAddress *EmailAddressInsightsVerdict
+
+	// Checks that the mailbox exists and can receive messages without actually
+	// sending an email.
+	MailboxExists *EmailAddressInsightsVerdict
+
+	noSmithyDocumentSerde
+}
+
+// Contains the overall validation verdict for an email address.
+type EmailAddressInsightsVerdict struct {
+
+	// The confidence level of the validation verdict.
+	ConfidenceVerdict EmailAddressInsightsConfidenceVerdict
+
+	noSmithyDocumentSerde
+}
+
 // An object that defines the entire content of the email, including the message
 // headers, body content, and attachments. For a simple email message, you specify
 // the subject and provide both text and HTML versions of the message body. You can
@@ -1248,8 +1348,7 @@ type EventDestination struct {
 	//   - RENDERING_FAILURE - The email wasn't sent because of a template rendering
 	//   issue. This event type can occur when template data is missing, or when there is
 	//   a mismatch between template parameters and data. (This event type only occurs
-	//   when you send email using the [SendTemplatedEmail]SendTemplatedEmail or [SendBulkTemplatedEmail]SendBulkTemplatedEmail API
-	//   operations.)
+	//   when you send email using the [SendEmail]SendEmail or [SendBulkEmail]SendBulkEmail API operations.)
 	//
 	//   - DELIVERY_DELAY - The email couldn't be delivered to the recipient’s mail
 	//   server because a temporary issue occurred. Delivery delays can occur, for
@@ -1260,9 +1359,9 @@ type EventDestination struct {
 	//   updated their subscription preferences by clicking on an unsubscribe link as
 	//   part of your [subscription management].
 	//
-	// [SendTemplatedEmail]: https://docs.aws.amazon.com/ses/latest/APIReference/API_SendTemplatedEmail.html
 	// [subscription management]: https://docs.aws.amazon.com/ses/latest/dg/sending-email-subscription-management.html
-	// [SendBulkTemplatedEmail]: https://docs.aws.amazon.com/ses/latest/APIReference/API_SendBulkTemplatedEmail.html
+	// [SendBulkEmail]: https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendBulkEmail.html
+	// [SendEmail]: https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html
 	//
 	// This member is required.
 	MatchingEventTypes []EventType
@@ -1754,6 +1853,18 @@ type ListManagementOptions struct {
 	noSmithyDocumentSerde
 }
 
+// Contains detailed validation information about an email address.
+type MailboxValidation struct {
+
+	// Specific validation checks performed on the email address.
+	Evaluations *EmailAddressInsightsMailboxEvaluations
+
+	// Overall validity assessment with a conﬁdence verdict.
+	IsValid *EmailAddressInsightsVerdict
+
+	noSmithyDocumentSerde
+}
+
 // A list of attributes that are associated with a MAIL FROM domain.
 type MailFromAttributes struct {
 
@@ -2195,6 +2306,50 @@ type ReplacementTemplate struct {
 	noSmithyDocumentSerde
 }
 
+// An object that contains information about a reputation entity, including its
+// reference, type, policy, status records, and reputation impact.
+type ReputationEntity struct {
+
+	// The Amazon Web Services Amazon SES-managed status record for this reputation
+	// entity, including the current status, cause description, and last updated
+	// timestamp.
+	AwsSesManagedStatus *StatusRecord
+
+	// The customer-managed status record for this reputation entity, including the
+	// current status, cause description, and last updated timestamp.
+	CustomerManagedStatus *StatusRecord
+
+	// The unique identifier for the reputation entity. For resource-type entities,
+	// this is the Amazon Resource Name (ARN) of the resource.
+	ReputationEntityReference *string
+
+	// The type of reputation entity. Currently, only RESOURCE type entities are
+	// supported.
+	ReputationEntityType ReputationEntityType
+
+	// The reputation impact level for this entity, representing the highest impact
+	// reputation finding currently active. Reputation findings can be retrieved using
+	// the ListRecommendations operation.
+	ReputationImpact RecommendationImpact
+
+	// The Amazon Resource Name (ARN) of the reputation management policy applied to
+	// this entity. This is an Amazon Web Services Amazon SES-managed policy.
+	ReputationManagementPolicy *string
+
+	// The aggregate sending status that determines whether the entity is allowed to
+	// send emails. This status is derived from both the customer-managed and Amazon
+	// Web Services Amazon SES-managed statuses. If either the customer-managed status
+	// or the Amazon Web Services Amazon SES-managed status is DISABLED , the aggregate
+	// status will be DISABLED and the entity will not be allowed to send emails. When
+	// the customer-managed status is set to REINSTATED , the entity can continue
+	// sending even if there are active reputation findings, provided the Amazon Web
+	// Services Amazon SES-managed status also permits sending. The entity can only
+	// send emails when both statuses permit sending.
+	SendingStatusAggregate SendingStatus
+
+	noSmithyDocumentSerde
+}
+
 // Enable or disable collection of reputation metrics for emails that you send
 // using this configuration set in the current Amazon Web Services Region.
 type ReputationOptions struct {
@@ -2207,6 +2362,24 @@ type ReputationOptions struct {
 	// If true , tracking of reputation metrics is enabled for the configuration set.
 	// If false , tracking of reputation metrics is disabled for the configuration set.
 	ReputationMetricsEnabled bool
+
+	noSmithyDocumentSerde
+}
+
+// A structure that contains information about a tenant associated with a resource.
+type ResourceTenantMetadata struct {
+
+	// The date and time when the resource was associated with the tenant.
+	AssociatedTimestamp *time.Time
+
+	// The Amazon Resource Name (ARN) of the resource.
+	ResourceArn *string
+
+	// A unique identifier for the tenant associated with the resource.
+	TenantId *string
+
+	// The name of the tenant associated with the resource.
+	TenantName *string
 
 	noSmithyDocumentSerde
 }
@@ -2322,6 +2495,29 @@ type SOARecord struct {
 	noSmithyDocumentSerde
 }
 
+// An object that contains status information for a reputation entity, including
+// the current status, cause description, and timestamp.
+type StatusRecord struct {
+
+	// A description of the reason for the current status, or null if no specific
+	// cause is available.
+	Cause *string
+
+	// The timestamp when this status was last updated.
+	LastUpdatedTimestamp *time.Time
+
+	// The current sending status. This can be one of the following:
+	//
+	//   - ENABLED – Sending is allowed.
+	//
+	//   - DISABLED – Sending is prevented.
+	//
+	//   - REINSTATED – Sending is allowed even with active reputation findings.
+	Status SendingStatus
+
+	noSmithyDocumentSerde
+}
+
 // An object that contains information about an email address that is on the
 // suppression list for your account.
 type SuppressedDestination struct {
@@ -2401,6 +2597,40 @@ type SuppressionAttributes struct {
 	//   account when a message sent to that address results in a hard bounce.
 	SuppressedReasons []SuppressionListReason
 
+	// Structure containing validation attributes used for suppressing sending to
+	// specific destination on account level.
+	ValidationAttributes *SuppressionValidationAttributes
+
+	noSmithyDocumentSerde
+}
+
+// Contains Auto Validation settings, allowing you to suppress sending to specific
+// destination(s) if they do not meet required threshold. For details on Auto
+// Validation, see [Auto Validation].
+//
+// [Auto Validation]: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/email-validation.html
+type SuppressionConditionThreshold struct {
+
+	// Indicates whether Auto Validation is enabled for suppression. Set to ENABLED to
+	// enable the Auto Validation feature, or set to DISABLED to disable it.
+	//
+	// This member is required.
+	ConditionThresholdEnabled FeatureStatus
+
+	// The overall confidence threshold used to determine suppression decisions.
+	OverallConfidenceThreshold *SuppressionConfidenceThreshold
+
+	noSmithyDocumentSerde
+}
+
+// Contains the confidence threshold settings for Auto Validation.
+type SuppressionConfidenceThreshold struct {
+
+	// The confidence level threshold for suppression decisions.
+	//
+	// This member is required.
+	ConfidenceVerdictThreshold SuppressionConfidenceVerdictThreshold
+
 	noSmithyDocumentSerde
 }
 
@@ -2434,6 +2664,32 @@ type SuppressionOptions struct {
 	//   - BOUNCE – Amazon SES adds an email address to the suppression list for your
 	//   account when a message sent to that address results in a hard bounce.
 	SuppressedReasons []SuppressionListReason
+
+	// Contains validation options for email address suppression.
+	ValidationOptions *SuppressionValidationOptions
+
+	noSmithyDocumentSerde
+}
+
+// Structure containing validation attributes used for suppressing sending to
+// specific destination on account level.
+type SuppressionValidationAttributes struct {
+
+	// Specifies the condition threshold settings for account-level suppression.
+	//
+	// This member is required.
+	ConditionThreshold *SuppressionConditionThreshold
+
+	noSmithyDocumentSerde
+}
+
+// Contains validation options for email address suppression.
+type SuppressionValidationOptions struct {
+
+	// Specifies the condition threshold settings for suppression validation.
+	//
+	// This member is required.
+	ConditionThreshold *SuppressionConditionThreshold
 
 	noSmithyDocumentSerde
 }
@@ -2518,8 +2774,64 @@ type Template struct {
 	TemplateData *string
 
 	// The name of the template. You will refer to this name when you send email using
-	// the SendTemplatedEmail or SendBulkTemplatedEmail operations.
+	// the SendEmail or SendBulkEmail operations.
 	TemplateName *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that contains details about a tenant.
+type Tenant struct {
+
+	// The date and time when the tenant was created.
+	CreatedTimestamp *time.Time
+
+	// The status of sending capability for the tenant.
+	SendingStatus SendingStatus
+
+	// An array of objects that define the tags (keys and values) associated with the
+	// tenant.
+	Tags []Tag
+
+	// The Amazon Resource Name (ARN) of the tenant.
+	TenantArn *string
+
+	// A unique identifier for the tenant.
+	TenantId *string
+
+	// The name of the tenant.
+	TenantName *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that contains basic information about a tenant.
+type TenantInfo struct {
+
+	// The date and time when the tenant was created.
+	CreatedTimestamp *time.Time
+
+	// The Amazon Resource Name (ARN) of the tenant.
+	TenantArn *string
+
+	// A unique identifier for the tenant.
+	TenantId *string
+
+	// The name of the tenant.
+	TenantName *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that contains information about a resource associated with a tenant.
+type TenantResource struct {
+
+	// The Amazon Resource Name (ARN) of the resource associated with the tenant.
+	ResourceArn *string
+
+	// The type of resource associated with the tenant. Valid values are EMAIL_IDENTITY
+	// , CONFIGURATION_SET , or EMAIL_TEMPLATE .
+	ResourceType ResourceType
 
 	noSmithyDocumentSerde
 }

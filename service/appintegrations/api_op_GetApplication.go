@@ -40,8 +40,14 @@ type GetApplicationInput struct {
 
 type GetApplicationOutput struct {
 
+	// The configuration settings for the application.
+	ApplicationConfig *types.ApplicationConfig
+
 	// The configuration for where the application should be loaded from.
 	ApplicationSourceConfig *types.ApplicationSourceConfig
+
+	// The type of application.
+	ApplicationType types.ApplicationType
 
 	// The Amazon Resource Name (ARN) of the Application.
 	Arn *string
@@ -54,6 +60,18 @@ type GetApplicationOutput struct {
 
 	// A unique identifier for the Application.
 	Id *string
+
+	// The iframe configuration for the application.
+	IframeConfig *types.IframeConfig
+
+	// The maximum time in milliseconds allowed to establish a connection with the
+	// workspace.
+	InitializationTimeout *int32
+
+	// Indicates whether the application is a service.
+	//
+	// Deprecated: IsService has been deprecated in favor of ApplicationType
+	IsService bool
 
 	// The last modified time of the Application.
 	LastModifiedTime *time.Time
@@ -175,16 +193,13 @@ func (c *Client) addOperationGetApplicationMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

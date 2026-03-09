@@ -92,17 +92,6 @@ type CreateDomainInput struct {
 	// This member is required.
 	DomainName *string
 
-	// The VPC subnets that the domain uses for communication.
-	//
-	// This member is required.
-	SubnetIds []string
-
-	// The ID of the Amazon Virtual Private Cloud (VPC) that the domain uses for
-	// communication.
-	//
-	// This member is required.
-	VpcId *string
-
 	// Specifies the VPC used for non-EFS traffic. The default value is
 	// PublicInternetOnly .
 	//
@@ -136,6 +125,12 @@ type CreateDomainInput struct {
 	// more control, specify a customer managed key.
 	KmsKeyId *string
 
+	// The VPC subnets that the domain uses for communication.
+	//
+	// The field is optional when the AppNetworkAccessType parameter is set to
+	// PublicInternetOnly for domains created from Amazon SageMaker Unified Studio.
+	SubnetIds []string
+
 	// Indicates whether custom tag propagation is supported for the domain. Defaults
 	// to DISABLED .
 	TagPropagation types.TagPropagation
@@ -147,6 +142,13 @@ type CreateDomainInput struct {
 	// Tags that you specify for the Domain are also added to all Apps that the Domain
 	// launches.
 	Tags []types.Tag
+
+	// The ID of the Amazon Virtual Private Cloud (VPC) that the domain uses for
+	// communication.
+	//
+	// The field is optional when the AppNetworkAccessType parameter is set to
+	// PublicInternetOnly for domains created from Amazon SageMaker Unified Studio.
+	VpcId *string
 
 	noSmithyDocumentSerde
 }
@@ -256,16 +258,13 @@ func (c *Client) addOperationCreateDomainMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

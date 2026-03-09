@@ -12,6 +12,16 @@ import (
 )
 
 // Updates the business glossary in Amazon DataZone.
+//
+// Prerequisites:
+//
+//   - The glossary must exist in the given domain.
+//
+//   - The caller must have the datazone:UpdateGlossary permission to update it.
+//
+//   - When updating the name, the new name must be unique within the domain.
+//
+//   - The glossary must not be deleted or in a terminal state.
 func (c *Client) UpdateGlossary(ctx context.Context, params *UpdateGlossaryInput, optFns ...func(*Options)) (*UpdateGlossaryOutput, error) {
 	if params == nil {
 		params = &UpdateGlossaryInput{}
@@ -84,6 +94,9 @@ type UpdateGlossaryOutput struct {
 
 	// The status to be updated as part of the UpdateGlossary action.
 	Status types.GlossaryStatus
+
+	// The usage restriction of the restricted glossary.
+	UsageRestrictions []types.GlossaryUsageRestriction
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -182,16 +195,13 @@ func (c *Client) addOperationUpdateGlossaryMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

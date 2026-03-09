@@ -10,9 +10,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes the specified Directory Config object from AppStream 2.0. This object
-// includes the information required to join streaming instances to an Active
-// Directory domain.
+// Deletes the specified Directory Config object from WorkSpaces Applications.
+// This object includes the information required to join streaming instances to an
+// Active Directory domain.
 func (c *Client) DeleteDirectoryConfig(ctx context.Context, params *DeleteDirectoryConfigInput, optFns ...func(*Options)) (*DeleteDirectoryConfigOutput, error) {
 	if params == nil {
 		params = &DeleteDirectoryConfigInput{}
@@ -133,16 +133,13 @@ func (c *Client) addOperationDeleteDirectoryConfigMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

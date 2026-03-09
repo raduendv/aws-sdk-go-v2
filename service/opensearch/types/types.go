@@ -103,6 +103,9 @@ type AdvancedSecurityOptions struct {
 	// True if fine-grained access control is enabled.
 	Enabled *bool
 
+	// Configuration options for IAM identity federation in advanced security settings.
+	IAMFederationOptions *IAMFederationOptionsOutput
+
 	// True if the internal user database is enabled.
 	InternalUserDatabaseEnabled *bool
 
@@ -131,6 +134,10 @@ type AdvancedSecurityOptionsInput struct {
 
 	// True to enable fine-grained access control.
 	Enabled *bool
+
+	// Input configuration for IAM identity federation within advanced security
+	// options.
+	IAMFederationOptions *IAMFederationOptionsInput
 
 	// True to enable the internal user database.
 	InternalUserDatabaseEnabled *bool
@@ -172,6 +179,17 @@ type AIMLOptionsInput struct {
 	// specified domain.
 	NaturalLanguageQueryGenerationOptions *NaturalLanguageQueryGenerationOptionsInput
 
+	// Container for parameters required to enable S3 vectors engine features on the
+	// specified domain.
+	S3VectorsEngine *S3VectorsEngine
+
+	// Specifies whether to enable serverless vector acceleration for the domain. When
+	// enabled, provides [GPU-accelerated]vector search capabilities for improved performance on vector
+	// workloads.
+	//
+	// [GPU-accelerated]: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/gpu-acceleration-vector-index.html
+	ServerlessVectorAcceleration *ServerlessVectorAcceleration
+
 	noSmithyDocumentSerde
 }
 
@@ -182,6 +200,13 @@ type AIMLOptionsOutput struct {
 	// Container for parameters required for natural language query generation on the
 	// specified domain.
 	NaturalLanguageQueryGenerationOptions *NaturalLanguageQueryGenerationOptionsOutput
+
+	// Container for parameters representing the state of S3 vectors engine features
+	// on the specified domain.
+	S3VectorsEngine *S3VectorsEngine
+
+	// The current serverless vector acceleration configuration for the domain.
+	ServerlessVectorAcceleration *ServerlessVectorAcceleration
 
 	noSmithyDocumentSerde
 }
@@ -198,8 +223,8 @@ type AIMLOptionsStatus struct {
 	noSmithyDocumentSerde
 }
 
-// Configuration settings for an OpenSearch application. For more information, see
-// see [Using the OpenSearch user interface in Amazon OpenSearch Service].
+// Configuration settings for an OpenSearch application. For more information, see [Using the OpenSearch user interface in Amazon OpenSearch Service]
+// .
 //
 // [Using the OpenSearch user interface in Amazon OpenSearch Service]: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/application.html
 type AppConfig struct {
@@ -753,7 +778,7 @@ type CrossClusterSearchConnectionProperties struct {
 	noSmithyDocumentSerde
 }
 
-// Data sources that are associated with an OpenSearch Application.
+// Data sources that are associated with an OpenSearch application.
 type DataSource struct {
 
 	// The Amazon Resource Name (ARN) of the domain. See [Identifiers for IAM Entities] in Using Amazon Web Services
@@ -1134,7 +1159,7 @@ type DomainPackageDetails struct {
 type DomainStatus struct {
 
 	// The Amazon Resource Name (ARN) of the domain. For more information, see [IAM identifiers] in the
-	// AWS Identity and Access Management User Guide.
+	// Amazon Web Services Identity and Access Management User Guide.
 	//
 	// [IAM identifiers]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html
 	//
@@ -1449,10 +1474,40 @@ type Filter struct {
 	noSmithyDocumentSerde
 }
 
-// Configuration settings for IAM Identity Center in an OpenSearch Application.
+// Input parameters for configuring IAM identity federation settings.
+type IAMFederationOptionsInput struct {
+
+	// Specifies whether IAM identity federation is enabled for the OpenSearch domain.
+	Enabled *bool
+
+	// The key in the SAML assertion that contains the user's role information.
+	RolesKey *string
+
+	// The key in the SAML assertion that contains the user's subject identifier.
+	SubjectKey *string
+
+	noSmithyDocumentSerde
+}
+
+// Output parameters showing the current IAM identity federation configuration.
+type IAMFederationOptionsOutput struct {
+
+	// Indicates whether IAM identity federation is currently enabled for the domain.
+	Enabled *bool
+
+	// The configured key in the SAML assertion for the user's role information.
+	RolesKey *string
+
+	// The configured key in the SAML assertion for the user's subject identifier.
+	SubjectKey *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for IAM Identity Center in an OpenSearch application.
 type IamIdentityCenterOptions struct {
 
-	// Indicates whether IAM Identity Center is enabled for the OpenSearch Application.
+	// Indicates whether IAM Identity Center is enabled for the OpenSearch application.
 	Enabled *bool
 
 	// The Amazon Resource Name (ARN) of the domain. See [Identifiers for IAM Entities] in Using Amazon Web Services
@@ -1468,7 +1523,7 @@ type IamIdentityCenterOptions struct {
 	IamIdentityCenterInstanceArn *string
 
 	// The Amazon Resource Name (ARN) of the IAM role assigned to the IAM Identity
-	// Center application for the OpenSearch Application.
+	// Center application for the OpenSearch application.
 	IamRoleForIdentityCenterApplicationArn *string
 
 	noSmithyDocumentSerde
@@ -2351,6 +2406,15 @@ type S3GlueDataCatalog struct {
 	noSmithyDocumentSerde
 }
 
+// Options for enabling S3 vectors engine features on the specified domain.
+type S3VectorsEngine struct {
+
+	// Enables S3 vectors engine features.
+	Enabled *bool
+
+	noSmithyDocumentSerde
+}
+
 // The SAML identity povider information.
 type SAMLIdp struct {
 
@@ -2494,6 +2558,18 @@ type SecurityLakeDirectQueryDataSource struct {
 	//
 	// This member is required.
 	RoleArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for serverless vector acceleration, which provides [GPU-accelerated] vector search
+// capabilities for improved performance on vector workloads.
+//
+// [GPU-accelerated]: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/gpu-acceleration-vector-index.html
+type ServerlessVectorAcceleration struct {
+
+	// Specifies whether serverless vector acceleration is enabled for the domain.
+	Enabled *bool
 
 	noSmithyDocumentSerde
 }

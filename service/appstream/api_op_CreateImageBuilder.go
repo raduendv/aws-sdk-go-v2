@@ -74,16 +74,6 @@ type CreateImageBuilderInput struct {
 	//
 	//   - stream.memory.z1d.12xlarge
 	//
-	//   - stream.graphics-design.large
-	//
-	//   - stream.graphics-design.xlarge
-	//
-	//   - stream.graphics-design.2xlarge
-	//
-	//   - stream.graphics-design.4xlarge
-	//
-	//   - stream.graphics-desktop.2xlarge
-	//
 	//   - stream.graphics.g4dn.xlarge
 	//
 	//   - stream.graphics.g4dn.2xlarge
@@ -96,11 +86,47 @@ type CreateImageBuilderInput struct {
 	//
 	//   - stream.graphics.g4dn.16xlarge
 	//
-	//   - stream.graphics-pro.4xlarge
+	//   - stream.graphics.g5.xlarge
 	//
-	//   - stream.graphics-pro.8xlarge
+	//   - stream.graphics.g5.2xlarge
 	//
-	//   - stream.graphics-pro.16xlarge
+	//   - stream.graphics.g5.4xlarge
+	//
+	//   - stream.graphics.g5.8xlarge
+	//
+	//   - stream.graphics.g5.16xlarge
+	//
+	//   - stream.graphics.g5.12xlarge
+	//
+	//   - stream.graphics.g5.24xlarge
+	//
+	//   - stream.graphics.g6.xlarge
+	//
+	//   - stream.graphics.g6.2xlarge
+	//
+	//   - stream.graphics.g6.4xlarge
+	//
+	//   - stream.graphics.g6.8xlarge
+	//
+	//   - stream.graphics.g6.16xlarge
+	//
+	//   - stream.graphics.g6.12xlarge
+	//
+	//   - stream.graphics.g6.24xlarge
+	//
+	//   - stream.graphics.gr6.4xlarge
+	//
+	//   - stream.graphics.gr6.8xlarge
+	//
+	//   - stream.graphics.g6f.large
+	//
+	//   - stream.graphics.g6f.xlarge
+	//
+	//   - stream.graphics.g6f.2xlarge
+	//
+	//   - stream.graphics.g6f.4xlarge
+	//
+	//   - stream.graphics.gr6f.4xlarge
 	//
 	// This member is required.
 	InstanceType *string
@@ -114,8 +140,9 @@ type CreateImageBuilderInput struct {
 	// can connect to the image builder only through the specified endpoints.
 	AccessEndpoints []types.AccessEndpoint
 
-	// The version of the AppStream 2.0 agent to use for this image builder. To use
-	// the latest version of the AppStream 2.0 agent, specify [LATEST].
+	// The version of the WorkSpaces Applications agent to use for this image builder.
+	// To use the latest version of the WorkSpaces Applications agent, specify
+	// [LATEST].
 	AppstreamAgentVersion *string
 
 	// The description to display.
@@ -134,13 +161,14 @@ type CreateImageBuilderInput struct {
 	// The Amazon Resource Name (ARN) of the IAM role to apply to the image builder.
 	// To assume a role, the image builder calls the AWS Security Token Service (STS)
 	// AssumeRole API operation and passes the ARN of the role to use. The operation
-	// creates a new session with temporary credentials. AppStream 2.0 retrieves the
-	// temporary credentials and creates the appstream_machine_role credential profile
-	// on the instance.
+	// creates a new session with temporary credentials. WorkSpaces Applications
+	// retrieves the temporary credentials and creates the appstream_machine_role
+	// credential profile on the instance.
 	//
-	// For more information, see [Using an IAM Role to Grant Permissions to Applications and Scripts Running on AppStream 2.0 Streaming Instances] in the Amazon AppStream 2.0 Administration Guide.
+	// For more information, see [Using an IAM Role to Grant Permissions to Applications and Scripts Running on WorkSpaces Applications Streaming Instances] in the Amazon WorkSpaces Applications Administration
+	// Guide.
 	//
-	// [Using an IAM Role to Grant Permissions to Applications and Scripts Running on AppStream 2.0 Streaming Instances]: https://docs.aws.amazon.com/appstream2/latest/developerguide/using-iam-roles-to-grant-permissions-to-applications-scripts-streaming-instances.html
+	// [Using an IAM Role to Grant Permissions to Applications and Scripts Running on WorkSpaces Applications Streaming Instances]: https://docs.aws.amazon.com/appstream2/latest/developerguide/using-iam-roles-to-grant-permissions-to-applications-scripts-streaming-instances.html
 	IamRoleArn *string
 
 	// The ARN of the public, private, or shared image to use.
@@ -148,6 +176,119 @@ type CreateImageBuilderInput struct {
 
 	// The name of the image used to create the image builder.
 	ImageName *string
+
+	// The configuration for the root volume of the image builder. Use this to
+	// customize storage capacity from 200 GB up to 500 GB based on your application
+	// installation requirements.
+	RootVolumeConfig *types.VolumeConfig
+
+	// The list of license included applications to install on the image builder
+	// during creation.
+	//
+	// Possible values include the following:
+	//
+	//   - Microsoft_Office_2021_LTSC_Professional_Plus_32Bit
+	//
+	//   - Microsoft_Office_2021_LTSC_Professional_Plus_64Bit
+	//
+	//   - Microsoft_Office_2024_LTSC_Professional_Plus_32Bit
+	//
+	//   - Microsoft_Office_2024_LTSC_Professional_Plus_64Bit
+	//
+	//   - Microsoft_Visio_2021_LTSC_Professional_32Bit
+	//
+	//   - Microsoft_Visio_2021_LTSC_Professional_64Bit
+	//
+	//   - Microsoft_Visio_2024_LTSC_Professional_32Bit
+	//
+	//   - Microsoft_Visio_2024_LTSC_Professional_64Bit
+	//
+	//   - Microsoft_Project_2021_Professional_32Bit
+	//
+	//   - Microsoft_Project_2021_Professional_64Bit
+	//
+	//   - Microsoft_Project_2024_Professional_32Bit
+	//
+	//   - Microsoft_Project_2024_Professional_64Bit
+	//
+	//   - Microsoft_Office_2021_LTSC_Standard_32Bit
+	//
+	//   - Microsoft_Office_2021_LTSC_Standard_64Bit
+	//
+	//   - Microsoft_Office_2024_LTSC_Standard_32Bit
+	//
+	//   - Microsoft_Office_2024_LTSC_Standard_64Bit
+	//
+	//   - Microsoft_Visio_2021_LTSC_Standard_32Bit
+	//
+	//   - Microsoft_Visio_2021_LTSC_Standard_64Bit
+	//
+	//   - Microsoft_Visio_2024_LTSC_Standard_32Bit
+	//
+	//   - Microsoft_Visio_2024_LTSC_Standard_64Bit
+	//
+	//   - Microsoft_Project_2021_Standard_32Bit
+	//
+	//   - Microsoft_Project_2021_Standard_64Bit
+	//
+	//   - Microsoft_Project_2024_Standard_32Bit
+	//
+	//   - Microsoft_Project_2024_Standard_64Bit
+	SoftwaresToInstall []string
+
+	// The list of license included applications to uninstall from the image builder
+	// during creation.
+	//
+	// Possible values include the following:
+	//
+	//   - Microsoft_Office_2021_LTSC_Professional_Plus_32Bit
+	//
+	//   - Microsoft_Office_2021_LTSC_Professional_Plus_64Bit
+	//
+	//   - Microsoft_Office_2024_LTSC_Professional_Plus_32Bit
+	//
+	//   - Microsoft_Office_2024_LTSC_Professional_Plus_64Bit
+	//
+	//   - Microsoft_Visio_2021_LTSC_Professional_32Bit
+	//
+	//   - Microsoft_Visio_2021_LTSC_Professional_64Bit
+	//
+	//   - Microsoft_Visio_2024_LTSC_Professional_32Bit
+	//
+	//   - Microsoft_Visio_2024_LTSC_Professional_64Bit
+	//
+	//   - Microsoft_Project_2021_Professional_32Bit
+	//
+	//   - Microsoft_Project_2021_Professional_64Bit
+	//
+	//   - Microsoft_Project_2024_Professional_32Bit
+	//
+	//   - Microsoft_Project_2024_Professional_64Bit
+	//
+	//   - Microsoft_Office_2021_LTSC_Standard_32Bit
+	//
+	//   - Microsoft_Office_2021_LTSC_Standard_64Bit
+	//
+	//   - Microsoft_Office_2024_LTSC_Standard_32Bit
+	//
+	//   - Microsoft_Office_2024_LTSC_Standard_64Bit
+	//
+	//   - Microsoft_Visio_2021_LTSC_Standard_32Bit
+	//
+	//   - Microsoft_Visio_2021_LTSC_Standard_64Bit
+	//
+	//   - Microsoft_Visio_2024_LTSC_Standard_32Bit
+	//
+	//   - Microsoft_Visio_2024_LTSC_Standard_64Bit
+	//
+	//   - Microsoft_Project_2021_Standard_32Bit
+	//
+	//   - Microsoft_Project_2021_Standard_64Bit
+	//
+	//   - Microsoft_Project_2024_Standard_32Bit
+	//
+	//   - Microsoft_Project_2024_Standard_64Bit
+	SoftwaresToUninstall []string
 
 	// The tags to associate with the image builder. A tag is a key-value pair, and
 	// the value is optional. For example, Environment=Test. If you do not specify a
@@ -160,7 +301,7 @@ type CreateImageBuilderInput struct {
 	//
 	// If you do not specify a value, the value is set to an empty string.
 	//
-	// For more information about tags, see [Tagging Your Resources] in the Amazon AppStream 2.0
+	// For more information about tags, see [Tagging Your Resources] in the Amazon WorkSpaces Applications
 	// Administration Guide.
 	//
 	// [Tagging Your Resources]: https://docs.aws.amazon.com/appstream2/latest/developerguide/tagging-basic.html
@@ -271,16 +412,13 @@ func (c *Client) addOperationCreateImageBuilderMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

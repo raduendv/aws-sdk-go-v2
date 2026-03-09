@@ -12,6 +12,12 @@ import (
 )
 
 // Lists asset filters.
+//
+// Prerequisites:
+//
+//   - A valid domain and asset must exist.
+//
+//   - The asset must have at least one filter created to return results.
 func (c *Client) ListAssetFilters(ctx context.Context, params *ListAssetFiltersInput, optFns ...func(*Options)) (*ListAssetFiltersOutput, error) {
 	if params == nil {
 		params = &ListAssetFiltersInput{}
@@ -167,16 +173,13 @@ func (c *Client) addOperationListAssetFiltersMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

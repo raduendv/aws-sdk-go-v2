@@ -53,15 +53,15 @@ type CreateAssessmentInput struct {
 	//  The wrapper that contains the Amazon Web Services accounts that are in scope
 	// for the assessment.
 	//
-	// You no longer need to specify which Amazon Web Services are in scope when you
-	// create or update an assessment. Audit Manager infers the services in scope by
-	// examining your assessment controls and their data sources, and then mapping this
-	// information to the relevant Amazon Web Services.
+	// You no longer need to specify which Amazon Web Services services are in scope
+	// when you create or update an assessment. Audit Manager infers the services in
+	// scope by examining your assessment controls and their data sources, and then
+	// mapping this information to the relevant Amazon Web Services services.
 	//
 	// If an underlying data source changes for your assessment, we automatically
-	// update the services scope as needed to reflect the correct Amazon Web Services.
-	// This ensures that your assessment collects accurate and comprehensive evidence
-	// about all of the relevant services in your AWS environment.
+	// update the services scope as needed to reflect the correct Amazon Web Services
+	// services. This ensures that your assessment collects accurate and comprehensive
+	// evidence about all of the relevant services in your AWS environment.
 	//
 	// This member is required.
 	Scope *types.Scope
@@ -175,16 +175,13 @@ func (c *Client) addOperationCreateAssessmentMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

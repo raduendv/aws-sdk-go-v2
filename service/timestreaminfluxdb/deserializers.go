@@ -13,22 +13,13 @@ import (
 	smithyio "github.com/aws/smithy-go/io"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"io/ioutil"
+	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson10_deserializeOpCreateDbCluster struct {
 }
@@ -1641,6 +1632,258 @@ func awsAwsjson10_deserializeOpErrorListTagsForResource(response *smithyhttp.Res
 	}
 }
 
+type awsAwsjson10_deserializeOpRebootDbCluster struct {
+}
+
+func (*awsAwsjson10_deserializeOpRebootDbCluster) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson10_deserializeOpRebootDbCluster) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson10_deserializeOpErrorRebootDbCluster(response, &metadata)
+	}
+	output := &RebootDbClusterOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson10_deserializeOpDocumentRebootDbClusterOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson10_deserializeOpErrorRebootDbCluster(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("AccessDeniedException", errorCode):
+		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ThrottlingException", errorCode):
+		return awsAwsjson10_deserializeErrorThrottlingException(response, errorBody)
+
+	case strings.EqualFold("ValidationException", errorCode):
+		return awsAwsjson10_deserializeErrorValidationException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+type awsAwsjson10_deserializeOpRebootDbInstance struct {
+}
+
+func (*awsAwsjson10_deserializeOpRebootDbInstance) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson10_deserializeOpRebootDbInstance) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson10_deserializeOpErrorRebootDbInstance(response, &metadata)
+	}
+	output := &RebootDbInstanceOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson10_deserializeOpDocumentRebootDbInstanceOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson10_deserializeOpErrorRebootDbInstance(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("AccessDeniedException", errorCode):
+		return awsAwsjson10_deserializeErrorAccessDeniedException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsAwsjson10_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("InternalServerException", errorCode):
+		return awsAwsjson10_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson10_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ThrottlingException", errorCode):
+		return awsAwsjson10_deserializeErrorThrottlingException(response, errorBody)
+
+	case strings.EqualFold("ValidationException", errorCode):
+		return awsAwsjson10_deserializeErrorValidationException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
 type awsAwsjson10_deserializeOpTagResource struct {
 }
 
@@ -2497,6 +2740,15 @@ func awsAwsjson10_deserializeDocumentDbClusterSummary(v **types.DbClusterSummary
 				sv.Endpoint = ptr.String(jtv)
 			}
 
+		case "engineType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngineType to be of type string, got %T instead", value)
+				}
+				sv.EngineType = types.EngineType(jtv)
+			}
+
 		case "id":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -2694,6 +2946,11 @@ func awsAwsjson10_deserializeDocumentDbInstanceForClusterSummary(v **types.DbIns
 					return fmt.Errorf("expected InstanceMode to be of type string, got %T instead", value)
 				}
 				sv.InstanceMode = types.InstanceMode(jtv)
+			}
+
+		case "instanceModes":
+			if err := awsAwsjson10_deserializeDocumentInstanceModeList(&sv.InstanceModes, value); err != nil {
+				return err
 			}
 
 		case "name":
@@ -3478,6 +3735,985 @@ func awsAwsjson10_deserializeDocumentInfluxDBv2Parameters(v **types.InfluxDBv2Pa
 	return nil
 }
 
+func awsAwsjson10_deserializeDocumentInfluxDBv3CoreParameters(v **types.InfluxDBv3CoreParameters, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.InfluxDBv3CoreParameters
+	if *v == nil {
+		sv = &types.InfluxDBv3CoreParameters{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "dataFusionConfig":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.DataFusionConfig = ptr.String(jtv)
+			}
+
+		case "dataFusionMaxParquetFanout":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionMaxParquetFanout = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionNumThreads":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionNumThreads = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeDisableLifoSlot":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.DataFusionRuntimeDisableLifoSlot = ptr.Bool(jtv)
+			}
+
+		case "dataFusionRuntimeEventInterval":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeEventInterval = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeGlobalQueueInterval":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeGlobalQueueInterval = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeMaxBlockingThreads":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeMaxBlockingThreads = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeMaxIoEventsPerTick":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeMaxIoEventsPerTick = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeThreadKeepAlive":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.DataFusionRuntimeThreadKeepAlive, value); err != nil {
+				return err
+			}
+
+		case "dataFusionRuntimeThreadPriority":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeThreadPriority = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DataFusionRuntimeType to be of type string, got %T instead", value)
+				}
+				sv.DataFusionRuntimeType = types.DataFusionRuntimeType(jtv)
+			}
+
+		case "dataFusionUseCachedParquetLoader":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.DataFusionUseCachedParquetLoader = ptr.Bool(jtv)
+			}
+
+		case "deleteGracePeriod":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.DeleteGracePeriod, value); err != nil {
+				return err
+			}
+
+		case "disableParquetMemCache":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.DisableParquetMemCache = ptr.Bool(jtv)
+			}
+
+		case "distinctCacheEvictionInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.DistinctCacheEvictionInterval, value); err != nil {
+				return err
+			}
+
+		case "execMemPoolBytes":
+			if err := awsAwsjson10_deserializeDocumentPercentOrAbsoluteLong(&sv.ExecMemPoolBytes, value); err != nil {
+				return err
+			}
+
+		case "forceSnapshotMemThreshold":
+			if err := awsAwsjson10_deserializeDocumentPercentOrAbsoluteLong(&sv.ForceSnapshotMemThreshold, value); err != nil {
+				return err
+			}
+
+		case "gen1Duration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.Gen1Duration, value); err != nil {
+				return err
+			}
+
+		case "gen1LookbackDuration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.Gen1LookbackDuration, value); err != nil {
+				return err
+			}
+
+		case "hardDeleteDefaultDuration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.HardDeleteDefaultDuration, value); err != nil {
+				return err
+			}
+
+		case "lastCacheEvictionInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.LastCacheEvictionInterval, value); err != nil {
+				return err
+			}
+
+		case "logFilter":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.LogFilter = ptr.String(jtv)
+			}
+
+		case "logFormat":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LogFormats to be of type string, got %T instead", value)
+				}
+				sv.LogFormat = types.LogFormats(jtv)
+			}
+
+		case "maxHttpRequestSize":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Long to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.MaxHttpRequestSize = ptr.Int64(i64)
+			}
+
+		case "parquetMemCachePruneInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.ParquetMemCachePruneInterval, value); err != nil {
+				return err
+			}
+
+		case "parquetMemCachePrunePercentage":
+			if value != nil {
+				switch jtv := value.(type) {
+				case json.Number:
+					f64, err := jtv.Float64()
+					if err != nil {
+						return err
+					}
+					sv.ParquetMemCachePrunePercentage = ptr.Float32(float32(f64))
+
+				case string:
+					var f64 float64
+					switch {
+					case strings.EqualFold(jtv, "NaN"):
+						f64 = math.NaN()
+
+					case strings.EqualFold(jtv, "Infinity"):
+						f64 = math.Inf(1)
+
+					case strings.EqualFold(jtv, "-Infinity"):
+						f64 = math.Inf(-1)
+
+					default:
+						return fmt.Errorf("unknown JSON number value: %s", jtv)
+
+					}
+					sv.ParquetMemCachePrunePercentage = ptr.Float32(float32(f64))
+
+				default:
+					return fmt.Errorf("expected Float to be a JSON Number, got %T instead", value)
+
+				}
+			}
+
+		case "parquetMemCacheQueryPathDuration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.ParquetMemCacheQueryPathDuration, value); err != nil {
+				return err
+			}
+
+		case "parquetMemCacheSize":
+			if err := awsAwsjson10_deserializeDocumentPercentOrAbsoluteLong(&sv.ParquetMemCacheSize, value); err != nil {
+				return err
+			}
+
+		case "preemptiveCacheAge":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.PreemptiveCacheAge, value); err != nil {
+				return err
+			}
+
+		case "queryFileLimit":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.QueryFileLimit = ptr.Int32(int32(i64))
+			}
+
+		case "queryLogSize":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.QueryLogSize = ptr.Int32(int32(i64))
+			}
+
+		case "retentionCheckInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.RetentionCheckInterval, value); err != nil {
+				return err
+			}
+
+		case "snapshottedWalFilesToKeep":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.SnapshottedWalFilesToKeep = ptr.Int32(int32(i64))
+			}
+
+		case "tableIndexCacheConcurrencyLimit":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TableIndexCacheConcurrencyLimit = ptr.Int32(int32(i64))
+			}
+
+		case "tableIndexCacheMaxEntries":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TableIndexCacheMaxEntries = ptr.Int32(int32(i64))
+			}
+
+		case "walMaxWriteBufferSize":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.WalMaxWriteBufferSize = ptr.Int32(int32(i64))
+			}
+
+		case "walReplayConcurrencyLimit":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.WalReplayConcurrencyLimit = ptr.Int32(int32(i64))
+			}
+
+		case "walReplayFailOnError":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.WalReplayFailOnError = ptr.Bool(jtv)
+			}
+
+		case "walSnapshotSize":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.WalSnapshotSize = ptr.Int32(int32(i64))
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentInfluxDBv3EnterpriseParameters(v **types.InfluxDBv3EnterpriseParameters, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.InfluxDBv3EnterpriseParameters
+	if *v == nil {
+		sv = &types.InfluxDBv3EnterpriseParameters{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "catalogSyncInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.CatalogSyncInterval, value); err != nil {
+				return err
+			}
+
+		case "compactionCheckInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.CompactionCheckInterval, value); err != nil {
+				return err
+			}
+
+		case "compactionCleanupWait":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.CompactionCleanupWait, value); err != nil {
+				return err
+			}
+
+		case "compactionGen2Duration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.CompactionGen2Duration, value); err != nil {
+				return err
+			}
+
+		case "compactionMaxNumFilesPerPlan":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.CompactionMaxNumFilesPerPlan = ptr.Int32(int32(i64))
+			}
+
+		case "compactionMultipliers":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.CompactionMultipliers = ptr.String(jtv)
+			}
+
+		case "compactionRowLimit":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.CompactionRowLimit = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionConfig":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.DataFusionConfig = ptr.String(jtv)
+			}
+
+		case "dataFusionMaxParquetFanout":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionMaxParquetFanout = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionNumThreads":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionNumThreads = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeDisableLifoSlot":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.DataFusionRuntimeDisableLifoSlot = ptr.Bool(jtv)
+			}
+
+		case "dataFusionRuntimeEventInterval":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeEventInterval = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeGlobalQueueInterval":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeGlobalQueueInterval = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeMaxBlockingThreads":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeMaxBlockingThreads = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeMaxIoEventsPerTick":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeMaxIoEventsPerTick = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeThreadKeepAlive":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.DataFusionRuntimeThreadKeepAlive, value); err != nil {
+				return err
+			}
+
+		case "dataFusionRuntimeThreadPriority":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.DataFusionRuntimeThreadPriority = ptr.Int32(int32(i64))
+			}
+
+		case "dataFusionRuntimeType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DataFusionRuntimeType to be of type string, got %T instead", value)
+				}
+				sv.DataFusionRuntimeType = types.DataFusionRuntimeType(jtv)
+			}
+
+		case "dataFusionUseCachedParquetLoader":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.DataFusionUseCachedParquetLoader = ptr.Bool(jtv)
+			}
+
+		case "dedicatedCompactor":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.DedicatedCompactor = ptr.Bool(jtv)
+			}
+
+		case "deleteGracePeriod":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.DeleteGracePeriod, value); err != nil {
+				return err
+			}
+
+		case "disableParquetMemCache":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.DisableParquetMemCache = ptr.Bool(jtv)
+			}
+
+		case "distinctCacheEvictionInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.DistinctCacheEvictionInterval, value); err != nil {
+				return err
+			}
+
+		case "distinctValueCacheDisableFromHistory":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.DistinctValueCacheDisableFromHistory = ptr.Bool(jtv)
+			}
+
+		case "execMemPoolBytes":
+			if err := awsAwsjson10_deserializeDocumentPercentOrAbsoluteLong(&sv.ExecMemPoolBytes, value); err != nil {
+				return err
+			}
+
+		case "forceSnapshotMemThreshold":
+			if err := awsAwsjson10_deserializeDocumentPercentOrAbsoluteLong(&sv.ForceSnapshotMemThreshold, value); err != nil {
+				return err
+			}
+
+		case "gen1Duration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.Gen1Duration, value); err != nil {
+				return err
+			}
+
+		case "gen1LookbackDuration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.Gen1LookbackDuration, value); err != nil {
+				return err
+			}
+
+		case "hardDeleteDefaultDuration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.HardDeleteDefaultDuration, value); err != nil {
+				return err
+			}
+
+		case "ingestQueryInstances":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.IngestQueryInstances = ptr.Int32(int32(i64))
+			}
+
+		case "lastCacheEvictionInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.LastCacheEvictionInterval, value); err != nil {
+				return err
+			}
+
+		case "lastValueCacheDisableFromHistory":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.LastValueCacheDisableFromHistory = ptr.Bool(jtv)
+			}
+
+		case "logFilter":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.LogFilter = ptr.String(jtv)
+			}
+
+		case "logFormat":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LogFormats to be of type string, got %T instead", value)
+				}
+				sv.LogFormat = types.LogFormats(jtv)
+			}
+
+		case "maxHttpRequestSize":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Long to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.MaxHttpRequestSize = ptr.Int64(i64)
+			}
+
+		case "parquetMemCachePruneInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.ParquetMemCachePruneInterval, value); err != nil {
+				return err
+			}
+
+		case "parquetMemCachePrunePercentage":
+			if value != nil {
+				switch jtv := value.(type) {
+				case json.Number:
+					f64, err := jtv.Float64()
+					if err != nil {
+						return err
+					}
+					sv.ParquetMemCachePrunePercentage = ptr.Float32(float32(f64))
+
+				case string:
+					var f64 float64
+					switch {
+					case strings.EqualFold(jtv, "NaN"):
+						f64 = math.NaN()
+
+					case strings.EqualFold(jtv, "Infinity"):
+						f64 = math.Inf(1)
+
+					case strings.EqualFold(jtv, "-Infinity"):
+						f64 = math.Inf(-1)
+
+					default:
+						return fmt.Errorf("unknown JSON number value: %s", jtv)
+
+					}
+					sv.ParquetMemCachePrunePercentage = ptr.Float32(float32(f64))
+
+				default:
+					return fmt.Errorf("expected Float to be a JSON Number, got %T instead", value)
+
+				}
+			}
+
+		case "parquetMemCacheQueryPathDuration":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.ParquetMemCacheQueryPathDuration, value); err != nil {
+				return err
+			}
+
+		case "parquetMemCacheSize":
+			if err := awsAwsjson10_deserializeDocumentPercentOrAbsoluteLong(&sv.ParquetMemCacheSize, value); err != nil {
+				return err
+			}
+
+		case "preemptiveCacheAge":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.PreemptiveCacheAge, value); err != nil {
+				return err
+			}
+
+		case "queryFileLimit":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.QueryFileLimit = ptr.Int32(int32(i64))
+			}
+
+		case "queryLogSize":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.QueryLogSize = ptr.Int32(int32(i64))
+			}
+
+		case "queryOnlyInstances":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.QueryOnlyInstances = ptr.Int32(int32(i64))
+			}
+
+		case "replicationInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.ReplicationInterval, value); err != nil {
+				return err
+			}
+
+		case "retentionCheckInterval":
+			if err := awsAwsjson10_deserializeDocumentDuration(&sv.RetentionCheckInterval, value); err != nil {
+				return err
+			}
+
+		case "snapshottedWalFilesToKeep":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.SnapshottedWalFilesToKeep = ptr.Int32(int32(i64))
+			}
+
+		case "tableIndexCacheConcurrencyLimit":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TableIndexCacheConcurrencyLimit = ptr.Int32(int32(i64))
+			}
+
+		case "tableIndexCacheMaxEntries":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TableIndexCacheMaxEntries = ptr.Int32(int32(i64))
+			}
+
+		case "walMaxWriteBufferSize":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.WalMaxWriteBufferSize = ptr.Int32(int32(i64))
+			}
+
+		case "walReplayConcurrencyLimit":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.WalReplayConcurrencyLimit = ptr.Int32(int32(i64))
+			}
+
+		case "walReplayFailOnError":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.WalReplayFailOnError = ptr.Bool(jtv)
+			}
+
+		case "walSnapshotSize":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.WalSnapshotSize = ptr.Int32(int32(i64))
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentInstanceModeList(v *[]types.InstanceMode, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.InstanceMode
+	if *v == nil {
+		cv = []types.InstanceMode{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.InstanceMode
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected InstanceMode to be of type string, got %T instead", value)
+			}
+			col = types.InstanceMode(jtv)
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
 func awsAwsjson10_deserializeDocumentInternalServerException(v **types.InternalServerException, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3582,6 +4818,84 @@ loop:
 			}
 			mv = *destAddr
 			uv = &types.ParametersMemberInfluxDBv2{Value: mv}
+			break loop
+
+		case "InfluxDBv3Core":
+			var mv types.InfluxDBv3CoreParameters
+			destAddr := &mv
+			if err := awsAwsjson10_deserializeDocumentInfluxDBv3CoreParameters(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.ParametersMemberInfluxDBv3Core{Value: mv}
+			break loop
+
+		case "InfluxDBv3Enterprise":
+			var mv types.InfluxDBv3EnterpriseParameters
+			destAddr := &mv
+			if err := awsAwsjson10_deserializeDocumentInfluxDBv3EnterpriseParameters(&destAddr, value); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.ParametersMemberInfluxDBv3Enterprise{Value: mv}
+			break loop
+
+		default:
+			uv = &types.UnknownUnionMember{Tag: key}
+			break loop
+
+		}
+	}
+	*v = uv
+	return nil
+}
+
+func awsAwsjson10_deserializeDocumentPercentOrAbsoluteLong(v *types.PercentOrAbsoluteLong, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var uv types.PercentOrAbsoluteLong
+loop:
+	for key, value := range shape {
+		if value == nil {
+			continue
+		}
+		switch key {
+		case "absolute":
+			var mv int64
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Long to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				mv = i64
+			}
+			uv = &types.PercentOrAbsoluteLongMemberAbsolute{Value: mv}
+			break loop
+
+		case "percent":
+			var mv string
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				mv = jtv
+			}
+			uv = &types.PercentOrAbsoluteLongMemberPercent{Value: mv}
 			break loop
 
 		default:
@@ -4134,6 +5448,11 @@ func awsAwsjson10_deserializeOpDocumentCreateDbInstanceOutput(v **CreateDbInstan
 				sv.InstanceMode = types.InstanceMode(jtv)
 			}
 
+		case "instanceModes":
+			if err := awsAwsjson10_deserializeDocumentInstanceModeList(&sv.InstanceModes, value); err != nil {
+				return err
+			}
+
 		case "logDeliveryConfiguration":
 			if err := awsAwsjson10_deserializeDocumentLogDeliveryConfiguration(&sv.LogDeliveryConfiguration, value); err != nil {
 				return err
@@ -4462,6 +5781,11 @@ func awsAwsjson10_deserializeOpDocumentDeleteDbInstanceOutput(v **DeleteDbInstan
 				sv.InstanceMode = types.InstanceMode(jtv)
 			}
 
+		case "instanceModes":
+			if err := awsAwsjson10_deserializeDocumentInstanceModeList(&sv.InstanceModes, value); err != nil {
+				return err
+			}
+
 		case "logDeliveryConfiguration":
 			if err := awsAwsjson10_deserializeDocumentLogDeliveryConfiguration(&sv.LogDeliveryConfiguration, value); err != nil {
 				return err
@@ -4631,6 +5955,15 @@ func awsAwsjson10_deserializeOpDocumentGetDbClusterOutput(v **GetDbClusterOutput
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.Endpoint = ptr.String(jtv)
+			}
+
+		case "engineType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EngineType to be of type string, got %T instead", value)
+				}
+				sv.EngineType = types.EngineType(jtv)
 			}
 
 		case "failoverMode":
@@ -4874,6 +6207,11 @@ func awsAwsjson10_deserializeOpDocumentGetDbInstanceOutput(v **GetDbInstanceOutp
 					return fmt.Errorf("expected InstanceMode to be of type string, got %T instead", value)
 				}
 				sv.InstanceMode = types.InstanceMode(jtv)
+			}
+
+		case "instanceModes":
+			if err := awsAwsjson10_deserializeDocumentInstanceModeList(&sv.InstanceModes, value); err != nil {
+				return err
 			}
 
 		case "logDeliveryConfiguration":
@@ -5246,6 +6584,267 @@ func awsAwsjson10_deserializeOpDocumentListTagsForResourceOutput(v **ListTagsFor
 	return nil
 }
 
+func awsAwsjson10_deserializeOpDocumentRebootDbClusterOutput(v **RebootDbClusterOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *RebootDbClusterOutput
+	if *v == nil {
+		sv = &RebootDbClusterOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "dbClusterStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ClusterStatus to be of type string, got %T instead", value)
+				}
+				sv.DbClusterStatus = types.ClusterStatus(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson10_deserializeOpDocumentRebootDbInstanceOutput(v **RebootDbInstanceOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *RebootDbInstanceOutput
+	if *v == nil {
+		sv = &RebootDbInstanceOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "allocatedStorage":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected AllocatedStorage to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AllocatedStorage = ptr.Int32(int32(i64))
+			}
+
+		case "arn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Arn to be of type string, got %T instead", value)
+				}
+				sv.Arn = ptr.String(jtv)
+			}
+
+		case "availabilityZone":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.AvailabilityZone = ptr.String(jtv)
+			}
+
+		case "dbClusterId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DbClusterId to be of type string, got %T instead", value)
+				}
+				sv.DbClusterId = ptr.String(jtv)
+			}
+
+		case "dbInstanceType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DbInstanceType to be of type string, got %T instead", value)
+				}
+				sv.DbInstanceType = types.DbInstanceType(jtv)
+			}
+
+		case "dbParameterGroupIdentifier":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DbParameterGroupIdentifier to be of type string, got %T instead", value)
+				}
+				sv.DbParameterGroupIdentifier = ptr.String(jtv)
+			}
+
+		case "dbStorageType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DbStorageType to be of type string, got %T instead", value)
+				}
+				sv.DbStorageType = types.DbStorageType(jtv)
+			}
+
+		case "deploymentType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DeploymentType to be of type string, got %T instead", value)
+				}
+				sv.DeploymentType = types.DeploymentType(jtv)
+			}
+
+		case "endpoint":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.Endpoint = ptr.String(jtv)
+			}
+
+		case "id":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DbInstanceId to be of type string, got %T instead", value)
+				}
+				sv.Id = ptr.String(jtv)
+			}
+
+		case "influxAuthParametersSecretArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.InfluxAuthParametersSecretArn = ptr.String(jtv)
+			}
+
+		case "instanceMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected InstanceMode to be of type string, got %T instead", value)
+				}
+				sv.InstanceMode = types.InstanceMode(jtv)
+			}
+
+		case "instanceModes":
+			if err := awsAwsjson10_deserializeDocumentInstanceModeList(&sv.InstanceModes, value); err != nil {
+				return err
+			}
+
+		case "logDeliveryConfiguration":
+			if err := awsAwsjson10_deserializeDocumentLogDeliveryConfiguration(&sv.LogDeliveryConfiguration, value); err != nil {
+				return err
+			}
+
+		case "name":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DbInstanceName to be of type string, got %T instead", value)
+				}
+				sv.Name = ptr.String(jtv)
+			}
+
+		case "networkType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected NetworkType to be of type string, got %T instead", value)
+				}
+				sv.NetworkType = types.NetworkType(jtv)
+			}
+
+		case "port":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected Port to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Port = ptr.Int32(int32(i64))
+			}
+
+		case "publiclyAccessible":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.PubliclyAccessible = ptr.Bool(jtv)
+			}
+
+		case "secondaryAvailabilityZone":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.SecondaryAvailabilityZone = ptr.String(jtv)
+			}
+
+		case "status":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Status to be of type string, got %T instead", value)
+				}
+				sv.Status = types.Status(jtv)
+			}
+
+		case "vpcSecurityGroupIds":
+			if err := awsAwsjson10_deserializeDocumentVpcSecurityGroupIdList(&sv.VpcSecurityGroupIds, value); err != nil {
+				return err
+			}
+
+		case "vpcSubnetIds":
+			if err := awsAwsjson10_deserializeDocumentVpcSubnetIdList(&sv.VpcSubnetIds, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson10_deserializeOpDocumentUpdateDbClusterOutput(v **UpdateDbClusterOutput, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -5418,6 +7017,11 @@ func awsAwsjson10_deserializeOpDocumentUpdateDbInstanceOutput(v **UpdateDbInstan
 					return fmt.Errorf("expected InstanceMode to be of type string, got %T instead", value)
 				}
 				sv.InstanceMode = types.InstanceMode(jtv)
+			}
+
+		case "instanceModes":
+			if err := awsAwsjson10_deserializeDocumentInstanceModeList(&sv.InstanceModes, value); err != nil {
+				return err
 			}
 
 		case "logDeliveryConfiguration":

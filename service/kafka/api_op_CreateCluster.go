@@ -68,6 +68,11 @@ type CreateClusterInput struct {
 	// The settings for open monitoring.
 	OpenMonitoring *types.OpenMonitoringInfo
 
+	// Specifies if intelligent rebalancing should be turned on for the new MSK
+	// Provisioned cluster with Express brokers. By default, intelligent rebalancing
+	// status is ACTIVE for all new clusters.
+	Rebalancing *types.Rebalancing
+
 	// This controls storage mode for supported storage tiers.
 	StorageMode types.StorageMode
 
@@ -183,16 +188,13 @@ func (c *Client) addOperationCreateClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

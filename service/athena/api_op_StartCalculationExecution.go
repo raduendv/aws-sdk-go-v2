@@ -40,7 +40,7 @@ type StartCalculationExecutionInput struct {
 
 	// Contains configuration information for the calculation.
 	//
-	// Deprecated: Kepler Post GA Tasks : https://sim.amazon.com/issues/ATHENA-39828
+	// Deprecated: Structure is deprecated.
 	CalculationConfiguration *types.CalculationConfiguration
 
 	// A unique case-sensitive string used to ensure the request to create the
@@ -183,16 +183,13 @@ func (c *Client) addOperationStartCalculationExecutionMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

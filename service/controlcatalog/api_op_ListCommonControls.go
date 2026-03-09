@@ -37,7 +37,7 @@ type ListCommonControlsInput struct {
 	// An optional filter that narrows the results to a specific objective.
 	//
 	// This filter allows you to specify one objective ARN at a time. Passing multiple
-	// ARNs in the CommonControlFilter isn’t currently supported.
+	// ARNs in the CommonControlFilter isn’t supported.
 	CommonControlFilter *types.CommonControlFilter
 
 	// The maximum number of results on a page or for an API request call.
@@ -150,16 +150,13 @@ func (c *Client) addOperationListCommonControlsMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

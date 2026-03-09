@@ -12,6 +12,7 @@ const (
 	DestinationCategoryUnclassified   DestinationCategory = "UNCLASSIFIED"
 	DestinationCategoryAmazonS3       DestinationCategory = "AMAZON_S3"
 	DestinationCategoryAmazonDynamodb DestinationCategory = "AMAZON_DYNAMODB"
+	DestinationCategoryInterRegion    DestinationCategory = "INTER_REGION"
 )
 
 // Values returns all known values for DestinationCategory. Note that this can be
@@ -26,6 +27,7 @@ func (DestinationCategory) Values() []DestinationCategory {
 		"UNCLASSIFIED",
 		"AMAZON_S3",
 		"AMAZON_DYNAMODB",
+		"INTER_REGION",
 	}
 }
 
@@ -102,9 +104,11 @@ type MonitorLocalResourceType string
 
 // Enum values for MonitorLocalResourceType
 const (
-	MonitorLocalResourceTypeAwsVpc    MonitorLocalResourceType = "AWS::EC2::VPC"
-	MonitorLocalResourceTypeAwsAz     MonitorLocalResourceType = "AWS::AvailabilityZone"
-	MonitorLocalResourceTypeAwsSubnet MonitorLocalResourceType = "AWS::EC2::Subnet"
+	MonitorLocalResourceTypeAwsVpc     MonitorLocalResourceType = "AWS::EC2::VPC"
+	MonitorLocalResourceTypeAwsAz      MonitorLocalResourceType = "AWS::AvailabilityZone"
+	MonitorLocalResourceTypeAwsSubnet  MonitorLocalResourceType = "AWS::EC2::Subnet"
+	MonitorLocalResourceTypeAwsRegion  MonitorLocalResourceType = "AWS::Region"
+	MonitorLocalResourceTypeEksCluster MonitorLocalResourceType = "AWS::EKS::Cluster"
 )
 
 // Values returns all known values for MonitorLocalResourceType. Note that this
@@ -116,6 +120,8 @@ func (MonitorLocalResourceType) Values() []MonitorLocalResourceType {
 		"AWS::EC2::VPC",
 		"AWS::AvailabilityZone",
 		"AWS::EC2::Subnet",
+		"AWS::Region",
+		"AWS::EKS::Cluster",
 	}
 }
 
@@ -150,6 +156,7 @@ const (
 	MonitorRemoteResourceTypeAwsAz      MonitorRemoteResourceType = "AWS::AvailabilityZone"
 	MonitorRemoteResourceTypeAwsSubnet  MonitorRemoteResourceType = "AWS::EC2::Subnet"
 	MonitorRemoteResourceTypeAwsService MonitorRemoteResourceType = "AWS::AWSService"
+	MonitorRemoteResourceTypeAwsRegion  MonitorRemoteResourceType = "AWS::Region"
 )
 
 // Values returns all known values for MonitorRemoteResourceType. Note that this
@@ -162,6 +169,7 @@ func (MonitorRemoteResourceType) Values() []MonitorRemoteResourceType {
 		"AWS::AvailabilityZone",
 		"AWS::EC2::Subnet",
 		"AWS::AWSService",
+		"AWS::Region",
 	}
 }
 
@@ -219,9 +227,11 @@ type ScopeStatus string
 
 // Enum values for ScopeStatus
 const (
-	ScopeStatusSucceeded  ScopeStatus = "SUCCEEDED"
-	ScopeStatusInProgress ScopeStatus = "IN_PROGRESS"
-	ScopeStatusFailed     ScopeStatus = "FAILED"
+	ScopeStatusSucceeded    ScopeStatus = "SUCCEEDED"
+	ScopeStatusInProgress   ScopeStatus = "IN_PROGRESS"
+	ScopeStatusFailed       ScopeStatus = "FAILED"
+	ScopeStatusDeactivating ScopeStatus = "DEACTIVATING"
+	ScopeStatusDeactivated  ScopeStatus = "DEACTIVATED"
 )
 
 // Values returns all known values for ScopeStatus. Note that this can be expanded
@@ -233,6 +243,8 @@ func (ScopeStatus) Values() []ScopeStatus {
 		"SUCCEEDED",
 		"IN_PROGRESS",
 		"FAILED",
+		"DEACTIVATING",
+		"DEACTIVATED",
 	}
 }
 

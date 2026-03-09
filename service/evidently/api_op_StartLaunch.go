@@ -13,6 +13,8 @@ import (
 
 // Starts an existing launch. To create a launch, use [CreateLaunch].
 //
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
+//
 // [CreateLaunch]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_CreateLaunch.html
 func (c *Client) StartLaunch(ctx context.Context, params *StartLaunchInput, optFns ...func(*Options)) (*StartLaunchOutput, error) {
 	if params == nil {
@@ -34,11 +36,15 @@ type StartLaunchInput struct {
 	// The name of the launch to start.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Launch *string
 
 	// The name or ARN of the project that contains the launch to start.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	noSmithyDocumentSerde
@@ -49,6 +55,8 @@ type StartLaunchOutput struct {
 	// A structure that contains information about the launch that was started.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Launch *types.Launch
 
 	// Metadata pertaining to the operation's result.
@@ -145,16 +153,13 @@ func (c *Client) addOperationStartLaunchMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,11 +11,13 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Registers a compute resource in an Amazon GameLift Anywhere fleet.
+//	This API works with the following fleet types: Anywhere, Container
 //
-// For an Anywhere fleet that's running the Amazon GameLift Agent, the Agent
-// handles all compute registry tasks for you. For an Anywhere fleet that doesn't
-// use the Agent, call this operation to register fleet computes.
+// Registers a compute resource in an Amazon GameLift Servers Anywhere fleet.
+//
+// For an Anywhere fleet that's running the Amazon GameLift Servers Agent, the
+// Agent handles all compute registry tasks for you. For an Anywhere fleet that
+// doesn't use the Agent, call this operation to register fleet computes.
 //
 // To register a compute, give the compute a name (must be unique within the
 // fleet) and specify the compute resource's DNS name or IP address. Provide a
@@ -24,10 +26,10 @@ import (
 // resource.
 //
 // If successful, this operation returns compute details, including an Amazon
-// GameLift SDK endpoint or Agent endpoint. Game server processes running on the
-// compute can use this endpoint to communicate with the Amazon GameLift service.
-// Each server process includes the SDK endpoint in its call to the Amazon GameLift
-// server SDK action InitSDK() .
+// GameLift Servers SDK endpoint or Agent endpoint. Game server processes running
+// on the compute can use this endpoint to communicate with the Amazon GameLift
+// Servers service. Each server process includes the SDK endpoint in its call to
+// the Amazon GameLift Servers server SDK action InitSDK() .
 //
 // To view compute details, call [DescribeCompute] with the compute name.
 //
@@ -72,16 +74,16 @@ type RegisterComputeInput struct {
 	// This member is required.
 	FleetId *string
 
-	// The path to a TLS certificate on your compute resource. Amazon GameLift doesn't
-	// validate the path and certificate.
+	// The path to a TLS certificate on your compute resource. Amazon GameLift Servers
+	// doesn't validate the path and certificate.
 	CertificatePath *string
 
-	// The DNS name of the compute resource. Amazon GameLift requires either a DNS
-	// name or IP address.
+	// The DNS name of the compute resource. Amazon GameLift Servers requires either a
+	// DNS name or IP address.
 	DnsName *string
 
-	// The IP address of the compute resource. Amazon GameLift requires either a DNS
-	// name or IP address. When registering an Anywhere fleet, an IP address is
+	// The IP address of the compute resource. Amazon GameLift Servers requires either
+	// a DNS name or IP address. When registering an Anywhere fleet, an IP address is
 	// required.
 	IpAddress *string
 
@@ -192,16 +194,13 @@ func (c *Client) addOperationRegisterComputeMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

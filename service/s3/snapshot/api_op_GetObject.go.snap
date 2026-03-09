@@ -1,15 +1,12 @@
 GetObject
 	Initialize stack step
-		spanInitializeStart
 		AWSChecksum:SetupOutputContext
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		S3Shared:ARNLookup
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		putBucketContext
 		setOperationInput
 		ResolveEndpoint
@@ -28,11 +25,12 @@ GetObject
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		DisableAcceptEncodingGzip
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

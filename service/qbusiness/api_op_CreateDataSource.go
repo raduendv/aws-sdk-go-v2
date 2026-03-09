@@ -99,7 +99,8 @@ type CreateDataSourceInput struct {
 	MediaExtractionConfiguration *types.MediaExtractionConfiguration
 
 	// The Amazon Resource Name (ARN) of an IAM role with permission to access the
-	// data source and required resources.
+	// data source and required resources. This field is required for all connector
+	// types except custom connectors, where it is optional.
 	RoleArn *string
 
 	// Sets the frequency for Amazon Q Business to check the documents in your data
@@ -233,16 +234,13 @@ func (c *Client) addOperationCreateDataSourceMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

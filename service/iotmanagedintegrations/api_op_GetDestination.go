@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Gets a destination by ID.
+// Gets a destination by name.
 func (c *Client) GetDestination(ctx context.Context, params *GetDestinationInput, optFns ...func(*Options)) (*GetDestinationOutput, error) {
 	if params == nil {
 		params = &GetDestinationInput{}
@@ -60,6 +60,8 @@ type GetDestinationOutput struct {
 
 	// A set of key/value pairs that are used to manage the customer-managed
 	// destination.
+	//
+	// Deprecated: Tags has been deprecated from this api
 	Tags map[string]string
 
 	// The timestamp value of when the destination update requset occurred.
@@ -159,16 +161,13 @@ func (c *Client) addOperationGetDestinationMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

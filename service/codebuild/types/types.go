@@ -866,6 +866,55 @@ type DebugSession struct {
 	noSmithyDocumentSerde
 }
 
+// Contains docker server information.
+type DockerServer struct {
+
+	// Information about the compute resources the docker server uses. Available
+	// values include:
+	//
+	//   - BUILD_GENERAL1_SMALL : Use up to 4 GiB memory and 2 vCPUs for your docker
+	//   server.
+	//
+	//   - BUILD_GENERAL1_MEDIUM : Use up to 8 GiB memory and 4 vCPUs for your docker
+	//   server.
+	//
+	//   - BUILD_GENERAL1_LARGE : Use up to 16 GiB memory and 8 vCPUs for your docker
+	//   server.
+	//
+	//   - BUILD_GENERAL1_XLARGE : Use up to 64 GiB memory and 32 vCPUs for your docker
+	//   server.
+	//
+	//   - BUILD_GENERAL1_2XLARGE : Use up to 128 GiB memory and 64 vCPUs for your
+	//   docker server.
+	//
+	// This member is required.
+	ComputeType ComputeType
+
+	// A list of one or more security groups IDs.
+	//
+	// Security groups configured for Docker servers should allow ingress network
+	// traffic from the VPC configured in the project. They should allow ingress on
+	// port 9876.
+	SecurityGroupIds []string
+
+	// A DockerServerStatus object to use for this docker server.
+	Status *DockerServerStatus
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the status of the docker server.
+type DockerServerStatus struct {
+
+	// A message associated with the status of a docker server.
+	Message *string
+
+	// The status of the docker server.
+	Status *string
+
+	noSmithyDocumentSerde
+}
+
 // Information about a Docker image that is managed by CodeBuild.
 type EnvironmentImage struct {
 
@@ -986,7 +1035,7 @@ type Fleet struct {
 	BaseCapacity *int32
 
 	// The compute configuration of the compute fleet. This is only required if
-	// computeType is set to ATTRIBUTE_BASED_COMPUTE .
+	// computeType is set to ATTRIBUTE_BASED_COMPUTE or CUSTOM_INSTANCE_TYPE .
 	ComputeConfiguration *ComputeConfiguration
 
 	// Information about the compute resources the compute fleet uses. Available
@@ -999,6 +1048,9 @@ type Fleet struct {
 	//   computeConfiguration . CodeBuild will select the cheapest instance that
 	//   satisfies your specified attributes. For more information, see [Reserved capacity environment types]in the
 	//   CodeBuild User Guide.
+	//
+	//   - CUSTOM_INSTANCE_TYPE : Specify the instance type for your compute fleet. For
+	//   a list of supported instance types, see [Supported instance families]in the CodeBuild User Guide.
 	//
 	//   - BUILD_GENERAL1_SMALL : Use up to 4 GiB memory and 2 vCPUs for builds.
 	//
@@ -1053,6 +1105,7 @@ type Fleet struct {
 	//
 	// For more information, see [On-demand environment types] in the CodeBuild User Guide.
 	//
+	// [Supported instance families]: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html#environment-reserved-capacity.instance-types
 	// [Reserved capacity environment types]: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html#environment-reserved-capacity.types
 	// [On-demand environment types]: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html#environment.types
 	ComputeType ComputeType
@@ -1861,6 +1914,9 @@ type ProjectEnvironment struct {
 	// computeType is set to ATTRIBUTE_BASED_COMPUTE .
 	ComputeConfiguration *ComputeConfiguration
 
+	// A DockerServer object to use for this build project.
+	DockerServer *DockerServer
+
 	// A set of environment variables to make available to builds for this build
 	// project.
 	EnvironmentVariables []EnvironmentVariable
@@ -2167,6 +2223,37 @@ type ProxyConfiguration struct {
 	// An array of FleetProxyRule objects that represent the specified destination
 	// domains or IPs to allow or deny network access control to.
 	OrderedProxyRules []FleetProxyRule
+
+	noSmithyDocumentSerde
+}
+
+// A PullRequestBuildPolicy object that defines comment-based approval
+// requirements for triggering builds on pull requests. This policy helps control
+// when automated builds are executed based on contributor permissions and approval
+// workflows.
+type PullRequestBuildPolicy struct {
+
+	// Specifies when comment-based approval is required before triggering a build on
+	// pull requests. This setting determines whether builds run automatically or
+	// require explicit approval through comments.
+	//
+	//   - DISABLED: Builds trigger automatically without requiring comment approval
+	//
+	//   - ALL_PULL_REQUESTS: All pull requests require comment approval before builds
+	//   execute (unless contributor is one of the approver roles)
+	//
+	//   - FORK_PULL_REQUESTS: Only pull requests from forked repositories require
+	//   comment approval (unless contributor is one of the approver roles)
+	//
+	// This member is required.
+	RequiresCommentApproval PullRequestBuildCommentApproval
+
+	// List of repository roles that have approval privileges for pull request builds
+	// when comment approval is required. Only users with these roles can provide valid
+	// comment approvals. If a pull request contributor is one of these roles, their
+	// pull request builds will trigger automatically. This field is only applicable
+	// when requiresCommentApproval is not DISABLED.
+	ApproverRoles []PullRequestBuildApproverRole
 
 	noSmithyDocumentSerde
 }
@@ -2886,6 +2973,12 @@ type Webhook struct {
 
 	// The CodeBuild endpoint where webhook events are sent.
 	PayloadUrl *string
+
+	// A PullRequestBuildPolicy object that defines comment-based approval
+	// requirements for triggering builds on pull requests. This policy helps control
+	// when automated builds are executed based on contributor permissions and approval
+	// workflows.
+	PullRequestBuildPolicy *PullRequestBuildPolicy
 
 	// The scope configuration for global or organization webhooks.
 	//

@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Gets information about a knoweldge base.
+// Gets information about a knowledge base.
 func (c *Client) GetKnowledgeBase(ctx context.Context, params *GetKnowledgeBaseInput, optFns ...func(*Options)) (*GetKnowledgeBaseOutput, error) {
 	if params == nil {
 		params = &GetKnowledgeBaseInput{}
@@ -138,16 +138,13 @@ func (c *Client) addOperationGetKnowledgeBaseMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

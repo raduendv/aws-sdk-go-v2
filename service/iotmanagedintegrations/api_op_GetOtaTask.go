@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Get the over-the-air (OTA) task.
+// Get details of the over-the-air (OTA) task by its task id.
 func (c *Client) GetOtaTask(ctx context.Context, params *GetOtaTaskInput, optFns ...func(*Options)) (*GetOtaTaskOutput, error) {
 	if params == nil {
 		params = &GetOtaTaskInput{}
@@ -72,6 +72,9 @@ type GetOtaTaskOutput struct {
 
 	// The status of the over-the-air (OTA) task.
 	Status types.OtaStatus
+
+	// A set of key/value pairs that are used to manage the over-the-air (OTA) task.
+	Tags map[string]string
 
 	// The device targeted for the over-the-air (OTA) task.
 	Target []string
@@ -182,16 +185,13 @@ func (c *Client) addOperationGetOtaTaskMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

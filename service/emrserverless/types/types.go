@@ -56,6 +56,13 @@ type Application struct {
 	// amount of time being idle.
 	AutoStopConfiguration *AutoStopConfig
 
+	// The configuration object that allows encrypting local disks.
+	DiskEncryptionConfiguration *DiskEncryptionConfiguration
+
+	// The IAM Identity Center configuration applied to enable trusted identity
+	// propagation.
+	IdentityCenterConfiguration *IdentityCenterConfiguration
+
 	// The image configuration applied to all worker types.
 	ImageConfiguration *ImageConfiguration
 
@@ -65,6 +72,9 @@ type Application struct {
 	// The interactive configuration object that enables the interactive use cases for
 	// an application.
 	InteractiveConfiguration *InteractiveConfiguration
+
+	// The configuration object that enables job level cost allocation.
+	JobLevelCostAllocationConfiguration *JobLevelCostAllocationConfiguration
 
 	// The maximum capacity of the application. This is cumulative across all workers
 	// at any given point in time during the lifespan of the application is created. No
@@ -242,8 +252,25 @@ type ConfigurationOverrides struct {
 	// The override configurations for the application.
 	ApplicationConfiguration []Configuration
 
+	// The override configuration to encrypt local disks.
+	DiskEncryptionConfiguration *DiskEncryptionConfiguration
+
 	// The override configurations for monitoring.
 	MonitoringConfiguration *MonitoringConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The configuration object that allows encrypting local disks.
+type DiskEncryptionConfiguration struct {
+
+	// Specifies the optional encryption context that will be used when encrypting the
+	// data. An encryption context is a collection of non-secret key-value pairs that
+	// represent additional authenticated data.
+	EncryptionContext map[string]string
+
+	// The KMS key ARN to encrypt local disks.
+	EncryptionKeyArn *string
 
 	noSmithyDocumentSerde
 }
@@ -261,6 +288,44 @@ type Hive struct {
 
 	// The parameters for the Hive job run.
 	Parameters *string
+
+	noSmithyDocumentSerde
+}
+
+// The IAM Identity Center Configuration accepts the Identity Center instance
+// parameter required to enable trusted identity propagation. This configuration
+// allows identity propagation between integrated services and the Identity Center
+// instance.
+type IdentityCenterConfiguration struct {
+
+	// The ARN of the EMR Serverless created IAM Identity Center Application that
+	// provides trusted-identity propagation.
+	IdentityCenterApplicationArn *string
+
+	// The ARN of the IAM Identity Center instance.
+	IdentityCenterInstanceArn *string
+
+	// Enables user background sessions for this application so Livy sessions can
+	// continue running after users log out of their interactive notebook or their
+	// Identity Center sessions expire.
+	UserBackgroundSessionsEnabled *bool
+
+	noSmithyDocumentSerde
+}
+
+// The IAM Identity Center Configuration accepts the Identity Center instance
+// parameter required to enable trusted identity propagation. This configuration
+// allows identity propagation between integrated services and the Identity Center
+// instance.
+type IdentityCenterConfigurationInput struct {
+
+	// The ARN of the IAM Identity Center instance.
+	IdentityCenterInstanceArn *string
+
+	// Enables user background sessions for this application so Livy sessions can
+	// continue running after users log out of their interactive notebook or their
+	// Identity Center sessions expire.
+	UserBackgroundSessionsEnabled *bool
 
 	noSmithyDocumentSerde
 }
@@ -349,6 +414,15 @@ type JobDriverMemberSparkSubmit struct {
 
 func (*JobDriverMemberSparkSubmit) isJobDriver() {}
 
+// The configuration object that enables job level cost allocation.
+type JobLevelCostAllocationConfiguration struct {
+
+	// Enables job level cost allocation for the application.
+	Enabled *bool
+
+	noSmithyDocumentSerde
+}
+
 // Information about a job run. A job run is a unit of work, such as a Spark JAR,
 // Hive query, or SparkSQL query, that you submit to an Amazon EMR Serverless
 // application.
@@ -429,6 +503,11 @@ type JobRun struct {
 
 	// The date and time when the job was terminated.
 	EndedAt *time.Time
+
+	// Optional IAM policy. The resulting job IAM role permissions will be an
+	// intersection of the policies passed and the policy associated with your job
+	// execution role.
+	ExecutionIamPolicy *JobRunExecutionIamPolicy
 
 	// Returns the job run timeout value from the StartJobRun call. If no timeout was
 	// specified, then it returns the default timeout of 720 minutes.
@@ -536,6 +615,20 @@ type JobRunAttemptSummary struct {
 
 	// The type of the job run, such as Spark or Hive.
 	Type *string
+
+	noSmithyDocumentSerde
+}
+
+// Optional IAM policy. The resulting job IAM role permissions will be an
+// intersection of the policies passed and the policy associated with your job
+// execution role.
+type JobRunExecutionIamPolicy struct {
+
+	// An IAM inline policy to use as an execution IAM policy.
+	Policy *string
+
+	// A list of Amazon Resource Names (ARNs) to use as an execution IAM policy.
+	PolicyArns []string
 
 	noSmithyDocumentSerde
 }

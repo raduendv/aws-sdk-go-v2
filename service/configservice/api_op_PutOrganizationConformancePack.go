@@ -20,6 +20,16 @@ import (
 // ListDelegatedAdministrator permissions are added. An organization can have up to
 // 3 delegated administrators.
 //
+// When you use PutOrganizationConformancePack to deploy conformance packs across
+// member accounts, the operation can create Config rules and remediation actions
+// without requiring config:PutConfigRule or config:PutRemediationConfigurations
+// permissions in member account IAM policies.
+//
+// This API uses the AWSServiceRoleForConfigConforms service-linked role in each
+// member account to create conformance pack resources. This service-linked role
+// includes the permissions to create Config rules and remediation configurations,
+// even if member account IAM policies explicitly deny these actions.
+//
 // This API enables organization service access for
 // config-multiaccountsetup.amazonaws.com through the EnableAWSServiceAccess
 // action and creates a service-linked role
@@ -81,9 +91,9 @@ type PutOrganizationConformancePackInput struct {
 	// conformance pack while deploying a conformance pack.
 	ExcludedAccounts []string
 
-	// A string containing full conformance pack template body. Structure containing
-	// the template body with a minimum length of 1 byte and a maximum length of 51,200
-	// bytes.
+	// A string that contains the full conformance pack template body. Structure
+	// containing the template body with a minimum length of 1 byte and a maximum
+	// length of 51,200 bytes.
 	TemplateBody *string
 
 	// Location of file containing the template body. The uri must point to the
@@ -198,16 +208,13 @@ func (c *Client) addOperationPutOrganizationConformancePackMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

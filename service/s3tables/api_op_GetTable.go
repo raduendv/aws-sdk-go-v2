@@ -37,18 +37,15 @@ func (c *Client) GetTable(ctx context.Context, params *GetTableInput, optFns ...
 type GetTableInput struct {
 
 	// The name of the table.
-	//
-	// This member is required.
 	Name *string
 
 	// The name of the namespace the table is associated with.
-	//
-	// This member is required.
 	Namespace *string
 
+	// The Amazon Resource Name (ARN) of the table.
+	TableArn *string
+
 	// The Amazon Resource Name (ARN) of the table bucket associated with the table.
-	//
-	// This member is required.
 	TableBucketARN *string
 
 	noSmithyDocumentSerde
@@ -118,6 +115,10 @@ type GetTableOutput struct {
 
 	// The service that manages the table.
 	ManagedByService *string
+
+	// If this table is managed by S3 Tables, contains additional information such as
+	// replication details.
+	ManagedTableInformation *types.ManagedTableInformation
 
 	// The metadata location of the table.
 	MetadataLocation *string
@@ -201,9 +202,6 @@ func (c *Client) addOperationGetTableMiddlewares(stack *middleware.Stack, option
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
-	if err = addOpGetTableValidationMiddleware(stack); err != nil {
-		return err
-	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opGetTable(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -222,16 +220,13 @@ func (c *Client) addOperationGetTableMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

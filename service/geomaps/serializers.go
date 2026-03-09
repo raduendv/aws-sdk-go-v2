@@ -396,8 +396,16 @@ func awsRestjson1_serializeOpHttpBindingsGetStyleDescriptorInput(v *GetStyleDesc
 		return fmt.Errorf("unsupported serialization of nil %T", v)
 	}
 
+	if len(v.Buildings) > 0 {
+		encoder.SetQuery("buildings").String(string(v.Buildings))
+	}
+
 	if len(v.ColorScheme) > 0 {
 		encoder.SetQuery("color-scheme").String(string(v.ColorScheme))
+	}
+
+	if len(v.ContourDensity) > 0 {
+		encoder.SetQuery("contour-density").String(string(v.ContourDensity))
 	}
 
 	if v.Key != nil {
@@ -414,6 +422,20 @@ func awsRestjson1_serializeOpHttpBindingsGetStyleDescriptorInput(v *GetStyleDesc
 	if len(v.Style) > 0 {
 		if err := encoder.SetURI("Style").String(string(v.Style)); err != nil {
 			return err
+		}
+	}
+
+	if len(v.Terrain) > 0 {
+		encoder.SetQuery("terrain").String(string(v.Terrain))
+	}
+
+	if len(v.Traffic) > 0 {
+		encoder.SetQuery("traffic").String(string(v.Traffic))
+	}
+
+	if v.TravelModes != nil {
+		for i := range v.TravelModes {
+			encoder.AddQuery("travel-modes").String(string(v.TravelModes[i]))
 		}
 	}
 
@@ -477,6 +499,12 @@ func (m *awsRestjson1_serializeOpGetTile) HandleSerialize(ctx context.Context, i
 func awsRestjson1_serializeOpHttpBindingsGetTileInput(v *GetTileInput, encoder *httpbinding.Encoder) error {
 	if v == nil {
 		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.AdditionalFeatures != nil {
+		for i := range v.AdditionalFeatures {
+			encoder.AddQuery("additional-features").String(string(v.AdditionalFeatures[i]))
+		}
 	}
 
 	if v.Key != nil {

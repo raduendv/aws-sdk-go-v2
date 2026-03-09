@@ -69,6 +69,9 @@ type GetLicenseConfigurationOutput struct {
 	// Dimension for which the licenses are counted.
 	LicenseCountingType types.LicenseCountingType
 
+	// License Expiry.
+	LicenseExpiry *int64
+
 	// License rules.
 	LicenseRules []string
 
@@ -184,16 +187,13 @@ func (c *Client) addOperationGetLicenseConfigurationMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

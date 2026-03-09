@@ -100,6 +100,13 @@ type InvokeAgentInput struct {
 	// The unique identifier of the agent memory.
 	MemoryId *string
 
+	// Specifies parameters that control how the service populates the agent prompt
+	// for an InvokeAgent request. You can control which aspects of previous
+	// invocations in the same agent session the service uses to populate the agent
+	// prompt. This gives you more granular control over the contextual history that is
+	// used to process the current request.
+	PromptCreationConfigurations *types.PromptCreationConfigurations
+
 	// Contains parameters that specify various attributes of the session. For more
 	// information, see [Control session context].
 	//
@@ -235,16 +242,13 @@ func (c *Client) addOperationInvokeAgentMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

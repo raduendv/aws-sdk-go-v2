@@ -70,26 +70,6 @@ func (m *validateOpDisableBaseline) HandleInitialize(ctx context.Context, in mid
 	return next.HandleInitialize(ctx, in)
 }
 
-type validateOpDisableControl struct {
-}
-
-func (*validateOpDisableControl) ID() string {
-	return "OperationInputValidation"
-}
-
-func (m *validateOpDisableControl) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
-	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
-) {
-	input, ok := in.Parameters.(*DisableControlInput)
-	if !ok {
-		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
-	}
-	if err := validateOpDisableControlInput(input); err != nil {
-		return out, metadata, err
-	}
-	return next.HandleInitialize(ctx, in)
-}
-
 type validateOpEnableBaseline struct {
 }
 
@@ -462,10 +442,6 @@ func addOpDisableBaselineValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDisableBaseline{}, middleware.After)
 }
 
-func addOpDisableControlValidationMiddleware(stack *middleware.Stack) error {
-	return stack.Initialize.Add(&validateOpDisableControl{}, middleware.After)
-}
-
 func addOpEnableBaselineValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpEnableBaseline{}, middleware.After)
 }
@@ -616,9 +592,6 @@ func validateOpCreateLandingZoneInput(v *CreateLandingZoneInput) error {
 	if v.Version == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Version"))
 	}
-	if v.Manifest == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("Manifest"))
-	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -648,24 +621,6 @@ func validateOpDisableBaselineInput(v *DisableBaselineInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DisableBaselineInput"}
 	if v.EnabledBaselineIdentifier == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("EnabledBaselineIdentifier"))
-	}
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	} else {
-		return nil
-	}
-}
-
-func validateOpDisableControlInput(v *DisableControlInput) error {
-	if v == nil {
-		return nil
-	}
-	invalidParams := smithy.InvalidParamsError{Context: "DisableControlInput"}
-	if v.ControlIdentifier == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("ControlIdentifier"))
-	}
-	if v.TargetIdentifier == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("TargetIdentifier"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -976,9 +931,6 @@ func validateOpUpdateLandingZoneInput(v *UpdateLandingZoneInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "UpdateLandingZoneInput"}
 	if v.Version == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Version"))
-	}
-	if v.Manifest == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("Manifest"))
 	}
 	if v.LandingZoneIdentifier == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("LandingZoneIdentifier"))

@@ -112,6 +112,9 @@ type ListCopyJobsInput struct {
 	//   - VirtualMachine for VMware virtual machines
 	ByResourceType *string
 
+	// Filters copy jobs by the specified source recovery point ARN.
+	BySourceRecoveryPointArn *string
+
 	// Returns only copy jobs that are in the specified state.
 	ByState types.CopyJobState
 
@@ -230,16 +233,13 @@ func (c *Client) addOperationListCopyJobsMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -44,9 +44,24 @@ type ModifyDBClusterInput struct {
 
 	// A value that indicates whether major version upgrades are allowed.
 	//
-	// Constraints: You must allow major version upgrades when specifying a value for
-	// the EngineVersion parameter that is a different major version than the DB
-	// cluster's current version.
+	// Constraints:
+	//
+	//   - You must allow major version upgrades when specifying a value for the
+	//   EngineVersion parameter that is a different major version than the cluster's
+	//   current version.
+	//
+	//   - Since some parameters are version specific, changing them requires
+	//   executing a new ModifyDBCluster API call after the in-place MVU completes.
+	//
+	// Performing an MVU directly impacts the following parameters:
+	//
+	//   - MasterUserPassword
+	//
+	//   - NewDBClusterIdentifier
+	//
+	//   - VpcSecurityGroupIds
+	//
+	//   - Port
 	AllowMajorVersionUpgrade *bool
 
 	// A value that specifies whether the changes in this request and any pending
@@ -144,6 +159,19 @@ type ModifyDBClusterInput struct {
 	// Services Region.
 	MasterUserSecretKmsKeyId *string
 
+	// The network type of the cluster.
+	//
+	// The network type is determined by the DBSubnetGroup specified for the cluster.
+	// A DBSubnetGroup can support only the IPv4 protocol or the IPv4 and the IPv6
+	// protocols ( DUAL ).
+	//
+	// For more information, see [DocumentDB clusters in a VPC] in the Amazon DocumentDB Developer Guide.
+	//
+	// Valid Values: IPV4 | DUAL
+	//
+	// [DocumentDB clusters in a VPC]: https://docs.aws.amazon.com/documentdb/latest/developerguide/vpc-clusters.html
+	NetworkType *string
+
 	// The new cluster identifier for the cluster when renaming a cluster. This value
 	// is stored as a lowercase string.
 	//
@@ -205,6 +233,9 @@ type ModifyDBClusterInput struct {
 	// Constraint: You must apply the change immediately when rotating the master user
 	// password.
 	RotateMasterUserPassword *bool
+
+	// Contains the scaling configuration of an Amazon DocumentDB Serverless cluster.
+	ServerlessV2ScalingConfiguration *types.ServerlessV2ScalingConfiguration
 
 	// The storage type to associate with the DB cluster.
 	//
@@ -322,16 +353,13 @@ func (c *Client) addOperationModifyDBClusterMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves a list of read set import jobs.
+// Retrieves a list of read set import jobs and returns the data in JSON format.
 func (c *Client) ListReadSetImportJobs(ctx context.Context, params *ListReadSetImportJobsInput, optFns ...func(*Options)) (*ListReadSetImportJobsOutput, error) {
 	if params == nil {
 		params = &ListReadSetImportJobsInput{}
@@ -152,16 +152,13 @@ func (c *Client) addOperationListReadSetImportJobsMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

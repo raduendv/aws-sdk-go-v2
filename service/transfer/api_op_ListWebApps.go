@@ -12,7 +12,12 @@ import (
 )
 
 // Lists all web apps associated with your Amazon Web Services account for your
-// current region.
+// current region. The response includes the endpoint type for each web app,
+// showing whether it is publicly accessible or VPC hosted.
+//
+// For more information about using VPC endpoints with Transfer Family, see [Create a Transfer Family web app in a VPC].
+//
+// [Create a Transfer Family web app in a VPC]: https://docs.aws.amazon.com/transfer/latest/userguide/create-webapp-in-vpc.html
 func (c *Client) ListWebApps(ctx context.Context, params *ListWebAppsInput, optFns ...func(*Options)) (*ListWebAppsOutput, error) {
 	if params == nil {
 		params = &ListWebAppsInput{}
@@ -143,16 +148,13 @@ func (c *Client) addOperationListWebAppsMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

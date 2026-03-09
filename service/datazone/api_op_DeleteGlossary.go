@@ -11,6 +11,19 @@ import (
 )
 
 // Deletes a business glossary in Amazon DataZone.
+//
+// Prerequisites:
+//
+//   - The glossary must be in DISABLED state.
+//
+//   - The glossary must not have any glossary terms associated with it.
+//
+//   - The glossary must exist in the specified domain.
+//
+//   - The caller must have the datazone:DeleteGlossary permission in the domain
+//     and glossary.
+//
+//   - Glossary should not be linked to any active metadata forms.
 func (c *Client) DeleteGlossary(ctx context.Context, params *DeleteGlossaryInput, optFns ...func(*Options)) (*DeleteGlossaryOutput, error) {
 	if params == nil {
 		params = &DeleteGlossaryInput{}
@@ -136,16 +149,13 @@ func (c *Client) addOperationDeleteGlossaryMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

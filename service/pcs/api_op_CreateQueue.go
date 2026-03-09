@@ -52,6 +52,9 @@ type CreateQueueInput struct {
 	// Queues assign jobs to associated compute node groups.
 	ComputeNodeGroupConfigurations []types.ComputeNodeGroupConfiguration
 
+	// Additional options related to the Slurm scheduler.
+	SlurmConfiguration *types.QueueSlurmConfigurationRequest
+
 	// 1 or more tags added to the resource. Each tag consists of a tag key and tag
 	// value. The tag value is optional and can be an empty string.
 	Tags map[string]string
@@ -161,16 +164,13 @@ func (c *Client) addOperationCreateQueueMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

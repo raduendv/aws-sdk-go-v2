@@ -103,13 +103,13 @@ type CreateLabelingJobInput struct {
 	//
 	//   - The name can't end with "-metadata".
 	//
-	//   - If you are using one of the following [built-in task types], the attribute name must end with
-	//   "-ref". If the task type you are using is not listed below, the attribute name
-	//   must not end with "-ref".
+	//   - If you are using one of the [built-in task types]or one of the following, the attribute name
+	//   must end with "-ref".
 	//
-	//   - Image semantic segmentation ( SemanticSegmentation) , and adjustment (
-	//   AdjustmentSemanticSegmentation ) and verification (
-	//   VerificationSemanticSegmentation ) labeling jobs for this task type.
+	//   - Image semantic segmentation ( SemanticSegmentation) and adjustment (
+	//   AdjustmentSemanticSegmentation ) labeling jobs for this task type. One
+	//   exception is that verification ( VerificationSemanticSegmentation ) must not
+	//   end with -"ref".
 	//
 	//   - Video frame object detection ( VideoObjectDetection ), and adjustment and
 	//   verification ( AdjustmentVideoObjectDetection ) labeling jobs for this task
@@ -170,15 +170,9 @@ type CreateLabelingJobInput struct {
 	//
 	// For named entity recognition jobs, in addition to "labels" , you must provide
 	// worker instructions in the label category configuration file using the
-	// "instructions" parameter: "instructions": {"shortInstruction":"
-	//
-	// Add header
-	//
-	//     Add Instructions
-	//
-	// ", "fullInstruction":" Add additional instructions.
-	//
-	// "} . For details and an example, see [Create a Named Entity Recognition Labeling Job (API)].
+	// "instructions" parameter: "instructions": {"shortInstruction":"<h1>Add
+	// header</h1><p>Add Instructions</p>", "fullInstruction":"<p>Add additional
+	// instructions.</p>"} . For details and an example, see [Create a Named Entity Recognition Labeling Job (API)].
 	//
 	// For all other [built-in task types] and [custom tasks], your label category configuration file must be a JSON file
 	// in the following format. Identify the labels you want to use by replacing
@@ -332,16 +326,13 @@ func (c *Client) addOperationCreateLabelingJobMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

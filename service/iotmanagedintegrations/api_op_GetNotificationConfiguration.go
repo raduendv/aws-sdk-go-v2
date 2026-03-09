@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Get a notification configuration.
+// Get a notification configuration for a specified event type.
 func (c *Client) GetNotificationConfiguration(ctx context.Context, params *GetNotificationConfigurationInput, optFns ...func(*Options)) (*GetNotificationConfigurationOutput, error) {
 	if params == nil {
 		params = &GetNotificationConfigurationInput{}
@@ -52,6 +52,8 @@ type GetNotificationConfigurationOutput struct {
 	EventType types.EventType
 
 	// A set of key/value pairs that are used to manage the notification configuration.
+	//
+	// Deprecated: Tags has been deprecated for this api
 	Tags map[string]string
 
 	// The timestamp value of when the notification configuration was last updated.
@@ -151,16 +153,13 @@ func (c *Client) addOperationGetNotificationConfigurationMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

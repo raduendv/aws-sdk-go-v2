@@ -11,6 +11,7 @@
         "api_op_CancelContact.go",
         "api_op_CreateConfig.go",
         "api_op_CreateDataflowEndpointGroup.go",
+        "api_op_CreateDataflowEndpointGroupV2.go",
         "api_op_CreateEphemeris.go",
         "api_op_CreateMissionProfile.go",
         "api_op_DeleteConfig.go",
@@ -20,6 +21,7 @@
         "api_op_DescribeContact.go",
         "api_op_DescribeEphemeris.go",
         "api_op_GetAgentConfiguration.go",
+        "api_op_GetAgentTaskResponseUrl.go",
         "api_op_GetConfig.go",
         "api_op_GetDataflowEndpointGroup.go",
         "api_op_GetMinuteUsage.go",
@@ -61,7 +63,7 @@
         "types/types_exported_test.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/groundstation",
     "unstable": false
 }

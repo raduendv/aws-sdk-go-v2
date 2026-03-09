@@ -11,7 +11,12 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes one or more read sets.
+// Deletes one or more read sets. If the operation is successful, it returns a
+// response with no body. If there is an error with deleting one of the read sets,
+// the operation returns an error list. If the operation successfully deletes only
+// a subset of files, it will return an error list for the remaining files that
+// fail to be deleted. There is a limit of 100 read sets that can be deleted in
+// each BatchDeleteReadSet API call.
 func (c *Client) BatchDeleteReadSet(ctx context.Context, params *BatchDeleteReadSetInput, optFns ...func(*Options)) (*BatchDeleteReadSetOutput, error) {
 	if params == nil {
 		params = &BatchDeleteReadSetInput{}
@@ -144,16 +149,13 @@ func (c *Client) addOperationBatchDeleteReadSetMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

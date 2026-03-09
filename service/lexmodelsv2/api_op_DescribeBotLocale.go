@@ -109,6 +109,16 @@ type DescribeBotLocaleOutput struct {
 	// The number of slot types defined for the locale.
 	SlotTypesCount *int32
 
+	// The sensitivity level for voice activity detection (VAD) configured for the bot
+	// locale.
+	SpeechDetectionSensitivity types.SpeechDetectionSensitivity
+
+	// The speech-to-text settings configured for the bot locale.
+	SpeechRecognitionSettings *types.SpeechRecognitionSettings
+
+	// The unified speech settings configured for the bot locale.
+	UnifiedSpeechSettings *types.UnifiedSpeechSettings
+
 	// The Amazon Polly voice Amazon Lex uses for voice interaction with the user.
 	VoiceSettings *types.VoiceSettings
 
@@ -206,16 +216,13 @@ func (c *Client) addOperationDescribeBotLocaleMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

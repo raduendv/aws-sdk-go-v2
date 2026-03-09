@@ -3400,6 +3400,84 @@ func awsAwsjson11_serializeDocumentAPIKeyTokenDomains(v []string, value smithyjs
 	return nil
 }
 
+func awsAwsjson11_serializeDocumentApplicationAttribute(v *types.ApplicationAttribute, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Name != nil {
+		ok := object.Key("Name")
+		ok.String(*v.Name)
+	}
+
+	if v.Values != nil {
+		ok := object.Key("Values")
+		if err := awsAwsjson11_serializeDocumentAttributeValues(v.Values, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentApplicationAttributes(v []types.ApplicationAttribute, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsAwsjson11_serializeDocumentApplicationAttribute(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentApplicationConfig(v *types.ApplicationConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Attributes != nil {
+		ok := object.Key("Attributes")
+		if err := awsAwsjson11_serializeDocumentApplicationAttributes(v.Attributes, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentAsnList(v []int64, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.Long(v[i])
+	}
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentAsnMatchStatement(v *types.AsnMatchStatement, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.AsnList != nil {
+		ok := object.Key("AsnList")
+		if err := awsAwsjson11_serializeDocumentAsnList(v.AsnList, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ForwardedIPConfig != nil {
+		ok := object.Key("ForwardedIPConfig")
+		if err := awsAwsjson11_serializeDocumentForwardedIPConfig(v.ForwardedIPConfig, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsAwsjson11_serializeDocumentAssociationConfig(v *types.AssociationConfig, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -3411,6 +3489,17 @@ func awsAwsjson11_serializeDocumentAssociationConfig(v *types.AssociationConfig,
 		}
 	}
 
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentAttributeValues(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
 	return nil
 }
 
@@ -3445,6 +3534,25 @@ func awsAwsjson11_serializeDocumentAWSManagedRulesACFPRuleSet(v *types.AWSManage
 		if err := awsAwsjson11_serializeDocumentResponseInspection(v.ResponseInspection, ok); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentAWSManagedRulesAntiDDoSRuleSet(v *types.AWSManagedRulesAntiDDoSRuleSet, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ClientSideActionConfig != nil {
+		ok := object.Key("ClientSideActionConfig")
+		if err := awsAwsjson11_serializeDocumentClientSideActionConfig(v.ClientSideActionConfig, ok); err != nil {
+			return err
+		}
+	}
+
+	if len(v.SensitivityToBlock) > 0 {
+		ok := object.Key("SensitivityToBlock")
+		ok.String(string(v.SensitivityToBlock))
 	}
 
 	return nil
@@ -3604,6 +3712,44 @@ func awsAwsjson11_serializeDocumentChallengeConfig(v *types.ChallengeConfig, val
 	if v.ImmunityTimeProperty != nil {
 		ok := object.Key("ImmunityTimeProperty")
 		if err := awsAwsjson11_serializeDocumentImmunityTimeProperty(v.ImmunityTimeProperty, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentClientSideAction(v *types.ClientSideAction, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ExemptUriRegularExpressions != nil {
+		ok := object.Key("ExemptUriRegularExpressions")
+		if err := awsAwsjson11_serializeDocumentRegularExpressionList(v.ExemptUriRegularExpressions, ok); err != nil {
+			return err
+		}
+	}
+
+	if len(v.Sensitivity) > 0 {
+		ok := object.Key("Sensitivity")
+		ok.String(string(v.Sensitivity))
+	}
+
+	if len(v.UsageOfAction) > 0 {
+		ok := object.Key("UsageOfAction")
+		ok.String(string(v.UsageOfAction))
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentClientSideActionConfig(v *types.ClientSideActionConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Challenge != nil {
+		ok := object.Key("Challenge")
+		if err := awsAwsjson11_serializeDocumentClientSideAction(v.Challenge, ok); err != nil {
 			return err
 		}
 	}
@@ -4523,6 +4669,13 @@ func awsAwsjson11_serializeDocumentManagedRuleGroupConfig(v *types.ManagedRuleGr
 		}
 	}
 
+	if v.AWSManagedRulesAntiDDoSRuleSet != nil {
+		ok := object.Key("AWSManagedRulesAntiDDoSRuleSet")
+		if err := awsAwsjson11_serializeDocumentAWSManagedRulesAntiDDoSRuleSet(v.AWSManagedRulesAntiDDoSRuleSet, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.AWSManagedRulesATPRuleSet != nil {
 		ok := object.Key("AWSManagedRulesATPRuleSet")
 		if err := awsAwsjson11_serializeDocumentAWSManagedRulesATPRuleSet(v.AWSManagedRulesATPRuleSet, ok); err != nil {
@@ -4655,6 +4808,18 @@ func awsAwsjson11_serializeDocumentNotStatement(v *types.NotStatement, value smi
 	return nil
 }
 
+func awsAwsjson11_serializeDocumentOnSourceDDoSProtectionConfig(v *types.OnSourceDDoSProtectionConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.ALBLowReputationMode) > 0 {
+		ok := object.Key("ALBLowReputationMode")
+		ok.String(string(v.ALBLowReputationMode))
+	}
+
+	return nil
+}
+
 func awsAwsjson11_serializeDocumentOrStatement(v *types.OrStatement, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -4781,6 +4946,13 @@ func awsAwsjson11_serializeDocumentRateBasedStatementCustomKey(v *types.RateBase
 	object := value.Object()
 	defer object.Close()
 
+	if v.ASN != nil {
+		ok := object.Key("ASN")
+		if err := awsAwsjson11_serializeDocumentRateLimitAsn(v.ASN, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Cookie != nil {
 		ok := object.Key("Cookie")
 		if err := awsAwsjson11_serializeDocumentRateLimitCookie(v.Cookie, ok); err != nil {
@@ -4871,6 +5043,13 @@ func awsAwsjson11_serializeDocumentRateBasedStatementCustomKeys(v []types.RateBa
 			return err
 		}
 	}
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentRateLimitAsn(v *types.RateLimitAsn, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
 	return nil
 }
 
@@ -5693,6 +5872,13 @@ func awsAwsjson11_serializeDocumentStatement(v *types.Statement, value smithyjso
 		}
 	}
 
+	if v.AsnMatchStatement != nil {
+		ok := object.Key("AsnMatchStatement")
+		if err := awsAwsjson11_serializeDocumentAsnMatchStatement(v.AsnMatchStatement, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.ByteMatchStatement != nil {
 		ok := object.Key("ByteMatchStatement")
 		if err := awsAwsjson11_serializeDocumentByteMatchStatement(v.ByteMatchStatement, ok); err != nil {
@@ -6202,6 +6388,13 @@ func awsAwsjson11_serializeOpDocumentCreateWebACLInput(v *CreateWebACLInput, val
 	object := value.Object()
 	defer object.Close()
 
+	if v.ApplicationConfig != nil {
+		ok := object.Key("ApplicationConfig")
+		if err := awsAwsjson11_serializeDocumentApplicationConfig(v.ApplicationConfig, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.AssociationConfig != nil {
 		ok := object.Key("AssociationConfig")
 		if err := awsAwsjson11_serializeDocumentAssociationConfig(v.AssociationConfig, ok); err != nil {
@@ -6252,6 +6445,13 @@ func awsAwsjson11_serializeOpDocumentCreateWebACLInput(v *CreateWebACLInput, val
 	if v.Name != nil {
 		ok := object.Key("Name")
 		ok.String(*v.Name)
+	}
+
+	if v.OnSourceDDoSProtectionConfig != nil {
+		ok := object.Key("OnSourceDDoSProtectionConfig")
+		if err := awsAwsjson11_serializeDocumentOnSourceDDoSProtectionConfig(v.OnSourceDDoSProtectionConfig, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.Rules != nil {
@@ -7371,6 +7571,13 @@ func awsAwsjson11_serializeOpDocumentUpdateWebACLInput(v *UpdateWebACLInput, val
 	object := value.Object()
 	defer object.Close()
 
+	if v.ApplicationConfig != nil {
+		ok := object.Key("ApplicationConfig")
+		if err := awsAwsjson11_serializeDocumentApplicationConfig(v.ApplicationConfig, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.AssociationConfig != nil {
 		ok := object.Key("AssociationConfig")
 		if err := awsAwsjson11_serializeDocumentAssociationConfig(v.AssociationConfig, ok); err != nil {
@@ -7431,6 +7638,13 @@ func awsAwsjson11_serializeOpDocumentUpdateWebACLInput(v *UpdateWebACLInput, val
 	if v.Name != nil {
 		ok := object.Key("Name")
 		ok.String(*v.Name)
+	}
+
+	if v.OnSourceDDoSProtectionConfig != nil {
+		ok := object.Key("OnSourceDDoSProtectionConfig")
+		if err := awsAwsjson11_serializeDocumentOnSourceDDoSProtectionConfig(v.OnSourceDDoSProtectionConfig, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.Rules != nil {

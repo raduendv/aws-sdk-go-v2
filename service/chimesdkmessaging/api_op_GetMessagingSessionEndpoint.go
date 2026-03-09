@@ -28,6 +28,11 @@ func (c *Client) GetMessagingSessionEndpoint(ctx context.Context, params *GetMes
 }
 
 type GetMessagingSessionEndpointInput struct {
+
+	// The type of network for the messaging session endpoint. Either IPv4 only or
+	// dual-stack (IPv4 and IPv6).
+	NetworkType types.NetworkType
+
 	noSmithyDocumentSerde
 }
 
@@ -127,16 +132,13 @@ func (c *Client) addOperationGetMessagingSessionEndpointMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

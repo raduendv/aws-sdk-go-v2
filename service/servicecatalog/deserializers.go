@@ -18,16 +18,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpAcceptPortfolioShare struct {
 }
@@ -2827,6 +2818,9 @@ func awsAwsjson11_deserializeOpErrorDeleteServiceAction(response *smithyhttp.Res
 		errorMessage = bodyInfo.Message
 	}
 	switch {
+	case strings.EqualFold("InvalidParametersException", errorCode):
+		return awsAwsjson11_deserializeErrorInvalidParametersException(response, errorBody)
+
 	case strings.EqualFold("ResourceInUseException", errorCode):
 		return awsAwsjson11_deserializeErrorResourceInUseException(response, errorBody)
 
@@ -5329,6 +5323,9 @@ func awsAwsjson11_deserializeOpErrorDisassociateServiceActionFromProvisioningArt
 		errorMessage = bodyInfo.Message
 	}
 	switch {
+	case strings.EqualFold("InvalidParametersException", errorCode):
+		return awsAwsjson11_deserializeErrorInvalidParametersException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
 

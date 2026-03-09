@@ -39,7 +39,9 @@
         "api_op_GetQueryExecution.go",
         "api_op_GetQueryResults.go",
         "api_op_GetQueryRuntimeStatistics.go",
+        "api_op_GetResourceDashboard.go",
         "api_op_GetSession.go",
+        "api_op_GetSessionEndpoint.go",
         "api_op_GetSessionStatus.go",
         "api_op_GetTableMetadata.go",
         "api_op_GetWorkGroup.go",
@@ -95,7 +97,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/athena",
     "unstable": false
 }

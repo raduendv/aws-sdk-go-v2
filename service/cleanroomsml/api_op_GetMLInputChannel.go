@@ -110,6 +110,11 @@ type GetMLInputChannelOutput struct {
 	// The number of records in the ML input channel.
 	NumberOfRecords *int64
 
+	// Returns the privacy budgets that control access to this Clean Rooms ML input
+	// channel. Use these budgets to monitor and limit resource consumption over
+	// specified time periods.
+	PrivacyBudgets types.PrivacyBudgets
+
 	// The ID of the protected query that was used to create the ML input channel.
 	ProtectedQueryIdentifier *string
 
@@ -118,6 +123,11 @@ type GetMLInputChannelOutput struct {
 
 	// Details about the status of a resource.
 	StatusDetails *types.StatusDetails
+
+	// The synthetic data configuration for this ML input channel, including
+	// parameters for generating privacy-preserving synthetic data and evaluation
+	// scores for measuring the privacy of the generated data.
+	SyntheticDataConfiguration *types.SyntheticDataConfiguration
 
 	// The optional metadata that you applied to the resource to help you categorize
 	// and organize them. Each tag consists of a key and an optional value, both of
@@ -243,16 +253,13 @@ func (c *Client) addOperationGetMLInputChannelMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

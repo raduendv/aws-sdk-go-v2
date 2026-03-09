@@ -37,7 +37,9 @@ type DeleteApplicationAssignmentInput struct {
 
 	// An identifier for an object in IAM Identity Center, such as a user or group.
 	// PrincipalIds are GUIDs (For example, f81d4fae-7dec-11d0-a765-00a0c91e6bf6). For
-	// more information about PrincipalIds in IAM Identity Center, see the IAM Identity Center Identity Store API Reference.
+	// more information about PrincipalIds in IAM Identity Center, see the [IAM Identity Center Identity Store API Reference].
+	//
+	// [IAM Identity Center Identity Store API Reference]: https://docs.aws.amazon.com/singlesignon/latest/IdentityStoreAPIReference/welcome.html
 	//
 	// This member is required.
 	PrincipalId *string
@@ -145,16 +147,13 @@ func (c *Client) addOperationDeleteApplicationAssignmentMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

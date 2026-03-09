@@ -35,9 +35,9 @@ func (c *Client) GetApplication(ctx context.Context, params *GetApplicationInput
 
 type GetApplicationInput struct {
 
-	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the application resource. Format example:
-	// ARN- arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6 or
-	// ID- a-9ZY8X7Wv6 .
+	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the application resource. Example ARN:
+	// arn:aws:gameliftstreams:us-west-2:111122223333:application/a-9ZY8X7Wv6 . Example
+	// ID: a-9ZY8X7Wv6 .
 	//
 	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
@@ -49,9 +49,11 @@ type GetApplicationInput struct {
 
 type GetApplicationOutput struct {
 
-	// An Amazon Resource Name (ARN) that's assigned to an application resource and
-	// uniquely identifies it across all Amazon Web Services Regions. Format is
-	// arn:aws:gameliftstreams:[AWS Region]:[AWS account]:application/[resource ID] .
+	// The [Amazon Resource Name (ARN)] that's assigned to an application resource and uniquely identifies it
+	// across all Amazon Web Services Regions. Format is arn:aws:gameliftstreams:[AWS
+	// Region]:[AWS account]:application/[resource ID] .
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
 	// This member is required.
 	Arn *string
@@ -74,9 +76,8 @@ type GetApplicationOutput struct {
 	//  A set of stream groups that this application is associated with. You can use
 	// any of these stream groups to stream your application.
 	//
-	// This value is a set of [Amazon Resource Names (ARNs)] that uniquely identify stream group resources. Format
-	// example: arn:aws:gameliftstreams:us-west-2:123456789012:streamgroup/sg-1AB2C3De4
-	// .
+	// This value is a set of [Amazon Resource Names (ARNs)] that uniquely identify stream group resources. Example
+	// ARN: arn:aws:gameliftstreams:us-west-2:111122223333:streamgroup/sg-1AB2C3De4 .
 	//
 	// [Amazon Resource Names (ARNs)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	AssociatedStreamGroups []string
@@ -88,15 +89,12 @@ type GetApplicationOutput struct {
 	// A human-readable label for the application. You can edit this value.
 	Description *string
 
-	// The path and file name of the executable file that launches the content for
-	// streaming.
+	// The relative path and file name of the executable file that launches the
+	// content for streaming.
 	ExecutablePath *string
 
-	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the application resource. Format example:
-	// ARN- arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6 or
-	// ID- a-9ZY8X7Wv6 .
-	//
-	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
+	// A unique ID value that is assigned to the resource when it's created. Format
+	// example: a-9ZY8X7Wv6 .
 	Id *string
 
 	// A timestamp that indicates when this resource was last updated. Timestamps are
@@ -118,6 +116,8 @@ type GetApplicationOutput struct {
 	//   - For Windows applications
 	//
 	//   - Microsoft Windows Server 2022 Base ( Type=WINDOWS, Version=2022 )
+	//
+	//   - Proton 9.0-2 ( Type=PROTON, Version=20250516 )
 	//
 	//   - Proton 8.0-5 ( Type=PROTON, Version=20241007 )
 	//
@@ -241,16 +241,13 @@ func (c *Client) addOperationGetApplicationMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -82,8 +82,8 @@ type UpdateContactInput struct {
 	//
 	// This field can be used to show channel subtype, such as connect:Guide .
 	//
-	// Currently Contact Expiry is the only segment attribute which can be updated by
-	// using the UpdateContact API.
+	// Contact Expiry, and user-defined attributes (String - String) that are defined
+	// in predefined attributes, can be updated by using the UpdateContact API.
 	SegmentAttributes map[string]types.SegmentAttributeValue
 
 	// External system endpoint for the contact was initiated. For external audio
@@ -200,16 +200,13 @@ func (c *Client) addOperationUpdateContactMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

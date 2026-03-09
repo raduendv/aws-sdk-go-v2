@@ -56,7 +56,7 @@ type GetContactOutput struct {
 	// This member is required.
 	Plan *types.Plan
 
-	// The type of contact, either PERSONAL or ESCALATION .
+	// The type of contact.
 	//
 	// This member is required.
 	Type types.ContactType
@@ -158,16 +158,13 @@ func (c *Client) addOperationGetContactMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

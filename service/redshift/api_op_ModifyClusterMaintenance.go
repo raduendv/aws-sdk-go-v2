@@ -39,7 +39,7 @@ type ModifyClusterMaintenanceInput struct {
 	DeferMaintenance *bool
 
 	// An integer indicating the duration of the maintenance window in days. If you
-	// specify a duration, you can't specify an end time. The duration must be 45 days
+	// specify a duration, you can't specify an end time. The duration must be 60 days
 	// or less.
 	DeferMaintenanceDuration *int32
 
@@ -155,16 +155,13 @@ func (c *Client) addOperationModifyClusterMaintenanceMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

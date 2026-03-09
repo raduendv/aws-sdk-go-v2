@@ -13,6 +13,21 @@ import (
 )
 
 // Starts the metadata generation run.
+//
+// Prerequisites:
+//
+//   - Asset must be created and belong to the specified domain and project.
+//
+//   - Asset type must be supported for metadata generation (e.g., Amazon Web
+//     Services Glue table).
+//
+//   - Asset must have a structured schema with valid rows and columns.
+//
+//   - Valid values for --type: BUSINESS_DESCRIPTIONS, BUSINESS_NAMES,
+//     BUSINESS_GLOSSARY_ASSOCIATIONS.
+//
+//   - The user must have permission to run metadata generation in the
+//     domain/project.
 func (c *Client) StartMetadataGenerationRun(ctx context.Context, params *StartMetadataGenerationRunInput, optFns ...func(*Options)) (*StartMetadataGenerationRunOutput, error) {
 	if params == nil {
 		params = &StartMetadataGenerationRunInput{}
@@ -47,14 +62,18 @@ type StartMetadataGenerationRunInput struct {
 	// This member is required.
 	Target *types.MetadataGenerationRunTarget
 
-	// The type of the metadata generation run.
-	//
-	// This member is required.
-	Type types.MetadataGenerationRunType
-
 	// A unique, case-sensitive identifier to ensure idempotency of the request. This
 	// field is automatically populated if not provided.
 	ClientToken *string
+
+	// The type of the metadata generation run.
+	//
+	// Deprecated: This field is going to be deprecated, please use the 'types' field
+	// to provide the MetadataGenerationRun types
+	Type types.MetadataGenerationRunType
+
+	// The types of the metadata generation run.
+	Types []types.MetadataGenerationRunType
 
 	noSmithyDocumentSerde
 }
@@ -86,7 +105,13 @@ type StartMetadataGenerationRunOutput struct {
 	Status types.MetadataGenerationRunStatus
 
 	// The type of the metadata generation run.
+	//
+	// Deprecated: This field is going to be deprecated, please use the 'types' field
+	// to provide the MetadataGenerationRun types
 	Type types.MetadataGenerationRunType
+
+	// The types of the metadata generation run.
+	Types []types.MetadataGenerationRunType
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -185,16 +210,13 @@ func (c *Client) addOperationStartMetadataGenerationRunMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

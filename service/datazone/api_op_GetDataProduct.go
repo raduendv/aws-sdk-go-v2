@@ -13,6 +13,14 @@ import (
 )
 
 // Gets the data product.
+//
+// Prerequisites:
+//
+//   - The data product ID must exist.
+//
+//   - The domain must be valid and accessible.
+//
+//   - User must have read or discovery permissions for the data product.
 func (c *Client) GetDataProduct(ctx context.Context, params *GetDataProductInput, optFns ...func(*Options)) (*GetDataProductOutput, error) {
 	if params == nil {
 		params = &GetDataProductInput{}
@@ -196,16 +204,13 @@ func (c *Client) addOperationGetDataProductMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

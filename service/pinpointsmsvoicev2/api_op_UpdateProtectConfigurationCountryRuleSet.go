@@ -34,8 +34,8 @@ type UpdateProtectConfigurationCountryRuleSetInput struct {
 
 	// A map of ProtectConfigurationCountryRuleSetInformation objects that contain the
 	// details for the requested NumberCapability. The Key is the two-letter ISO
-	// country code. For a list of supported ISO country codes, see [Supported countries and regions (SMS channel)]in the AWS End
-	// User Messaging SMS User Guide.
+	// country code. For a list of supported ISO country codes, see [Supported countries and regions (SMS channel)]in the End User
+	// Messaging SMS User Guide.
 	//
 	// For example, to set the United States as allowed and Canada as blocked, the
 	// CountryRuleSetUpdates would be formatted as: "CountryRuleSetUpdates": { "US" :
@@ -176,16 +176,13 @@ func (c *Client) addOperationUpdateProtectConfigurationCountryRuleSetMiddlewares
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

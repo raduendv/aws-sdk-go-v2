@@ -51,6 +51,10 @@ type GetCostAndUsageWithResourcesInput struct {
 	// that account's usage of that service. You can nest Expression objects to define
 	// any combination of dimension filters. For more information, see [Expression].
 	//
+	// The GetCostAndUsageWithResources operation requires that you either group by or
+	// filter by a ResourceId . It requires the [Expression]"SERVICE = Amazon Elastic Compute
+	// Cloud - Compute" in the filter.
+	//
 	// Valid values for MatchOptions for Dimensions are EQUALS and CASE_SENSITIVE .
 	//
 	// Valid values for MatchOptions for CostCategories and Tags are EQUALS , ABSENT ,
@@ -227,16 +231,13 @@ func (c *Client) addOperationGetCostAndUsageWithResourcesMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

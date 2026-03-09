@@ -79,12 +79,16 @@ type ListStreamConsumersInput struct {
 	// You can't specify this parameter if you specify the NextToken parameter.
 	StreamCreationTimestamp *time.Time
 
+	// Not Implemented. Reserved for future use.
+	StreamId *string
+
 	noSmithyDocumentSerde
 }
 
 func (in *ListStreamConsumersInput) bindEndpointParams(p *EndpointParameters) {
 
 	p.StreamARN = in.StreamARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("control")
 }
 
@@ -201,16 +205,13 @@ func (c *Client) addOperationListStreamConsumersMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

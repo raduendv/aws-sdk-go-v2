@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates the SPICE capacity configuration for a Amazon QuickSight account.
+// Updates the SPICE capacity configuration for a Quick Sight account.
 func (c *Client) UpdateSPICECapacityConfiguration(ctx context.Context, params *UpdateSPICECapacityConfigurationInput, optFns ...func(*Options)) (*UpdateSPICECapacityConfigurationOutput, error) {
 	if params == nil {
 		params = &UpdateSPICECapacityConfigurationInput{}
@@ -152,16 +152,13 @@ func (c *Client) addOperationUpdateSPICECapacityConfigurationMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

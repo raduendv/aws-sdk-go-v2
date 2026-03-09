@@ -13,10 +13,10 @@ import (
 
 // Returns information about a new or existing template. The GetTemplateSummary
 // action is useful for viewing parameter information, such as default parameter
-// values and parameter types, before you create or update a stack or stack set.
+// values and parameter types, before you create or update a stack or StackSet.
 //
 // You can use the GetTemplateSummary action when you submit a template, or you
-// can get template information for a stack set, or a running or deleted stack.
+// can get template information for a StackSet, or a running or deleted stack.
 //
 // For deleted stacks, GetTemplateSummary returns the template information for up
 // to 90 days after the stack has been deleted. If the template doesn't exist, a
@@ -43,7 +43,7 @@ type GetTemplateSummaryInput struct {
 	// administrator in the organization's management account or as a delegated
 	// administrator in a member account.
 	//
-	// By default, SELF is specified. Use SELF for stack sets with self-managed
+	// By default, SELF is specified. Use SELF for StackSets with self-managed
 	// permissions.
 	//
 	//   - If you are signed in to the management account, specify SELF .
@@ -66,13 +66,13 @@ type GetTemplateSummaryInput struct {
 	// StackSetName , TemplateBody , or TemplateURL .
 	StackName *string
 
-	// The name or unique ID of the stack set from which the stack was created.
+	// The name or unique ID of the StackSet from which the stack was created.
 	//
 	// Conditional: You must specify only one of the following parameters: StackName ,
 	// StackSetName , TemplateBody , or TemplateURL .
 	StackSetName *string
 
-	// Structure containing the template body with a minimum length of 1 byte and a
+	// Structure that contains the template body with a minimum length of 1 byte and a
 	// maximum length of 51,200 bytes.
 	//
 	// Conditional: You must specify only one of the following parameters: StackName ,
@@ -82,7 +82,7 @@ type GetTemplateSummaryInput struct {
 	// Specifies options for the GetTemplateSummary API action.
 	TemplateSummaryConfig *types.TemplateSummaryConfig
 
-	// The URL of a file containing the template body. The URL must point to a
+	// The URL of a file that contains the template body. The URL must point to a
 	// template (max size: 1 MB) that's located in an Amazon S3 bucket or a Systems
 	// Manager document. The location for an Amazon S3 bucket must start with https:// .
 	//
@@ -137,7 +137,7 @@ type GetTemplateSummaryOutput struct {
 	// capabilities of the template.
 	Version *string
 
-	// An object containing any warnings returned.
+	// An object that contains any warnings returned.
 	Warnings *types.Warnings
 
 	// Metadata pertaining to the operation's result.
@@ -231,16 +231,13 @@ func (c *Client) addOperationGetTemplateSummaryMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

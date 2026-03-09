@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Grants permissions to cancel an existing membership.
+// Cancels an existing membership.
 func (c *Client) CancelMembership(ctx context.Context, params *CancelMembershipInput, optFns ...func(*Options)) (*CancelMembershipOutput, error) {
 	if params == nil {
 		params = &CancelMembershipInput{}
@@ -139,16 +139,13 @@ func (c *Client) addOperationCancelMembershipMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

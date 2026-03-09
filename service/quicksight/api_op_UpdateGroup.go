@@ -30,8 +30,8 @@ func (c *Client) UpdateGroup(ctx context.Context, params *UpdateGroupInput, optF
 type UpdateGroupInput struct {
 
 	// The ID for the Amazon Web Services account that the group is in. Currently, you
-	// use the ID for the Amazon Web Services account that contains your Amazon
-	// QuickSight account.
+	// use the ID for the Amazon Web Services account that contains your Amazon Quick
+	// Sight account.
 	//
 	// This member is required.
 	AwsAccountId *string
@@ -157,16 +157,13 @@ func (c *Client) addOperationUpdateGroupMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -39,7 +39,7 @@ type ListManagedWorkgroupsInput struct {
 	// which returns results in the next page.
 	NextToken *string
 
-	// The Amazon Resource Name (ARN) for the managed workgroup in the AWS Glue Data
+	// The Amazon Resource Name (ARN) for the managed workgroup in the Glue Data
 	// Catalog.
 	SourceArn *string
 
@@ -147,16 +147,13 @@ func (c *Client) addOperationListManagedWorkgroupsMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

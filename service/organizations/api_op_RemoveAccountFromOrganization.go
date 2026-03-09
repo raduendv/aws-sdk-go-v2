@@ -18,8 +18,8 @@ import (
 // for any expenses accrued by the member account after it's removed from the
 // organization.
 //
-// This operation can be called only from the organization's management account.
-// Member accounts can remove themselves with LeaveOrganizationinstead.
+// You can only call this operation from the management account. Member accounts
+// can remove themselves with LeaveOrganizationinstead.
 //
 //   - You can remove an account from your organization only if the account is
 //     configured with the information required to operate as a standalone account.
@@ -55,8 +55,7 @@ func (c *Client) RemoveAccountFromOrganization(ctx context.Context, params *Remo
 
 type RemoveAccountFromOrganizationInput struct {
 
-	// The unique identifier (ID) of the member account that you want to remove from
-	// the organization.
+	// ID for the member account that you want to remove from the organization.
 	//
 	// The [regex pattern] for an account ID string requires exactly 12 digits.
 	//
@@ -163,16 +162,13 @@ func (c *Client) addOperationRemoveAccountFromOrganizationMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

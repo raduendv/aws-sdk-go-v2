@@ -15,6 +15,8 @@ import (
 // service template is a version that isn't backward compatible. A minor version of
 // a service template is a version that's backward compatible within its major
 // version.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) CreateServiceTemplateVersion(ctx context.Context, params *CreateServiceTemplateVersionInput, optFns ...func(*Options)) (*CreateServiceTemplateVersionOutput, error) {
 	if params == nil {
 		params = &CreateServiceTemplateVersionInput{}
@@ -186,16 +188,13 @@ func (c *Client) addOperationCreateServiceTemplateVersionMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

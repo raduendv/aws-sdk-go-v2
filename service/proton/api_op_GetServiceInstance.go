@@ -16,6 +16,8 @@ import (
 
 // Get detailed data for a service instance. A service instance is an
 // instantiation of service template and it runs in a specific environment.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) GetServiceInstance(ctx context.Context, params *GetServiceInstanceInput, optFns ...func(*Options)) (*GetServiceInstanceOutput, error) {
 	if params == nil {
 		params = &GetServiceInstanceInput{}
@@ -147,16 +149,13 @@ func (c *Client) addOperationGetServiceInstanceMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

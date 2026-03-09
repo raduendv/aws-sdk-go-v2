@@ -15,9 +15,8 @@ import (
 // don't supply any parameter, that value remains unchanged. You can't change a
 // policy's type.
 //
-// This operation can be called only from the organization's management account or
-// by a member account that is a delegated administrator for an Amazon Web Services
-// service.
+// You can only call this operation from the management account or a member
+// account that is a delegated administrator.
 func (c *Client) UpdatePolicy(ctx context.Context, params *UpdatePolicyInput, optFns ...func(*Options)) (*UpdatePolicyOutput, error) {
 	if params == nil {
 		params = &UpdatePolicyInput{}
@@ -35,7 +34,7 @@ func (c *Client) UpdatePolicy(ctx context.Context, params *UpdatePolicyInput, op
 
 type UpdatePolicyInput struct {
 
-	// The unique identifier (ID) of the policy that you want to update.
+	// ID for the policy that you want to update.
 	//
 	// The [regex pattern] for a policy ID string requires "p-" followed by from 8 to 128 lowercase
 	// or uppercase letters, digits, or the underscore character (_).
@@ -170,16 +169,13 @@ func (c *Client) addOperationUpdatePolicyMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

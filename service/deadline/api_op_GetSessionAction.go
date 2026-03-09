@@ -82,6 +82,9 @@ type GetSessionActionOutput struct {
 	// The date and time the resource ended running.
 	EndedAt *time.Time
 
+	// The list of manifest properties that describe file attachments for the task run.
+	Manifests []types.TaskRunManifestPropertiesResponse
+
 	// The process exit code. The default Deadline Cloud worker agent converts
 	// unsigned 32-bit exit codes to signed 32-bit exit codes.
 	ProcessExitCode *int32
@@ -195,16 +198,13 @@ func (c *Client) addOperationGetSessionActionMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -12,8 +12,7 @@ import (
 )
 
 // Retrieves the specified channel group that's configured in AWS Elemental
-// MediaPackage, including the channels and origin endpoints that are associated
-// with it.
+// MediaPackage.
 func (c *Client) GetChannelGroup(ctx context.Context, params *GetChannelGroupInput, optFns ...func(*Options)) (*GetChannelGroupOutput, error) {
 	if params == nil {
 		params = &GetChannelGroupInput{}
@@ -173,16 +172,13 @@ func (c *Client) addOperationGetChannelGroupMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

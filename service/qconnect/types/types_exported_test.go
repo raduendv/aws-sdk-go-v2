@@ -14,8 +14,26 @@ func ExampleAIAgentConfiguration_outputUsage() {
 	case *types.AIAgentConfigurationMemberAnswerRecommendationAIAgentConfiguration:
 		_ = v.Value // Value is types.AnswerRecommendationAIAgentConfiguration
 
+	case *types.AIAgentConfigurationMemberCaseSummarizationAIAgentConfiguration:
+		_ = v.Value // Value is types.CaseSummarizationAIAgentConfiguration
+
+	case *types.AIAgentConfigurationMemberEmailGenerativeAnswerAIAgentConfiguration:
+		_ = v.Value // Value is types.EmailGenerativeAnswerAIAgentConfiguration
+
+	case *types.AIAgentConfigurationMemberEmailOverviewAIAgentConfiguration:
+		_ = v.Value // Value is types.EmailOverviewAIAgentConfiguration
+
+	case *types.AIAgentConfigurationMemberEmailResponseAIAgentConfiguration:
+		_ = v.Value // Value is types.EmailResponseAIAgentConfiguration
+
 	case *types.AIAgentConfigurationMemberManualSearchAIAgentConfiguration:
 		_ = v.Value // Value is types.ManualSearchAIAgentConfiguration
+
+	case *types.AIAgentConfigurationMemberNoteTakingAIAgentConfiguration:
+		_ = v.Value // Value is types.NoteTakingAIAgentConfiguration
+
+	case *types.AIAgentConfigurationMemberOrchestrationAIAgentConfiguration:
+		_ = v.Value // Value is types.OrchestrationAIAgentConfiguration
 
 	case *types.AIAgentConfigurationMemberSelfServiceAIAgentConfiguration:
 		_ = v.Value // Value is types.SelfServiceAIAgentConfiguration
@@ -30,7 +48,13 @@ func ExampleAIAgentConfiguration_outputUsage() {
 }
 
 var _ *types.SelfServiceAIAgentConfiguration
+var _ *types.OrchestrationAIAgentConfiguration
+var _ *types.EmailResponseAIAgentConfiguration
+var _ *types.NoteTakingAIAgentConfiguration
+var _ *types.CaseSummarizationAIAgentConfiguration
+var _ *types.EmailGenerativeAnswerAIAgentConfiguration
 var _ *types.ManualSearchAIAgentConfiguration
+var _ *types.EmailOverviewAIAgentConfiguration
 var _ *types.AnswerRecommendationAIAgentConfiguration
 
 func ExampleAIPromptTemplateConfiguration_outputUsage() {
@@ -55,6 +79,9 @@ func ExampleAssistantAssociationInputData_outputUsage() {
 	var union types.AssistantAssociationInputData
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.AssistantAssociationInputDataMemberExternalBedrockKnowledgeBaseConfig:
+		_ = v.Value // Value is types.ExternalBedrockKnowledgeBaseConfig
+
 	case *types.AssistantAssociationInputDataMemberKnowledgeBaseId:
 		_ = v.Value // Value is string
 
@@ -68,11 +95,15 @@ func ExampleAssistantAssociationInputData_outputUsage() {
 }
 
 var _ *string
+var _ *types.ExternalBedrockKnowledgeBaseConfig
 
 func ExampleAssistantAssociationOutputData_outputUsage() {
 	var union types.AssistantAssociationOutputData
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.AssistantAssociationOutputDataMemberExternalBedrockKnowledgeBaseConfig:
+		_ = v.Value // Value is types.ExternalBedrockKnowledgeBaseConfig
+
 	case *types.AssistantAssociationOutputDataMemberKnowledgeBaseAssociation:
 		_ = v.Value // Value is types.KnowledgeBaseAssociationData
 
@@ -85,6 +116,7 @@ func ExampleAssistantAssociationOutputData_outputUsage() {
 	}
 }
 
+var _ *types.ExternalBedrockKnowledgeBaseConfig
 var _ *types.KnowledgeBaseAssociationData
 
 func ExampleAssociationConfigurationData_outputUsage() {
@@ -163,8 +195,20 @@ func ExampleDataDetails_outputUsage() {
 	var union types.DataDetails
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.DataDetailsMemberCaseSummarizationChunkData:
+		_ = v.Value // Value is types.CaseSummarizationChunkDataDetails
+
 	case *types.DataDetailsMemberContentData:
 		_ = v.Value // Value is types.ContentDataDetails
+
+	case *types.DataDetailsMemberEmailGenerativeAnswerChunkData:
+		_ = v.Value // Value is types.EmailGenerativeAnswerChunkDataDetails
+
+	case *types.DataDetailsMemberEmailOverviewChunkData:
+		_ = v.Value // Value is types.EmailOverviewChunkDataDetails
+
+	case *types.DataDetailsMemberEmailResponseChunkData:
+		_ = v.Value // Value is types.EmailResponseChunkDataDetails
 
 	case *types.DataDetailsMemberGenerativeChunkData:
 		_ = v.Value // Value is types.GenerativeChunkDataDetails
@@ -175,8 +219,17 @@ func ExampleDataDetails_outputUsage() {
 	case *types.DataDetailsMemberIntentDetectedData:
 		_ = v.Value // Value is types.IntentDetectedDataDetails
 
+	case *types.DataDetailsMemberNotesChunkData:
+		_ = v.Value // Value is types.NotesChunkDataDetails
+
+	case *types.DataDetailsMemberNotesData:
+		_ = v.Value // Value is types.NotesDataDetails
+
 	case *types.DataDetailsMemberSourceContentData:
 		_ = v.Value // Value is types.SourceContentDataDetails
+
+	case *types.DataDetailsMemberSuggestedMessageData:
+		_ = v.Value // Value is types.SuggestedMessageDataDetails
 
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
@@ -187,11 +240,18 @@ func ExampleDataDetails_outputUsage() {
 	}
 }
 
+var _ *types.NotesDataDetails
+var _ *types.EmailGenerativeAnswerChunkDataDetails
+var _ *types.CaseSummarizationChunkDataDetails
 var _ *types.ContentDataDetails
 var _ *types.GenerativeChunkDataDetails
+var _ *types.NotesChunkDataDetails
+var _ *types.SuggestedMessageDataDetails
 var _ *types.IntentDetectedDataDetails
 var _ *types.GenerativeDataDetails
+var _ *types.EmailOverviewChunkDataDetails
 var _ *types.SourceContentDataDetails
+var _ *types.EmailResponseChunkDataDetails
 
 func ExampleDataReference_outputUsage() {
 	var union types.DataReference
@@ -203,6 +263,9 @@ func ExampleDataReference_outputUsage() {
 	case *types.DataReferenceMemberGenerativeReference:
 		_ = v.Value // Value is types.GenerativeReference
 
+	case *types.DataReferenceMemberSuggestedMessageReference:
+		_ = v.Value // Value is types.SuggestedMessageReference
+
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
 
@@ -213,7 +276,26 @@ func ExampleDataReference_outputUsage() {
 }
 
 var _ *types.GenerativeReference
+var _ *types.SuggestedMessageReference
 var _ *types.ContentReference
+
+func ExampleKnowledgeSource_outputUsage() {
+	var union types.KnowledgeSource
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.KnowledgeSourceMemberAssistantAssociationIds:
+		_ = v.Value // Value is []string
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ []string
 
 func ExampleManagedSourceConfiguration_outputUsage() {
 	var union types.ManagedSourceConfiguration
@@ -240,6 +322,9 @@ func ExampleMessageData_outputUsage() {
 	case *types.MessageDataMemberText:
 		_ = v.Value // Value is types.TextMessage
 
+	case *types.MessageDataMemberToolUseResult:
+		_ = v.Value // Value is types.ToolUseResultData
+
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
 
@@ -249,6 +334,7 @@ func ExampleMessageData_outputUsage() {
 	}
 }
 
+var _ *types.ToolUseResultData
 var _ *types.TextMessage
 
 func ExampleMessageTemplateBodyContentProvider_outputUsage() {
@@ -276,8 +362,14 @@ func ExampleMessageTemplateContentProvider_outputUsage() {
 	case *types.MessageTemplateContentProviderMemberEmail:
 		_ = v.Value // Value is types.EmailMessageTemplateContent
 
+	case *types.MessageTemplateContentProviderMemberPush:
+		_ = v.Value // Value is types.PushMessageTemplateContent
+
 	case *types.MessageTemplateContentProviderMemberSms:
 		_ = v.Value // Value is types.SMSMessageTemplateContent
+
+	case *types.MessageTemplateContentProviderMemberWhatsApp:
+		_ = v.Value // Value is types.WhatsAppMessageTemplateContent
 
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
@@ -288,8 +380,46 @@ func ExampleMessageTemplateContentProvider_outputUsage() {
 	}
 }
 
+var _ *types.WhatsAppMessageTemplateContent
 var _ *types.EmailMessageTemplateContent
 var _ *types.SMSMessageTemplateContent
+var _ *types.PushMessageTemplateContent
+
+func ExampleMessageTemplateSourceConfiguration_outputUsage() {
+	var union types.MessageTemplateSourceConfiguration
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.MessageTemplateSourceConfigurationMemberWhatsApp:
+		_ = v.Value // Value is types.WhatsAppMessageTemplateSourceConfiguration
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.WhatsAppMessageTemplateSourceConfiguration
+
+func ExampleMessageTemplateSourceConfigurationSummary_outputUsage() {
+	var union types.MessageTemplateSourceConfigurationSummary
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.MessageTemplateSourceConfigurationSummaryMemberWhatsApp:
+		_ = v.Value // Value is types.WhatsAppMessageTemplateSourceConfigurationSummary
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.WhatsAppMessageTemplateSourceConfigurationSummary
 
 func ExampleOrCondition_outputUsage() {
 	var union types.OrCondition
@@ -335,6 +465,9 @@ func ExampleQueryInputData_outputUsage() {
 	var union types.QueryInputData
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.QueryInputDataMemberCaseSummarizationInputData:
+		_ = v.Value // Value is types.CaseSummarizationInputData
+
 	case *types.QueryInputDataMemberIntentInputData:
 		_ = v.Value // Value is types.IntentInputData
 
@@ -350,6 +483,7 @@ func ExampleQueryInputData_outputUsage() {
 	}
 }
 
+var _ *types.CaseSummarizationInputData
 var _ *types.QueryTextInputData
 var _ *types.IntentInputData
 
@@ -407,6 +541,61 @@ func ExampleRecommendationTriggerData_outputUsage() {
 
 var _ *types.QueryRecommendationTriggerData
 
+func ExampleRetrievalFilterConfiguration_outputUsage() {
+	var union types.RetrievalFilterConfiguration
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.RetrievalFilterConfigurationMemberAndAll:
+		_ = v.Value // Value is []types.RetrievalFilterConfiguration
+
+	case *types.RetrievalFilterConfigurationMemberEquals:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberGreaterThan:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberGreaterThanOrEquals:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberIn:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberLessThan:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberLessThanOrEquals:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberListContains:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberNotEquals:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberNotIn:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberOrAll:
+		_ = v.Value // Value is []types.RetrievalFilterConfiguration
+
+	case *types.RetrievalFilterConfigurationMemberStartsWith:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.RetrievalFilterConfigurationMemberStringContains:
+		_ = v.Value // Value is types.FilterAttribute
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ []types.RetrievalFilterConfiguration
+var _ *types.FilterAttribute
+
 func ExampleRuntimeSessionDataValue_outputUsage() {
 	var union types.RuntimeSessionDataValue
 	// type switches can be used to check the union value
@@ -447,6 +636,32 @@ func ExampleSourceConfiguration_outputUsage() {
 var _ *types.AppIntegrationsConfiguration
 var _ types.ManagedSourceConfiguration
 
+func ExampleSpanMessageValue_outputUsage() {
+	var union types.SpanMessageValue
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.SpanMessageValueMemberText:
+		_ = v.Value // Value is types.SpanTextValue
+
+	case *types.SpanMessageValueMemberToolResult:
+		_ = v.Value // Value is types.SpanToolResultValue
+
+	case *types.SpanMessageValueMemberToolUse:
+		_ = v.Value // Value is types.SpanToolUseValue
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.SpanTextValue
+var _ *types.SpanToolResultValue
+var _ *types.SpanToolUseValue
+
 func ExampleTagFilter_outputUsage() {
 	var union types.TagFilter
 	// type switches can be used to check the union value
@@ -472,3 +687,21 @@ func ExampleTagFilter_outputUsage() {
 var _ []types.TagCondition
 var _ []types.OrCondition
 var _ *types.TagCondition
+
+func ExampleToolOverrideInputValueConfiguration_outputUsage() {
+	var union types.ToolOverrideInputValueConfiguration
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.ToolOverrideInputValueConfigurationMemberConstant:
+		_ = v.Value // Value is types.ToolOverrideConstantInputValue
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.ToolOverrideConstantInputValue

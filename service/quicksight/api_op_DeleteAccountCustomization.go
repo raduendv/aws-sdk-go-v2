@@ -10,8 +10,22 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes all Amazon QuickSight customizations in this Amazon Web Services Region
-// for the specified Amazon Web Services account and Amazon QuickSight namespace.
+// This API permanently deletes all Quick Sight customizations for the specified
+// Amazon Web Services account and namespace. When you delete account
+// customizations:
+//
+//   - All customizations are removed including themes, branding, and visual
+//     settings
+//
+//   - This action cannot be undone through the API
+//
+//   - Users will see default Quick Sight styling after customizations are deleted
+//
+// Before proceeding: Ensure you have backups of any custom themes or branding
+// elements you may want to recreate.
+//
+// Deletes all Amazon Quick Sight customizations for the specified Amazon Web
+// Services account and Quick Sight namespace.
 func (c *Client) DeleteAccountCustomization(ctx context.Context, params *DeleteAccountCustomizationInput, optFns ...func(*Options)) (*DeleteAccountCustomizationOutput, error) {
 	if params == nil {
 		params = &DeleteAccountCustomizationInput{}
@@ -29,13 +43,13 @@ func (c *Client) DeleteAccountCustomization(ctx context.Context, params *DeleteA
 
 type DeleteAccountCustomizationInput struct {
 
-	// The ID for the Amazon Web Services account that you want to delete Amazon
-	// QuickSight customizations from in this Amazon Web Services Region.
+	// The ID for the Amazon Web Services account that you want to delete Quick Sight
+	// customizations from.
 	//
 	// This member is required.
 	AwsAccountId *string
 
-	// The Amazon QuickSight namespace that you're deleting the customizations from.
+	// The Quick Sight namespace that you're deleting the customizations from.
 	Namespace *string
 
 	noSmithyDocumentSerde
@@ -143,16 +157,13 @@ func (c *Client) addOperationDeleteAccountCustomizationMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

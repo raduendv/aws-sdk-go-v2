@@ -55,6 +55,17 @@ type UpdateAIPromptInput struct {
 	// The description of the Amazon Q in Connect AI Prompt.
 	Description *string
 
+	// The updated inference configuration for the AI Prompt.
+	InferenceConfiguration *types.AIPromptInferenceConfiguration
+
+	// The identifier of the model used for this AI Prompt.
+	//
+	// For information about which models are supported in each Amazon Web Services
+	// Region, see [Supported models for system/custom prompts].
+	//
+	// [Supported models for system/custom prompts]: https://docs.aws.amazon.com/connect/latest/adminguide/create-ai-prompts.html#cli-create-aiprompt
+	ModelId *string
+
 	// The configuration of the prompt template for this AI Prompt.
 	TemplateConfiguration types.AIPromptTemplateConfiguration
 
@@ -163,16 +174,13 @@ func (c *Client) addOperationUpdateAIPromptMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

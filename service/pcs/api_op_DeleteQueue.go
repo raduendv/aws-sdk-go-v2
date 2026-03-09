@@ -11,8 +11,8 @@ import (
 )
 
 // Deletes a job queue. If the compute node group associated with this queue isn't
-// associated with any other queues, Amazon Web Services PCS terminates all the
-// compute nodes for this queue.
+// associated with any other queues, PCS terminates all the compute nodes for this
+// queue.
 func (c *Client) DeleteQueue(ctx context.Context, params *DeleteQueueInput, optFns ...func(*Options)) (*DeleteQueueOutput, error) {
 	if params == nil {
 		params = &DeleteQueueInput{}
@@ -149,16 +149,13 @@ func (c *Client) addOperationDeleteQueueMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

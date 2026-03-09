@@ -12,6 +12,8 @@ import (
 )
 
 // List the provisioned resources for your environment.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) ListEnvironmentProvisionedResources(ctx context.Context, params *ListEnvironmentProvisionedResourcesInput, optFns ...func(*Options)) (*ListEnvironmentProvisionedResourcesOutput, error) {
 	if params == nil {
 		params = &ListEnvironmentProvisionedResourcesInput{}
@@ -148,16 +150,13 @@ func (c *Client) addOperationListEnvironmentProvisionedResourcesMiddlewares(stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

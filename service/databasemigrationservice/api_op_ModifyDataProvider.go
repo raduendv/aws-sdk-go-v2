@@ -47,8 +47,8 @@ type ModifyDataProviderInput struct {
 
 	// The type of database engine for the data provider. Valid values include "aurora"
 	// , "aurora-postgresql" , "mysql" , "oracle" , "postgres" , "sqlserver" , redshift
-	// , mariadb , mongodb , db2 , db2-zos and docdb . A value of "aurora" represents
-	// Amazon Aurora MySQL-Compatible Edition.
+	// , mariadb , mongodb , db2 , db2-zos , docdb , and sybase . A value of "aurora"
+	// represents Amazon Aurora MySQL-Compatible Edition.
 	Engine *string
 
 	// If this attribute is Y, the current call to ModifyDataProvider replaces all
@@ -65,6 +65,9 @@ type ModifyDataProviderInput struct {
 
 	// The settings in JSON format for a data provider.
 	Settings types.DataProviderSettings
+
+	// Indicates whether the data provider is virtual.
+	Virtual *bool
 
 	noSmithyDocumentSerde
 }
@@ -168,16 +171,13 @@ func (c *Client) addOperationModifyDataProviderMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

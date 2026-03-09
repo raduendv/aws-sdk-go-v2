@@ -13,23 +13,13 @@ import (
 	smithyio "github.com/aws/smithy-go/io"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"math"
 	"strconv"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpAssociateAccounts struct {
 }
@@ -6394,6 +6384,42 @@ func awsRestjson1_deserializeDocumentAttributesList(v *[]types.Attribute, value 
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentAttributeValueList(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected AttributeValue to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentBillingGroupCostReportElement(v **types.BillingGroupCostReportElement, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -6707,6 +6733,15 @@ func awsRestjson1_deserializeDocumentBillingGroupListElement(v **types.BillingGr
 				sv.Arn = ptr.String(jtv)
 			}
 
+		case "BillingGroupType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected BillingGroupType to be of type string, got %T instead", value)
+				}
+				sv.BillingGroupType = types.BillingGroupType(jtv)
+			}
+
 		case "ComputationPreference":
 			if err := awsRestjson1_deserializeDocumentComputationPreference(&sv.ComputationPreference, value); err != nil {
 				return err
@@ -7013,6 +7048,15 @@ func awsRestjson1_deserializeDocumentCustomLineItemListElement(v **types.CustomL
 				return err
 			}
 
+		case "ComputationRule":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ComputationRuleEnum to be of type string, got %T instead", value)
+				}
+				sv.ComputationRule = types.ComputationRuleEnum(jtv)
+			}
+
 		case "CreationTime":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -7064,6 +7108,11 @@ func awsRestjson1_deserializeDocumentCustomLineItemListElement(v **types.CustomL
 					return fmt.Errorf("expected CustomLineItemName to be of type string, got %T instead", value)
 				}
 				sv.Name = ptr.String(jtv)
+			}
+
+		case "PresentationDetails":
+			if err := awsRestjson1_deserializeDocumentPresentationObject(&sv.PresentationDetails, value); err != nil {
+				return err
 			}
 
 		case "ProductCode":
@@ -7185,6 +7234,15 @@ func awsRestjson1_deserializeDocumentCustomLineItemVersionListElement(v **types.
 				return err
 			}
 
+		case "ComputationRule":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ComputationRuleEnum to be of type string, got %T instead", value)
+				}
+				sv.ComputationRule = types.ComputationRuleEnum(jtv)
+			}
+
 		case "CreationTime":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -7245,6 +7303,11 @@ func awsRestjson1_deserializeDocumentCustomLineItemVersionListElement(v **types.
 					return fmt.Errorf("expected CustomLineItemName to be of type string, got %T instead", value)
 				}
 				sv.Name = ptr.String(jtv)
+			}
+
+		case "PresentationDetails":
+			if err := awsRestjson1_deserializeDocumentPresentationObject(&sv.PresentationDetails, value); err != nil {
+				return err
 			}
 
 		case "ProductCode":
@@ -7490,6 +7553,11 @@ func awsRestjson1_deserializeDocumentLineItemFilter(v **types.LineItemFilter, va
 				sv.Attribute = types.LineItemFilterAttributeName(jtv)
 			}
 
+		case "AttributeValues":
+			if err := awsRestjson1_deserializeDocumentAttributeValueList(&sv.AttributeValues, value); err != nil {
+				return err
+			}
+
 		case "MatchOption":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -7612,6 +7680,15 @@ func awsRestjson1_deserializeDocumentListBillingGroupAccountGrouping(v **types.L
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.AutoAssociate = ptr.Bool(jtv)
+			}
+
+		case "ResponsibilityTransferArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResponsibilityTransferArn to be of type string, got %T instead", value)
+				}
+				sv.ResponsibilityTransferArn = ptr.String(jtv)
 			}
 
 		default:
@@ -7897,6 +7974,46 @@ func awsRestjson1_deserializeDocumentListResourcesAssociatedToCustomLineItemResp
 
 	}
 	*v = cv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentPresentationObject(v **types.PresentationObject, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.PresentationObject
+	if *v == nil {
+		sv = &types.PresentationObject{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Service":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Service to be of type string, got %T instead", value)
+				}
+				sv.Service = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
 	return nil
 }
 
@@ -8615,6 +8732,15 @@ func awsRestjson1_deserializeDocumentUpdateBillingGroupAccountGrouping(v **types
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.AutoAssociate = ptr.Bool(jtv)
+			}
+
+		case "ResponsibilityTransferArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResponsibilityTransferArn to be of type string, got %T instead", value)
+				}
+				sv.ResponsibilityTransferArn = ptr.String(jtv)
 			}
 
 		default:

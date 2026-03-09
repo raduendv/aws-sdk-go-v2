@@ -2,12 +2,34 @@
 
 package types
 
+type ActionType string
+
+// Enum values for ActionType
+const (
+	ActionTypeEvidenceCollection    ActionType = "Evidence"
+	ActionTypeInvestigationAnalysis ActionType = "Investigation"
+	ActionTypeSummarization         ActionType = "Summarization"
+)
+
+// Values returns all known values for ActionType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ActionType) Values() []ActionType {
+	return []ActionType{
+		"Evidence",
+		"Investigation",
+		"Summarization",
+	}
+}
+
 type AwsRegion string
 
 // Enum values for AwsRegion
 const (
 	AwsRegionAfSouth1     AwsRegion = "af-south-1"
 	AwsRegionApEast1      AwsRegion = "ap-east-1"
+	AwsRegionApEast2      AwsRegion = "ap-east-2"
 	AwsRegionApNortheast1 AwsRegion = "ap-northeast-1"
 	AwsRegionApNortheast2 AwsRegion = "ap-northeast-2"
 	AwsRegionApNortheast3 AwsRegion = "ap-northeast-3"
@@ -18,6 +40,8 @@ const (
 	AwsRegionApSoutheast3 AwsRegion = "ap-southeast-3"
 	AwsRegionApSoutheast4 AwsRegion = "ap-southeast-4"
 	AwsRegionApSoutheast5 AwsRegion = "ap-southeast-5"
+	AwsRegionApSoutheast6 AwsRegion = "ap-southeast-6"
+	AwsRegionApSoutheast7 AwsRegion = "ap-southeast-7"
 	AwsRegionCaCentral1   AwsRegion = "ca-central-1"
 	AwsRegionCaWest1      AwsRegion = "ca-west-1"
 	AwsRegionCnNorth1     AwsRegion = "cn-north-1"
@@ -33,6 +57,7 @@ const (
 	AwsRegionIlCentral1   AwsRegion = "il-central-1"
 	AwsRegionMeCentral1   AwsRegion = "me-central-1"
 	AwsRegionMeSouth1     AwsRegion = "me-south-1"
+	AwsRegionMxCentral1   AwsRegion = "mx-central-1"
 	AwsRegionSaEast1      AwsRegion = "sa-east-1"
 	AwsRegionUsEast1      AwsRegion = "us-east-1"
 	AwsRegionUsEast2      AwsRegion = "us-east-2"
@@ -48,6 +73,7 @@ func (AwsRegion) Values() []AwsRegion {
 	return []AwsRegion{
 		"af-south-1",
 		"ap-east-1",
+		"ap-east-2",
 		"ap-northeast-1",
 		"ap-northeast-2",
 		"ap-northeast-3",
@@ -58,6 +84,8 @@ func (AwsRegion) Values() []AwsRegion {
 		"ap-southeast-3",
 		"ap-southeast-4",
 		"ap-southeast-5",
+		"ap-southeast-6",
+		"ap-southeast-7",
 		"ca-central-1",
 		"ca-west-1",
 		"cn-north-1",
@@ -73,6 +101,7 @@ func (AwsRegion) Values() []AwsRegion {
 		"il-central-1",
 		"me-central-1",
 		"me-south-1",
+		"mx-central-1",
 		"sa-east-1",
 		"us-east-1",
 		"us-east-2",
@@ -154,6 +183,53 @@ func (ClosureCode) Values() []ClosureCode {
 	}
 }
 
+type CommunicationType string
+
+// Enum values for CommunicationType
+const (
+	CommunicationTypeCaseCreated                       CommunicationType = "Case Created"
+	CommunicationTypeCaseUpdated                       CommunicationType = "Case Updated"
+	CommunicationTypeCaseAcknowledged                  CommunicationType = "Case Acknowledged"
+	CommunicationTypeCaseClosed                        CommunicationType = "Case Closed"
+	CommunicationTypeCaseUpdatedToServiceManaged       CommunicationType = "Case Updated To Service Managed"
+	CommunicationTypeCaseUpdateCaseStatus              CommunicationType = "Case Status Updated"
+	CommunicationTypeCasePendingCustomerActionReminder CommunicationType = "Case Pending Customer Action Reminder"
+	CommunicationTypeCaseAttachmentUrlUploaded         CommunicationType = "Case Attachment Url Uploaded"
+	CommunicationTypeCaseCommentAdded                  CommunicationType = "Case Comment Added"
+	CommunicationTypeCaseCommentUpdated                CommunicationType = "Case Comment Updated"
+	CommunicationTypeMembershipCreated                 CommunicationType = "Membership Created"
+	CommunicationTypeMembershipUpdated                 CommunicationType = "Membership Updated"
+	CommunicationTypeMembershipCancelled               CommunicationType = "Membership Cancelled"
+	CommunicationTypeRegisterDelegatedAdministrator    CommunicationType = "Register Delegated Administrator"
+	CommunicationTypeDeregisterDelegatedAdministrator  CommunicationType = "Deregister Delegated Administrator"
+	CommunicationTypeDisableAwsServiceAccess           CommunicationType = "Disable AWS Service Access"
+)
+
+// Values returns all known values for CommunicationType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CommunicationType) Values() []CommunicationType {
+	return []CommunicationType{
+		"Case Created",
+		"Case Updated",
+		"Case Acknowledged",
+		"Case Closed",
+		"Case Updated To Service Managed",
+		"Case Status Updated",
+		"Case Pending Customer Action Reminder",
+		"Case Attachment Url Uploaded",
+		"Case Comment Added",
+		"Case Comment Updated",
+		"Membership Created",
+		"Membership Updated",
+		"Membership Cancelled",
+		"Register Delegated Administrator",
+		"Deregister Delegated Administrator",
+		"Disable AWS Service Access",
+	}
+}
+
 type CustomerType string
 
 // Enum values for CustomerType
@@ -192,12 +268,40 @@ func (EngagementType) Values() []EngagementType {
 	}
 }
 
+type ExecutionStatus string
+
+// Enum values for ExecutionStatus
+const (
+	ExecutionStatusPending    ExecutionStatus = "Pending"
+	ExecutionStatusInProgress ExecutionStatus = "InProgress"
+	ExecutionStatusWaiting    ExecutionStatus = "Waiting"
+	ExecutionStatusCompleted  ExecutionStatus = "Completed"
+	ExecutionStatusFailed     ExecutionStatus = "Failed"
+	ExecutionStatusCancelled  ExecutionStatus = "Cancelled"
+)
+
+// Values returns all known values for ExecutionStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ExecutionStatus) Values() []ExecutionStatus {
+	return []ExecutionStatus{
+		"Pending",
+		"InProgress",
+		"Waiting",
+		"Completed",
+		"Failed",
+		"Cancelled",
+	}
+}
+
 type MembershipAccountRelationshipStatus string
 
 // Enum values for MembershipAccountRelationshipStatus
 const (
 	MembershipAccountRelationshipStatusAssociated    MembershipAccountRelationshipStatus = "Associated"
 	MembershipAccountRelationshipStatusDisassociated MembershipAccountRelationshipStatus = "Disassociated"
+	MembershipAccountRelationshipStatusUnassociated  MembershipAccountRelationshipStatus = "Unassociated"
 )
 
 // Values returns all known values for MembershipAccountRelationshipStatus. Note
@@ -209,6 +313,7 @@ func (MembershipAccountRelationshipStatus) Values() []MembershipAccountRelations
 	return []MembershipAccountRelationshipStatus{
 		"Associated",
 		"Disassociated",
+		"Unassociated",
 	}
 }
 
@@ -217,6 +322,7 @@ type MembershipAccountRelationshipType string
 // Enum values for MembershipAccountRelationshipType
 const (
 	MembershipAccountRelationshipTypeOrganization MembershipAccountRelationshipType = "Organization"
+	MembershipAccountRelationshipTypeUnrelated    MembershipAccountRelationshipType = "Unrelated"
 )
 
 // Values returns all known values for MembershipAccountRelationshipType. Note
@@ -227,6 +333,7 @@ const (
 func (MembershipAccountRelationshipType) Values() []MembershipAccountRelationshipType {
 	return []MembershipAccountRelationshipType{
 		"Organization",
+		"Unrelated",
 	}
 }
 
@@ -326,6 +433,25 @@ func (SelfManagedCaseStatus) Values() []SelfManagedCaseStatus {
 		"Detection and Analysis",
 		"Containment, Eradication and Recovery",
 		"Post-incident Activities",
+	}
+}
+
+type UsefulnessRating string
+
+// Enum values for UsefulnessRating
+const (
+	UsefulnessRatingUseful    UsefulnessRating = "USEFUL"
+	UsefulnessRatingNotUseful UsefulnessRating = "NOT_USEFUL"
+)
+
+// Values returns all known values for UsefulnessRating. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (UsefulnessRating) Values() []UsefulnessRating {
+	return []UsefulnessRating{
+		"USEFUL",
+		"NOT_USEFUL",
 	}
 }
 

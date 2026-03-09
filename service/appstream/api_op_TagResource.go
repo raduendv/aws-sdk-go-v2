@@ -10,8 +10,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Adds or overwrites one or more tags for the specified AppStream 2.0 resource.
-// You can tag AppStream 2.0 image builders, images, fleets, and stacks.
+// Adds or overwrites one or more tags for the specified WorkSpaces Applications
+// resource. You can tag WorkSpaces Applications image builders, images, fleets,
+// and stacks.
 //
 // Each tag consists of a key and an optional value. If a resource already has a
 // tag with the same key, this operation updates its value.
@@ -19,7 +20,7 @@ import (
 // To list the current tags for your resources, use ListTagsForResource. To disassociate tags from
 // your resources, use UntagResource.
 //
-// For more information about tags, see [Tagging Your Resources] in the Amazon AppStream 2.0
+// For more information about tags, see [Tagging Your Resources] in the Amazon WorkSpaces Applications
 // Administration Guide.
 //
 // [Tagging Your Resources]: https://docs.aws.amazon.com/appstream2/latest/developerguide/tagging-basic.html
@@ -156,16 +157,13 @@ func (c *Client) addOperationTagResourceMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

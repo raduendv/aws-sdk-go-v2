@@ -17,7 +17,10 @@ import (
 )
 
 // Creates an access point and associates it to a specified bucket. For more
-// information, see [Managing access to shared datasets in general purpose buckets with access points]or [Managing access to shared datasets in directory buckets with access points] in the Amazon S3 User Guide.
+// information, see [Managing access to shared datasets with access points]or [Managing access to shared datasets in directory buckets with access points] in the Amazon S3 User Guide.
+//
+// To create an access point and attach it to a volume on an Amazon FSx file
+// system, see [CreateAndAttachS3AccessPoint]in the Amazon FSx API Reference.
 //
 // S3 on Outposts only supports VPC-style access points.
 //
@@ -42,8 +45,9 @@ import (
 //
 // [ListAccessPointsForDirectoryBuckets]: https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_ListAccessPointsForDirectoryBuckets.html
 // [ListAccessPoints]: https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_ListAccessPoints.html
+// [CreateAndAttachS3AccessPoint]: https://docs.aws.amazon.com/fsx/latest/APIReference/API_CreateAndAttachS3AccessPoint.html
+// [Managing access to shared datasets with access points]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points.html
 // [GetAccessPoint]: https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_GetAccessPoint.html
-// [Managing access to shared datasets in general purpose buckets with access points]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points.html
 // [Accessing Amazon S3 on Outposts using virtual private cloud (VPC) only access points]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html
 // [DeleteAccessPoint]: https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_DeleteAccessPoint.html
 // [Managing access to shared datasets in directory buckets with access points]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-directory-buckets.html
@@ -116,10 +120,18 @@ type CreateAccessPointInput struct {
 	// operations, or a combination of both. For more information, see [Managing access to shared datasets in directory buckets with access points]in the Amazon
 	// S3 User Guide.
 	//
-	// Scope is not supported for access points for general purpose buckets.
+	// Scope is only supported for access points attached to directory buckets.
 	//
 	// [Managing access to shared datasets in directory buckets with access points]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-directory-buckets.html
 	Scope *types.Scope
+
+	// An array of tags that you can apply to an access point. Tags are key-value
+	// pairs of metadata used to control access to your access points. For more
+	// information about tags, see [Using tags with Amazon S3]. For information about tagging access points, see [Using tags for attribute-based access control (ABAC)].
+	//
+	// [Using tags with Amazon S3]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html
+	// [Using tags for attribute-based access control (ABAC)]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html#using-tags-for-abac
+	Tags []types.Tag
 
 	// If you include this field, Amazon S3 restricts access to this access point to
 	// requests from the specified virtual private cloud (VPC).
@@ -260,16 +272,13 @@ func (c *Client) addOperationCreateAccessPointMiddlewares(stack *middleware.Stac
 	if err = s3controlcust.AddDisableHostPrefixMiddleware(stack); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

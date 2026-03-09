@@ -12,6 +12,8 @@ import (
 )
 
 // List major or minor versions of a service template with detail data.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) ListServiceTemplateVersions(ctx context.Context, params *ListServiceTemplateVersionsInput, optFns ...func(*Options)) (*ListServiceTemplateVersionsOutput, error) {
 	if params == nil {
 		params = &ListServiceTemplateVersionsInput{}
@@ -157,16 +159,13 @@ func (c *Client) addOperationListServiceTemplateVersionsMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

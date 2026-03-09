@@ -10,7 +10,24 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates a run group.
+// Updates the settings of a run group and returns a response with no body if the
+// operation is successful.
+//
+// You can update the following settings with UpdateRunGroup :
+//
+//   - Maximum number of CPUs
+//
+//   - Run time (measured in minutes)
+//
+//   - Number of GPUs
+//
+//   - Number of concurrent runs
+//
+//   - Group name
+//
+// To confirm that the settings have been successfully updated, use the
+// ListRunGroups or GetRunGroup API operations to verify that the desired changes
+// have been made.
 func (c *Client) UpdateRunGroup(ctx context.Context, params *UpdateRunGroupInput, optFns ...func(*Options)) (*UpdateRunGroupOutput, error) {
 	if params == nil {
 		params = &UpdateRunGroupInput{}
@@ -149,16 +166,13 @@ func (c *Client) addOperationUpdateRunGroupMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -51,14 +51,14 @@ type CreateCanaryInput struct {
 
 	// The location in Amazon S3 where Synthetics stores artifacts from the test runs
 	// of this canary. Artifacts include the log file, screenshots, and HAR files. The
-	// name of the S3 bucket can't include a period (.).
+	// name of the Amazon S3 bucket can't include a period (.).
 	//
 	// This member is required.
 	ArtifactS3Location *string
 
 	// A structure that includes the entry point from which the canary should start
-	// running your script. If the script is stored in an S3 bucket, the bucket name,
-	// key, and version are also included.
+	// running your script. If the script is stored in an Amazon S3 bucket, the bucket
+	// name, key, and version are also included.
 	//
 	// This member is required.
 	Code *types.CanaryCodeInput
@@ -114,8 +114,22 @@ type CreateCanaryInput struct {
 	// encryption-at-rest settings for artifacts that the canary uploads to Amazon S3.
 	ArtifactConfig *types.ArtifactConfigInput
 
+	// CloudWatch Synthetics now supports multibrowser canaries for
+	// syn-nodejs-puppeteer-11.0 and syn-nodejs-playwright-3.0 runtimes. This feature
+	// allows you to run your canaries on both Firefox and Chrome browsers. To create a
+	// multibrowser canary, you need to specify the BrowserConfigs with a list of
+	// browsers you want to use.
+	//
+	// If not specified, browserConfigs defaults to Chrome.
+	BrowserConfigs []types.BrowserConfig
+
 	// The number of days to retain data about failed runs of this canary. If you omit
 	// this field, the default of 31 days is used. The valid range is 1 to 455 days.
+	//
+	// This setting affects the range of information returned by [GetCanaryRuns], as well as the
+	// range of information displayed in the Synthetics console.
+	//
+	// [GetCanaryRuns]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_GetCanaryRuns.html
 	FailureRetentionPeriodInDays *int32
 
 	// Specifies whether to also delete the Lambda functions and layers used by this
@@ -141,13 +155,19 @@ type CreateCanaryInput struct {
 	// A structure that contains the configuration for individual canary runs, such as
 	// timeout value and environment variables.
 	//
-	// The environment variables keys and values are not encrypted. Do not store
-	// sensitive information in this field.
+	// Environment variable keys and values are encrypted at rest using Amazon Web
+	// Services owned KMS keys. However, the environment variables are not encrypted on
+	// the client side. Do not store sensitive information in them.
 	RunConfig *types.CanaryRunConfigInput
 
 	// The number of days to retain data about successful runs of this canary. If you
 	// omit this field, the default of 31 days is used. The valid range is 1 to 455
 	// days.
+	//
+	// This setting affects the range of information returned by [GetCanaryRuns], as well as the
+	// range of information displayed in the Synthetics console.
+	//
+	// [GetCanaryRuns]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_GetCanaryRuns.html
 	SuccessRetentionPeriodInDays *int32
 
 	// A list of key-value pairs to associate with the canary. You can associate as
@@ -271,16 +291,13 @@ func (c *Client) addOperationCreateCanaryMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

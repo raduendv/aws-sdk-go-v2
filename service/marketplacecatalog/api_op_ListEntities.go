@@ -36,7 +36,8 @@ type ListEntitiesInput struct {
 
 	// The type of entities to retrieve. Valid values are: AmiProduct ,
 	// ContainerProduct , DataProduct , SaaSProduct , ProcurementPolicy , Experience ,
-	// Audience , BrandingSettings , Offer , Seller , ResaleAuthorization .
+	// Audience , BrandingSettings , Offer , OfferSet , Seller , ResaleAuthorization ,
+	// Solution .
 	//
 	// This member is required.
 	EntityType *string
@@ -176,16 +177,13 @@ func (c *Client) addOperationListEntitiesMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

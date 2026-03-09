@@ -13,11 +13,11 @@ import (
 
 // Starts an Asset Bundle import job.
 //
-// An Asset Bundle import job imports specified Amazon QuickSight assets into an
-// Amazon QuickSight account. You can also choose to import a naming prefix and
+// An Asset Bundle import job imports specified Amazon Quick Sight assets into an
+// Amazon Quick Sight account. You can also choose to import a naming prefix and
 // specified configuration overrides. The assets that are contained in the bundle
 // file that you provide are used to create or update a new or existing asset in
-// your Amazon QuickSight account. Each Amazon QuickSight account can run up to 5
+// your Amazon Quick Sight account. Each Amazon Quick Sight account can run up to 5
 // import jobs concurrently.
 //
 // The API caller must have the necessary "create" , "describe" , and "update"
@@ -63,7 +63,7 @@ type StartAssetBundleImportJobInput struct {
 	// changes caused by the failed job.
 	//
 	// If you choose DO_NOTHING , failed import jobs will not attempt to roll back any
-	// asset changes caused by the failed job, possibly keeping the Amazon QuickSight
+	// asset changes caused by the failed job, possibly keeping the Amazon Quick Sight
 	// account in an inconsistent state.
 	FailureAction types.AssetBundleImportFailureAction
 
@@ -194,16 +194,13 @@ func (c *Client) addOperationStartAssetBundleImportJobMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -82,6 +82,17 @@ type CreateBotLocaleInput struct {
 	// Bedrock that you can turn on for your bot.
 	GenerativeAISettings *types.GenerativeAISettings
 
+	// The sensitivity level for voice activity detection (VAD) in the bot locale.
+	// This setting helps optimize speech recognition accuracy by adjusting how the
+	// system responds to background noise during voice interactions.
+	SpeechDetectionSensitivity types.SpeechDetectionSensitivity
+
+	// Speech-to-text settings to configure for the new bot locale.
+	SpeechRecognitionSettings *types.SpeechRecognitionSettings
+
+	// Unified speech settings to configure for the new bot locale.
+	UnifiedSpeechSettings *types.UnifiedSpeechSettings
+
 	// The Amazon Polly voice ID that Amazon Lex uses for voice interaction with the
 	// user.
 	VoiceSettings *types.VoiceSettings
@@ -129,6 +140,16 @@ type CreateBotLocaleOutput struct {
 	// The specified confidence threshold for inserting the AMAZON.FallbackIntent and
 	// AMAZON.KendraSearchIntent intents.
 	NluIntentConfidenceThreshold *float64
+
+	// The sensitivity level for voice activity detection (VAD) that was specified for
+	// the bot locale.
+	SpeechDetectionSensitivity types.SpeechDetectionSensitivity
+
+	// The speech-to-text settings configured for the created bot locale.
+	SpeechRecognitionSettings *types.SpeechRecognitionSettings
+
+	// The unified speech settings configured for the created bot locale.
+	UnifiedSpeechSettings *types.UnifiedSpeechSettings
 
 	// The Amazon Polly voice ID that Amazon Lex uses for voice interaction with the
 	// user.
@@ -228,16 +249,13 @@ func (c *Client) addOperationCreateBotLocaleMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

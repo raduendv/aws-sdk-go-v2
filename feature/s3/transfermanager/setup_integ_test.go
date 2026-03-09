@@ -14,6 +14,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -121,7 +123,7 @@ func TestMain(m *testing.M) {
 	s3Client = s3.NewFromConfig(s3cfg)
 
 	// build s3 transfermanager client from config
-	s3TransferManagerClient = NewFromConfig(s3Client, s3cfg)
+	s3TransferManagerClient = New(s3Client)
 
 	// build sts client from config
 	stsClient = sts.NewFromConfig(cfg)
@@ -247,10 +249,10 @@ func UniqueID() string {
 func testPutObject(t *testing.T, bucket string, testData putObjectTestData, opts ...func(options *Options)) {
 	key := UniqueID()
 
-	_, err := s3TransferManagerClient.PutObject(context.Background(),
-		&PutObjectInput{
-			Bucket: bucket,
-			Key:    key,
+	_, err := s3TransferManagerClient.UploadObject(context.Background(),
+		&UploadObjectInput{
+			Bucket: aws.String(bucket),
+			Key:    aws.String(key),
 			Body:   testData.Body,
 		}, opts...)
 	if err != nil {
@@ -300,8 +302,8 @@ func testGetObject(t *testing.T, bucket string, testData getObjectTestData) {
 
 	out, err := s3TransferManagerClient.GetObject(context.Background(),
 		&GetObjectInput{
-			Bucket: bucket,
-			Key:    key,
+			Bucket: aws.String(bucket),
+			Key:    aws.String(key),
 		}, testData.OptFns...)
 
 	if err != nil {
@@ -357,8 +359,8 @@ func testDownloadObject(t *testing.T, bucket string, testData downloadObjectTest
 	w := types.NewWriteAtBuffer(make([]byte, 0))
 	_, err = s3TransferManagerClient.DownloadObject(context.Background(),
 		&DownloadObjectInput{
-			Bucket:   bucket,
-			Key:      key,
+			Bucket:   aws.String(bucket),
+			Key:      aws.String(key),
 			WriterAt: w,
 		}, testData.OptFns...)
 	if err != nil {
@@ -379,6 +381,177 @@ func testDownloadObject(t *testing.T, bucket string, testData downloadObjectTest
 
 	if e, a := testData.ExpectBody, w.Bytes(); !bytes.EqualFold(e, a) {
 		t.Errorf("expect %s, got %s", e, a)
+	}
+}
+
+type uploadDirectoryTestData struct {
+	FilesSize           map[string]int64
+	Source              string
+	Recursive           bool
+	KeyPrefix           string
+	ExpectFilesUploaded int64
+	ExpectKeys          []string
+	ExpectError         string
+}
+
+func testUploadDirectory(t *testing.T, bucket string, testData uploadDirectoryTestData) {
+	_, filename, _, _ := runtime.Caller(0)
+	root := filepath.Join(filepath.Dir(filename), "testdata")
+	delimiter := "/"
+	expectObjects := map[string][]byte{}
+	source := filepath.Join(root, testData.Source)
+	if err := os.MkdirAll(source, os.ModePerm); err != nil {
+		t.Fatalf("error when creating test folder %v", err)
+	}
+	defer os.RemoveAll(source)
+	for f, size := range testData.FilesSize {
+		path := filepath.Join(source, strings.Replace(f, "/", string(os.PathSeparator), -1))
+		if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
+			t.Fatalf("error when creating directory for file %s", path)
+		}
+		objectBuf := make([]byte, size)
+		_, err := rand.Read(objectBuf)
+		if err != nil {
+			t.Fatalf("error when mocking test data for file %s", path)
+		}
+		file, err := os.Create(path)
+		if err != nil {
+			t.Fatalf("error when opening test file %s: %v", path, err)
+		}
+		_, err = file.Write(objectBuf)
+		if err != nil {
+			t.Fatalf("error when writing test file %s: %v", path, err)
+		}
+		key := strings.Replace(f, "/", delimiter, -1)
+		if testData.KeyPrefix != "" {
+			key = testData.KeyPrefix + delimiter + key
+		}
+		expectObjects[key] = objectBuf
+	}
+
+	out, err := s3TransferManagerClient.UploadDirectory(context.Background(), &UploadDirectoryInput{
+		Bucket:    aws.String(bucket),
+		Source:    aws.String(source),
+		Recursive: aws.Bool(testData.Recursive),
+		KeyPrefix: aws.String(testData.KeyPrefix),
+	})
+	if err != nil {
+		if len(testData.ExpectError) == 0 {
+			t.Fatalf("expect no error, got %v", err)
+		}
+		if e, a := testData.ExpectError, err.Error(); !strings.Contains(a, e) {
+			t.Fatalf("expect error to contain %v, got %v", e, a)
+		}
+	} else {
+		if e := testData.ExpectError; len(e) != 0 {
+			t.Fatalf("expect error: %v, got none", e)
+		}
+	}
+	if len(testData.ExpectError) != 0 {
+		return
+	}
+
+	if e, a := testData.ExpectFilesUploaded, out.ObjectsUploaded; e != a {
+		t.Errorf("expect %d files uploaded, got %d", e, a)
+	}
+	for _, key := range testData.ExpectKeys {
+		resp, err := s3Client.GetObject(context.Background(),
+			&s3.GetObjectInput{
+				Bucket: aws.String(bucket),
+				Key:    aws.String(key),
+			})
+		if err != nil {
+			t.Fatalf("error when getting object %s", key)
+		}
+
+		b, _ := ioutil.ReadAll(resp.Body)
+		expectData, ok := expectObjects[key]
+		if !ok {
+			t.Errorf("no data recorded for object %s", key)
+		}
+		if e, a := expectData, b; !bytes.EqualFold(e, a) {
+			t.Errorf("for object %s, expect %s, got %s", key, e, a)
+		}
+	}
+}
+
+type downloadDirectoryTestData struct {
+	ObjectsSize             map[string]int64
+	KeyPrefix               string
+	ExpectObjectsDownloaded int64
+	ExpectFiles             []string
+	ExpectError             string
+}
+
+func testDownloadDirectory(t *testing.T, bucket string, testData downloadDirectoryTestData) {
+	_, filename, _, _ := runtime.Caller(0)
+	dst := filepath.Join(filepath.Dir(filename), "testdata", "integ")
+	defer os.RemoveAll(dst)
+
+	delimiter := "/"
+	keyprefix := testData.KeyPrefix
+	if keyprefix != "" && !strings.HasSuffix(keyprefix, delimiter) {
+		keyprefix = keyprefix + delimiter
+	}
+	expectFiles := map[string][]byte{}
+	for key, size := range testData.ObjectsSize {
+		fileBuf := make([]byte, size)
+		_, err := rand.Read(fileBuf)
+		if err != nil {
+			t.Fatalf("error when mocking test data for object %s", key)
+		}
+		_, err = s3Client.PutObject(context.Background(),
+			&s3.PutObjectInput{
+				Bucket: aws.String(bucket),
+				Key:    aws.String(key),
+				Body:   bytes.NewReader(fileBuf),
+			})
+		if err != nil {
+			t.Fatalf("error when putting object %s", key)
+		}
+		file := strings.ReplaceAll(strings.TrimPrefix(key, keyprefix), delimiter, string(os.PathSeparator))
+		expectFiles[file] = fileBuf
+	}
+
+	out, err := s3TransferManagerClient.DownloadDirectory(context.Background(), &DownloadDirectoryInput{
+		Bucket:      aws.String(bucket),
+		Destination: aws.String(dst),
+		KeyPrefix:   aws.String(testData.KeyPrefix),
+	})
+	if err != nil {
+		if len(testData.ExpectError) == 0 {
+			t.Fatalf("expect no error, got %v", err)
+		}
+		if e, a := testData.ExpectError, err.Error(); !strings.Contains(a, e) {
+			t.Fatalf("expect error to contain %v, got %v", e, a)
+		}
+	} else {
+		if e := testData.ExpectError; len(e) != 0 {
+			t.Fatalf("expect error: %v, got none", e)
+		}
+	}
+	if len(testData.ExpectError) != 0 {
+		return
+	}
+
+	if e, a := testData.ExpectObjectsDownloaded, out.ObjectsDownloaded; e != a {
+		t.Errorf("expect %d objects downloaded, got %d", e, a)
+	}
+	for _, file := range testData.ExpectFiles {
+		f := strings.ReplaceAll(file, delimiter, string(os.PathSeparator))
+		path := filepath.Join(dst, f)
+		b, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("error when reading downloaded file %s: %v", path, err)
+		}
+		expectData, ok := expectFiles[f]
+		if !ok {
+			t.Errorf("no data recorded for file %s", path)
+			continue
+		}
+		if e, a := expectData, b; !bytes.EqualFold(e, a) {
+			t.Errorf("for file %s, expect %s, got %s", f, e, a)
+		}
 	}
 }
 

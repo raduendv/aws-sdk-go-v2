@@ -229,9 +229,9 @@ type RestoreDBClusterFromS3Input struct {
 	// version on your DB cluster past the end of standard support for that engine
 	// version. For more information, see the following sections:
 	//
-	//   - Amazon Aurora - [Using Amazon RDS Extended Support]in the Amazon Aurora User Guide
+	//   - Amazon Aurora - [Amazon RDS Extended Support with Amazon Aurora]in the Amazon Aurora User Guide
 	//
-	//   - Amazon RDS - [Using Amazon RDS Extended Support]in the Amazon RDS User Guide
+	//   - Amazon RDS - [Amazon RDS Extended Support with Amazon RDS]in the Amazon RDS User Guide
 	//
 	// Valid for Cluster Type: Aurora DB clusters and Multi-AZ DB clusters
 	//
@@ -240,7 +240,8 @@ type RestoreDBClusterFromS3Input struct {
 	//
 	// Default: open-source-rds-extended-support
 	//
-	// [Using Amazon RDS Extended Support]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
+	// [Amazon RDS Extended Support with Amazon RDS]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
+	// [Amazon RDS Extended Support with Amazon Aurora]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/extended-support.html
 	EngineLifecycleSupport *string
 
 	// The version number of the database engine to use.
@@ -404,6 +405,13 @@ type RestoreDBClusterFromS3Input struct {
 	// Valid for: Aurora DB clusters only
 	StorageType *string
 
+	// Tags to assign to resources associated with the DB cluster.
+	//
+	// Valid Values:
+	//
+	//   - cluster-auto-backup - The DB cluster's automated backup.
+	TagSpecifications []types.TagSpecification
+
 	// A list of tags.
 	//
 	// For more information, see [Tagging Amazon RDS resources] in the Amazon RDS User Guide or [Tagging Amazon Aurora and Amazon RDS resources] in the Amazon
@@ -538,16 +546,13 @@ func (c *Client) addOperationRestoreDBClusterFromS3Middlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -17,8 +17,29 @@ import (
 //
 // You can import both the certificate and its chain in the Certificate parameter.
 //
+// After importing a certificate, Transfer Family automatically creates a Amazon
+// CloudWatch metric called DaysUntilExpiry that tracks the number of days until
+// the certificate expires. The metric is based on the InactiveDate parameter and
+// is published daily in the AWS/Transfer namespace.
+//
+// It can take up to a full day after importing a certificate for Transfer Family
+// to emit the DaysUntilExpiry metric to your account.
+//
 // If you use the Certificate parameter to upload both the certificate and its
 // chain, don't use the CertificateChain parameter.
+//
+// # CloudWatch monitoring
+//
+// The DaysUntilExpiry metric includes the following specifications:
+//
+//   - Units: Count (days)
+//
+//   - Dimensions: CertificateId (always present), Description (if provided during
+//     certificate import)
+//
+//   - Statistics: Minimum, Maximum, Average
+//
+//   - Frequency: Published daily
 func (c *Client) ImportCertificate(ctx context.Context, params *ImportCertificateInput, optFns ...func(*Options)) (*ImportCertificateOutput, error) {
 	if params == nil {
 		params = &ImportCertificateInput{}
@@ -194,16 +215,13 @@ func (c *Client) addOperationImportCertificateMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

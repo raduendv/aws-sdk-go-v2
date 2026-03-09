@@ -11,6 +11,11 @@ import (
 )
 
 // Get the metadata information for a managed thing.
+//
+// The managedThing metadata parameter is used for associating attributes with a
+// managedThing that can be used for grouping over-the-air (OTA) tasks. Name value
+// pairs in metadata can be used in the OtaTargetQueryString parameter for the
+// CreateOtaTask API operation.
 func (c *Client) GetManagedThingMetaData(ctx context.Context, params *GetManagedThingMetaDataInput, optFns ...func(*Options)) (*GetManagedThingMetaDataOutput, error) {
 	if params == nil {
 		params = &GetManagedThingMetaDataInput{}
@@ -138,16 +143,13 @@ func (c *Client) addOperationGetManagedThingMetaDataMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

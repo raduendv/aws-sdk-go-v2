@@ -343,6 +343,17 @@ type AuthEventType struct {
 //   - "ChallengeName": "SELECT_CHALLENGE", "ChallengeResponses": { "ANSWER":
 //     "EMAIL_OTP", "USERNAME": "[username]"}
 //
+// WEB_AUTHN "ChallengeName": "WEB_AUTHN", "ChallengeResponses": { "USERNAME":
+// "[username]", "CREDENTIAL": "[AuthenticationResponseJSON]"}
+//
+// See [AuthenticationResponseJSON].
+//
+// PASSWORD "ChallengeName": "PASSWORD", "ChallengeResponses": { "USERNAME":
+// "[username]", "PASSWORD": "[password]"}
+//
+// PASSWORD_SRP "ChallengeName": "PASSWORD_SRP", "ChallengeResponses": {
+// "USERNAME": "[username]", "SRP_A": "[SRP_A]"}
+//
 // SMS_OTP "ChallengeName": "SMS_OTP", "ChallengeResponses": {"SMS_OTP_CODE":
 // "[code]", "USERNAME": "[username]"}
 //
@@ -357,16 +368,12 @@ type AuthEventType struct {
 // seconds. When the response time exceeds this period, your user pool returns a
 // NotAuthorizedException error.
 //
-//	"ChallengeName": "PASSWORD_VERIFIER", "ChallengeResponses":
-//	{"PASSWORD_CLAIM_SIGNATURE": "[claim_signature]", "PASSWORD_CLAIM_SECRET_BLOCK":
-//	"[secret_block]", "TIMESTAMP": [timestamp], "USERNAME": "[username]"}
-//
-// Add "DEVICE_KEY" when you sign in with a remembered device.
+// "ChallengeName": "PASSWORD_VERIFIER", "ChallengeResponses":
+// {"PASSWORD_CLAIM_SIGNATURE": "[claim_signature]", "PASSWORD_CLAIM_SECRET_BLOCK":
+// "[secret_block]", "TIMESTAMP": [timestamp], "USERNAME": "[username]"}
 //
 // CUSTOM_CHALLENGE "ChallengeName": "CUSTOM_CHALLENGE", "ChallengeResponses":
 // {"USERNAME": "[username]", "ANSWER": "[challenge_answer]"}
-//
-// Add "DEVICE_KEY" when you sign in with a remembered device.
 //
 // NEW_PASSWORD_REQUIRED "ChallengeName": "NEW_PASSWORD_REQUIRED",
 // "ChallengeResponses": {"NEW_PASSWORD": "[new_password]", "USERNAME":
@@ -399,7 +406,7 @@ type AuthEventType struct {
 // "[username]"}, "SESSION": "[Session ID from VerifySoftwareToken]"
 //
 // SELECT_MFA_TYPE "ChallengeName": "SELECT_MFA_TYPE", "ChallengeResponses":
-// {"USERNAME": "[username]", "ANSWER": "[SMS_MFA or SOFTWARE_TOKEN_MFA]"}
+// {"USERNAME": "[username]", "ANSWER": "[SMS_MFA|EMAIL_MFA|SOFTWARE_TOKEN_MFA]"}
 //
 // For more information about SECRET_HASH , see [Computing secret hash values]. For information about DEVICE_KEY
 // , see [Working with user devices in your user pool].
@@ -1101,6 +1108,26 @@ type IdentityProviderType struct {
 	noSmithyDocumentSerde
 }
 
+// The properties of an inbound federation Lambda trigger.
+type InboundFederationLambdaType struct {
+
+	// The Amazon Resource Name (ARN) of the function that you want to assign to your
+	// Lambda trigger.
+	//
+	// This member is required.
+	LambdaArn *string
+
+	// The user pool trigger version of the request that Amazon Cognito sends to your
+	// Lambda function. Higher-numbered versions add fields that support new features.
+	//
+	// You must use a LambdaVersion of V1_0 with an inbound federation function.
+	//
+	// This member is required.
+	LambdaVersion InboundFederationLambdaVersionType
+
+	noSmithyDocumentSerde
+}
+
 // A collection of user pool Lambda triggers. Amazon Cognito invokes triggers at
 // several possible stages of user pool operations. Triggers can modify the outcome
 // of the operations that invoked them.
@@ -1134,6 +1161,11 @@ type LambdaConfigType struct {
 	//
 	// [custom authentication challenge triggers]: https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-lambda-challenge.html
 	DefineAuthChallenge *string
+
+	// The configuration of an inbound federation Lambda trigger. This trigger can
+	// transform federated user attributes during the authentication with external
+	// identity providers.
+	InboundFederation *InboundFederationLambdaType
 
 	// The ARN of an [KMS key]. Amazon Cognito uses the key to encrypt codes and temporary
 	// passwords sent to custom sender Lambda triggers.
@@ -1282,11 +1314,24 @@ type ManagedLoginBrandingType struct {
 
 	// A JSON file, encoded as a Document type, with the the settings that you want to
 	// apply to your style.
+	//
+	// The following components are not currently implemented and reserved for future
+	// use:
+	//
+	//   - signUp
+	//
+	//   - instructions
+	//
+	//   - sessionTimerDisplay
+	//
+	//   - languageSelector (for localization, see [Managed login localization)]
+	//
+	// [Managed login localization)]: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-managed-login.html#managed-login-localization
 	Settings document.Interface
 
 	// When true, applies the default branding style options. This option reverts to
 	// default style options that are managed by Amazon Cognito. You can modify them
-	// later in the branding designer.
+	// later in the branding editor.
 	//
 	// When you specify true for this option, you must also omit values for Settings
 	// and Assets in the request.
@@ -1880,6 +1925,105 @@ type StringAttributeConstraintsType struct {
 
 	// The minimum length of a string attribute value.
 	MinLength *string
+
+	noSmithyDocumentSerde
+}
+
+// The details of a set of terms documents. For more information, see [Terms documents].
+//
+// [Terms documents]: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-managed-login.html#managed-login-terms-documents
+type TermsDescriptionType struct {
+
+	// The date and time when the item was created. Amazon Cognito returns this
+	// timestamp in UNIX epoch time format. Your SDK might render the output in a
+	// human-readable format like ISO 8601 or a Java Date object.
+	//
+	// This member is required.
+	CreationDate *time.Time
+
+	// This parameter is reserved for future use and currently accepts one value.
+	//
+	// This member is required.
+	Enforcement TermsEnforcementType
+
+	// The date and time when the item was modified. Amazon Cognito returns this
+	// timestamp in UNIX epoch time format. Your SDK might render the output in a
+	// human-readable format like ISO 8601 or a Java Date object.
+	//
+	// This member is required.
+	LastModifiedDate *time.Time
+
+	// The ID of the requested terms documents.
+	//
+	// This member is required.
+	TermsId *string
+
+	// The type and friendly name of the requested terms documents.
+	//
+	// This member is required.
+	TermsName *string
+
+	noSmithyDocumentSerde
+}
+
+// The details of a set of terms documents. For more information, see [Terms documents].
+//
+// [Terms documents]: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-managed-login.html#managed-login-terms-documents
+type TermsType struct {
+
+	// The ID of the app client that the terms documents are assigned to.
+	//
+	// This member is required.
+	ClientId *string
+
+	// The date and time when the item was created. Amazon Cognito returns this
+	// timestamp in UNIX epoch time format. Your SDK might render the output in a
+	// human-readable format like ISO 8601 or a Java Date object.
+	//
+	// This member is required.
+	CreationDate *time.Time
+
+	// This parameter is reserved for future use and currently accepts one value.
+	//
+	// This member is required.
+	Enforcement TermsEnforcementType
+
+	// The date and time when the item was modified. Amazon Cognito returns this
+	// timestamp in UNIX epoch time format. Your SDK might render the output in a
+	// human-readable format like ISO 8601 or a Java Date object.
+	//
+	// This member is required.
+	LastModifiedDate *time.Time
+
+	// A map of URLs to languages. For each localized language that will view the
+	// requested TermsName , assign a URL. A selection of cognito:default displays for
+	// all languages that don't have a language-specific URL.
+	//
+	// For example, "cognito:default": "https://terms.example.com", "cognito:spanish":
+	// "https://terms.example.com/es" .
+	//
+	// This member is required.
+	Links map[string]string
+
+	// The ID of the terms documents.
+	//
+	// This member is required.
+	TermsId *string
+
+	// The type and friendly name of the terms documents.
+	//
+	// This member is required.
+	TermsName *string
+
+	// This parameter is reserved for future use and currently accepts one value.
+	//
+	// This member is required.
+	TermsSource TermsSourceType
+
+	// The ID of the user pool that contains the terms documents.
+	//
+	// This member is required.
+	UserPoolId *string
 
 	noSmithyDocumentSerde
 }

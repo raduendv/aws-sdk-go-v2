@@ -11,8 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Use your WhatsApp phone number id to get the WABA account id and phone number
-// details.
+// Retrieve the WABA account id and phone number details of a WhatsApp business
+// account phone number.
 func (c *Client) GetLinkedWhatsAppBusinessAccountPhoneNumber(ctx context.Context, params *GetLinkedWhatsAppBusinessAccountPhoneNumberInput, optFns ...func(*Options)) (*GetLinkedWhatsAppBusinessAccountPhoneNumberOutput, error) {
 	if params == nil {
 		params = &GetLinkedWhatsAppBusinessAccountPhoneNumberInput{}
@@ -34,7 +34,7 @@ type GetLinkedWhatsAppBusinessAccountPhoneNumberInput struct {
 	// formatted as phone-number-id-01234567890123456789012345678901 . Use [GetLinkedWhatsAppBusinessAccount] to find a
 	// phone number's id.
 	//
-	// [GetLinkedWhatsAppBusinessAccount]: https://docs.aws.amazon.com/social-messaging/latest/APIReference/API_GetLinkedWhatsAppBusinessAccountPhoneNumber.html
+	// [GetLinkedWhatsAppBusinessAccount]: https://docs.aws.amazon.com/social-messaging/latest/APIReference/API_GetLinkedWhatsAppBusinessAccount.html
 	//
 	// This member is required.
 	Id *string
@@ -145,16 +145,13 @@ func (c *Client) addOperationGetLinkedWhatsAppBusinessAccountPhoneNumberMiddlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

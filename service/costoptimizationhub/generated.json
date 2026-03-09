@@ -10,6 +10,7 @@
         "api_client_test.go",
         "api_op_GetPreferences.go",
         "api_op_GetRecommendation.go",
+        "api_op_ListEfficiencyMetrics.go",
         "api_op_ListEnrollmentStatuses.go",
         "api_op_ListRecommendationSummaries.go",
         "api_op_ListRecommendations.go",
@@ -35,7 +36,7 @@
         "types/types_exported_test.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/costoptimizationhub",
     "unstable": false
 }

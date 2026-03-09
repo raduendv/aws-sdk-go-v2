@@ -320,6 +320,7 @@ const (
 	InstanceFleetStateBootstrapping InstanceFleetState = "BOOTSTRAPPING"
 	InstanceFleetStateRunning       InstanceFleetState = "RUNNING"
 	InstanceFleetStateResizing      InstanceFleetState = "RESIZING"
+	InstanceFleetStateReconfiguring InstanceFleetState = "RECONFIGURING"
 	InstanceFleetStateSuspended     InstanceFleetState = "SUSPENDED"
 	InstanceFleetStateTerminating   InstanceFleetState = "TERMINATING"
 	InstanceFleetStateTerminated    InstanceFleetState = "TERMINATED"
@@ -335,6 +336,7 @@ func (InstanceFleetState) Values() []InstanceFleetState {
 		"BOOTSTRAPPING",
 		"RUNNING",
 		"RESIZING",
+		"RECONFIGURING",
 		"SUSPENDED",
 		"TERMINATING",
 		"TERMINATED",
@@ -625,6 +627,33 @@ func (NotebookExecutionStatus) Values() []NotebookExecutionStatus {
 	}
 }
 
+type OnClusterAppUIType string
+
+// Enum values for OnClusterAppUIType
+const (
+	OnClusterAppUITypeSparkHistoryServer  OnClusterAppUIType = "SparkHistoryServer"
+	OnClusterAppUITypeYarnTimelineService OnClusterAppUIType = "YarnTimelineService"
+	OnClusterAppUITypeTezUI               OnClusterAppUIType = "TezUI"
+	OnClusterAppUITypeApplicationMaster   OnClusterAppUIType = "ApplicationMaster"
+	OnClusterAppUITypeJobHistoryServer    OnClusterAppUIType = "JobHistoryServer"
+	OnClusterAppUITypeResourceManager     OnClusterAppUIType = "ResourceManager"
+)
+
+// Values returns all known values for OnClusterAppUIType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OnClusterAppUIType) Values() []OnClusterAppUIType {
+	return []OnClusterAppUIType{
+		"SparkHistoryServer",
+		"YarnTimelineService",
+		"TezUI",
+		"ApplicationMaster",
+		"JobHistoryServer",
+		"ResourceManager",
+	}
+}
+
 type OnDemandCapacityReservationPreference string
 
 // Enum values for OnDemandCapacityReservationPreference
@@ -700,6 +729,27 @@ func (OutputNotebookFormat) Values() []OutputNotebookFormat {
 	}
 }
 
+type PersistentAppUIType string
+
+// Enum values for PersistentAppUIType
+const (
+	PersistentAppUITypeShs PersistentAppUIType = "SHS"
+	PersistentAppUITypeTez PersistentAppUIType = "TEZ"
+	PersistentAppUITypeYts PersistentAppUIType = "YTS"
+)
+
+// Values returns all known values for PersistentAppUIType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (PersistentAppUIType) Values() []PersistentAppUIType {
+	return []PersistentAppUIType{
+		"SHS",
+		"TEZ",
+		"YTS",
+	}
+}
+
 type PlacementGroupStrategy string
 
 // Enum values for PlacementGroupStrategy
@@ -720,6 +770,27 @@ func (PlacementGroupStrategy) Values() []PlacementGroupStrategy {
 		"PARTITION",
 		"CLUSTER",
 		"NONE",
+	}
+}
+
+type ProfilerType string
+
+// Enum values for ProfilerType
+const (
+	ProfilerTypeShs   ProfilerType = "SHS"
+	ProfilerTypeTezui ProfilerType = "TEZUI"
+	ProfilerTypeYts   ProfilerType = "YTS"
+)
+
+// Values returns all known values for ProfilerType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProfilerType) Values() []ProfilerType {
+	return []ProfilerType{
+		"SHS",
+		"TEZUI",
+		"YTS",
 	}
 }
 

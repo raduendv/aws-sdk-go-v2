@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	awsmiddleware "github.com/aws/aws-sdk-go-v2/aws/middleware"
+	"github.com/aws/aws-sdk-go-v2/service/geomaps/types"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
@@ -13,6 +14,10 @@ import (
 // GetTile returns a tile. Map tiles are used by clients to render a map. they're
 // addressed using a grid arrangement with an X coordinate, Y coordinate, and Z
 // (zoom) level.
+//
+// For more information, see [Tiles] in the Amazon Location Service Developer Guide.
+//
+// [Tiles]: https://docs.aws.amazon.com/location/latest/developerguide/tiles.html
 func (c *Client) GetTile(ctx context.Context, params *GetTileInput, optFns ...func(*Options)) (*GetTileOutput, error) {
 	if params == nil {
 		params = &GetTileInput{}
@@ -32,7 +37,7 @@ type GetTileInput struct {
 
 	// Specifies the desired tile set.
 	//
-	// Valid Values: raster.satellite | vector.basemap
+	// Valid Values: raster.satellite | vector.basemap | vector.traffic | raster.dem
 	//
 	// This member is required.
 	Tileset *string
@@ -51,6 +56,10 @@ type GetTileInput struct {
 	//
 	// This member is required.
 	Z *string
+
+	// A list of optional additional parameters such as map styles that can be
+	// requested for each result.
+	AdditionalFeatures []types.TileAdditionalFeature
 
 	// Optional: The API key to be used for authorization. Either an API key or valid
 	// SigV4 signature must be provided when making a request.
@@ -173,16 +182,13 @@ func (c *Client) addOperationGetTileMiddlewares(stack *middleware.Stack, options
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

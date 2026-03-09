@@ -25,6 +25,7 @@
         "api_op_ListGroups.go",
         "api_op_ListTagsForResource.go",
         "api_op_StartCanary.go",
+        "api_op_StartCanaryDryRun.go",
         "api_op_StopCanary.go",
         "api_op_TagResource.go",
         "api_op_UntagResource.go",
@@ -48,7 +49,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/synthetics",
     "unstable": false
 }

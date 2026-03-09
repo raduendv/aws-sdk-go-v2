@@ -55,6 +55,7 @@
         "api_op_ListMLInputChannels.go",
         "api_op_ListTagsForResource.go",
         "api_op_ListTrainedModelInferenceJobs.go",
+        "api_op_ListTrainedModelVersions.go",
         "api_op_ListTrainedModels.go",
         "api_op_ListTrainingDatasets.go",
         "api_op_PutConfiguredAudienceModelPolicy.go",
@@ -86,7 +87,7 @@
         "types/types_exported_test.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/cleanroomsml",
     "unstable": false
 }

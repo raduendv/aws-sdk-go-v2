@@ -48,8 +48,7 @@ type DescribeMlflowTrackingServerOutput struct {
 	// Registry is enabled.
 	AutomaticModelRegistration *bool
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	CreatedBy *types.UserContext
 
 	// The timestamp of when the described MLflow Tracking Server was created.
@@ -58,8 +57,7 @@ type DescribeMlflowTrackingServerOutput struct {
 	// Whether the described MLflow Tracking Server is currently active.
 	IsActive types.IsTrackingServerActive
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	LastModifiedBy *types.UserContext
 
 	// The timestamp of when the described MLflow Tracking Server was last modified.
@@ -74,6 +72,9 @@ type DescribeMlflowTrackingServerOutput struct {
 
 	// The ARN of the described tracking server.
 	TrackingServerArn *string
+
+	//  The current maintenance status of the described MLflow Tracking Server.
+	TrackingServerMaintenanceStatus types.TrackingServerMaintenanceStatus
 
 	// The name of the described tracking server.
 	TrackingServerName *string
@@ -186,16 +187,13 @@ func (c *Client) addOperationDescribeMlflowTrackingServerMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

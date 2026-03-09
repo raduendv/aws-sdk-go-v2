@@ -47,8 +47,8 @@ type UpdateLocationNfsInput struct {
 	// server.
 	OnPremConfig *types.OnPremConfig
 
-	// Specifies the DNS name or IP version 4 (IPv4) address of the NFS file server
-	// that your DataSync agent connects to.
+	// Specifies the DNS name or IP address (IPv4 or IPv6) of the NFS file server that
+	// your DataSync agent connects to.
 	ServerHostname *string
 
 	// Specifies the export path in your NFS file server that you want DataSync to
@@ -158,16 +158,13 @@ func (c *Client) addOperationUpdateLocationNfsMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

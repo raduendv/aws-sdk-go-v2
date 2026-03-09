@@ -153,6 +153,9 @@ type ConverseStreamInput struct {
 	// The messages that you want to send to the model.
 	Messages []types.Message
 
+	// Output configuration for a model response.
+	OutputConfig *types.OutputConfig
+
 	// Model performance settings for the request.
 	PerformanceConfig *types.PerformanceConfiguration
 
@@ -163,6 +166,9 @@ type ConverseStreamInput struct {
 
 	// Key-value pairs that you can use to filter invocation logs.
 	RequestMetadata map[string]string
+
+	// Specifies the processing tier configuration used for serving the request.
+	ServiceTier *types.ServiceTier
 
 	// A prompt that provides instructions or context to the model about the task it
 	// should perform, or the persona it should adopt during the conversation.
@@ -278,16 +284,13 @@ func (c *Client) addOperationConverseStreamMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

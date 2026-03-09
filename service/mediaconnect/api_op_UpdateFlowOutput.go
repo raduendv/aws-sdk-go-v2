@@ -72,7 +72,7 @@ type UpdateFlowOutputInput struct {
 	// receiver’s minimum latency.
 	MinLatency *int32
 
-	//  A suffix for the names of the NDI sources that the flow creates. If a custom
+	//  A suffix for the name of the NDI® sender that the flow creates. If a custom
 	// name isn't specified, MediaConnect uses the output name.
 	NdiProgramName *string
 
@@ -95,6 +95,13 @@ type UpdateFlowOutputInput struct {
 
 	//  The remote ID for the Zixi-pull stream.
 	RemoteId *string
+
+	// Indicates whether to enable or disable router integration for this flow output.
+	RouterIntegrationState types.State
+
+	// The configuration that defines how content is encrypted during transit between
+	// the MediaConnect router and a MediaConnect flow.
+	RouterIntegrationTransitEncryption *types.FlowTransitEncryption
 
 	//  The port that the flow uses to send outbound requests to initiate connection
 	// with the sender.
@@ -219,16 +226,13 @@ func (c *Client) addOperationUpdateFlowOutputMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

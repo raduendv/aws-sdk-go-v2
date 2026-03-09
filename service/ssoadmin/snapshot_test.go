@@ -62,6 +62,18 @@ func testSnapshot(stack *middleware.Stack, operation string) error {
 	}
 	return snapshotOK{}
 }
+func TestCheckSnapshot_AddRegion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AddRegion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AddRegion")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_AttachCustomerManagedPolicyReferenceToPermissionSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.AttachCustomerManagedPolicyReferenceToPermissionSet(context.Background(), nil, func(o *Options) {
@@ -422,6 +434,18 @@ func TestCheckSnapshot_DescribePermissionSetProvisioningStatus(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeRegion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeRegion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeRegion")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeTrustedTokenIssuer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeTrustedTokenIssuer(context.Background(), nil, func(o *Options) {
@@ -499,6 +523,18 @@ func TestCheckSnapshot_GetApplicationGrant(t *testing.T) {
 	_, err := svc.GetApplicationGrant(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetApplicationGrant")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetApplicationSessionConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetApplicationSessionConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetApplicationSessionConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -746,6 +782,18 @@ func TestCheckSnapshot_ListPermissionSetsProvisionedToAccount(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListRegions(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListRegions(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListRegions")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListTagsForResource(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListTagsForResource(context.Background(), nil, func(o *Options) {
@@ -830,6 +878,18 @@ func TestCheckSnapshot_PutApplicationGrant(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_PutApplicationSessionConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutApplicationSessionConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutApplicationSessionConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_PutInlinePolicyToPermissionSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutInlinePolicyToPermissionSet(context.Background(), nil, func(o *Options) {
@@ -847,6 +907,18 @@ func TestCheckSnapshot_PutPermissionsBoundaryToPermissionSet(t *testing.T) {
 	_, err := svc.PutPermissionsBoundaryToPermissionSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "PutPermissionsBoundaryToPermissionSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_RemoveRegion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RemoveRegion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "RemoveRegion")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -937,6 +1009,18 @@ func TestCheckSnapshot_UpdateTrustedTokenIssuer(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func TestUpdateSnapshot_AddRegion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AddRegion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AddRegion")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_AttachCustomerManagedPolicyReferenceToPermissionSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.AttachCustomerManagedPolicyReferenceToPermissionSet(context.Background(), nil, func(o *Options) {
@@ -1297,6 +1381,18 @@ func TestUpdateSnapshot_DescribePermissionSetProvisioningStatus(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeRegion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeRegion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeRegion")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeTrustedTokenIssuer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeTrustedTokenIssuer(context.Background(), nil, func(o *Options) {
@@ -1374,6 +1470,18 @@ func TestUpdateSnapshot_GetApplicationGrant(t *testing.T) {
 	_, err := svc.GetApplicationGrant(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetApplicationGrant")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetApplicationSessionConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetApplicationSessionConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetApplicationSessionConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1621,6 +1729,18 @@ func TestUpdateSnapshot_ListPermissionSetsProvisionedToAccount(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListRegions(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListRegions(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListRegions")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListTagsForResource(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListTagsForResource(context.Background(), nil, func(o *Options) {
@@ -1705,6 +1825,18 @@ func TestUpdateSnapshot_PutApplicationGrant(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_PutApplicationSessionConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutApplicationSessionConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutApplicationSessionConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_PutInlinePolicyToPermissionSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutInlinePolicyToPermissionSet(context.Background(), nil, func(o *Options) {
@@ -1722,6 +1854,18 @@ func TestUpdateSnapshot_PutPermissionsBoundaryToPermissionSet(t *testing.T) {
 	_, err := svc.PutPermissionsBoundaryToPermissionSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "PutPermissionsBoundaryToPermissionSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_RemoveRegion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RemoveRegion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "RemoveRegion")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

@@ -21,9 +21,11 @@ import (
 // has ended, note that chat transcripts contain the following event content types
 // if the event has occurred during the chat session:
 //
-//   - application/vnd.amazonaws.connect.event.participant.left
+//   - application/vnd.amazonaws.connect.event.participant.invited
 //
 //   - application/vnd.amazonaws.connect.event.participant.joined
+//
+//   - application/vnd.amazonaws.connect.event.participant.left
 //
 //   - application/vnd.amazonaws.connect.event.chat.ended
 //
@@ -189,16 +191,13 @@ func (c *Client) addOperationGetTranscriptMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -19,16 +19,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson10_deserializeOpCreateFHIRDatastore struct {
 }
@@ -2425,6 +2416,15 @@ func awsAwsjson10_deserializeDocumentImportJobProperties(v **types.ImportJobProp
 					return fmt.Errorf("expected Timestamp to be a JSON Number, got %T instead", value)
 
 				}
+			}
+
+		case "ValidationLevel":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ValidationLevel to be of type string, got %T instead", value)
+				}
+				sv.ValidationLevel = types.ValidationLevel(jtv)
 			}
 
 		default:

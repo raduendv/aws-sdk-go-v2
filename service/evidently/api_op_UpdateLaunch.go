@@ -16,6 +16,8 @@ import (
 // Don't use this operation to update the tags of an existing launch. Instead, use [TagResource]
 // .
 //
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
+//
 // [TagResource]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_TagResource.html
 func (c *Client) UpdateLaunch(ctx context.Context, params *UpdateLaunchInput, optFns ...func(*Options)) (*UpdateLaunchOutput, error) {
 	if params == nil {
@@ -37,22 +39,32 @@ type UpdateLaunchInput struct {
 	// The name of the launch that is to be updated.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Launch *string
 
 	// The name or ARN of the project that contains the launch that you want to update.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	// An optional description for the launch.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Description *string
 
 	// An array of structures that contains the feature and variations that are to be
 	// used for the launch.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Groups []types.LaunchGroupConfig
 
 	// An array of structures that define the metrics that will be used to monitor the
 	// launch performance.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	MetricMonitors []types.MetricMonitorConfig
 
 	// When Evidently assigns a particular user session to a launch, it must use a
@@ -60,10 +72,14 @@ type UpdateLaunchInput struct {
 	// randomization ID is a combination of the entity ID and randomizationSalt . If
 	// you omit randomizationSalt , Evidently uses the launch name as the
 	// randomizationSalt .
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	RandomizationSalt *string
 
 	// An array of structures that define the traffic allocation percentages among the
 	// feature variations during each step of the launch.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	ScheduledSplitsConfig *types.ScheduledSplitsLaunchConfig
 
 	noSmithyDocumentSerde
@@ -74,6 +90,8 @@ type UpdateLaunchOutput struct {
 	// A structure that contains the new configuration of the launch that was updated.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Launch *types.Launch
 
 	// Metadata pertaining to the operation's result.
@@ -170,16 +188,13 @@ func (c *Client) addOperationUpdateLaunchMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

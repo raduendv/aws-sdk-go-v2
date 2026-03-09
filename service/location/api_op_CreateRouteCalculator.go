@@ -12,6 +12,25 @@ import (
 	"time"
 )
 
+// This operation is no longer current and may be deprecated in the future. We
+// recommend you upgrade to the Routes API V2 unless you require Grab data.
+//
+//   - CreateRouteCalculator is part of a previous Amazon Location Service Routes
+//     API (version 1) which has been superseded by a more intuitive, powerful, and
+//     complete API (version 2).
+//
+//   - The Routes API version 2 has a simplified interface that can be used
+//     without creating or managing route calculator resources.
+//
+//   - If you are using an Amazon Web Services SDK or the Amazon Web Services CLI,
+//     note that the Routes API version 2 is found under geo-routes or geo_routes ,
+//     not under location .
+//
+//   - Since Grab is not yet fully supported in Routes API version 2, we recommend
+//     you continue using API version 1 when using Grab.
+//
+//   - Start your version 2 API journey with the Routes V2 API Referenceor the Developer Guide.
+//
 // Creates a route calculator resource in your Amazon Web Services account.
 //
 // You can send requests to a route calculator resource to estimate travel time,
@@ -77,13 +96,13 @@ type CreateRouteCalculatorInput struct {
 	// Guide.
 	//
 	// [HERE car routing coverage]: https://developer.here.com/documentation/routing-api/dev_guide/topics/coverage/car-routing.html
-	// [Esri]: https://docs.aws.amazon.com/location/latest/developerguide/esri.html
+	// [Esri]: https://docs.aws.amazon.com/location/previous/developerguide/esri.html
 	// [HERE truck routing coverage]: https://developer.here.com/documentation/routing-api/dev_guide/topics/coverage/truck-routing.html
-	// [HERE Technologies]: https://docs.aws.amazon.com/location/latest/developerguide/HERE.html
-	// [GrabMaps]: https://docs.aws.amazon.com/location/latest/developerguide/grab.html
+	// [HERE Technologies]: https://docs.aws.amazon.com/location/previous/developerguide/HERE.html
+	// [GrabMaps]: https://docs.aws.amazon.com/location/previous/developerguide/grab.html
 	// [Esri details on street networks and traffic coverage]: https://doc.arcgis.com/en/arcgis-online/reference/network-coverage.htm
-	// [Data providers]: https://docs.aws.amazon.com/location/latest/developerguide/what-is-data-provider.html
-	// [GrabMaps countries and areas covered]: https://docs.aws.amazon.com/location/latest/developerguide/grab.html#grab-coverage-area
+	// [Data providers]: https://docs.aws.amazon.com/location/previous/developerguide/what-is-data-provider.html
+	// [GrabMaps countries and areas covered]: https://docs.aws.amazon.com/location/previous/developerguide/grab.html#grab-coverage-area
 	//
 	// This member is required.
 	DataSource *string
@@ -249,16 +268,13 @@ func (c *Client) addOperationCreateRouteCalculatorMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

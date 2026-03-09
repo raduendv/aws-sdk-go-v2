@@ -44,13 +44,14 @@ import (
 // The TestState API can run for up to five minutes. If the execution of a state
 // exceeds this duration, it fails with the States.Timeout error.
 //
-// TestState doesn't support [Activity tasks], .sync or .waitForTaskToken[service integration patterns] , [Parallel], or [Map] states.
+// TestState only supports the following when a mock is specified: [Activity tasks], .sync or
+// .waitForTaskToken[service integration patterns] , [Parallel], or [Map] states.
 //
 // [Amazon Web Services service integration]: https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-services.html
 // [All Task types]: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html#task-types
 // [Choice]: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html
 // [Activity tasks]: https://docs.aws.amazon.com/step-functions/latest/dg/concepts-activities.html
-// [HTTP Task]: https://docs.aws.amazon.com/step-functions/latest/dg/connect-third-party-apis.html
+// [HTTP Task]: https://docs.aws.amazon.com/step-functions/latest/dg/call-https-apis.html
 // [input and output processing]: https://docs.aws.amazon.com/step-functions/latest/dg/test-state-isolation.html#test-state-input-output-dataflow
 // [Activity]: https://docs.aws.amazon.com/step-functions/latest/dg/concepts-activities.html
 // [Parallel]: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-parallel-state.html
@@ -78,12 +79,16 @@ func (c *Client) TestState(ctx context.Context, params *TestStateInput, optFns .
 
 type TestStateInput struct {
 
-	// The [Amazon States Language] (ASL) definition of the state.
+	// The [Amazon States Language] (ASL) definition of the state or state machine.
 	//
 	// [Amazon States Language]: https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html
 	//
 	// This member is required.
 	Definition *string
+
+	// A JSON string representing a valid Context object for the state under test.
+	// This field may only be specified if a mock is specified in the same request.
+	Context *string
 
 	// A string that contains the JSON input data for the state.
 	Input *string
@@ -105,6 +110,12 @@ type TestStateInput struct {
 	// execution and the next state to transition to.
 	InspectionLevel types.InspectionLevel
 
+	// Defines a mocked result or error for the state under test.
+	//
+	// A mock can only be specified for Task, Map, or Parallel states. If it is
+	// specified for another state type, an exception will be thrown.
+	Mock *types.MockInput
+
 	// Specifies whether or not to include secret information in the test result. For
 	// HTTP Tasks, a secret includes the data that an EventBridge connection adds to
 	// modify the HTTP request headers, query parameters, and body. Step Functions
@@ -124,6 +135,14 @@ type TestStateInput struct {
 	// The Amazon Resource Name (ARN) of the execution role with the required IAM
 	// permissions for the state.
 	RoleArn *string
+
+	// Contains configurations for the state under test.
+	StateConfiguration *types.TestStateConfiguration
+
+	// Denotes the particular state within a state machine definition to be tested. If
+	// this field is specified, the definition must contain a fully-formed state
+	// machine definition.
+	StateName *string
 
 	// JSON object literal that sets variables used in the state under test. Object
 	// keys are the variable names and values are the variable values.
@@ -147,7 +166,7 @@ type TestStateOutput struct {
 	InspectionData *types.InspectionData
 
 	// The name of the next state to transition to. If you haven't defined a next
-	// state in your definition or if the execution of the state fails, this ﬁeld
+	// state in your definition or if the execution of the state fails, this field
 	// doesn't contain a value.
 	NextState *string
 
@@ -255,16 +274,13 @@ func (c *Client) addOperationTestStateMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

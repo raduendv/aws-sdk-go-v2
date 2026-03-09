@@ -12,6 +12,8 @@ import (
 )
 
 // Get detailed data for an environment template.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) GetEnvironmentTemplate(ctx context.Context, params *GetEnvironmentTemplateInput, optFns ...func(*Options)) (*GetEnvironmentTemplateOutput, error) {
 	if params == nil {
 		params = &GetEnvironmentTemplateInput{}
@@ -138,16 +140,13 @@ func (c *Client) addOperationGetEnvironmentTemplateMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

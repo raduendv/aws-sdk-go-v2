@@ -12,6 +12,8 @@ import (
 
 // Deletes a segment. You can't delete a segment that is being used in a launch or
 // experiment, even if that launch or experiment is not currently running.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) DeleteSegment(ctx context.Context, params *DeleteSegmentInput, optFns ...func(*Options)) (*DeleteSegmentOutput, error) {
 	if params == nil {
 		params = &DeleteSegmentInput{}
@@ -32,6 +34,8 @@ type DeleteSegmentInput struct {
 	// Specifies the segment to delete.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Segment *string
 
 	noSmithyDocumentSerde
@@ -132,16 +136,13 @@ func (c *Client) addOperationDeleteSegmentMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

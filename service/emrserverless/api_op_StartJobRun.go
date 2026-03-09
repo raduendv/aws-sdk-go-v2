@@ -48,6 +48,11 @@ type StartJobRunInput struct {
 	// The configuration overrides for the job run.
 	ConfigurationOverrides *types.ConfigurationOverrides
 
+	// You can pass an optional IAM policy. The resulting job IAM role permissions
+	// will be an intersection of this policy and the policy associated with your job
+	// execution role.
+	ExecutionIamPolicy *types.JobRunExecutionIamPolicy
+
 	// The maximum duration for the job run to run. If the job run runs beyond this
 	// duration, it will be automatically cancelled.
 	ExecutionTimeoutMinutes *int64
@@ -184,16 +189,13 @@ func (c *Client) addOperationStartJobRunMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

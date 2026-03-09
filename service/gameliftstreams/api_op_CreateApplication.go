@@ -21,8 +21,8 @@ import (
 // Getting Started in the Amazon GameLift Streams Developer Guide.
 //
 // Make sure that your files in the Amazon S3 bucket are the correct version you
-// want to use. As soon as you create a Amazon GameLift Streams application, you
-// cannot change the files at a later time.
+// want to use. If you change the files at a later time, you will need to create a
+// new Amazon GameLift Streams application.
 //
 // If the request is successful, Amazon GameLift Streams begins to create an
 // application and sets the status to INITIALIZED . When an application reaches
@@ -67,9 +67,13 @@ type CreateApplicationInput struct {
 	// This member is required.
 	Description *string
 
-	// The path and file name of the executable file that launches the content for
-	// streaming. Enter a path value that is relative to the location set in
-	// ApplicationSourceUri .
+	// The relative path and file name of the executable file that Amazon GameLift
+	// Streams will stream. Specify a path relative to the location set in
+	// ApplicationSourceUri . The file must be contained within the application's root
+	// folder. For Windows applications, the file must be a valid Windows executable or
+	// batch file with a filename ending in .exe, .cmd, or .bat. For Linux
+	// applications, the file must be a valid Linux binary executable or a script that
+	// contains an initial interpreter line starting with a shebang (' #! ').
 	//
 	// This member is required.
 	ExecutablePath *string
@@ -87,6 +91,8 @@ type CreateApplicationInput struct {
 	//
 	//   - Microsoft Windows Server 2022 Base ( Type=WINDOWS, Version=2022 )
 	//
+	//   - Proton 9.0-2 ( Type=PROTON, Version=20250516 )
+	//
 	//   - Proton 8.0-5 ( Type=PROTON, Version=20241007 )
 	//
 	//   - Proton 8.0-2c ( Type=PROTON, Version=20230704 )
@@ -98,8 +104,10 @@ type CreateApplicationInput struct {
 	// save application logs. Required if you specify one or more ApplicationLogPaths .
 	//
 	// The log bucket must have permissions that give Amazon GameLift Streams access
-	// to write the log files. For more information, see Getting Started in the Amazon
-	// GameLift Streams Developer Guide.
+	// to write the log files. For more information, see [Application log bucket permission policy]in the Amazon GameLift
+	// Streams Developer Guide.
+	//
+	// [Application log bucket permission policy]: https://docs.aws.amazon.com/gameliftstreams/latest/developerguide/applications.html#application-bucket-permission-template
 	ApplicationLogOutputUri *string
 
 	// Locations of log files that your content generates during a stream session.
@@ -134,9 +142,11 @@ type CreateApplicationInput struct {
 
 type CreateApplicationOutput struct {
 
-	// An Amazon Resource Name (ARN) that's assigned to an application resource and
-	// uniquely identifies it across all Amazon Web Services Regions. Format is
-	// arn:aws:gameliftstreams:[AWS Region]:[AWS account]:application/[resource ID] .
+	// The [Amazon Resource Name (ARN)] that's assigned to an application resource and uniquely identifies it
+	// across all Amazon Web Services Regions. Format is arn:aws:gameliftstreams:[AWS
+	// Region]:[AWS account]:application/[resource ID] .
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
 	// This member is required.
 	Arn *string
@@ -167,15 +177,12 @@ type CreateApplicationOutput struct {
 	// A human-readable label for the application. You can edit this value.
 	Description *string
 
-	// The path and file name of the executable file that launches the content for
-	// streaming.
+	// The relative path and file name of the executable file that launches the
+	// content for streaming.
 	ExecutablePath *string
 
-	// An [Amazon Resource Name (ARN)] or ID that uniquely identifies the application resource. Format example:
-	// ARN- arn:aws:gameliftstreams:us-west-2:123456789012:application/a-9ZY8X7Wv6 or
-	// ID- a-9ZY8X7Wv6 .
-	//
-	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
+	// A unique ID value that is assigned to the resource when it's created. Format
+	// example: a-9ZY8X7Wv6 .
 	Id *string
 
 	// A timestamp that indicates when this resource was last updated. Timestamps are
@@ -197,6 +204,8 @@ type CreateApplicationOutput struct {
 	//   - For Windows applications
 	//
 	//   - Microsoft Windows Server 2022 Base ( Type=WINDOWS, Version=2022 )
+	//
+	//   - Proton 9.0-2 ( Type=PROTON, Version=20250516 )
 	//
 	//   - Proton 8.0-5 ( Type=PROTON, Version=20241007 )
 	//
@@ -323,16 +332,13 @@ func (c *Client) addOperationCreateApplicationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

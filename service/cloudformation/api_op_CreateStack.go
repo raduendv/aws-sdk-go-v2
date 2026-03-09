@@ -116,17 +116,17 @@ type CreateStackInput struct {
 	//
 	// Only one of the Capabilities and ResourceType parameters can be specified.
 	//
-	// [AWS::IAM::ManagedPolicy]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-managedpolicy.html
-	// [AWS::IAM::AccessKey]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-accesskey.html
+	// [AWS::IAM::ManagedPolicy]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-managedpolicy.html
+	// [AWS::IAM::AccessKey]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-accesskey.html
 	// [AWS::Include]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-include.html
-	// [AWS::IAM::User]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-user.html
-	// [AWS::IAM::InstanceProfile]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-instanceprofile.html
+	// [AWS::IAM::User]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-user.html
+	// [AWS::IAM::InstanceProfile]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-instanceprofile.html
 	// [Acknowledging IAM resources in CloudFormation templates]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/control-access-with-iam.html#using-iam-capabilities
 	// [Perform custom processing on CloudFormation templates with template macros]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-macros.html
-	// [AWS::IAM::Policy]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-policy.html
-	// [AWS::IAM::Group]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-group.html
-	// [AWS::IAM::UserToGroupAddition]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-usertogroupaddition.html
-	// [AWS::IAM::Role]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+	// [AWS::IAM::Policy]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-policy.html
+	// [AWS::IAM::Group]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-group.html
+	// [AWS::IAM::UserToGroupAddition]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-usertogroupaddition.html
+	// [AWS::IAM::Role]: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-iam-role.html
 	// [AWS::Serverless]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
 	Capabilities []types.Capability
 
@@ -176,6 +176,11 @@ type CreateStackInput struct {
 	// of: DO_NOTHING , ROLLBACK , or DELETE . You can specify either OnFailure or
 	// DisableRollback , but not both.
 	//
+	// Although the default setting is ROLLBACK , there is one exception. This
+	// exception occurs when a StackSet attempts to deploy a stack instance and the
+	// stack instance fails to create successfully. In this case, the CreateStack call
+	// overrides the default setting and sets the value of OnFailure to DELETE .
+	//
 	// Default: ROLLBACK
 	OnFailure types.OnFailure
 
@@ -185,23 +190,17 @@ type CreateStackInput struct {
 	// [Parameter]: https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_Parameter.html
 	Parameters []types.Parameter
 
-	// The template resource types that you have permissions to work with for this
-	// create stack action, such as AWS::EC2::Instance , AWS::EC2::* , or
-	// Custom::MyCustomInstance . Use the following syntax to describe template
-	// resource types: AWS::* (for all Amazon Web Services resources), Custom::* (for
-	// all custom resources), Custom::logical_ID  (for a specific custom resource),
-	// AWS::service_name::* (for all resources of a particular Amazon Web Services
-	// service), and AWS::service_name::resource_logical_ID  (for a specific Amazon
-	// Web Services resource).
+	// Specifies which resource types you can work with, such as AWS::EC2::Instance or
+	// Custom::MyCustomInstance .
 	//
 	// If the list of resource types doesn't include a resource that you're creating,
 	// the stack creation fails. By default, CloudFormation grants permissions to all
 	// resource types. IAM uses this parameter for CloudFormation-specific condition
-	// keys in IAM policies. For more information, see [Control access with Identity and Access Management].
+	// keys in IAM policies. For more information, see [Control CloudFormation access with Identity and Access Management].
 	//
 	// Only one of the Capabilities and ResourceType parameters can be specified.
 	//
-	// [Control access with Identity and Access Management]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/control-access-with-iam.html
+	// [Control CloudFormation access with Identity and Access Management]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/control-access-with-iam.html
 	ResourceTypes []string
 
 	// When set to true , newly created resources are deleted when the operation rolls
@@ -227,17 +226,20 @@ type CreateStackInput struct {
 	// updating operations, and for the specified monitoring period afterwards.
 	RollbackConfiguration *types.RollbackConfiguration
 
-	// Structure containing the stack policy body. For more information, see [Prevent updates to stack resources] in the
-	// CloudFormation User Guide. You can specify either the StackPolicyBody or the
-	// StackPolicyURL parameter, but not both.
+	// Structure that contains the stack policy body. For more information, see [Prevent updates to stack resources] in
+	// the CloudFormation User Guide. You can specify either the StackPolicyBody or
+	// the StackPolicyURL parameter, but not both.
 	//
 	// [Prevent updates to stack resources]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/protect-stack-resources.html
 	StackPolicyBody *string
 
-	// Location of a file containing the stack policy. The URL must point to a policy
-	// (maximum size: 16 KB) located in an S3 bucket in the same Region as the stack.
-	// The location for an Amazon S3 bucket must start with https:// . You can specify
-	// either the StackPolicyBody or the StackPolicyURL parameter, but not both.
+	// Location of a file that contains the stack policy. The URL must point to a
+	// policy (maximum size: 16 KB) located in an S3 bucket in the same Region as the
+	// stack. The location for an Amazon S3 bucket must start with https:// . URLs from
+	// S3 static websites are not supported.
+	//
+	// You can specify either the StackPolicyBody or the StackPolicyURL parameter, but
+	// not both.
 	StackPolicyURL *string
 
 	// Key-value pairs to associate with this stack. CloudFormation also propagates
@@ -245,16 +247,16 @@ type CreateStackInput struct {
 	// can be specified.
 	Tags []types.Tag
 
-	// Structure containing the template body with a minimum length of 1 byte and a
+	// Structure that contains the template body with a minimum length of 1 byte and a
 	// maximum length of 51,200 bytes.
 	//
-	// Conditional: You must specify either the TemplateBody or the TemplateURL
-	// parameter, but not both.
+	// Conditional: You must specify either TemplateBody or TemplateURL , but not both.
 	TemplateBody *string
 
-	// The URL of a file containing the template body. The URL must point to a
+	// The URL of a file that contains the template body. The URL must point to a
 	// template (max size: 1 MB) that's located in an Amazon S3 bucket or a Systems
-	// Manager document. The location for an Amazon S3 bucket must start with https:// .
+	// Manager document. The location for an Amazon S3 bucket must start with https://
+	// . URLs from S3 static websites are not supported.
 	//
 	// Conditional: You must specify either the TemplateBody or the TemplateURL
 	// parameter, but not both.
@@ -269,6 +271,10 @@ type CreateStackInput struct {
 
 // The output for a CreateStack action.
 type CreateStackOutput struct {
+
+	// A unique identifier for this stack operation that can be used to track the
+	// operation's progress and events.
+	OperationId *string
 
 	// Unique identifier of the stack.
 	StackId *string
@@ -367,16 +373,13 @@ func (c *Client) addOperationCreateStackMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

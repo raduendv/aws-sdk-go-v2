@@ -30,7 +30,7 @@ func (c *Client) ListWaitingWorkflowSteps(ctx context.Context, params *ListWaiti
 
 type ListWaitingWorkflowStepsInput struct {
 
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	MaxResults *int32
 
 	// A token to specify where to start paginating. This is the nextToken from a
@@ -142,16 +142,13 @@ func (c *Client) addOperationListWaitingWorkflowStepsMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -160,7 +157,7 @@ func (c *Client) addOperationListWaitingWorkflowStepsMiddlewares(stack *middlewa
 // ListWaitingWorkflowStepsPaginatorOptions is the paginator options for
 // ListWaitingWorkflowSteps
 type ListWaitingWorkflowStepsPaginatorOptions struct {
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	Limit int32
 
 	// Set to true if pagination should stop if the service returns a pagination token

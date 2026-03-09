@@ -13,6 +13,13 @@ import (
 )
 
 // Gets a business glossary in Amazon DataZone.
+//
+// Prerequisites:
+//
+//   - The specified glossary ID must exist and be associated with the given
+//     domain.
+//
+//   - The caller must have the datazone:GetGlossary permission on the domain.
 func (c *Client) GetGlossary(ctx context.Context, params *GetGlossaryInput, optFns ...func(*Options)) (*GetGlossaryOutput, error) {
 	if params == nil {
 		params = &GetGlossaryInput{}
@@ -84,6 +91,9 @@ type GetGlossaryOutput struct {
 
 	// The Amazon DataZone user who updated the business glossary.
 	UpdatedBy *string
+
+	// The usage restriction of the restricted glossary.
+	UsageRestrictions []types.GlossaryUsageRestriction
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -179,16 +189,13 @@ func (c *Client) addOperationGetGlossaryMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,12 +11,12 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	The CustomerIdentifier parameter is scheduled for deprecation. Use
+//	The CustomerIdentifier and CustomerAWSAccountID are mutually exclusive
 //
-// CustomerAWSAccountID instead.
-//
-// These parameters are mutually exclusive. You can't specify both
-// CustomerIdentifier and CustomerAWSAccountID in the same request.
+// parameters. You must use one or the other, but not both in the same API request.
+// For new implementations, we recommend using the CustomerAWSAccountID . Your
+// current integration will continue to work. When updating your implementation,
+// consider migrating to CustomerAWSAccountID for improved integration.
 //
 // To post metering records for customers, SaaS applications call BatchMeterUsage ,
 // which is used for metering SaaS flexible consumption pricing (FCP). Identical
@@ -186,16 +186,13 @@ func (c *Client) addOperationBatchMeterUsageMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

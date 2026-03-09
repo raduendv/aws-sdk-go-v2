@@ -10,7 +10,15 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes a genome reference.
+// Deletes a reference genome and returns a response with no body if the operation
+// is successful. The read set associated with the reference genome must first be
+// deleted before deleting the reference genome. After the reference genome is
+// deleted, you can delete the reference store using the DeleteReferenceStore API
+// operation.
+//
+// For more information, see [Deleting HealthOmics reference and sequence stores] in the Amazon Web Services HealthOmics User Guide.
+//
+// [Deleting HealthOmics reference and sequence stores]: https://docs.aws.amazon.com/omics/latest/dev/deleting-reference-and-sequence-stores.html
 func (c *Client) DeleteReference(ctx context.Context, params *DeleteReferenceInput, optFns ...func(*Options)) (*DeleteReferenceOutput, error) {
 	if params == nil {
 		params = &DeleteReferenceInput{}
@@ -139,16 +147,13 @@ func (c *Client) addOperationDeleteReferenceMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

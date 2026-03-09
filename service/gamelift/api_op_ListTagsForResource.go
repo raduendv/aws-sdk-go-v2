@@ -11,10 +11,12 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves all tags assigned to a Amazon GameLift resource. Use resource tags to
-// organize Amazon Web Services resources for a range of purposes. This operation
-// handles the permissions necessary to manage tags for Amazon GameLift resources
-// that support tagging.
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
+// Retrieves all tags assigned to a Amazon GameLift Servers resource. Use resource
+// tags to organize Amazon Web Services resources for a range of purposes. This
+// operation handles the permissions necessary to manage tags for Amazon GameLift
+// Servers resources that support tagging.
 //
 // To list tags for a resource, specify the unique ARN value for the resource.
 //
@@ -49,9 +51,9 @@ func (c *Client) ListTagsForResource(ctx context.Context, params *ListTagsForRes
 type ListTagsForResourceInput struct {
 
 	// The Amazon Resource Name ([ARN] ) that uniquely identifies the Amazon GameLift
-	// resource that you want to retrieve tags for. Amazon GameLift includes resource
-	// ARNs in the data object for the resource. You can retrieve the ARN by calling a
-	// List or Describe operation for the resource type.
+	// Servers resource that you want to retrieve tags for. Amazon GameLift Servers
+	// includes resource ARNs in the data object for the resource. You can retrieve the
+	// ARN by calling a List or Describe operation for the resource type.
 	//
 	// [ARN]: https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html
 	//
@@ -160,16 +162,13 @@ func (c *Client) addOperationListTagsForResourceMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

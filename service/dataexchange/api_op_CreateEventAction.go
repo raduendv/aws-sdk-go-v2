@@ -40,6 +40,9 @@ type CreateEventActionInput struct {
 	// This member is required.
 	Event *types.Event
 
+	// Key-value pairs that you can associate with the event action.
+	Tags map[string]string
+
 	noSmithyDocumentSerde
 }
 
@@ -59,6 +62,9 @@ type CreateEventActionOutput struct {
 
 	// The unique identifier for the event action.
 	Id *string
+
+	// The tags for the event action.
+	Tags map[string]string
 
 	// The date and time that the event action was last updated, in ISO 8601 format.
 	UpdatedAt *time.Time
@@ -157,16 +163,13 @@ func (c *Client) addOperationCreateEventActionMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

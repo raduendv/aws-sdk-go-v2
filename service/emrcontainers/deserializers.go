@@ -18,16 +18,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpCancelJobRun struct {
 }
@@ -4415,6 +4406,15 @@ func awsRestjson1_deserializeDocumentEksInfo(v **types.EksInfo, value interface{
 					return fmt.Errorf("expected KubernetesNamespace to be of type string, got %T instead", value)
 				}
 				sv.Namespace = ptr.String(jtv)
+			}
+
+		case "nodeLabel":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResourceNameString to be of type string, got %T instead", value)
+				}
+				sv.NodeLabel = ptr.String(jtv)
 			}
 
 		default:

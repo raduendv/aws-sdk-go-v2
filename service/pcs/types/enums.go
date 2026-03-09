@@ -2,6 +2,25 @@
 
 package types
 
+type AccountingMode string
+
+// Enum values for AccountingMode
+const (
+	AccountingModeStandard AccountingMode = "STANDARD"
+	AccountingModeNone     AccountingMode = "NONE"
+)
+
+// Values returns all known values for AccountingMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AccountingMode) Values() []AccountingMode {
+	return []AccountingMode{
+		"STANDARD",
+		"NONE",
+	}
+}
+
 type ClusterStatus string
 
 // Enum values for ClusterStatus
@@ -13,6 +32,9 @@ const (
 	ClusterStatusCreateFailed ClusterStatus = "CREATE_FAILED"
 	ClusterStatusDeleteFailed ClusterStatus = "DELETE_FAILED"
 	ClusterStatusUpdateFailed ClusterStatus = "UPDATE_FAILED"
+	ClusterStatusSuspending   ClusterStatus = "SUSPENDING"
+	ClusterStatusSuspended    ClusterStatus = "SUSPENDED"
+	ClusterStatusResuming     ClusterStatus = "RESUMING"
 )
 
 // Values returns all known values for ClusterStatus. Note that this can be
@@ -28,6 +50,9 @@ func (ClusterStatus) Values() []ClusterStatus {
 		"CREATE_FAILED",
 		"DELETE_FAILED",
 		"UPDATE_FAILED",
+		"SUSPENDING",
+		"SUSPENDED",
+		"RESUMING",
 	}
 }
 
@@ -43,6 +68,9 @@ const (
 	ComputeNodeGroupStatusDeleteFailed ComputeNodeGroupStatus = "DELETE_FAILED"
 	ComputeNodeGroupStatusUpdateFailed ComputeNodeGroupStatus = "UPDATE_FAILED"
 	ComputeNodeGroupStatusDeleted      ComputeNodeGroupStatus = "DELETED"
+	ComputeNodeGroupStatusSuspending   ComputeNodeGroupStatus = "SUSPENDING"
+	ComputeNodeGroupStatusSuspended    ComputeNodeGroupStatus = "SUSPENDED"
+	ComputeNodeGroupStatusResuming     ComputeNodeGroupStatus = "RESUMING"
 )
 
 // Values returns all known values for ComputeNodeGroupStatus. Note that this can
@@ -59,6 +87,9 @@ func (ComputeNodeGroupStatus) Values() []ComputeNodeGroupStatus {
 		"DELETE_FAILED",
 		"UPDATE_FAILED",
 		"DELETED",
+		"SUSPENDING",
+		"SUSPENDED",
+		"RESUMING",
 	}
 }
 
@@ -66,8 +97,9 @@ type EndpointType string
 
 // Enum values for EndpointType
 const (
-	EndpointTypeSlurmctld EndpointType = "SLURMCTLD"
-	EndpointTypeSlurmdbd  EndpointType = "SLURMDBD"
+	EndpointTypeSlurmctld  EndpointType = "SLURMCTLD"
+	EndpointTypeSlurmdbd   EndpointType = "SLURMDBD"
+	EndpointTypeSlurmrestd EndpointType = "SLURMRESTD"
 )
 
 // Values returns all known values for EndpointType. Note that this can be
@@ -78,6 +110,26 @@ func (EndpointType) Values() []EndpointType {
 	return []EndpointType{
 		"SLURMCTLD",
 		"SLURMDBD",
+		"SLURMRESTD",
+	}
+}
+
+type NetworkType string
+
+// Enum values for NetworkType
+const (
+	NetworkTypeIpv4 NetworkType = "IPV4"
+	NetworkTypeIpv6 NetworkType = "IPV6"
+)
+
+// Values returns all known values for NetworkType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (NetworkType) Values() []NetworkType {
+	return []NetworkType{
+		"IPV4",
+		"IPV6",
 	}
 }
 
@@ -85,8 +137,9 @@ type PurchaseOption string
 
 // Enum values for PurchaseOption
 const (
-	PurchaseOptionOndemand PurchaseOption = "ONDEMAND"
-	PurchaseOptionSpot     PurchaseOption = "SPOT"
+	PurchaseOptionOndemand      PurchaseOption = "ONDEMAND"
+	PurchaseOptionSpot          PurchaseOption = "SPOT"
+	PurchaseOptionCapacityBlock PurchaseOption = "CAPACITY_BLOCK"
 )
 
 // Values returns all known values for PurchaseOption. Note that this can be
@@ -97,6 +150,7 @@ func (PurchaseOption) Values() []PurchaseOption {
 	return []PurchaseOption{
 		"ONDEMAND",
 		"SPOT",
+		"CAPACITY_BLOCK",
 	}
 }
 
@@ -111,6 +165,9 @@ const (
 	QueueStatusCreateFailed QueueStatus = "CREATE_FAILED"
 	QueueStatusDeleteFailed QueueStatus = "DELETE_FAILED"
 	QueueStatusUpdateFailed QueueStatus = "UPDATE_FAILED"
+	QueueStatusSuspending   QueueStatus = "SUSPENDING"
+	QueueStatusSuspended    QueueStatus = "SUSPENDED"
+	QueueStatusResuming     QueueStatus = "RESUMING"
 )
 
 // Values returns all known values for QueueStatus. Note that this can be expanded
@@ -126,6 +183,9 @@ func (QueueStatus) Values() []QueueStatus {
 		"CREATE_FAILED",
 		"DELETE_FAILED",
 		"UPDATE_FAILED",
+		"SUSPENDING",
+		"SUSPENDED",
+		"RESUMING",
 	}
 }
 
@@ -164,6 +224,25 @@ func (Size) Values() []Size {
 		"SMALL",
 		"MEDIUM",
 		"LARGE",
+	}
+}
+
+type SlurmRestMode string
+
+// Enum values for SlurmRestMode
+const (
+	SlurmRestModeStandard SlurmRestMode = "STANDARD"
+	SlurmRestModeNone     SlurmRestMode = "NONE"
+)
+
+// Values returns all known values for SlurmRestMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SlurmRestMode) Values() []SlurmRestMode {
+	return []SlurmRestMode{
+		"STANDARD",
+		"NONE",
 	}
 }
 

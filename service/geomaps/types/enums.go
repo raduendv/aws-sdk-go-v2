@@ -2,6 +2,23 @@
 
 package types
 
+type Buildings string
+
+// Enum values for Buildings
+const (
+	BuildingsBuildings3d Buildings = "Buildings3D"
+)
+
+// Values returns all known values for Buildings. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Buildings) Values() []Buildings {
+	return []Buildings{
+		"Buildings3D",
+	}
+}
+
 type ColorScheme string
 
 // Enum values for ColorScheme
@@ -18,6 +35,23 @@ func (ColorScheme) Values() []ColorScheme {
 	return []ColorScheme{
 		"Light",
 		"Dark",
+	}
+}
+
+type ContourDensity string
+
+// Enum values for ContourDensity
+const (
+	ContourDensityMedium ContourDensity = "Medium"
+)
+
+// Values returns all known values for ContourDensity. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContourDensity) Values() []ContourDensity {
+	return []ContourDensity{
+		"Medium",
 	}
 }
 
@@ -121,6 +155,88 @@ func (StaticMapStyle) Values() []StaticMapStyle {
 	return []StaticMapStyle{
 		"Satellite",
 		"Standard",
+	}
+}
+
+type Terrain string
+
+// Enum values for Terrain
+const (
+	TerrainHillshade Terrain = "Hillshade"
+	TerrainTerrain3d Terrain = "Terrain3D"
+)
+
+// Values returns all known values for Terrain. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Terrain) Values() []Terrain {
+	return []Terrain{
+		"Hillshade",
+		"Terrain3D",
+	}
+}
+
+type TileAdditionalFeature string
+
+// Enum values for TileAdditionalFeature
+const (
+	// Map elevation contour lines.
+	TileAdditionalFeatureContourLines TileAdditionalFeature = "ContourLines"
+	// Map hillshading details for shading elevation changes.
+	TileAdditionalFeatureHillshade TileAdditionalFeature = "Hillshade"
+	// Map logistics details, including advanced pois and road networks.
+	TileAdditionalFeatureLogistics TileAdditionalFeature = "Logistics"
+	// Map transit details.
+	TileAdditionalFeatureTransit TileAdditionalFeature = "Transit"
+)
+
+// Values returns all known values for TileAdditionalFeature. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TileAdditionalFeature) Values() []TileAdditionalFeature {
+	return []TileAdditionalFeature{
+		"ContourLines",
+		"Hillshade",
+		"Logistics",
+		"Transit",
+	}
+}
+
+type Traffic string
+
+// Enum values for Traffic
+const (
+	TrafficAll Traffic = "All"
+)
+
+// Values returns all known values for Traffic. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Traffic) Values() []Traffic {
+	return []Traffic{
+		"All",
+	}
+}
+
+type TravelMode string
+
+// Enum values for TravelMode
+const (
+	TravelModeTransit TravelMode = "Transit"
+	TravelModeTruck   TravelMode = "Truck"
+)
+
+// Values returns all known values for TravelMode. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TravelMode) Values() []TravelMode {
+	return []TravelMode{
+		"Transit",
+		"Truck",
 	}
 }
 

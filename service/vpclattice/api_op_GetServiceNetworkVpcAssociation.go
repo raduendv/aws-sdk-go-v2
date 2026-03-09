@@ -50,6 +50,9 @@ type GetServiceNetworkVpcAssociationOutput struct {
 	// The account that created the association.
 	CreatedBy *string
 
+	//  DNS options for the service network VPC association.
+	DnsOptions *types.DnsOptions
+
 	// The failure code.
 	FailureCode *string
 
@@ -61,6 +64,9 @@ type GetServiceNetworkVpcAssociationOutput struct {
 
 	// The date and time that the association was last updated, in ISO-8601 format.
 	LastUpdatedAt *time.Time
+
+	//  Indicates if private DNS is enabled in the VPC association.
+	PrivateDnsEnabled *bool
 
 	// The IDs of the security groups.
 	SecurityGroupIds []string
@@ -174,16 +180,13 @@ func (c *Client) addOperationGetServiceNetworkVpcAssociationMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

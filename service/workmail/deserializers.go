@@ -19,16 +19,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpAssociateDelegateToResource struct {
 }
@@ -9478,6 +9469,9 @@ func awsAwsjson11_deserializeOpErrorRegisterToWorkMail(response *smithyhttp.Resp
 
 	case strings.EqualFold("OrganizationStateException", errorCode):
 		return awsAwsjson11_deserializeErrorOrganizationStateException(response, errorBody)
+
+	case strings.EqualFold("UnsupportedOperationException", errorCode):
+		return awsAwsjson11_deserializeErrorUnsupportedOperationException(response, errorBody)
 
 	default:
 		genericError := &smithy.GenericAPIError{

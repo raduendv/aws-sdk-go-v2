@@ -49,6 +49,9 @@ type UpdateLaunchConfigurationTemplateInput struct {
 	// Enable map auto tagging.
 	EnableMapAutoTagging *bool
 
+	// Enable parameters encryption.
+	EnableParametersEncryption *bool
+
 	// Large volume config.
 	LargeVolumeConf *types.LaunchTemplateDiskConf
 
@@ -60,6 +63,9 @@ type UpdateLaunchConfigurationTemplateInput struct {
 
 	// Launch configuration template map auto tagging MPE ID.
 	MapAutoTaggingMpeID *string
+
+	// Parameters encryption key.
+	ParametersEncryptionKey *string
 
 	// Post Launch Action to execute on the Test or Cutover instance.
 	PostLaunchActions *types.PostLaunchActions
@@ -104,6 +110,9 @@ type UpdateLaunchConfigurationTemplateOutput struct {
 	// Enable map auto tagging.
 	EnableMapAutoTagging *bool
 
+	// Enable parameters encryption.
+	EnableParametersEncryption *bool
+
 	// Large volume config.
 	LargeVolumeConf *types.LaunchTemplateDiskConf
 
@@ -115,6 +124,9 @@ type UpdateLaunchConfigurationTemplateOutput struct {
 
 	// Launch configuration template map auto tagging MPE ID.
 	MapAutoTaggingMpeID *string
+
+	// Parameters encryption key.
+	ParametersEncryptionKey *string
 
 	// Post Launch Actions of the Launch Configuration Template.
 	PostLaunchActions *types.PostLaunchActions
@@ -225,16 +237,13 @@ func (c *Client) addOperationUpdateLaunchConfigurationTemplateMiddlewares(stack 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

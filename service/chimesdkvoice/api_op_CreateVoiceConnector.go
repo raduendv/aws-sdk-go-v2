@@ -73,6 +73,10 @@ type CreateVoiceConnectorInput struct {
 	//   migration.
 	IntegrationType types.VoiceConnectorIntegrationType
 
+	// The type of network for the Voice Connector. Either IPv4 only or dual-stack
+	// (IPv4 and IPv6).
+	NetworkType types.NetworkType
+
 	// The tags assigned to the Voice Connector.
 	Tags []types.Tag
 
@@ -178,16 +182,13 @@ func (c *Client) addOperationCreateVoiceConnectorMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

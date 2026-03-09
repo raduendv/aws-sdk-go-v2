@@ -81,6 +81,12 @@ type DescribeAppOutput struct {
 	// The domain ID.
 	DomainId *string
 
+	// The effective status of Trusted Identity Propagation (TIP) for this
+	// application. When enabled, user identities from IAM Identity Center are being
+	// propagated through the application to TIP enabled Amazon Web Services services.
+	// When disabled, standard IAM role-based access is used.
+	EffectiveTrustedIdentityPropagationStatus types.FeatureStatus
+
 	// The failure reason.
 	FailureReason *string
 
@@ -203,16 +209,13 @@ func (c *Client) addOperationDescribeAppMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

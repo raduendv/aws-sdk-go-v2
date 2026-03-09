@@ -148,6 +148,10 @@ type Cluster struct {
 	// Describes the status of the Availability Zone relocation operation.
 	AvailabilityZoneRelocationStatus *string
 
+	// The Amazon Resource Name (ARN) of the Glue data catalog associated with the
+	// cluster enabled with Amazon Redshift federated permissions.
+	CatalogArn *string
+
 	// The availability status of the cluster for queries. Possible values are the
 	// following:
 	//
@@ -310,6 +314,12 @@ type Cluster struct {
 	//   - Pending - The next snapshot is pending to be taken.
 	ExpectedNextSnapshotScheduleTimeStatus *string
 
+	// A boolean value that, if true , indicates that the cluster allocates additional
+	// compute resources to run automatic optimization operations.
+	//
+	// Default: false
+	ExtraComputeForAutomaticOptimization *string
+
 	// A value that reports whether the Amazon Redshift cluster has finished applying
 	// any hardware security module (HSM) settings changes specified in a modify
 	// cluster command.
@@ -327,6 +337,10 @@ type Cluster struct {
 	// The Key Management Service (KMS) key ID of the encryption key used to encrypt
 	// data in the cluster.
 	KmsKeyId *string
+
+	// The status of the lakehouse registration for the cluster. Indicates whether the
+	// cluster is successfully registered with Amazon Redshift federated permissions.
+	LakehouseRegistrationStatus *string
 
 	// The name of the maintenance track for the cluster.
 	MaintenanceTrackName *string
@@ -671,6 +685,18 @@ type ClusterVersion struct {
 
 	// The description of the cluster version.
 	Description *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that defines the Amazon Redshift connect service integration scope.
+type Connect struct {
+
+	// Determines whether the Amazon Redshift connect integration is enabled or
+	// disabled for the application.
+	//
+	// This member is required.
+	Authorization ServiceAuthorization
 
 	noSmithyDocumentSerde
 }
@@ -1612,6 +1638,10 @@ type RecurringCharge struct {
 // Contains properties for the Redshift IDC application.
 type RedshiftIdcApplication struct {
 
+	// The type of application being created. Valid values are None or Lakehouse . Use
+	// Lakehouse to enable Amazon Redshift federated permissions on cluster.
+	ApplicationType ApplicationType
+
 	// The authorized token issuer list for the Amazon Redshift IAM Identity Center
 	// application.
 	AuthorizedTokenIssuerList []AuthorizedTokenIssuer
@@ -1646,8 +1676,37 @@ type RedshiftIdcApplication struct {
 	// A list of service integrations for the Redshift IAM Identity Center application.
 	ServiceIntegrations []ServiceIntegrationsUnion
 
+	// A list of tags keys that Redshift Identity Center applications copy to IAM
+	// Identity Center. For each input key, the tag corresponding to the key-value pair
+	// is propagated.
+	SsoTagKeys []string
+
+	// A list of tags.
+	Tags []Tag
+
 	noSmithyDocumentSerde
 }
+
+// A union structure that defines the scope of Amazon Redshift service
+// integrations. Contains configuration for different integration types such as
+// Amazon Redshift.
+//
+// The following types satisfy this interface:
+//
+//	RedshiftScopeUnionMemberConnect
+type RedshiftScopeUnion interface {
+	isRedshiftScopeUnion()
+}
+
+// The Amazon Redshift connect integration scope configuration. Defines
+// authorization settings for Amazon Redshift connect service integration.
+type RedshiftScopeUnionMemberConnect struct {
+	Value Connect
+
+	noSmithyDocumentSerde
+}
+
+func (*RedshiftScopeUnionMemberConnect) isRedshiftScopeUnion() {}
 
 // A link to an Amazon Redshift Advisor reference for more information about a
 // recommendation.
@@ -2082,6 +2141,7 @@ type ServerlessIdentifier struct {
 // The following types satisfy this interface:
 //
 //	ServiceIntegrationsUnionMemberLakeFormation
+//	ServiceIntegrationsUnionMemberRedshift
 //	ServiceIntegrationsUnionMemberS3AccessGrants
 type ServiceIntegrationsUnion interface {
 	isServiceIntegrationsUnion()
@@ -2095,6 +2155,15 @@ type ServiceIntegrationsUnionMemberLakeFormation struct {
 }
 
 func (*ServiceIntegrationsUnionMemberLakeFormation) isServiceIntegrationsUnion() {}
+
+// A list of scopes set up for Amazon Redshift integration.
+type ServiceIntegrationsUnionMemberRedshift struct {
+	Value []RedshiftScopeUnion
+
+	noSmithyDocumentSerde
+}
+
+func (*ServiceIntegrationsUnionMemberRedshift) isServiceIntegrationsUnion() {}
 
 // A list of scopes set up for S3 Access Grants integration.
 type ServiceIntegrationsUnionMemberS3AccessGrants struct {
@@ -2577,5 +2646,6 @@ type UnknownUnionMember struct {
 
 func (*UnknownUnionMember) isLakeFormationScopeUnion()  {}
 func (*UnknownUnionMember) isNamespaceIdentifierUnion() {}
+func (*UnknownUnionMember) isRedshiftScopeUnion()       {}
 func (*UnknownUnionMember) isS3AccessGrantsScopeUnion() {}
 func (*UnknownUnionMember) isServiceIntegrationsUnion() {}

@@ -11,7 +11,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Returns summary information about operations performed on a stack set.
+// Returns summary information about operations performed on a StackSet.
+//
+// This API provides eventually consistent reads meaning it may take some time but
+// will eventually return the most up-to-date data.
 func (c *Client) ListStackSetOperations(ctx context.Context, params *ListStackSetOperationsInput, optFns ...func(*Options)) (*ListStackSetOperationsOutput, error) {
 	if params == nil {
 		params = &ListStackSetOperationsInput{}
@@ -29,7 +32,7 @@ func (c *Client) ListStackSetOperations(ctx context.Context, params *ListStackSe
 
 type ListStackSetOperationsInput struct {
 
-	// The name or unique ID of the stack set that you want to get operation summaries
+	// The name or unique ID of the StackSet that you want to get operation summaries
 	// for.
 	//
 	// This member is required.
@@ -39,7 +42,7 @@ type ListStackSetOperationsInput struct {
 	// administrator in the organization's management account or as a delegated
 	// administrator in a member account.
 	//
-	// By default, SELF is specified. Use SELF for stack sets with self-managed
+	// By default, SELF is specified. Use SELF for StackSets with self-managed
 	// permissions.
 	//
 	//   - If you are signed in to the management account, specify SELF .
@@ -60,11 +63,8 @@ type ListStackSetOperationsInput struct {
 	// set of results.
 	MaxResults *int32
 
-	// If the previous paginated request didn't return all of the remaining results,
-	// the response object's NextToken parameter value is set to a token. To retrieve
-	// the next set of results, call ListStackSetOperations again and assign that
-	// token to the request object's NextToken parameter. If there are no remaining
-	// results, the previous response object's NextToken parameter is set to null .
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	noSmithyDocumentSerde
@@ -79,7 +79,7 @@ type ListStackSetOperationsOutput struct {
 	NextToken *string
 
 	// A list of StackSetOperationSummary structures that contain summary information
-	// about operations for the specified stack set.
+	// about operations for the specified StackSet.
 	Summaries []types.StackSetOperationSummary
 
 	// Metadata pertaining to the operation's result.
@@ -176,16 +176,13 @@ func (c *Client) addOperationListStackSetOperationsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

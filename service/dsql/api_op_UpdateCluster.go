@@ -12,7 +12,61 @@ import (
 	"time"
 )
 
-// Updates a cluster.
+// The UpdateCluster API allows you to modify both single-Region and multi-Region
+// cluster configurations. With the multiRegionProperties parameter, you can add or
+// modify witness Region support and manage peer relationships with clusters in
+// other Regions.
+//
+// Note that updating multi-Region clusters requires additional IAM permissions
+// beyond those needed for standard cluster updates, as detailed in the Permissions
+// section.
+//
+// # Required permissions
+//
+// dsql:UpdateCluster Permission to update a DSQL cluster.
+//
+// Resources: arn:aws:dsql:region:account-id:cluster/cluster-id
+//
+// dsql:PutMultiRegionProperties Permission to configure multi-Region properties
+// for a cluster.
+//
+// Resources: arn:aws:dsql:region:account-id:cluster/cluster-id
+//
+// dsql:GetCluster Permission to retrieve cluster information.
+//
+// Resources: arn:aws:dsql:region:account-id:cluster/cluster-id
+//
+// dsql:AddPeerCluster Permission to add peer clusters.
+//
+// Resources:
+//
+//   - Local cluster: arn:aws:dsql:region:account-id:cluster/cluster-id
+//
+//   - Each peer cluster: exact ARN of each specified peer cluster
+//
+// dsql:RemovePeerCluster Permission to remove peer clusters. The
+// dsql:RemovePeerCluster permission uses a wildcard ARN pattern to simplify
+// permission management during updates.
+//
+// Resources: arn:aws:dsql:*:account-id:cluster/*
+//
+// dsql:PutWitnessRegion Permission to set a witness Region.
+//
+// Resources: arn:aws:dsql:region:account-id:cluster/cluster-id
+//
+// Condition Keys: dsql:WitnessRegion (matching the specified witness Region)
+//
+// This permission is checked both in the cluster Region and in the witness
+// Region.
+//
+//   - The witness region specified in multiRegionProperties.witnessRegion cannot
+//     be the same as the cluster's Region.
+//
+//   - When updating clusters with peer relationships, permissions are checked for
+//     both adding and removing peers.
+//
+//   - The dsql:RemovePeerCluster permission uses a wildcard ARN pattern to
+//     simplify permission management during updates.
 func (c *Client) UpdateCluster(ctx context.Context, params *UpdateClusterInput, optFns ...func(*Options)) (*UpdateClusterOutput, error) {
 	if params == nil {
 		params = &UpdateClusterInput{}
@@ -48,10 +102,19 @@ type UpdateClusterInput struct {
 	// Specifies whether to enable deletion protection in your cluster.
 	DeletionProtectionEnabled *bool
 
+	// The KMS key that encrypts and protects the data on your cluster. You can
+	// specify the ARN, ID, or alias of an existing key or have Amazon Web Services
+	// create a default key for you.
+	KmsEncryptionKey *string
+
+	// The new multi-Region cluster configuration settings to be applied during an
+	// update operation.
+	MultiRegionProperties *types.MultiRegionProperties
+
 	noSmithyDocumentSerde
 }
 
-// Output Mixin
+// The details of the cluster after it has been updated.
 type UpdateClusterOutput struct {
 
 	// The ARN of the updated cluster.
@@ -64,11 +127,6 @@ type UpdateClusterOutput struct {
 	// This member is required.
 	CreationTime *time.Time
 
-	// Whether deletion protection is enabled for the updated cluster.
-	//
-	// This member is required.
-	DeletionProtectionEnabled *bool
-
 	// The ID of the cluster to update.
 	//
 	// This member is required.
@@ -78,13 +136,6 @@ type UpdateClusterOutput struct {
 	//
 	// This member is required.
 	Status types.ClusterStatus
-
-	// The ARNs of the clusters linked to the updated cluster. Applicable only for
-	// multi-Region clusters.
-	LinkedClusterArns []string
-
-	// The Region that receives all data you write to linked clusters.
-	WitnessRegion *string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -183,16 +234,13 @@ func (c *Client) addOperationUpdateClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

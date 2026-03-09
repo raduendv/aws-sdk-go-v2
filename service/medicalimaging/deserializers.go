@@ -18,16 +18,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpCopyImageSet struct {
 }
@@ -324,6 +315,9 @@ func awsRestjson1_deserializeOpErrorCreateDatastore(response *smithyhttp.Respons
 
 	case strings.EqualFold("InternalServerException", errorCode):
 		return awsRestjson1_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
 	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
 		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
@@ -1466,6 +1460,31 @@ func awsRestjson1_deserializeOpDocumentGetImageSetOutput(v **GetImageSetOutput, 
 				sv.ImageSetWorkflowStatus = types.ImageSetWorkflowStatus(jtv)
 			}
 
+		case "isPrimary":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.IsPrimary = ptr.Bool(jtv)
+			}
+
+		case "lastAccessedAt":
+			if value != nil {
+				switch jtv := value.(type) {
+				case json.Number:
+					f64, err := jtv.Float64()
+					if err != nil {
+						return err
+					}
+					sv.LastAccessedAt = ptr.Time(smithytime.ParseEpochSeconds(f64))
+
+				default:
+					return fmt.Errorf("expected Date to be a JSON Number, got %T instead", value)
+
+				}
+			}
+
 		case "message":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -1478,6 +1497,15 @@ func awsRestjson1_deserializeOpDocumentGetImageSetOutput(v **GetImageSetOutput, 
 		case "overrides":
 			if err := awsRestjson1_deserializeDocumentOverrides(&sv.Overrides, value); err != nil {
 				return err
+			}
+
+		case "storageTier":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected StorageTier to be of type string, got %T instead", value)
+				}
+				sv.StorageTier = types.StorageTier(jtv)
 			}
 
 		case "updatedAt":
@@ -3810,6 +3838,24 @@ func awsRestjson1_deserializeDocumentDatastoreProperties(v **types.DatastoreProp
 				sv.KmsKeyArn = ptr.String(jtv)
 			}
 
+		case "lambdaAuthorizerArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LambdaArn to be of type string, got %T instead", value)
+				}
+				sv.LambdaAuthorizerArn = ptr.String(jtv)
+			}
+
+		case "losslessStorageFormat":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected LosslessStorageFormat to be of type string, got %T instead", value)
+				}
+				sv.LosslessStorageFormat = types.LosslessStorageFormat(jtv)
+			}
+
 		case "updatedAt":
 			if value != nil {
 				switch jtv := value.(type) {
@@ -4522,6 +4568,15 @@ func awsRestjson1_deserializeDocumentImageSetProperties(v **types.ImageSetProper
 				sv.ImageSetWorkflowStatus = types.ImageSetWorkflowStatus(jtv)
 			}
 
+		case "isPrimary":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.IsPrimary = ptr.Bool(jtv)
+			}
+
 		case "message":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -4688,6 +4743,40 @@ func awsRestjson1_deserializeDocumentImageSetsMetadataSummary(v **types.ImageSet
 					return fmt.Errorf("expected ImageSetId to be of type string, got %T instead", value)
 				}
 				sv.ImageSetId = ptr.String(jtv)
+			}
+
+		case "isPrimary":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.IsPrimary = ptr.Bool(jtv)
+			}
+
+		case "lastAccessedAt":
+			if value != nil {
+				switch jtv := value.(type) {
+				case json.Number:
+					f64, err := jtv.Float64()
+					if err != nil {
+						return err
+					}
+					sv.LastAccessedAt = ptr.Time(smithytime.ParseEpochSeconds(f64))
+
+				default:
+					return fmt.Errorf("expected Date to be a JSON Number, got %T instead", value)
+
+				}
+			}
+
+		case "storageTier":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected StorageTier to be of type string, got %T instead", value)
+				}
+				sv.StorageTier = types.StorageTier(jtv)
 			}
 
 		case "updatedAt":

@@ -14,7 +14,8 @@ import (
 	"time"
 )
 
-// Gets information about a read set activation job.
+// Returns detailed information about the status of a read set activation job in
+// JSON format.
 func (c *Client) GetReadSetActivationJob(ctx context.Context, params *GetReadSetActivationJobInput, optFns ...func(*Options)) (*GetReadSetActivationJobOutput, error) {
 	if params == nil {
 		params = &GetReadSetActivationJobInput{}
@@ -173,16 +174,13 @@ func (c *Client) addOperationGetReadSetActivationJobMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

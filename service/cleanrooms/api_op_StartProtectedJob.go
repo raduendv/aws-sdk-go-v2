@@ -45,6 +45,9 @@ type StartProtectedJobInput struct {
 	// This member is required.
 	Type types.ProtectedJobType
 
+	// The compute configuration for the protected job.
+	ComputeConfiguration types.ProtectedJobComputeConfiguration
+
 	// The details needed to write the job results.
 	ResultConfiguration *types.ProtectedJobResultConfigurationInput
 
@@ -152,16 +155,13 @@ func (c *Client) addOperationStartProtectedJobMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

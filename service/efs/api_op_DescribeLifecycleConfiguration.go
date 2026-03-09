@@ -11,9 +11,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Returns the current LifecycleConfiguration object for the specified Amazon EFS
-// file system. Lifecycle management uses the LifecycleConfiguration object to
-// identify when to move files between storage classes. For a file system without a
+// Returns the current LifecycleConfiguration object for the specified EFS file
+// system. Lifecycle management uses the LifecycleConfiguration object to identify
+// when to move files between storage classes. For a file system without a
 // LifecycleConfiguration object, the call returns an empty array in the response.
 //
 // This operation requires permissions for the
@@ -144,16 +144,13 @@ func (c *Client) addOperationDescribeLifecycleConfigurationMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -32,16 +32,26 @@ type KubernetesMetadata struct {
 }
 
 // A local resource is the host where the agent is installed. Local resources can
-// be a a subnet, a VPC, or an Availability Zone.
+// be a a subnet, a VPC, an Availability Zone, an EKS cluster or an Amazon Web
+// Services Region.
 type MonitorLocalResource struct {
 
-	// The identifier of the local resource, such as an ARN.
+	// The identifier of the local resource. The values you can specify are the
+	// following:
+	//
+	//   - For a VPC, subnet or EKS cluster, this identifier is the VPC Amazon
+	//   Resource Name (ARN), subnet ARN or cluster ARN.
+	//
+	//   - For an Availability Zone, this identifier is the AZ name, for example,
+	//   us-west-2b.
+	//
+	//   - For a Region, this identifier is the Region name, for example, us-west-2.
 	//
 	// This member is required.
 	Identifier *string
 
 	// The type of the local resource. Valid values are AWS::EC2::VPC
-	// AWS::AvailabilityZone or AWS::EC2::Subnet .
+	// AWS::AvailabilityZone , AWS::EC2::Subnet , AWS::EKS::Cluster , or AWS::Region .
 	//
 	// This member is required.
 	Type MonitorLocalResourceType
@@ -50,18 +60,35 @@ type MonitorLocalResource struct {
 }
 
 // A remote resource is the other endpoint in a network flow. That is, one
-// endpoint is the local resource and the other is the remote resource. Remote
-// resources can be a a subnet, a VPC, an Availability Zone, or an Amazon Web
-// Services service.
+// endpoint is the local resource and the other is the remote resource. The values
+// you can specify are the following:
+//
+//   - For a VPC or subnet, this identifier is the VPC Amazon Resource Name (ARN)
+//     or subnet ARN.
+//
+//   - For a service, this identifier is one of the following strings: S3 or
+//     DynamoDB .
+//
+//   - For an Availability Zone, this identifier is the AZ name, for example,
+//     us-west-2b.
+//
+//   - For a Region, this identifier is the Region name, for example, us-west-2.
+//
+// When a remote resource is an Amazon Web Services Region, Network Flow Monitor
+// provides network performance measurements up to the edge of the Region that you
+// specify.
 type MonitorRemoteResource struct {
 
-	// The identifier of the remote resource, such as an ARN.
+	// The identifier of the remote resource. For a VPC or subnet, this identifier is
+	// the VPC Amazon Resource Name (ARN) or subnet ARN. For an Availability Zone, this
+	// identifier is the AZ name, for example, us-west-2b. For an Amazon Web Services
+	// Region , this identifier is the Region name, for example, us-west-2.
 	//
 	// This member is required.
 	Identifier *string
 
 	// The type of the remote resource. Valid values are AWS::EC2::VPC
-	// AWS::AvailabilityZone , AWS::EC2::Subnet , or AWS::AWSService .
+	// AWS::AvailabilityZone , AWS::EC2::Subnet , AWS::AWSService , or AWS::Region .
 	//
 	// This member is required.
 	Type MonitorRemoteResourceType
@@ -69,7 +96,7 @@ type MonitorRemoteResource struct {
 	noSmithyDocumentSerde
 }
 
-// A summary of information about a monitor, includ the ARN, the name, and the
+// A summary of information about a monitor, including the ARN, the name, and the
 // status.
 type MonitorSummary struct {
 
@@ -113,6 +140,9 @@ type MonitorTopContributorsRow struct {
 	//   - INTRA_AZ : Top contributor network flows within a single Availability Zone
 	//
 	//   - INTER_AZ : Top contributor network flows between Availability Zones
+	//
+	//   - INTER_REGION : Top contributor network flows between Regions (to the edge of
+	//   another Region)
 	//
 	//   - INTER_VPC : Top contributor network flows between VPCs
 	//
@@ -214,15 +244,19 @@ type ScopeSummary struct {
 	// This member is required.
 	ScopeArn *string
 
-	// The identifier for the scope that includes the resources you want to get data
-	// results for. A scope ID is an internally-generated identifier that includes all
-	// the resources for a specific root account.
+	// The identifier for the scope that includes the resources that you want to get
+	// data results for. A scope ID is an internally-generated identifier that includes
+	// all the resources for the accounts in a scope.
 	//
 	// This member is required.
 	ScopeId *string
 
-	// The status of a scope. The status can be one of the following, depending on the
-	// state of scope creation: SUCCEEDED , IN_PROGRESS , or FAILED .
+	// The status for a scope. The status can be one of the following: SUCCEEDED ,
+	// IN_PROGRESS , FAILED , DEACTIVATING , or DEACTIVATED .
+	//
+	// A status of DEACTIVATING means that you've requested a scope to be deactivated
+	// and Network Flow Monitor is in the process of deactivating the scope. A status
+	// of DEACTIVATED means that the deactivating process is complete.
 	//
 	// This member is required.
 	Status ScopeStatus
@@ -250,18 +284,18 @@ type TargetIdMemberAccountId struct {
 
 func (*TargetIdMemberAccountId) isTargetId() {}
 
-// A target identifier is a pair of identifying information for a resource that is
-// included in a target. A target identifier includes the target ID and the target
-// type.
+// A target identifier is a pair of identifying information for a scope that is
+// included in a target. A target identifier is made up of a target ID and a target
+// type. Currently the target ID is always an account ID and the target type is
+// always ACCOUNT.
 type TargetIdentifier struct {
 
-	// The identifier for a target.
+	// The identifier for a target, which is currently always an account ID .
 	//
 	// This member is required.
 	TargetId TargetId
 
-	// The type of a target. A target type is currently always ACCOUNT because a
-	// target is currently a single Amazon Web Services account.
+	// The type of a target. A target type is currently always ACCOUNT .
 	//
 	// This member is required.
 	TargetType TargetType
@@ -269,18 +303,20 @@ type TargetIdentifier struct {
 	noSmithyDocumentSerde
 }
 
-// A target resource in a scope. The resource is identified by a Region and a
-// target identifier, which includes a target ID and a target type.
+// A target resource in a scope. The resource is identified by a Region and an
+// account, defined by a target identifier. A target identifier is made up of a
+// target ID (currently always an account ID) and a target type (currently always
+// ACCOUNT ).
 type TargetResource struct {
 
-	// The Amazon Web Services Region where the target resource is located.
+	// The Amazon Web Services Region for the scope.
 	//
 	// This member is required.
 	Region *string
 
-	// A target identifier is a pair of identifying information for a resource that is
-	// included in a target. A target identifier includes the target ID and the target
-	// type.
+	// A target identifier is a pair of identifying information for a scope. A target
+	// identifier is made up of a targetID (currently always an account ID) and a
+	// targetType (currently always an account).
 	//
 	// This member is required.
 	TargetIdentifier *TargetIdentifier
@@ -291,7 +327,7 @@ type TargetResource struct {
 // A section of the network that a network flow has traveled through.
 type TraversedComponent struct {
 
-	// The Amazon Resource Name (ARN) of a tranversed component.
+	// The Amazon Resource Name (ARN) of a traversed component.
 	ComponentArn *string
 
 	// The identifier for the traversed component.
@@ -353,7 +389,10 @@ type WorkloadInsightsTopContributorsRow struct {
 	// The identifier for the VPC for the local resource.
 	LocalVpcId *string
 
-	// The identifier of a remote resource.
+	// The identifier of a remote resource. For a VPC or subnet, this identifier is
+	// the VPC Amazon Resource Name (ARN) or subnet ARN. For an Availability Zone, this
+	// identifier is the AZ name, for example, us-west-2b. For an Amazon Web Services
+	// Region , this identifier is the Region name, for example, us-west-2.
 	RemoteIdentifier *string
 
 	// The value for a metric.

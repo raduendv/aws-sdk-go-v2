@@ -58,6 +58,10 @@ type UpdatePortalInput struct {
 	// The maximum number of concurrent sessions for the portal.
 	MaxConcurrentSessions *int32
 
+	// The custom domain of the web portal that users access in order to start
+	// streaming sessions.
+	PortalCustomDomain *string
+
 	noSmithyDocumentSerde
 }
 
@@ -160,16 +164,13 @@ func (c *Client) addOperationUpdatePortalMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

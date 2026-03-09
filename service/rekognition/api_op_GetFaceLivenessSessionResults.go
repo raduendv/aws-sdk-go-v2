@@ -67,6 +67,10 @@ type GetFaceLivenessSessionResultsOutput struct {
 	// instead.
 	AuditImages []types.AuditImage
 
+	// Contains information regarding the challenge type used for the Face Liveness
+	// check.
+	Challenge *types.Challenge
+
 	// Probabalistic confidence score for if the person in the given video was live,
 	// represented as a float value between 0 to 100.
 	Confidence *float32
@@ -173,16 +177,13 @@ func (c *Client) addOperationGetFaceLivenessSessionResultsMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

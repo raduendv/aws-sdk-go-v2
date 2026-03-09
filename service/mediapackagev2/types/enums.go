@@ -25,7 +25,8 @@ type AdMarkerHls string
 
 // Enum values for AdMarkerHls
 const (
-	AdMarkerHlsDaterange AdMarkerHls = "DATERANGE"
+	AdMarkerHlsDaterange      AdMarkerHls = "DATERANGE"
+	AdMarkerHlsScte35Enhanced AdMarkerHls = "SCTE35_ENHANCED"
 )
 
 // Values returns all known values for AdMarkerHls. Note that this can be expanded
@@ -35,6 +36,7 @@ const (
 func (AdMarkerHls) Values() []AdMarkerHls {
 	return []AdMarkerHls{
 		"DATERANGE",
+		"SCTE35_ENHANCED",
 	}
 }
 
@@ -86,6 +88,7 @@ type ContainerType string
 const (
 	ContainerTypeTs   ContainerType = "TS"
 	ContainerTypeCmaf ContainerType = "CMAF"
+	ContainerTypeIsm  ContainerType = "ISM"
 )
 
 // Values returns all known values for ContainerType. Note that this can be
@@ -96,6 +99,26 @@ func (ContainerType) Values() []ContainerType {
 	return []ContainerType{
 		"TS",
 		"CMAF",
+		"ISM",
+	}
+}
+
+type DashCompactness string
+
+// Enum values for DashCompactness
+const (
+	DashCompactnessStandard DashCompactness = "STANDARD"
+	DashCompactnessNone     DashCompactness = "NONE"
+)
+
+// Values returns all known values for DashCompactness. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DashCompactness) Values() []DashCompactness {
+	return []DashCompactness{
+		"STANDARD",
+		"NONE",
 	}
 }
 
@@ -143,6 +166,23 @@ func (DashPeriodTrigger) Values() []DashPeriodTrigger {
 	}
 }
 
+type DashProfile string
+
+// Enum values for DashProfile
+const (
+	DashProfileDvbDash DashProfile = "DVB_DASH"
+)
+
+// Values returns all known values for DashProfile. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DashProfile) Values() []DashProfile {
+	return []DashProfile{
+		"DVB_DASH",
+	}
+}
+
 type DashSegmentTemplateFormat string
 
 // Enum values for DashSegmentTemplateFormat
@@ -157,6 +197,25 @@ const (
 func (DashSegmentTemplateFormat) Values() []DashSegmentTemplateFormat {
 	return []DashSegmentTemplateFormat{
 		"NUMBER_WITH_TIMELINE",
+	}
+}
+
+type DashTtmlProfile string
+
+// Enum values for DashTtmlProfile
+const (
+	DashTtmlProfileImsc1     DashTtmlProfile = "IMSC_1"
+	DashTtmlProfileEbuTtD101 DashTtmlProfile = "EBU_TT_D_101"
+)
+
+// Values returns all known values for DashTtmlProfile. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DashTtmlProfile) Values() []DashTtmlProfile {
+	return []DashTtmlProfile{
+		"IMSC_1",
+		"EBU_TT_D_101",
 	}
 }
 
@@ -272,6 +331,42 @@ func (InputType) Values() []InputType {
 	return []InputType{
 		"HLS",
 		"CMAF",
+	}
+}
+
+type IsmEncryptionMethod string
+
+// Enum values for IsmEncryptionMethod
+const (
+	IsmEncryptionMethodCenc IsmEncryptionMethod = "CENC"
+)
+
+// Values returns all known values for IsmEncryptionMethod. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IsmEncryptionMethod) Values() []IsmEncryptionMethod {
+	return []IsmEncryptionMethod{
+		"CENC",
+	}
+}
+
+type MssManifestLayout string
+
+// Enum values for MssManifestLayout
+const (
+	MssManifestLayoutFull    MssManifestLayout = "FULL"
+	MssManifestLayoutCompact MssManifestLayout = "COMPACT"
+)
+
+// Values returns all known values for MssManifestLayout. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MssManifestLayout) Values() []MssManifestLayout {
+	return []MssManifestLayout{
+		"FULL",
+		"COMPACT",
 	}
 }
 
@@ -391,6 +486,25 @@ func (ScteFilter) Values() []ScteFilter {
 	}
 }
 
+type ScteInSegments string
+
+// Enum values for ScteInSegments
+const (
+	ScteInSegmentsNone ScteInSegments = "NONE"
+	ScteInSegmentsAll  ScteInSegments = "ALL"
+)
+
+// Values returns all known values for ScteInSegments. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScteInSegments) Values() []ScteInSegments {
+	return []ScteInSegments{
+		"NONE",
+		"ALL",
+	}
+}
+
 type TsEncryptionMethod string
 
 // Enum values for TsEncryptionMethod
@@ -414,65 +528,104 @@ type ValidationExceptionType string
 
 // Enum values for ValidationExceptionType
 const (
-	ValidationExceptionTypeContainerTypeImmutable                                ValidationExceptionType = "CONTAINER_TYPE_IMMUTABLE"
-	ValidationExceptionTypeInvalidPaginationToken                                ValidationExceptionType = "INVALID_PAGINATION_TOKEN"
-	ValidationExceptionTypeInvalidPaginationMaxResults                           ValidationExceptionType = "INVALID_PAGINATION_MAX_RESULTS"
-	ValidationExceptionTypeInvalidPolicy                                         ValidationExceptionType = "INVALID_POLICY"
-	ValidationExceptionTypeInvalidRoleArn                                        ValidationExceptionType = "INVALID_ROLE_ARN"
-	ValidationExceptionTypeManifestNameCollision                                 ValidationExceptionType = "MANIFEST_NAME_COLLISION"
-	ValidationExceptionTypeEncryptionMethodContainerTypeMismatch                 ValidationExceptionType = "ENCRYPTION_METHOD_CONTAINER_TYPE_MISMATCH"
-	ValidationExceptionTypeCencIvIncompatible                                    ValidationExceptionType = "CENC_IV_INCOMPATIBLE"
-	ValidationExceptionTypeEncryptionContractWithoutAudioRenditionIncompatible   ValidationExceptionType = "ENCRYPTION_CONTRACT_WITHOUT_AUDIO_RENDITION_INCOMPATIBLE"
-	ValidationExceptionTypeEncryptionContractUnencrypted                         ValidationExceptionType = "ENCRYPTION_CONTRACT_UNENCRYPTED"
-	ValidationExceptionTypeEncryptionContractShared                              ValidationExceptionType = "ENCRYPTION_CONTRACT_SHARED"
-	ValidationExceptionTypeNumManifestsLow                                       ValidationExceptionType = "NUM_MANIFESTS_LOW"
-	ValidationExceptionTypeNumManifestsHigh                                      ValidationExceptionType = "NUM_MANIFESTS_HIGH"
-	ValidationExceptionTypeManifestDrmSystemsIncompatible                        ValidationExceptionType = "MANIFEST_DRM_SYSTEMS_INCOMPATIBLE"
-	ValidationExceptionTypeDrmSystemsEncryptionMethodIncompatible                ValidationExceptionType = "DRM_SYSTEMS_ENCRYPTION_METHOD_INCOMPATIBLE"
-	ValidationExceptionTypeRoleArnNotAssumable                                   ValidationExceptionType = "ROLE_ARN_NOT_ASSUMABLE"
-	ValidationExceptionTypeRoleArnLengthOutOfRange                               ValidationExceptionType = "ROLE_ARN_LENGTH_OUT_OF_RANGE"
-	ValidationExceptionTypeRoleArnInvalidFormat                                  ValidationExceptionType = "ROLE_ARN_INVALID_FORMAT"
-	ValidationExceptionTypeUrlInvalid                                            ValidationExceptionType = "URL_INVALID"
-	ValidationExceptionTypeUrlScheme                                             ValidationExceptionType = "URL_SCHEME"
-	ValidationExceptionTypeUrlUserInfo                                           ValidationExceptionType = "URL_USER_INFO"
-	ValidationExceptionTypeUrlPort                                               ValidationExceptionType = "URL_PORT"
-	ValidationExceptionTypeUrlUnknownHost                                        ValidationExceptionType = "URL_UNKNOWN_HOST"
-	ValidationExceptionTypeUrlLocalAddress                                       ValidationExceptionType = "URL_LOCAL_ADDRESS"
-	ValidationExceptionTypeUrlLoopbackAddress                                    ValidationExceptionType = "URL_LOOPBACK_ADDRESS"
-	ValidationExceptionTypeUrlLinkLocalAddress                                   ValidationExceptionType = "URL_LINK_LOCAL_ADDRESS"
-	ValidationExceptionTypeUrlMulticastAddress                                   ValidationExceptionType = "URL_MULTICAST_ADDRESS"
-	ValidationExceptionTypeMemberInvalid                                         ValidationExceptionType = "MEMBER_INVALID"
-	ValidationExceptionTypeMemberMissing                                         ValidationExceptionType = "MEMBER_MISSING"
-	ValidationExceptionTypeMemberMinValue                                        ValidationExceptionType = "MEMBER_MIN_VALUE"
-	ValidationExceptionTypeMemberMaxValue                                        ValidationExceptionType = "MEMBER_MAX_VALUE"
-	ValidationExceptionTypeMemberMinLength                                       ValidationExceptionType = "MEMBER_MIN_LENGTH"
-	ValidationExceptionTypeMemberMaxLength                                       ValidationExceptionType = "MEMBER_MAX_LENGTH"
-	ValidationExceptionTypeMemberInvalidEnumValue                                ValidationExceptionType = "MEMBER_INVALID_ENUM_VALUE"
-	ValidationExceptionTypeMemberDoesNotMatchPattern                             ValidationExceptionType = "MEMBER_DOES_NOT_MATCH_PATTERN"
-	ValidationExceptionTypeInvalidManifestFilter                                 ValidationExceptionType = "INVALID_MANIFEST_FILTER"
-	ValidationExceptionTypeInvalidTimeDelaySeconds                               ValidationExceptionType = "INVALID_TIME_DELAY_SECONDS"
-	ValidationExceptionTypeEndTimeEarlierThanStartTime                           ValidationExceptionType = "END_TIME_EARLIER_THAN_START_TIME"
-	ValidationExceptionTypeTsContainerTypeWithDashManifest                       ValidationExceptionType = "TS_CONTAINER_TYPE_WITH_DASH_MANIFEST"
-	ValidationExceptionTypeDirectModeWithTimingSource                            ValidationExceptionType = "DIRECT_MODE_WITH_TIMING_SOURCE"
-	ValidationExceptionTypeNoneModeWithTimingSource                              ValidationExceptionType = "NONE_MODE_WITH_TIMING_SOURCE"
-	ValidationExceptionTypeTimingSourceMissing                                   ValidationExceptionType = "TIMING_SOURCE_MISSING"
-	ValidationExceptionTypeUpdatePeriodSmallerThanSegmentDuration                ValidationExceptionType = "UPDATE_PERIOD_SMALLER_THAN_SEGMENT_DURATION"
-	ValidationExceptionTypePeriodTriggersNoneSpecifiedWithAdditionalValues       ValidationExceptionType = "PERIOD_TRIGGERS_NONE_SPECIFIED_WITH_ADDITIONAL_VALUES"
-	ValidationExceptionTypeDrmSignalingMismatchSegmentEncryptionStatus           ValidationExceptionType = "DRM_SIGNALING_MISMATCH_SEGMENT_ENCRYPTION_STATUS"
-	ValidationExceptionTypeOnlyCmafInputTypeAllowForceEndpointErrorConfiguration ValidationExceptionType = "ONLY_CMAF_INPUT_TYPE_ALLOW_FORCE_ENDPOINT_ERROR_CONFIGURATION"
-	ValidationExceptionTypeSourceDisruptionsEnabledIncorrectly                   ValidationExceptionType = "SOURCE_DISRUPTIONS_ENABLED_INCORRECTLY"
-	ValidationExceptionTypeHarvestedManifestHasStartEndFilterConfiguration       ValidationExceptionType = "HARVESTED_MANIFEST_HAS_START_END_FILTER_CONFIGURATION"
-	ValidationExceptionTypeHarvestedManifestNotFoundOnEndpoint                   ValidationExceptionType = "HARVESTED_MANIFEST_NOT_FOUND_ON_ENDPOINT"
-	ValidationExceptionTypeTooManyInProgressHarvestJobs                          ValidationExceptionType = "TOO_MANY_IN_PROGRESS_HARVEST_JOBS"
-	ValidationExceptionTypeHarvestJobIneligibleForCancellation                   ValidationExceptionType = "HARVEST_JOB_INELIGIBLE_FOR_CANCELLATION"
-	ValidationExceptionTypeInvalidHarvestJobDuration                             ValidationExceptionType = "INVALID_HARVEST_JOB_DURATION"
-	ValidationExceptionTypeHarvestJobS3DestinationMissingOrIncomplete            ValidationExceptionType = "HARVEST_JOB_S3_DESTINATION_MISSING_OR_INCOMPLETE"
-	ValidationExceptionTypeHarvestJobUnableToWriteToS3Destination                ValidationExceptionType = "HARVEST_JOB_UNABLE_TO_WRITE_TO_S3_DESTINATION"
-	ValidationExceptionTypeHarvestJobCustomerEndpointReadAccessDenied            ValidationExceptionType = "HARVEST_JOB_CUSTOMER_ENDPOINT_READ_ACCESS_DENIED"
-	ValidationExceptionTypeClipStartTimeWithStartOrEnd                           ValidationExceptionType = "CLIP_START_TIME_WITH_START_OR_END"
-	ValidationExceptionTypeStartTagTimeOffsetInvalid                             ValidationExceptionType = "START_TAG_TIME_OFFSET_INVALID"
-	ValidationExceptionTypeOnlyCmafInputTypeAllowMqcsInputSwitching              ValidationExceptionType = "ONLY_CMAF_INPUT_TYPE_ALLOW_MQCS_INPUT_SWITCHING"
-	ValidationExceptionTypeOnlyCmafInputTypeAllowMqcsOutputConfiguration         ValidationExceptionType = "ONLY_CMAF_INPUT_TYPE_ALLOW_MQCS_OUTPUT_CONFIGURATION"
+	ValidationExceptionTypeContainerTypeImmutable                                 ValidationExceptionType = "CONTAINER_TYPE_IMMUTABLE"
+	ValidationExceptionTypeInvalidPaginationToken                                 ValidationExceptionType = "INVALID_PAGINATION_TOKEN"
+	ValidationExceptionTypeInvalidPaginationMaxResults                            ValidationExceptionType = "INVALID_PAGINATION_MAX_RESULTS"
+	ValidationExceptionTypeInvalidPolicy                                          ValidationExceptionType = "INVALID_POLICY"
+	ValidationExceptionTypeInvalidRoleArn                                         ValidationExceptionType = "INVALID_ROLE_ARN"
+	ValidationExceptionTypeManifestNameCollision                                  ValidationExceptionType = "MANIFEST_NAME_COLLISION"
+	ValidationExceptionTypeEncryptionMethodContainerTypeMismatch                  ValidationExceptionType = "ENCRYPTION_METHOD_CONTAINER_TYPE_MISMATCH"
+	ValidationExceptionTypeCencIvIncompatible                                     ValidationExceptionType = "CENC_IV_INCOMPATIBLE"
+	ValidationExceptionTypeEncryptionContractWithoutAudioRenditionIncompatible    ValidationExceptionType = "ENCRYPTION_CONTRACT_WITHOUT_AUDIO_RENDITION_INCOMPATIBLE"
+	ValidationExceptionTypeEncryptionContractWithIsmContainerIncompatible         ValidationExceptionType = "ENCRYPTION_CONTRACT_WITH_ISM_CONTAINER_INCOMPATIBLE"
+	ValidationExceptionTypeEncryptionContractUnencrypted                          ValidationExceptionType = "ENCRYPTION_CONTRACT_UNENCRYPTED"
+	ValidationExceptionTypeEncryptionContractShared                               ValidationExceptionType = "ENCRYPTION_CONTRACT_SHARED"
+	ValidationExceptionTypeNumManifestsLow                                        ValidationExceptionType = "NUM_MANIFESTS_LOW"
+	ValidationExceptionTypeNumManifestsHigh                                       ValidationExceptionType = "NUM_MANIFESTS_HIGH"
+	ValidationExceptionTypeManifestDrmSystemsIncompatible                         ValidationExceptionType = "MANIFEST_DRM_SYSTEMS_INCOMPATIBLE"
+	ValidationExceptionTypeDrmSystemsEncryptionMethodIncompatible                 ValidationExceptionType = "DRM_SYSTEMS_ENCRYPTION_METHOD_INCOMPATIBLE"
+	ValidationExceptionTypeRoleArnNotAssumable                                    ValidationExceptionType = "ROLE_ARN_NOT_ASSUMABLE"
+	ValidationExceptionTypeRoleArnLengthOutOfRange                                ValidationExceptionType = "ROLE_ARN_LENGTH_OUT_OF_RANGE"
+	ValidationExceptionTypeRoleArnInvalidFormat                                   ValidationExceptionType = "ROLE_ARN_INVALID_FORMAT"
+	ValidationExceptionTypeUrlInvalid                                             ValidationExceptionType = "URL_INVALID"
+	ValidationExceptionTypeUrlScheme                                              ValidationExceptionType = "URL_SCHEME"
+	ValidationExceptionTypeUrlUserInfo                                            ValidationExceptionType = "URL_USER_INFO"
+	ValidationExceptionTypeUrlPort                                                ValidationExceptionType = "URL_PORT"
+	ValidationExceptionTypeUrlUnknownHost                                         ValidationExceptionType = "URL_UNKNOWN_HOST"
+	ValidationExceptionTypeUrlLocalAddress                                        ValidationExceptionType = "URL_LOCAL_ADDRESS"
+	ValidationExceptionTypeUrlLoopbackAddress                                     ValidationExceptionType = "URL_LOOPBACK_ADDRESS"
+	ValidationExceptionTypeUrlLinkLocalAddress                                    ValidationExceptionType = "URL_LINK_LOCAL_ADDRESS"
+	ValidationExceptionTypeUrlMulticastAddress                                    ValidationExceptionType = "URL_MULTICAST_ADDRESS"
+	ValidationExceptionTypeMemberInvalid                                          ValidationExceptionType = "MEMBER_INVALID"
+	ValidationExceptionTypeMemberMissing                                          ValidationExceptionType = "MEMBER_MISSING"
+	ValidationExceptionTypeMemberMinValue                                         ValidationExceptionType = "MEMBER_MIN_VALUE"
+	ValidationExceptionTypeMemberMaxValue                                         ValidationExceptionType = "MEMBER_MAX_VALUE"
+	ValidationExceptionTypeMemberMinLength                                        ValidationExceptionType = "MEMBER_MIN_LENGTH"
+	ValidationExceptionTypeMemberMaxLength                                        ValidationExceptionType = "MEMBER_MAX_LENGTH"
+	ValidationExceptionTypeMemberInvalidEnumValue                                 ValidationExceptionType = "MEMBER_INVALID_ENUM_VALUE"
+	ValidationExceptionTypeMemberDoesNotMatchPattern                              ValidationExceptionType = "MEMBER_DOES_NOT_MATCH_PATTERN"
+	ValidationExceptionTypeInvalidManifestFilter                                  ValidationExceptionType = "INVALID_MANIFEST_FILTER"
+	ValidationExceptionTypeInvalidDrmSettings                                     ValidationExceptionType = "INVALID_DRM_SETTINGS"
+	ValidationExceptionTypeInvalidTimeDelaySeconds                                ValidationExceptionType = "INVALID_TIME_DELAY_SECONDS"
+	ValidationExceptionTypeEndTimeEarlierThanStartTime                            ValidationExceptionType = "END_TIME_EARLIER_THAN_START_TIME"
+	ValidationExceptionTypeTsContainerTypeWithDashManifest                        ValidationExceptionType = "TS_CONTAINER_TYPE_WITH_DASH_MANIFEST"
+	ValidationExceptionTypeDirectModeWithTimingSource                             ValidationExceptionType = "DIRECT_MODE_WITH_TIMING_SOURCE"
+	ValidationExceptionTypeNoneModeWithTimingSource                               ValidationExceptionType = "NONE_MODE_WITH_TIMING_SOURCE"
+	ValidationExceptionTypeTimingSourceMissing                                    ValidationExceptionType = "TIMING_SOURCE_MISSING"
+	ValidationExceptionTypeUpdatePeriodSmallerThanSegmentDuration                 ValidationExceptionType = "UPDATE_PERIOD_SMALLER_THAN_SEGMENT_DURATION"
+	ValidationExceptionTypePeriodTriggersNoneSpecifiedWithAdditionalValues        ValidationExceptionType = "PERIOD_TRIGGERS_NONE_SPECIFIED_WITH_ADDITIONAL_VALUES"
+	ValidationExceptionTypeDrmSignalingMismatchSegmentEncryptionStatus            ValidationExceptionType = "DRM_SIGNALING_MISMATCH_SEGMENT_ENCRYPTION_STATUS"
+	ValidationExceptionTypeOnlyCmafInputTypeAllowForceEndpointErrorConfiguration  ValidationExceptionType = "ONLY_CMAF_INPUT_TYPE_ALLOW_FORCE_ENDPOINT_ERROR_CONFIGURATION"
+	ValidationExceptionTypeSourceDisruptionsEnabledIncorrectly                    ValidationExceptionType = "SOURCE_DISRUPTIONS_ENABLED_INCORRECTLY"
+	ValidationExceptionTypeHarvestedManifestHasStartEndFilterConfiguration        ValidationExceptionType = "HARVESTED_MANIFEST_HAS_START_END_FILTER_CONFIGURATION"
+	ValidationExceptionTypeHarvestedManifestNotFoundOnEndpoint                    ValidationExceptionType = "HARVESTED_MANIFEST_NOT_FOUND_ON_ENDPOINT"
+	ValidationExceptionTypeTooManyInProgressHarvestJobs                           ValidationExceptionType = "TOO_MANY_IN_PROGRESS_HARVEST_JOBS"
+	ValidationExceptionTypeHarvestJobIneligibleForCancellation                    ValidationExceptionType = "HARVEST_JOB_INELIGIBLE_FOR_CANCELLATION"
+	ValidationExceptionTypeInvalidHarvestJobDuration                              ValidationExceptionType = "INVALID_HARVEST_JOB_DURATION"
+	ValidationExceptionTypeHarvestJobS3DestinationMissingOrIncomplete             ValidationExceptionType = "HARVEST_JOB_S3_DESTINATION_MISSING_OR_INCOMPLETE"
+	ValidationExceptionTypeHarvestJobUnableToWriteToS3Destination                 ValidationExceptionType = "HARVEST_JOB_UNABLE_TO_WRITE_TO_S3_DESTINATION"
+	ValidationExceptionTypeHarvestJobCustomerEndpointReadAccessDenied             ValidationExceptionType = "HARVEST_JOB_CUSTOMER_ENDPOINT_READ_ACCESS_DENIED"
+	ValidationExceptionTypeClipStartTimeWithStartOrEnd                            ValidationExceptionType = "CLIP_START_TIME_WITH_START_OR_END"
+	ValidationExceptionTypeStartTagTimeOffsetInvalid                              ValidationExceptionType = "START_TAG_TIME_OFFSET_INVALID"
+	ValidationExceptionTypeIncompatibleDashProfileDvbDashConfiguration            ValidationExceptionType = "INCOMPATIBLE_DASH_PROFILE_DVB_DASH_CONFIGURATION"
+	ValidationExceptionTypeDashDvbAttributesWithoutDvbDashProfile                 ValidationExceptionType = "DASH_DVB_ATTRIBUTES_WITHOUT_DVB_DASH_PROFILE"
+	ValidationExceptionTypeIncompatibleDashCompactnessConfiguration               ValidationExceptionType = "INCOMPATIBLE_DASH_COMPACTNESS_CONFIGURATION"
+	ValidationExceptionTypeIncompatibleXmlEncoding                                ValidationExceptionType = "INCOMPATIBLE_XML_ENCODING"
+	ValidationExceptionTypeCmafExcludeSegmentDrmMetadataIncompatibleContainerType ValidationExceptionType = "CMAF_EXCLUDE_SEGMENT_DRM_METADATA_INCOMPATIBLE_CONTAINER_TYPE"
+	ValidationExceptionTypeOnlyCmafInputTypeAllowMqcsInputSwitching               ValidationExceptionType = "ONLY_CMAF_INPUT_TYPE_ALLOW_MQCS_INPUT_SWITCHING"
+	ValidationExceptionTypeOnlyCmafInputTypeAllowMqcsOutputConfiguration          ValidationExceptionType = "ONLY_CMAF_INPUT_TYPE_ALLOW_MQCS_OUTPUT_CONFIGURATION"
+	ValidationExceptionTypeOnlyCmafInputTypeAllowPreferredInputConfiguration      ValidationExceptionType = "ONLY_CMAF_INPUT_TYPE_ALLOW_PREFERRED_INPUT_CONFIGURATION"
+	ValidationExceptionTypeTsContainerTypeWithMssManifest                         ValidationExceptionType = "TS_CONTAINER_TYPE_WITH_MSS_MANIFEST"
+	ValidationExceptionTypeCmafContainerTypeWithMssManifest                       ValidationExceptionType = "CMAF_CONTAINER_TYPE_WITH_MSS_MANIFEST"
+	ValidationExceptionTypeIsmContainerTypeWithHlsManifest                        ValidationExceptionType = "ISM_CONTAINER_TYPE_WITH_HLS_MANIFEST"
+	ValidationExceptionTypeIsmContainerTypeWithLlHlsManifest                      ValidationExceptionType = "ISM_CONTAINER_TYPE_WITH_LL_HLS_MANIFEST"
+	ValidationExceptionTypeIsmContainerTypeWithDashManifest                       ValidationExceptionType = "ISM_CONTAINER_TYPE_WITH_DASH_MANIFEST"
+	ValidationExceptionTypeIsmContainerTypeWithScte                               ValidationExceptionType = "ISM_CONTAINER_TYPE_WITH_SCTE"
+	ValidationExceptionTypeIsmContainerWithKeyRotation                            ValidationExceptionType = "ISM_CONTAINER_WITH_KEY_ROTATION"
+	ValidationExceptionTypeBatchGetSecretValueDenied                              ValidationExceptionType = "BATCH_GET_SECRET_VALUE_DENIED"
+	ValidationExceptionTypeGetSecretValueDenied                                   ValidationExceptionType = "GET_SECRET_VALUE_DENIED"
+	ValidationExceptionTypeDescribeSecretDenied                                   ValidationExceptionType = "DESCRIBE_SECRET_DENIED"
+	ValidationExceptionTypeInvalidSecretFormat                                    ValidationExceptionType = "INVALID_SECRET_FORMAT"
+	ValidationExceptionTypeSecretIsNotOneKeyValuePair                             ValidationExceptionType = "SECRET_IS_NOT_ONE_KEY_VALUE_PAIR"
+	ValidationExceptionTypeInvalidSecretKey                                       ValidationExceptionType = "INVALID_SECRET_KEY"
+	ValidationExceptionTypeInvalidSecretValue                                     ValidationExceptionType = "INVALID_SECRET_VALUE"
+	ValidationExceptionTypeSecretArnResourceNotFound                              ValidationExceptionType = "SECRET_ARN_RESOURCE_NOT_FOUND"
+	ValidationExceptionTypeDecryptSecretFailed                                    ValidationExceptionType = "DECRYPT_SECRET_FAILED"
+	ValidationExceptionTypeTooManySecrets                                         ValidationExceptionType = "TOO_MANY_SECRETS"
+	ValidationExceptionTypeDuplicatedSecret                                       ValidationExceptionType = "DUPLICATED_SECRET"
+	ValidationExceptionTypeMalformedSecretArn                                     ValidationExceptionType = "MALFORMED_SECRET_ARN"
+	ValidationExceptionTypeSecretFromDifferentAccount                             ValidationExceptionType = "SECRET_FROM_DIFFERENT_ACCOUNT"
+	ValidationExceptionTypeSecretFromDifferentRegion                              ValidationExceptionType = "SECRET_FROM_DIFFERENT_REGION"
+	ValidationExceptionTypeInvalidSecret                                          ValidationExceptionType = "INVALID_SECRET"
+	ValidationExceptionTypeResourceNotInSameRegion                                ValidationExceptionType = "RESOURCE_NOT_IN_SAME_REGION"
+	ValidationExceptionTypeCertificateResourceNotFound                            ValidationExceptionType = "CERTIFICATE_RESOURCE_NOT_FOUND"
+	ValidationExceptionTypeCertificateAccessDenied                                ValidationExceptionType = "CERTIFICATE_ACCESS_DENIED"
+	ValidationExceptionTypeDescribeCertificateFailed                              ValidationExceptionType = "DESCRIBE_CERTIFICATE_FAILED"
+	ValidationExceptionTypeInvalidCertificateStatus                               ValidationExceptionType = "INVALID_CERTIFICATE_STATUS"
+	ValidationExceptionTypeInvalidCertificateKeyAlgorithm                         ValidationExceptionType = "INVALID_CERTIFICATE_KEY_ALGORITHM"
+	ValidationExceptionTypeInvalidCertificateSignatureAlgorithm                   ValidationExceptionType = "INVALID_CERTIFICATE_SIGNATURE_ALGORITHM"
+	ValidationExceptionTypeMissingCertificateDomainName                           ValidationExceptionType = "MISSING_CERTIFICATE_DOMAIN_NAME"
+	ValidationExceptionTypeInvalidArn                                             ValidationExceptionType = "INVALID_ARN"
 )
 
 // Values returns all known values for ValidationExceptionType. Note that this can
@@ -490,6 +643,7 @@ func (ValidationExceptionType) Values() []ValidationExceptionType {
 		"ENCRYPTION_METHOD_CONTAINER_TYPE_MISMATCH",
 		"CENC_IV_INCOMPATIBLE",
 		"ENCRYPTION_CONTRACT_WITHOUT_AUDIO_RENDITION_INCOMPATIBLE",
+		"ENCRYPTION_CONTRACT_WITH_ISM_CONTAINER_INCOMPATIBLE",
 		"ENCRYPTION_CONTRACT_UNENCRYPTED",
 		"ENCRYPTION_CONTRACT_SHARED",
 		"NUM_MANIFESTS_LOW",
@@ -517,6 +671,7 @@ func (ValidationExceptionType) Values() []ValidationExceptionType {
 		"MEMBER_INVALID_ENUM_VALUE",
 		"MEMBER_DOES_NOT_MATCH_PATTERN",
 		"INVALID_MANIFEST_FILTER",
+		"INVALID_DRM_SETTINGS",
 		"INVALID_TIME_DELAY_SECONDS",
 		"END_TIME_EARLIER_THAN_START_TIME",
 		"TS_CONTAINER_TYPE_WITH_DASH_MANIFEST",
@@ -538,7 +693,44 @@ func (ValidationExceptionType) Values() []ValidationExceptionType {
 		"HARVEST_JOB_CUSTOMER_ENDPOINT_READ_ACCESS_DENIED",
 		"CLIP_START_TIME_WITH_START_OR_END",
 		"START_TAG_TIME_OFFSET_INVALID",
+		"INCOMPATIBLE_DASH_PROFILE_DVB_DASH_CONFIGURATION",
+		"DASH_DVB_ATTRIBUTES_WITHOUT_DVB_DASH_PROFILE",
+		"INCOMPATIBLE_DASH_COMPACTNESS_CONFIGURATION",
+		"INCOMPATIBLE_XML_ENCODING",
+		"CMAF_EXCLUDE_SEGMENT_DRM_METADATA_INCOMPATIBLE_CONTAINER_TYPE",
 		"ONLY_CMAF_INPUT_TYPE_ALLOW_MQCS_INPUT_SWITCHING",
 		"ONLY_CMAF_INPUT_TYPE_ALLOW_MQCS_OUTPUT_CONFIGURATION",
+		"ONLY_CMAF_INPUT_TYPE_ALLOW_PREFERRED_INPUT_CONFIGURATION",
+		"TS_CONTAINER_TYPE_WITH_MSS_MANIFEST",
+		"CMAF_CONTAINER_TYPE_WITH_MSS_MANIFEST",
+		"ISM_CONTAINER_TYPE_WITH_HLS_MANIFEST",
+		"ISM_CONTAINER_TYPE_WITH_LL_HLS_MANIFEST",
+		"ISM_CONTAINER_TYPE_WITH_DASH_MANIFEST",
+		"ISM_CONTAINER_TYPE_WITH_SCTE",
+		"ISM_CONTAINER_WITH_KEY_ROTATION",
+		"BATCH_GET_SECRET_VALUE_DENIED",
+		"GET_SECRET_VALUE_DENIED",
+		"DESCRIBE_SECRET_DENIED",
+		"INVALID_SECRET_FORMAT",
+		"SECRET_IS_NOT_ONE_KEY_VALUE_PAIR",
+		"INVALID_SECRET_KEY",
+		"INVALID_SECRET_VALUE",
+		"SECRET_ARN_RESOURCE_NOT_FOUND",
+		"DECRYPT_SECRET_FAILED",
+		"TOO_MANY_SECRETS",
+		"DUPLICATED_SECRET",
+		"MALFORMED_SECRET_ARN",
+		"SECRET_FROM_DIFFERENT_ACCOUNT",
+		"SECRET_FROM_DIFFERENT_REGION",
+		"INVALID_SECRET",
+		"RESOURCE_NOT_IN_SAME_REGION",
+		"CERTIFICATE_RESOURCE_NOT_FOUND",
+		"CERTIFICATE_ACCESS_DENIED",
+		"DESCRIBE_CERTIFICATE_FAILED",
+		"INVALID_CERTIFICATE_STATUS",
+		"INVALID_CERTIFICATE_KEY_ALGORITHM",
+		"INVALID_CERTIFICATE_SIGNATURE_ALGORITHM",
+		"MISSING_CERTIFICATE_DOMAIN_NAME",
+		"INVALID_ARN",
 	}
 }

@@ -54,6 +54,9 @@ type DescribeContactOutput struct {
 	// End time of a contact in UTC.
 	EndTime *time.Time
 
+	// The ephemeris that determines antenna pointing directions for the contact.
+	Ephemeris *types.EphemerisResponseData
+
 	// Error message for a contact.
 	ErrorMessage *string
 
@@ -85,6 +88,9 @@ type DescribeContactOutput struct {
 
 	// Tags assigned to a contact.
 	Tags map[string]string
+
+	// Tracking configuration overrides specified when the contact was reserved.
+	TrackingOverrides *types.TrackingOverrides
 
 	//  Projected time in UTC your satellite will set below the [receive mask]. This time is based
 	// on the satellite's current active ephemeris for future contacts and the
@@ -194,16 +200,13 @@ func (c *Client) addOperationDescribeContactMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

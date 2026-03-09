@@ -23,6 +23,51 @@ func (AsyncInvokeStatus) Values() []AsyncInvokeStatus {
 	}
 }
 
+type AudioFormat string
+
+// Enum values for AudioFormat
+const (
+	AudioFormatMp3  AudioFormat = "mp3"
+	AudioFormatOpus AudioFormat = "opus"
+	AudioFormatWav  AudioFormat = "wav"
+	AudioFormatAac  AudioFormat = "aac"
+	AudioFormatFlac AudioFormat = "flac"
+	AudioFormatMp4  AudioFormat = "mp4"
+	AudioFormatOgg  AudioFormat = "ogg"
+	AudioFormatMkv  AudioFormat = "mkv"
+	AudioFormatMka  AudioFormat = "mka"
+	AudioFormatXAac AudioFormat = "x-aac"
+	AudioFormatM4a  AudioFormat = "m4a"
+	AudioFormatMpeg AudioFormat = "mpeg"
+	AudioFormatMpga AudioFormat = "mpga"
+	AudioFormatPcm  AudioFormat = "pcm"
+	AudioFormatWebm AudioFormat = "webm"
+)
+
+// Values returns all known values for AudioFormat. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AudioFormat) Values() []AudioFormat {
+	return []AudioFormat{
+		"mp3",
+		"opus",
+		"wav",
+		"aac",
+		"flac",
+		"mp4",
+		"ogg",
+		"mkv",
+		"mka",
+		"x-aac",
+		"m4a",
+		"mpeg",
+		"mpga",
+		"pcm",
+		"webm",
+	}
+}
+
 type CachePointType string
 
 // Enum values for CachePointType
@@ -37,6 +82,25 @@ const (
 func (CachePointType) Values() []CachePointType {
 	return []CachePointType{
 		"default",
+	}
+}
+
+type CacheTTL string
+
+// Enum values for CacheTTL
+const (
+	CacheTTLFiveMinutes CacheTTL = "5m"
+	CacheTTLOneHour     CacheTTL = "1h"
+)
+
+// Values returns all known values for CacheTTL. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CacheTTL) Values() []CacheTTL {
+	return []CacheTTL{
+		"5m",
+		"1h",
 	}
 }
 
@@ -108,6 +172,26 @@ func (GuardrailAction) Values() []GuardrailAction {
 	return []GuardrailAction{
 		"NONE",
 		"GUARDRAIL_INTERVENED",
+	}
+}
+
+type GuardrailAutomatedReasoningLogicWarningType string
+
+// Enum values for GuardrailAutomatedReasoningLogicWarningType
+const (
+	GuardrailAutomatedReasoningLogicWarningTypeAlwaysFalse GuardrailAutomatedReasoningLogicWarningType = "ALWAYS_FALSE"
+	GuardrailAutomatedReasoningLogicWarningTypeAlwaysTrue  GuardrailAutomatedReasoningLogicWarningType = "ALWAYS_TRUE"
+)
+
+// Values returns all known values for
+// GuardrailAutomatedReasoningLogicWarningType. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GuardrailAutomatedReasoningLogicWarningType) Values() []GuardrailAutomatedReasoningLogicWarningType {
+	return []GuardrailAutomatedReasoningLogicWarningType{
+		"ALWAYS_FALSE",
+		"ALWAYS_TRUE",
 	}
 }
 
@@ -364,6 +448,27 @@ func (GuardrailManagedWordType) Values() []GuardrailManagedWordType {
 	}
 }
 
+type GuardrailOrigin string
+
+// Enum values for GuardrailOrigin
+const (
+	GuardrailOriginRequest              GuardrailOrigin = "REQUEST"
+	GuardrailOriginAccountEnforced      GuardrailOrigin = "ACCOUNT_ENFORCED"
+	GuardrailOriginOrganizationEnforced GuardrailOrigin = "ORGANIZATION_ENFORCED"
+)
+
+// Values returns all known values for GuardrailOrigin. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GuardrailOrigin) Values() []GuardrailOrigin {
+	return []GuardrailOrigin{
+		"REQUEST",
+		"ACCOUNT_ENFORCED",
+		"ORGANIZATION_ENFORCED",
+	}
+}
+
 type GuardrailOutputScope string
 
 // Enum values for GuardrailOutputScope
@@ -380,6 +485,25 @@ func (GuardrailOutputScope) Values() []GuardrailOutputScope {
 	return []GuardrailOutputScope{
 		"INTERVENTIONS",
 		"FULL",
+	}
+}
+
+type GuardrailOwnership string
+
+// Enum values for GuardrailOwnership
+const (
+	GuardrailOwnershipSelf         GuardrailOwnership = "SELF"
+	GuardrailOwnershipCrossAccount GuardrailOwnership = "CROSS_ACCOUNT"
+)
+
+// Values returns all known values for GuardrailOwnership. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GuardrailOwnership) Values() []GuardrailOwnership {
+	return []GuardrailOwnership{
+		"SELF",
+		"CROSS_ACCOUNT",
 	}
 }
 
@@ -601,6 +725,23 @@ func (ImageFormat) Values() []ImageFormat {
 	}
 }
 
+type OutputFormatType string
+
+// Enum values for OutputFormatType
+const (
+	OutputFormatTypeJsonSchema OutputFormatType = "json_schema"
+)
+
+// Values returns all known values for OutputFormatType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OutputFormatType) Values() []OutputFormatType {
+	return []OutputFormatType{
+		"json_schema",
+	}
+}
+
 type PerformanceConfigLatency string
 
 // Enum values for PerformanceConfigLatency
@@ -617,6 +758,29 @@ func (PerformanceConfigLatency) Values() []PerformanceConfigLatency {
 	return []PerformanceConfigLatency{
 		"standard",
 		"optimized",
+	}
+}
+
+type ServiceTierType string
+
+// Enum values for ServiceTierType
+const (
+	ServiceTierTypePriority ServiceTierType = "priority"
+	ServiceTierTypeDefault  ServiceTierType = "default"
+	ServiceTierTypeFlex     ServiceTierType = "flex"
+	ServiceTierTypeReserved ServiceTierType = "reserved"
+)
+
+// Values returns all known values for ServiceTierType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ServiceTierType) Values() []ServiceTierType {
+	return []ServiceTierType{
+		"priority",
+		"default",
+		"flex",
+		"reserved",
 	}
 }
 
@@ -660,12 +824,15 @@ type StopReason string
 
 // Enum values for StopReason
 const (
-	StopReasonEndTurn             StopReason = "end_turn"
-	StopReasonToolUse             StopReason = "tool_use"
-	StopReasonMaxTokens           StopReason = "max_tokens"
-	StopReasonStopSequence        StopReason = "stop_sequence"
-	StopReasonGuardrailIntervened StopReason = "guardrail_intervened"
-	StopReasonContentFiltered     StopReason = "content_filtered"
+	StopReasonEndTurn                    StopReason = "end_turn"
+	StopReasonToolUse                    StopReason = "tool_use"
+	StopReasonMaxTokens                  StopReason = "max_tokens"
+	StopReasonStopSequence               StopReason = "stop_sequence"
+	StopReasonGuardrailIntervened        StopReason = "guardrail_intervened"
+	StopReasonContentFiltered            StopReason = "content_filtered"
+	StopReasonMalformedModelOutput       StopReason = "malformed_model_output"
+	StopReasonMalformedToolUse           StopReason = "malformed_tool_use"
+	StopReasonModelContextWindowExceeded StopReason = "model_context_window_exceeded"
 )
 
 // Values returns all known values for StopReason. Note that this can be expanded
@@ -680,6 +847,9 @@ func (StopReason) Values() []StopReason {
 		"stop_sequence",
 		"guardrail_intervened",
 		"content_filtered",
+		"malformed_model_output",
+		"malformed_tool_use",
+		"model_context_window_exceeded",
 	}
 }
 
@@ -699,6 +869,23 @@ func (ToolResultStatus) Values() []ToolResultStatus {
 	return []ToolResultStatus{
 		"success",
 		"error",
+	}
+}
+
+type ToolUseType string
+
+// Enum values for ToolUseType
+const (
+	ToolUseTypeServerToolUse ToolUseType = "server_tool_use"
+)
+
+// Values returns all known values for ToolUseType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ToolUseType) Values() []ToolUseType {
+	return []ToolUseType{
+		"server_tool_use",
 	}
 }
 

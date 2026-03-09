@@ -84,6 +84,9 @@ type ImportVmImageInput struct {
 	// The description for the base image that is created by the import process.
 	Description *string
 
+	// Define logging configuration for the image build process.
+	LoggingConfiguration *types.ImageLoggingConfiguration
+
 	// The operating system version for the imported VM.
 	OsVersion *string
 
@@ -202,16 +205,13 @@ func (c *Client) addOperationImportVmImageMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

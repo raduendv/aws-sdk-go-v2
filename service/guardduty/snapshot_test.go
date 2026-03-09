@@ -182,11 +182,35 @@ func TestCheckSnapshot_CreateSampleFindings(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateThreatEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateThreatEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateThreatEntitySet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateThreatIntelSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateThreatIntelSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CreateThreatIntelSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateTrustedEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateTrustedEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateTrustedEntitySet")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -290,11 +314,35 @@ func TestCheckSnapshot_DeletePublishingDestination(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteThreatEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteThreatEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteThreatEntitySet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteThreatIntelSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteThreatIntelSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteThreatIntelSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteTrustedEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTrustedEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteTrustedEntitySet")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -506,6 +554,18 @@ func TestCheckSnapshot_GetMalwareProtectionPlan(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetMalwareScan(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetMalwareScan(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetMalwareScan")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetMalwareScanSettings(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetMalwareScanSettings(context.Background(), nil, func(o *Options) {
@@ -578,11 +638,35 @@ func TestCheckSnapshot_GetRemainingFreeTrialDays(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetThreatEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetThreatEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetThreatEntitySet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetThreatIntelSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetThreatIntelSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetThreatIntelSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetTrustedEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTrustedEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetTrustedEntitySet")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -698,6 +782,18 @@ func TestCheckSnapshot_ListMalwareProtectionPlans(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListMalwareScans(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListMalwareScans(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListMalwareScans")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListMembers(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListMembers(context.Background(), nil, func(o *Options) {
@@ -746,11 +842,47 @@ func TestCheckSnapshot_ListTagsForResource(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListThreatEntitySets(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListThreatEntitySets(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListThreatEntitySets")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListThreatIntelSets(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListThreatIntelSets(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListThreatIntelSets")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListTrustedEntitySets(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListTrustedEntitySets(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListTrustedEntitySets")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_SendObjectMalwareScan(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.SendObjectMalwareScan(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "SendObjectMalwareScan")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -938,11 +1070,35 @@ func TestCheckSnapshot_UpdatePublishingDestination(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateThreatEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateThreatEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateThreatEntitySet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateThreatIntelSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateThreatIntelSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdateThreatIntelSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateTrustedEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateTrustedEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateTrustedEntitySet")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1069,11 +1225,35 @@ func TestUpdateSnapshot_CreateSampleFindings(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateThreatEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateThreatEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateThreatEntitySet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateThreatIntelSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateThreatIntelSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CreateThreatIntelSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateTrustedEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateTrustedEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateTrustedEntitySet")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1177,11 +1357,35 @@ func TestUpdateSnapshot_DeletePublishingDestination(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteThreatEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteThreatEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteThreatEntitySet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteThreatIntelSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteThreatIntelSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteThreatIntelSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteTrustedEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTrustedEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteTrustedEntitySet")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1393,6 +1597,18 @@ func TestUpdateSnapshot_GetMalwareProtectionPlan(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetMalwareScan(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetMalwareScan(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetMalwareScan")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetMalwareScanSettings(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetMalwareScanSettings(context.Background(), nil, func(o *Options) {
@@ -1465,11 +1681,35 @@ func TestUpdateSnapshot_GetRemainingFreeTrialDays(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetThreatEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetThreatEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetThreatEntitySet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetThreatIntelSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetThreatIntelSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetThreatIntelSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetTrustedEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetTrustedEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetTrustedEntitySet")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1585,6 +1825,18 @@ func TestUpdateSnapshot_ListMalwareProtectionPlans(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListMalwareScans(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListMalwareScans(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListMalwareScans")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListMembers(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListMembers(context.Background(), nil, func(o *Options) {
@@ -1633,11 +1885,47 @@ func TestUpdateSnapshot_ListTagsForResource(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListThreatEntitySets(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListThreatEntitySets(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListThreatEntitySets")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListThreatIntelSets(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListThreatIntelSets(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListThreatIntelSets")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListTrustedEntitySets(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListTrustedEntitySets(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListTrustedEntitySets")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_SendObjectMalwareScan(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.SendObjectMalwareScan(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "SendObjectMalwareScan")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1825,11 +2113,35 @@ func TestUpdateSnapshot_UpdatePublishingDestination(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_UpdateThreatEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateThreatEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateThreatEntitySet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_UpdateThreatIntelSet(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateThreatIntelSet(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateThreatIntelSet")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateTrustedEntitySet(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateTrustedEntitySet(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateTrustedEntitySet")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

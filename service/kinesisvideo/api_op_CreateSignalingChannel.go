@@ -42,6 +42,8 @@ type CreateSignalingChannelInput struct {
 	ChannelType types.ChannelType
 
 	// A structure containing the configuration for the SINGLE_MASTER channel type.
+	// The default configuration for the channel message's time to live is 60 seconds
+	// (1 minute).
 	SingleMasterConfiguration *types.SingleMasterConfiguration
 
 	// A set of tags (key-value pairs) that you want to associate with this channel.
@@ -149,16 +151,13 @@ func (c *Client) addOperationCreateSignalingChannelMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

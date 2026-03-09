@@ -91,6 +91,10 @@ type CreateConnectorInput struct {
 	// Details about log delivery.
 	LogDelivery *types.LogDelivery
 
+	// The network type of the connector. It gives connectors connectivity to either
+	// IPv4 (IPV4) or IPv4 and IPv6 (DUAL) destinations. Defaults to IPV4.
+	NetworkType types.NetworkType
+
 	// The tags you want to attach to the connector.
 	Tags map[string]string
 
@@ -205,16 +209,13 @@ func (c *Client) addOperationCreateConnectorMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

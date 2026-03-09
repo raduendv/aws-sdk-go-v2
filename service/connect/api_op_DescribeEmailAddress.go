@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	awsmiddleware "github.com/aws/aws-sdk-go-v2/aws/middleware"
+	"github.com/aws/aws-sdk-go-v2/service/connect/types"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
@@ -46,6 +47,11 @@ type DescribeEmailAddressInput struct {
 
 type DescribeEmailAddressOutput struct {
 
+	// A list of alias configurations associated with this email address. Contains
+	// details about email addresses that forward to this primary email address. The
+	// list can contain at most one alias configuration per email address.
+	AliasConfigurations []types.AliasConfiguration
+
 	// The email address creation timestamp in ISO 8601 Datetime.
 	CreateTimestamp *string
 
@@ -55,7 +61,7 @@ type DescribeEmailAddressOutput struct {
 	// The display name of email address
 	DisplayName *string
 
-	// The email address with the instance, in [^\s@]+@[^\s@]+\.[^\s@]+ format.
+	// The email address, including the domain.
 	EmailAddress *string
 
 	// The Amazon Resource Name (ARN) of the email address.
@@ -165,16 +171,13 @@ func (c *Client) addOperationDescribeEmailAddressMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -13,6 +13,24 @@ import (
 )
 
 // Creates a data product.
+//
+// A data product is a comprehensive package that combines data assets with their
+// associated metadata, documentation, and access controls. It's designed to serve
+// specific business needs or use cases, making it easier for users to find and
+// consume data appropriately. Data products include important information about
+// data quality, freshness, and usage guidelines, effectively bridging the gap
+// between data producers and consumers while ensuring proper governance.
+//
+// Prerequisites:
+//
+//   - The domain must exist and be accessible.
+//
+//   - The owning project must be valid and active.
+//
+//   - The name must be unique within the domain (no existing data product with
+//     the same name).
+//
+//   - User must have create permissions for data products in the project.
 func (c *Client) CreateDataProduct(ctx context.Context, params *CreateDataProductInput, optFns ...func(*Options)) (*CreateDataProductOutput, error) {
 	if params == nil {
 		params = &CreateDataProductInput{}
@@ -217,16 +235,13 @@ func (c *Client) addOperationCreateDataProductMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

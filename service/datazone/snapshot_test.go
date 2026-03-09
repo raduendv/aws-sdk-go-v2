@@ -122,6 +122,42 @@ func TestCheckSnapshot_AssociateEnvironmentRole(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_AssociateGovernedTerms(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AssociateGovernedTerms(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AssociateGovernedTerms")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_BatchGetAttributesMetadata(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchGetAttributesMetadata(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "BatchGetAttributesMetadata")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_BatchPutAttributesMetadata(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchPutAttributesMetadata(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "BatchPutAttributesMetadata")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CancelMetadataGenerationRun(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CancelMetadataGenerationRun(context.Background(), nil, func(o *Options) {
@@ -139,6 +175,18 @@ func TestCheckSnapshot_CancelSubscription(t *testing.T) {
 	_, err := svc.CancelSubscription(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CancelSubscription")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateAccountPool")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -283,6 +331,18 @@ func TestCheckSnapshot_CreateEnvironmentAction(t *testing.T) {
 	_, err := svc.CreateEnvironmentAction(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CreateEnvironmentAction")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateEnvironmentBlueprint(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateEnvironmentBlueprint(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateEnvironmentBlueprint")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -458,6 +518,18 @@ func TestCheckSnapshot_CreateUserProfile(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteAccountPool")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteAsset(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteAsset(context.Background(), nil, func(o *Options) {
@@ -499,6 +571,18 @@ func TestCheckSnapshot_DeleteConnection(t *testing.T) {
 	_, err := svc.DeleteConnection(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteConnection")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteDataExportConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteDataExportConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteDataExportConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -571,6 +655,18 @@ func TestCheckSnapshot_DeleteEnvironmentAction(t *testing.T) {
 	_, err := svc.DeleteEnvironmentAction(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteEnvironmentAction")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteEnvironmentBlueprint(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteEnvironmentBlueprint(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteEnvironmentBlueprint")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -758,6 +854,30 @@ func TestCheckSnapshot_DisassociateEnvironmentRole(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DisassociateGovernedTerms(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DisassociateGovernedTerms(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DisassociateGovernedTerms")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetAccountPool")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetAsset(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetAsset(context.Background(), nil, func(o *Options) {
@@ -799,6 +919,18 @@ func TestCheckSnapshot_GetConnection(t *testing.T) {
 	_, err := svc.GetConnection(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetConnection")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetDataExportConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDataExportConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetDataExportConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1159,6 +1291,30 @@ func TestCheckSnapshot_GetUserProfile(t *testing.T) {
 	_, err := svc.GetUserProfile(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetUserProfile")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListAccountPools(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAccountPools(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListAccountPools")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListAccountsInAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAccountsInAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListAccountsInAccountPool")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1562,6 +1718,18 @@ func TestCheckSnapshot_PostTimeSeriesDataPoints(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_PutDataExportConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutDataExportConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutDataExportConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_PutEnvironmentBlueprintConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutEnvironmentBlueprintConfiguration(context.Background(), nil, func(o *Options) {
@@ -1742,6 +1910,18 @@ func TestCheckSnapshot_UntagResource(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateAccountPool")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateAssetFilter(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateAssetFilter(context.Background(), nil, func(o *Options) {
@@ -1826,6 +2006,18 @@ func TestCheckSnapshot_UpdateEnvironmentAction(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateEnvironmentBlueprint(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateEnvironmentBlueprint(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateEnvironmentBlueprint")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateEnvironmentProfile(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateEnvironmentProfile(context.Background(), nil, func(o *Options) {
@@ -1891,6 +2083,18 @@ func TestCheckSnapshot_UpdateProjectProfile(t *testing.T) {
 	_, err := svc.UpdateProjectProfile(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdateProjectProfile")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateRootDomainUnitOwner(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateRootDomainUnitOwner(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateRootDomainUnitOwner")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2017,6 +2221,42 @@ func TestUpdateSnapshot_AssociateEnvironmentRole(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_AssociateGovernedTerms(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AssociateGovernedTerms(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AssociateGovernedTerms")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_BatchGetAttributesMetadata(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchGetAttributesMetadata(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "BatchGetAttributesMetadata")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_BatchPutAttributesMetadata(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchPutAttributesMetadata(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "BatchPutAttributesMetadata")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CancelMetadataGenerationRun(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CancelMetadataGenerationRun(context.Background(), nil, func(o *Options) {
@@ -2034,6 +2274,18 @@ func TestUpdateSnapshot_CancelSubscription(t *testing.T) {
 	_, err := svc.CancelSubscription(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CancelSubscription")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateAccountPool")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2178,6 +2430,18 @@ func TestUpdateSnapshot_CreateEnvironmentAction(t *testing.T) {
 	_, err := svc.CreateEnvironmentAction(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CreateEnvironmentAction")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateEnvironmentBlueprint(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateEnvironmentBlueprint(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateEnvironmentBlueprint")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2353,6 +2617,18 @@ func TestUpdateSnapshot_CreateUserProfile(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteAccountPool")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteAsset(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteAsset(context.Background(), nil, func(o *Options) {
@@ -2394,6 +2670,18 @@ func TestUpdateSnapshot_DeleteConnection(t *testing.T) {
 	_, err := svc.DeleteConnection(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteConnection")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteDataExportConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteDataExportConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteDataExportConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2466,6 +2754,18 @@ func TestUpdateSnapshot_DeleteEnvironmentAction(t *testing.T) {
 	_, err := svc.DeleteEnvironmentAction(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteEnvironmentAction")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteEnvironmentBlueprint(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteEnvironmentBlueprint(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteEnvironmentBlueprint")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2653,6 +2953,30 @@ func TestUpdateSnapshot_DisassociateEnvironmentRole(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DisassociateGovernedTerms(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DisassociateGovernedTerms(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DisassociateGovernedTerms")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetAccountPool")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetAsset(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetAsset(context.Background(), nil, func(o *Options) {
@@ -2694,6 +3018,18 @@ func TestUpdateSnapshot_GetConnection(t *testing.T) {
 	_, err := svc.GetConnection(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetConnection")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetDataExportConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDataExportConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetDataExportConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -3054,6 +3390,30 @@ func TestUpdateSnapshot_GetUserProfile(t *testing.T) {
 	_, err := svc.GetUserProfile(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetUserProfile")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListAccountPools(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAccountPools(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListAccountPools")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListAccountsInAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAccountsInAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListAccountsInAccountPool")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -3457,6 +3817,18 @@ func TestUpdateSnapshot_PostTimeSeriesDataPoints(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_PutDataExportConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutDataExportConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutDataExportConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_PutEnvironmentBlueprintConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutEnvironmentBlueprintConfiguration(context.Background(), nil, func(o *Options) {
@@ -3637,6 +4009,18 @@ func TestUpdateSnapshot_UntagResource(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_UpdateAccountPool(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateAccountPool(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateAccountPool")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_UpdateAssetFilter(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateAssetFilter(context.Background(), nil, func(o *Options) {
@@ -3721,6 +4105,18 @@ func TestUpdateSnapshot_UpdateEnvironmentAction(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_UpdateEnvironmentBlueprint(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateEnvironmentBlueprint(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateEnvironmentBlueprint")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_UpdateEnvironmentProfile(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateEnvironmentProfile(context.Background(), nil, func(o *Options) {
@@ -3786,6 +4182,18 @@ func TestUpdateSnapshot_UpdateProjectProfile(t *testing.T) {
 	_, err := svc.UpdateProjectProfile(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateProjectProfile")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateRootDomainUnitOwner(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateRootDomainUnitOwner(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateRootDomainUnitOwner")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

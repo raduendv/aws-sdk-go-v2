@@ -84,6 +84,10 @@ type UpdateImagePipelineInput struct {
 	// The image test configuration of the image pipeline.
 	ImageTestsConfiguration *types.ImageTestsConfiguration
 
+	// Update logging configuration for the output image that's created when the
+	// pipeline runs.
+	LoggingConfiguration *types.PipelineLoggingConfiguration
+
 	// The schedule of the image pipeline.
 	Schedule *types.Schedule
 
@@ -205,16 +209,13 @@ func (c *Client) addOperationUpdateImagePipelineMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

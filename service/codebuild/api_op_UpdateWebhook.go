@@ -57,6 +57,12 @@ type UpdateWebhookInput struct {
 	// WebhookFilter .
 	FilterGroups [][]types.WebhookFilter
 
+	// A PullRequestBuildPolicy object that defines comment-based approval
+	// requirements for triggering builds on pull requests. This policy helps control
+	// when automated builds are executed based on contributor permissions and approval
+	// workflows.
+	PullRequestBuildPolicy *types.PullRequestBuildPolicy
+
 	//  A boolean value that specifies whether the associated GitHub repository's
 	// secret token should be updated. If you use Bitbucket for your repository,
 	// rotateSecret is ignored.
@@ -165,16 +171,13 @@ func (c *Client) addOperationUpdateWebhookMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

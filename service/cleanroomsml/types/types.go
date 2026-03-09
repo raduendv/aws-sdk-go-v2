@@ -7,6 +7,66 @@ import (
 	"time"
 )
 
+// An access budget that defines consumption limits for a specific resource within
+// defined time periods.
+type AccessBudget struct {
+
+	// The total remaining budget across all active budget periods for this resource.
+	//
+	// This member is required.
+	AggregateRemainingBudget *int32
+
+	// A list of budget details for this resource. Contains active budget periods that
+	// apply to the resource.
+	//
+	// This member is required.
+	Details []AccessBudgetDetails
+
+	// The Amazon Resource Name (ARN) of the resource that this access budget applies
+	// to.
+	//
+	// This member is required.
+	ResourceArn *string
+
+	noSmithyDocumentSerde
+}
+
+// The detailed information for a specific budget period, including time
+// boundaries and budget amounts.
+type AccessBudgetDetails struct {
+
+	// The total budget amount allocated for this period.
+	//
+	// This member is required.
+	Budget *int32
+
+	// The type of budget period. Calendar-based types reset automatically at regular
+	// intervals, while LIFETIME budgets never reset.
+	//
+	// This member is required.
+	BudgetType AccessBudgetType
+
+	// The amount of budget remaining in this period.
+	//
+	// This member is required.
+	RemainingBudget *int32
+
+	// The start time of this budget period.
+	//
+	// This member is required.
+	StartTime *time.Time
+
+	// Specifies whether this budget automatically refreshes when the current period
+	// ends.
+	AutoRefresh AutoRefreshMode
+
+	// The end time of this budget period. If not specified, the budget period
+	// continues indefinitely.
+	EndTime *time.Time
+
+	noSmithyDocumentSerde
+}
+
 // Defines the Amazon S3 bucket where the configured audience is stored.
 type AudienceDestination struct {
 
@@ -408,6 +468,9 @@ type CollaborationTrainedModelExportJobSummary struct {
 	// Details about the status of a resource.
 	StatusDetails *StatusDetails
 
+	// The version identifier of the trained model that was exported in this job.
+	TrainedModelVersionIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
@@ -487,6 +550,10 @@ type CollaborationTrainedModelInferenceJobSummary struct {
 	// Details about the metrics status for trained model inference job.
 	MetricsStatusDetails *string
 
+	// The version identifier of the trained model that was used for inference in this
+	// job.
+	TrainedModelVersionIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
@@ -541,6 +608,28 @@ type CollaborationTrainedModelSummary struct {
 
 	// The description of the trained model.
 	Description *string
+
+	// Information about the incremental training data channels used to create this
+	// version of the trained model.
+	IncrementalTrainingDataChannels []IncrementalTrainingDataChannelOutput
+
+	// The version identifier of this trained model version.
+	VersionIdentifier *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains classification information for data columns, including mappings that
+// specify how columns should be handled during synthetic data generation and
+// privacy analysis.
+type ColumnClassificationDetails struct {
+
+	// A mapping that defines the classification of data columns for synthetic data
+	// generation and specifies how each column should be handled during the
+	// privacy-preserving data synthesis process.
+	//
+	// This member is required.
+	ColumnMapping []SyntheticDataColumnProperties
 
 	noSmithyDocumentSerde
 }
@@ -724,9 +813,8 @@ type ConfiguredModelAlgorithmSummary struct {
 type ContainerConfig struct {
 
 	// The registry path of the docker image that contains the algorithm. Clean Rooms
-	// ML supports both registry/repository[:tag] and registry/repositry[@digest]
-	// image path formats. For more information about using images in Clean Rooms ML,
-	// see the [Sagemaker API reference].
+	// ML currently only supports the registry/repository[:tag] image path format. For
+	// more information about using images in Clean Rooms ML, see the [Sagemaker API reference].
 	//
 	// [Sagemaker API reference]: https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AlgorithmSpecification.html#sagemaker-Type-AlgorithmSpecification-TrainingImage
 	//
@@ -753,6 +841,35 @@ type ContainerConfig struct {
 	// Rooms ML publishes each metric to all members' Amazon CloudWatch using IAM role
 	// configured in PutMLConfiguration.
 	MetricDefinitions []MetricDefinition
+
+	noSmithyDocumentSerde
+}
+
+// The configuration for defining custom patterns to be redacted from logs and
+// error messages. This is for the CUSTOM config under entitiesToRedact. Both
+// CustomEntityConfig and entitiesToRedact need to be present or not present.
+type CustomEntityConfig struct {
+
+	// Defines data identifiers for the custom entity configuration. Provide this only
+	// if CUSTOM redaction is configured.
+	//
+	// This member is required.
+	CustomDataIdentifiers []string
+
+	noSmithyDocumentSerde
+}
+
+// Privacy evaluation scores that measure the privacy characteristics of the
+// generated synthetic data, including assessments of potential privacy risks such
+// as membership inference attacks.
+type DataPrivacyScores struct {
+
+	// Scores that evaluate the vulnerability of the synthetic data to membership
+	// inference attacks, which attempt to determine whether a specific individual was
+	// a member of the original dataset.
+	//
+	// This member is required.
+	MembershipInferenceAttackScores []MembershipInferenceAttackScore
 
 	noSmithyDocumentSerde
 }
@@ -832,13 +949,62 @@ type GlueDataSource struct {
 	noSmithyDocumentSerde
 }
 
+// Defines an incremental training data channel that references a previously
+// trained model. Incremental training allows you to update an existing trained
+// model with new data, building upon the knowledge from a base model rather than
+// training from scratch. This can significantly reduce training time and
+// computational costs while improving model performance with additional data.
+type IncrementalTrainingDataChannel struct {
+
+	// The name of the incremental training data channel. This name is used to
+	// identify the channel during the training process and must be unique within the
+	// training job.
+	//
+	// This member is required.
+	ChannelName *string
+
+	// The Amazon Resource Name (ARN) of the base trained model to use for incremental
+	// training. This model serves as the starting point for the incremental training
+	// process.
+	//
+	// This member is required.
+	TrainedModelArn *string
+
+	// The version identifier of the base trained model to use for incremental
+	// training. If not specified, the latest version of the trained model is used.
+	VersionIdentifier *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about an incremental training data channel that was used
+// to create a trained model. This structure provides details about the base model
+// and channel configuration used during incremental training.
+type IncrementalTrainingDataChannelOutput struct {
+
+	// The name of the incremental training data channel that was used.
+	//
+	// This member is required.
+	ChannelName *string
+
+	// The name of the base trained model that was used for incremental training.
+	//
+	// This member is required.
+	ModelName *string
+
+	// The version identifier of the trained model that was used for incremental
+	// training.
+	VersionIdentifier *string
+
+	noSmithyDocumentSerde
+}
+
 // Provides configuration information for the inference container.
 type InferenceContainerConfig struct {
 
 	// The registry path of the docker image that contains the inference algorithm.
-	// Clean Rooms ML supports both registry/repository[:tag] and
-	// registry/repositry[@digest] image path formats. For more information about using
-	// images in Clean Rooms ML, see the [Sagemaker API reference].
+	// Clean Rooms ML currently only supports the registry/repository[:tag] image path
+	// format. For more information about using images in Clean Rooms ML, see the [Sagemaker API reference].
 	//
 	// [Sagemaker API reference]: https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AlgorithmSpecification.html#sagemaker-Type-AlgorithmSpecification-TrainingImage
 	//
@@ -905,8 +1071,8 @@ type InputChannel struct {
 	// This member is required.
 	DataSource InputChannelDataSource
 
-	// The ARN of the IAM role that Clean Rooms ML can assume to read the data
-	// referred to in the dataSource field the input channel.
+	// The Amazon Resource Name (ARN) of the role used to run the query specified in
+	// the dataSource field of the input channel.
 	//
 	// Passing a role across AWS accounts is not allowed. If you pass a role that
 	// isn't in your account, you get an AccessDeniedException error.
@@ -935,6 +1101,23 @@ type InputChannelDataSourceMemberProtectedQueryInputParameters struct {
 
 func (*InputChannelDataSourceMemberProtectedQueryInputParameters) isInputChannelDataSource() {}
 
+// The configuration for log redaction.
+type LogRedactionConfiguration struct {
+
+	// Specifies the entities to be redacted from logs. Entities to redact are
+	// "ALL_PERSONALLY_IDENTIFIABLE_INFORMATION", "NUMBERS","CUSTOM". If CUSTOM is
+	// supplied or configured, custom patterns (customDataIdentifiers) should be
+	// provided, and the patterns will be redacted in logs or error messages.
+	//
+	// This member is required.
+	EntitiesToRedact []EntityType
+
+	// Specifies the configuration for custom entities in the context of log redaction.
+	CustomEntityConfig *CustomEntityConfig
+
+	noSmithyDocumentSerde
+}
+
 // Provides the information necessary for a user to access the logs.
 type LogsConfigurationPolicy struct {
 
@@ -946,6 +1129,33 @@ type LogsConfigurationPolicy struct {
 	// A regular expression pattern that is used to parse the logs and return
 	// information that matches the pattern.
 	FilterPattern *string
+
+	// Specifies the log redaction configuration for this policy.
+	LogRedactionConfiguration *LogRedactionConfiguration
+
+	// Specifies the type of log this policy applies to. The currently supported
+	// policies are ALL or ERROR_SUMMARY.
+	LogType LogType
+
+	noSmithyDocumentSerde
+}
+
+// A score that measures the vulnerability of synthetic data to membership
+// inference attacks and provides both the numerical score and the version of the
+// attack methodology used for evaluation.
+type MembershipInferenceAttackScore struct {
+
+	// The version of the membership inference attack, which consists of the attack
+	// type and its version number, used to generate this privacy score.
+	//
+	// This member is required.
+	AttackVersion MembershipInferenceAttackVersion
+
+	// The numerical score representing the vulnerability to membership inference
+	// attacks.
+	//
+	// This member is required.
+	Score *float64
 
 	noSmithyDocumentSerde
 }
@@ -1044,6 +1254,31 @@ type MLOutputConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// Parameters that control the generation of synthetic data for custom model
+// training, including privacy settings and column classification details.
+type MLSyntheticDataParameters struct {
+
+	// The epsilon value for differential privacy, which controls the privacy-utility
+	// tradeoff in synthetic data generation. Lower values provide stronger privacy
+	// guarantees but may reduce data utility.
+	//
+	// This member is required.
+	Epsilon *float64
+
+	// The maximum acceptable score for membership inference attack vulnerability.
+	// Synthetic data generation fails if the score for the resulting data exceeds this
+	// threshold.
+	//
+	// This member is required.
+	MaxMembershipInferenceAttackScore *float64
+
+	// Classification details for data columns that specify how each column should be
+	// treated during synthetic data generation.
+	ColumnClassification *ColumnClassificationDetails
+
+	noSmithyDocumentSerde
+}
+
 // Defines information about the data source used for model inference.
 type ModelInferenceDataSource struct {
 
@@ -1071,8 +1306,41 @@ type ModelTrainingDataChannel struct {
 	// This member is required.
 	MlInputChannelArn *string
 
+	// Specifies how the training data stored in Amazon S3 should be distributed to
+	// training instances. This parameter controls the data distribution strategy for
+	// the training job:
+	//
+	//   - FullyReplicated - The entire dataset is replicated on each training
+	//   instance. This is suitable for smaller datasets and algorithms that require
+	//   access to the complete dataset.
+	//
+	//   - ShardedByS3Key - The dataset is distributed across training instances based
+	//   on Amazon S3 key names. This is suitable for larger datasets and distributed
+	//   training scenarios where each instance processes a subset of the data.
+	S3DataDistributionType S3DataDistributionType
+
 	noSmithyDocumentSerde
 }
+
+// The privacy budget information that controls access to Clean Rooms ML input
+// channels.
+//
+// The following types satisfy this interface:
+//
+//	PrivacyBudgetsMemberAccessBudgets
+type PrivacyBudgets interface {
+	isPrivacyBudgets()
+}
+
+// A list of access budgets that apply to resources associated with this Clean
+// Rooms ML input channel.
+type PrivacyBudgetsMemberAccessBudgets struct {
+	Value []AccessBudget
+
+	noSmithyDocumentSerde
+}
+
+func (*PrivacyBudgetsMemberAccessBudgets) isPrivacyBudgets() {}
 
 // Information about the privacy configuration for a configured model algorithm
 // association.
@@ -1113,6 +1381,10 @@ type ProtectedQueryInputParameters struct {
 	// Provides configuration information for the workers that will perform the
 	// protected query.
 	ComputeConfiguration ComputeConfiguration
+
+	// The format in which the query results should be returned. If not specified,
+	// defaults to CSV .
+	ResultFormat ResultFormat
 
 	noSmithyDocumentSerde
 }
@@ -1156,7 +1428,10 @@ type ResourceConfig struct {
 	// This member is required.
 	InstanceType InstanceType
 
-	// The maximum size of the instance that is used to train the model.
+	// The volume size of the instance that is used to train the model. Please see [EC2 volume limit]
+	// for volume size limitations on different instance types.
+	//
+	// [EC2 volume limit]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-store-volumes.html
 	//
 	// This member is required.
 	VolumeSizeInGB *int32
@@ -1200,6 +1475,89 @@ type StoppingCondition struct {
 	// The maximum amount of time, in seconds, that model training can run before it
 	// is terminated.
 	MaxRuntimeInSeconds *int32
+
+	noSmithyDocumentSerde
+}
+
+// Properties that define how a specific data column should be handled during
+// synthetic data generation, including its name, type, and role in predictive
+// modeling.
+type SyntheticDataColumnProperties struct {
+
+	// The name of the data column as it appears in the dataset.
+	//
+	// This member is required.
+	ColumnName *string
+
+	// The data type of the column, which determines how the synthetic data generation
+	// algorithm processes and synthesizes values for this column.
+	//
+	// This member is required.
+	ColumnType SyntheticDataColumnType
+
+	// Indicates if this column contains predictive values that should be treated as
+	// target variables in machine learning models. This affects how the synthetic data
+	// generation preserves statistical relationships.
+	//
+	// This member is required.
+	IsPredictiveValue *bool
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for synthetic data generation, including the parameters
+// that control data synthesis and the evaluation scores that measure the quality
+// and privacy characteristics of the generated synthetic data.
+type SyntheticDataConfiguration struct {
+
+	// The parameters that control how synthetic data is generated, including privacy
+	// settings, column classifications, and other configuration options that affect
+	// the data synthesis process.
+	//
+	// This member is required.
+	SyntheticDataParameters *MLSyntheticDataParameters
+
+	// Evaluation scores that assess the quality and privacy characteristics of the
+	// generated synthetic data, providing metrics on data utility and privacy
+	// preservation.
+	SyntheticDataEvaluationScores *SyntheticDataEvaluationScores
+
+	noSmithyDocumentSerde
+}
+
+// Comprehensive evaluation metrics for synthetic data that assess both the
+// utility of the generated data for machine learning tasks and its privacy
+// preservation characteristics.
+type SyntheticDataEvaluationScores struct {
+
+	// Privacy-specific evaluation scores that measure how well the synthetic data
+	// protects individual privacy, including assessments of potential privacy risks
+	// such as membership inference attacks.
+	//
+	// This member is required.
+	DataPrivacyScores *DataPrivacyScores
+
+	noSmithyDocumentSerde
+}
+
+// Specifies the maximum size limit for trained model artifacts. This
+// configuration helps control storage costs and ensures that trained models don't
+// exceed specified size constraints. The size limit applies to the total size of
+// all artifacts produced by the training job.
+type TrainedModelArtifactMaxSize struct {
+
+	// The unit of measurement for the maximum artifact size. Valid values include
+	// common storage units such as bytes, kilobytes, megabytes, gigabytes, and
+	// terabytes.
+	//
+	// This member is required.
+	Unit TrainedModelArtifactMaxSizeUnitType
+
+	// The numerical value for the maximum artifact size limit. This value is
+	// interpreted according to the specified unit.
+	//
+	// This member is required.
+	Value *float64
 
 	noSmithyDocumentSerde
 }
@@ -1342,6 +1700,10 @@ type TrainedModelInferenceJobSummary struct {
 	// Details about the metrics status for the trained model inference job.
 	MetricsStatusDetails *string
 
+	// The version identifier of the trained model that was used for inference in this
+	// job.
+	TrainedModelVersionIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
@@ -1369,6 +1731,11 @@ type TrainedModelsConfigurationPolicy struct {
 
 	// The container for the metrics of the trained model.
 	ContainerMetrics *MetricsConfigurationPolicy
+
+	// The maximum size limit for trained model artifacts as defined in the
+	// configuration policy. This setting helps enforce consistent size limits across
+	// trained models in the collaboration.
+	MaxArtifactSize *TrainedModelArtifactMaxSize
 
 	noSmithyDocumentSerde
 }
@@ -1420,6 +1787,13 @@ type TrainedModelSummary struct {
 	// The description of the trained model.
 	Description *string
 
+	// Information about the incremental training data channels used to create this
+	// version of the trained model.
+	IncrementalTrainingDataChannels []IncrementalTrainingDataChannelOutput
+
+	// The version identifier of this trained model version.
+	VersionIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
@@ -1464,11 +1838,41 @@ type WorkerComputeConfiguration struct {
 	// The number of compute workers that are used.
 	Number *int32
 
+	// The configuration properties for the worker compute environment. These
+	// properties allow you to customize the compute settings for your Clean Rooms
+	// workloads.
+	Properties WorkerComputeConfigurationProperties
+
 	// The instance type of the compute workers that are used.
 	Type WorkerComputeType
 
 	noSmithyDocumentSerde
 }
+
+// The configuration properties for the worker compute environment. These
+// properties allow you to customize the compute settings for your Clean Rooms
+// workloads.
+//
+// The following types satisfy this interface:
+//
+//	WorkerComputeConfigurationPropertiesMemberSpark
+type WorkerComputeConfigurationProperties interface {
+	isWorkerComputeConfigurationProperties()
+}
+
+// The Spark configuration properties for SQL workloads. This map contains
+// key-value pairs that configure Apache Spark settings to optimize performance for
+// your data processing jobs. You can specify up to 50 Spark properties, with each
+// key being 1-200 characters and each value being 0-500 characters. These
+// properties allow you to adjust compute capacity for large datasets and complex
+// workloads.
+type WorkerComputeConfigurationPropertiesMemberSpark struct {
+	Value map[string]string
+
+	noSmithyDocumentSerde
+}
+
+func (*WorkerComputeConfigurationPropertiesMemberSpark) isWorkerComputeConfigurationProperties() {}
 
 type noSmithyDocumentSerde = smithydocument.NoSerde
 
@@ -1481,5 +1885,7 @@ type UnknownUnionMember struct {
 	noSmithyDocumentSerde
 }
 
-func (*UnknownUnionMember) isComputeConfiguration()   {}
-func (*UnknownUnionMember) isInputChannelDataSource() {}
+func (*UnknownUnionMember) isComputeConfiguration()                 {}
+func (*UnknownUnionMember) isInputChannelDataSource()               {}
+func (*UnknownUnionMember) isPrivacyBudgets()                       {}
+func (*UnknownUnionMember) isWorkerComputeConfigurationProperties() {}

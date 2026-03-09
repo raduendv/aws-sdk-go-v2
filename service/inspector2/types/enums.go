@@ -51,6 +51,7 @@ const (
 	AggregationResourceTypeAwsEc2Instance       AggregationResourceType = "AWS_EC2_INSTANCE"
 	AggregationResourceTypeAwsEcrContainerImage AggregationResourceType = "AWS_ECR_CONTAINER_IMAGE"
 	AggregationResourceTypeAwsLambdaFunction    AggregationResourceType = "AWS_LAMBDA_FUNCTION"
+	AggregationResourceTypeCodeRepository       AggregationResourceType = "CODE_REPOSITORY"
 )
 
 // Values returns all known values for AggregationResourceType. Note that this can
@@ -62,6 +63,7 @@ func (AggregationResourceType) Values() []AggregationResourceType {
 		"AWS_EC2_INSTANCE",
 		"AWS_ECR_CONTAINER_IMAGE",
 		"AWS_LAMBDA_FUNCTION",
+		"CODE_REPOSITORY",
 	}
 }
 
@@ -80,6 +82,7 @@ const (
 	AggregationTypeAccount           AggregationType = "ACCOUNT"
 	AggregationTypeAwsLambdaFunction AggregationType = "AWS_LAMBDA_FUNCTION"
 	AggregationTypeLambdaLayer       AggregationType = "LAMBDA_LAYER"
+	AggregationTypeCodeRepository    AggregationType = "CODE_REPOSITORY"
 )
 
 // Values returns all known values for AggregationType. Note that this can be
@@ -99,6 +102,7 @@ func (AggregationType) Values() []AggregationType {
 		"ACCOUNT",
 		"AWS_LAMBDA_FUNCTION",
 		"LAMBDA_LAYER",
+		"CODE_REPOSITORY",
 	}
 }
 
@@ -141,6 +145,33 @@ func (Architecture) Values() []Architecture {
 	return []Architecture{
 		"X86_64",
 		"ARM64",
+	}
+}
+
+type AssociationResultStatusCode string
+
+// Enum values for AssociationResultStatusCode
+const (
+	AssociationResultStatusCodeInternalError             AssociationResultStatusCode = "INTERNAL_ERROR"
+	AssociationResultStatusCodeAccessDenied              AssociationResultStatusCode = "ACCESS_DENIED"
+	AssociationResultStatusCodeScanConfigurationNotFound AssociationResultStatusCode = "SCAN_CONFIGURATION_NOT_FOUND"
+	AssociationResultStatusCodeInvalidInput              AssociationResultStatusCode = "INVALID_INPUT"
+	AssociationResultStatusCodeResourceNotFound          AssociationResultStatusCode = "RESOURCE_NOT_FOUND"
+	AssociationResultStatusCodeQuotaExceeded             AssociationResultStatusCode = "QUOTA_EXCEEDED"
+)
+
+// Values returns all known values for AssociationResultStatusCode. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AssociationResultStatusCode) Values() []AssociationResultStatusCode {
+	return []AssociationResultStatusCode{
+		"INTERNAL_ERROR",
+		"ACCESS_DENIED",
+		"SCAN_CONFIGURATION_NOT_FOUND",
+		"INVALID_INPUT",
+		"RESOURCE_NOT_FOUND",
+		"QUOTA_EXCEEDED",
 	}
 }
 
@@ -577,6 +608,69 @@ func (CisTargetStatusReason) Values() []CisTargetStatusReason {
 	}
 }
 
+type CodeRepositoryProviderType string
+
+// Enum values for CodeRepositoryProviderType
+const (
+	CodeRepositoryProviderTypeGithub            CodeRepositoryProviderType = "GITHUB"
+	CodeRepositoryProviderTypeGitlabSelfManaged CodeRepositoryProviderType = "GITLAB_SELF_MANAGED"
+)
+
+// Values returns all known values for CodeRepositoryProviderType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CodeRepositoryProviderType) Values() []CodeRepositoryProviderType {
+	return []CodeRepositoryProviderType{
+		"GITHUB",
+		"GITLAB_SELF_MANAGED",
+	}
+}
+
+type CodeRepositorySortBy string
+
+// Enum values for CodeRepositorySortBy
+const (
+	CodeRepositorySortByCritical CodeRepositorySortBy = "CRITICAL"
+	CodeRepositorySortByHigh     CodeRepositorySortBy = "HIGH"
+	CodeRepositorySortByAll      CodeRepositorySortBy = "ALL"
+)
+
+// Values returns all known values for CodeRepositorySortBy. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CodeRepositorySortBy) Values() []CodeRepositorySortBy {
+	return []CodeRepositorySortBy{
+		"CRITICAL",
+		"HIGH",
+		"ALL",
+	}
+}
+
+type CodeScanStatus string
+
+// Enum values for CodeScanStatus
+const (
+	CodeScanStatusInProgress CodeScanStatus = "IN_PROGRESS"
+	CodeScanStatusSuccessful CodeScanStatus = "SUCCESSFUL"
+	CodeScanStatusFailed     CodeScanStatus = "FAILED"
+	CodeScanStatusSkipped    CodeScanStatus = "SKIPPED"
+)
+
+// Values returns all known values for CodeScanStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CodeScanStatus) Values() []CodeScanStatus {
+	return []CodeScanStatus{
+		"IN_PROGRESS",
+		"SUCCESSFUL",
+		"FAILED",
+		"SKIPPED",
+	}
+}
+
 type CodeSnippetErrorCode string
 
 // Enum values for CodeSnippetErrorCode
@@ -597,6 +691,45 @@ func (CodeSnippetErrorCode) Values() []CodeSnippetErrorCode {
 		"ACCESS_DENIED",
 		"CODE_SNIPPET_NOT_FOUND",
 		"INVALID_INPUT",
+	}
+}
+
+type ConfigurationLevel string
+
+// Enum values for ConfigurationLevel
+const (
+	ConfigurationLevelOrganization ConfigurationLevel = "ORGANIZATION"
+	ConfigurationLevelAccount      ConfigurationLevel = "ACCOUNT"
+)
+
+// Values returns all known values for ConfigurationLevel. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConfigurationLevel) Values() []ConfigurationLevel {
+	return []ConfigurationLevel{
+		"ORGANIZATION",
+		"ACCOUNT",
+	}
+}
+
+type ContinuousIntegrationScanEvent string
+
+// Enum values for ContinuousIntegrationScanEvent
+const (
+	ContinuousIntegrationScanEventPullRequest ContinuousIntegrationScanEvent = "PULL_REQUEST"
+	ContinuousIntegrationScanEventPush        ContinuousIntegrationScanEvent = "PUSH"
+)
+
+// Values returns all known values for ContinuousIntegrationScanEvent. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContinuousIntegrationScanEvent) Values() []ContinuousIntegrationScanEvent {
+	return []ContinuousIntegrationScanEvent{
+		"PULL_REQUEST",
+		"PUSH",
 	}
 }
 
@@ -625,6 +758,7 @@ const (
 	CoverageResourceTypeAwsEcrContainerImage CoverageResourceType = "AWS_ECR_CONTAINER_IMAGE"
 	CoverageResourceTypeAwsEcrRepository     CoverageResourceType = "AWS_ECR_REPOSITORY"
 	CoverageResourceTypeAwsLambdaFunction    CoverageResourceType = "AWS_LAMBDA_FUNCTION"
+	CoverageResourceTypeCodeRepository       CoverageResourceType = "CODE_REPOSITORY"
 )
 
 // Values returns all known values for CoverageResourceType. Note that this can be
@@ -637,6 +771,7 @@ func (CoverageResourceType) Values() []CoverageResourceType {
 		"AWS_ECR_CONTAINER_IMAGE",
 		"AWS_ECR_REPOSITORY",
 		"AWS_LAMBDA_FUNCTION",
+		"CODE_REPOSITORY",
 	}
 }
 
@@ -856,6 +991,25 @@ func (EcrPullDateRescanDuration) Values() []EcrPullDateRescanDuration {
 	}
 }
 
+type EcrPullDateRescanMode string
+
+// Enum values for EcrPullDateRescanMode
+const (
+	EcrPullDateRescanModeLastPullDate EcrPullDateRescanMode = "LAST_PULL_DATE"
+	EcrPullDateRescanModeLastInUseAt  EcrPullDateRescanMode = "LAST_IN_USE_AT"
+)
+
+// Values returns all known values for EcrPullDateRescanMode. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EcrPullDateRescanMode) Values() []EcrPullDateRescanMode {
+	return []EcrPullDateRescanMode{
+		"LAST_PULL_DATE",
+		"LAST_IN_USE_AT",
+	}
+}
+
 type EcrRescanDuration string
 
 // Enum values for EcrRescanDuration
@@ -945,6 +1099,7 @@ const (
 	ErrorCodeAccountIsIsolated                     ErrorCode = "ACCOUNT_IS_ISOLATED"
 	ErrorCodeEc2SsmResourceDataSyncLimitExceeded   ErrorCode = "EC2_SSM_RESOURCE_DATA_SYNC_LIMIT_EXCEEDED"
 	ErrorCodeEc2SsmAssociationVersionLimitExceeded ErrorCode = "EC2_SSM_ASSOCIATION_VERSION_LIMIT_EXCEEDED"
+	ErrorCodeBlockedByOrganizationPolicy           ErrorCode = "BLOCKED_BY_ORGANIZATION_POLICY"
 )
 
 // Values returns all known values for ErrorCode. Note that this can be expanded
@@ -969,6 +1124,7 @@ func (ErrorCode) Values() []ErrorCode {
 		"ACCOUNT_IS_ISOLATED",
 		"EC2_SSM_RESOURCE_DATA_SYNC_LIMIT_EXCEEDED",
 		"EC2_SSM_ASSOCIATION_VERSION_LIMIT_EXCEEDED",
+		"BLOCKED_BY_ORGANIZATION_POLICY",
 	}
 }
 
@@ -1182,10 +1338,11 @@ type FreeTrialType string
 
 // Enum values for FreeTrialType
 const (
-	FreeTrialTypeEc2        FreeTrialType = "EC2"
-	FreeTrialTypeEcr        FreeTrialType = "ECR"
-	FreeTrialTypeLambda     FreeTrialType = "LAMBDA"
-	FreeTrialTypeLambdaCode FreeTrialType = "LAMBDA_CODE"
+	FreeTrialTypeEc2            FreeTrialType = "EC2"
+	FreeTrialTypeEcr            FreeTrialType = "ECR"
+	FreeTrialTypeLambda         FreeTrialType = "LAMBDA"
+	FreeTrialTypeLambdaCode     FreeTrialType = "LAMBDA_CODE"
+	FreeTrialTypeCodeRepository FreeTrialType = "CODE_REPOSITORY"
 )
 
 // Values returns all known values for FreeTrialType. Note that this can be
@@ -1198,6 +1355,7 @@ func (FreeTrialType) Values() []FreeTrialType {
 		"ECR",
 		"LAMBDA",
 		"LAMBDA_CODE",
+		"CODE_REPOSITORY",
 	}
 }
 
@@ -1244,6 +1402,50 @@ func (ImageLayerSortBy) Values() []ImageLayerSortBy {
 		"CRITICAL",
 		"HIGH",
 		"ALL",
+	}
+}
+
+type IntegrationStatus string
+
+// Enum values for IntegrationStatus
+const (
+	IntegrationStatusPending    IntegrationStatus = "PENDING"
+	IntegrationStatusInProgress IntegrationStatus = "IN_PROGRESS"
+	IntegrationStatusActive     IntegrationStatus = "ACTIVE"
+	IntegrationStatusInactive   IntegrationStatus = "INACTIVE"
+	IntegrationStatusDisabling  IntegrationStatus = "DISABLING"
+)
+
+// Values returns all known values for IntegrationStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IntegrationStatus) Values() []IntegrationStatus {
+	return []IntegrationStatus{
+		"PENDING",
+		"IN_PROGRESS",
+		"ACTIVE",
+		"INACTIVE",
+		"DISABLING",
+	}
+}
+
+type IntegrationType string
+
+// Enum values for IntegrationType
+const (
+	IntegrationTypeGitlabSelfManaged IntegrationType = "GITLAB_SELF_MANAGED"
+	IntegrationTypeGithub            IntegrationType = "GITHUB"
+)
+
+// Values returns all known values for IntegrationType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IntegrationType) Values() []IntegrationType {
+	return []IntegrationType{
+		"GITLAB_SELF_MANAGED",
+		"GITHUB",
 	}
 }
 
@@ -1481,6 +1683,44 @@ func (PackageType) Values() []PackageType {
 	}
 }
 
+type PeriodicScanFrequency string
+
+// Enum values for PeriodicScanFrequency
+const (
+	PeriodicScanFrequencyWeekly  PeriodicScanFrequency = "WEEKLY"
+	PeriodicScanFrequencyMonthly PeriodicScanFrequency = "MONTHLY"
+	PeriodicScanFrequencyNever   PeriodicScanFrequency = "NEVER"
+)
+
+// Values returns all known values for PeriodicScanFrequency. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (PeriodicScanFrequency) Values() []PeriodicScanFrequency {
+	return []PeriodicScanFrequency{
+		"WEEKLY",
+		"MONTHLY",
+		"NEVER",
+	}
+}
+
+type ProjectSelectionScope string
+
+// Enum values for ProjectSelectionScope
+const (
+	ProjectSelectionScopeAll ProjectSelectionScope = "ALL"
+)
+
+// Values returns all known values for ProjectSelectionScope. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProjectSelectionScope) Values() []ProjectSelectionScope {
+	return []ProjectSelectionScope{
+		"ALL",
+	}
+}
+
 type RelationshipStatus string
 
 // Enum values for RelationshipStatus
@@ -1610,10 +1850,11 @@ type ResourceScanType string
 
 // Enum values for ResourceScanType
 const (
-	ResourceScanTypeEc2        ResourceScanType = "EC2"
-	ResourceScanTypeEcr        ResourceScanType = "ECR"
-	ResourceScanTypeLambda     ResourceScanType = "LAMBDA"
-	ResourceScanTypeLambdaCode ResourceScanType = "LAMBDA_CODE"
+	ResourceScanTypeEc2            ResourceScanType = "EC2"
+	ResourceScanTypeEcr            ResourceScanType = "ECR"
+	ResourceScanTypeLambda         ResourceScanType = "LAMBDA"
+	ResourceScanTypeLambdaCode     ResourceScanType = "LAMBDA_CODE"
+	ResourceScanTypeCodeRepository ResourceScanType = "CODE_REPOSITORY"
 )
 
 // Values returns all known values for ResourceScanType. Note that this can be
@@ -1626,6 +1867,7 @@ func (ResourceScanType) Values() []ResourceScanType {
 		"ECR",
 		"LAMBDA",
 		"LAMBDA_CODE",
+		"CODE_REPOSITORY",
 	}
 }
 
@@ -1656,6 +1898,7 @@ const (
 	ResourceTypeAwsEcrContainerImage ResourceType = "AWS_ECR_CONTAINER_IMAGE"
 	ResourceTypeAwsEcrRepository     ResourceType = "AWS_ECR_REPOSITORY"
 	ResourceTypeAwsLambdaFunction    ResourceType = "AWS_LAMBDA_FUNCTION"
+	ResourceTypeCodeRepository       ResourceType = "CODE_REPOSITORY"
 )
 
 // Values returns all known values for ResourceType. Note that this can be
@@ -1668,6 +1911,28 @@ func (ResourceType) Values() []ResourceType {
 		"AWS_ECR_CONTAINER_IMAGE",
 		"AWS_ECR_REPOSITORY",
 		"AWS_LAMBDA_FUNCTION",
+		"CODE_REPOSITORY",
+	}
+}
+
+type RuleSetCategory string
+
+// Enum values for RuleSetCategory
+const (
+	RuleSetCategorySast RuleSetCategory = "SAST"
+	RuleSetCategoryIac  RuleSetCategory = "IAC"
+	RuleSetCategorySca  RuleSetCategory = "SCA"
+)
+
+// Values returns all known values for RuleSetCategory. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RuleSetCategory) Values() []RuleSetCategory {
+	return []RuleSetCategory{
+		"SAST",
+		"IAC",
+		"SCA",
 	}
 }
 
@@ -1815,6 +2080,14 @@ const (
 	ScanStatusReasonDeepInspectionNoInventory                    ScanStatusReason = "DEEP_INSPECTION_NO_INVENTORY"
 	ScanStatusReasonAgentlessInstanceStorageLimitExceeded        ScanStatusReason = "AGENTLESS_INSTANCE_STORAGE_LIMIT_EXCEEDED"
 	ScanStatusReasonAgentlessInstanceCollectionTimeLimitExceeded ScanStatusReason = "AGENTLESS_INSTANCE_COLLECTION_TIME_LIMIT_EXCEEDED"
+	ScanStatusReasonPendingRevivalScan                           ScanStatusReason = "PENDING_REVIVAL_SCAN"
+	ScanStatusReasonIntegrationConnectionLost                    ScanStatusReason = "INTEGRATION_CONNECTION_LOST"
+	ScanStatusReasonAccessDeniedToEncryptionKey                  ScanStatusReason = "ACCESS_DENIED_TO_ENCRYPTION_KEY"
+	ScanStatusReasonUnsupportedLanguage                          ScanStatusReason = "UNSUPPORTED_LANGUAGE"
+	ScanStatusReasonNoScanConfigurationAssociated                ScanStatusReason = "NO_SCAN_CONFIGURATION_ASSOCIATED"
+	ScanStatusReasonScanInProgress                               ScanStatusReason = "SCAN_IN_PROGRESS"
+	ScanStatusReasonImageArchived                                ScanStatusReason = "IMAGE_ARCHIVED"
+	ScanStatusReasonUnsupportedCodeArtifacts                     ScanStatusReason = "UNSUPPORTED_CODE_ARTIFACTS"
 )
 
 // Values returns all known values for ScanStatusReason. Note that this can be
@@ -1849,6 +2122,14 @@ func (ScanStatusReason) Values() []ScanStatusReason {
 		"DEEP_INSPECTION_NO_INVENTORY",
 		"AGENTLESS_INSTANCE_STORAGE_LIMIT_EXCEEDED",
 		"AGENTLESS_INSTANCE_COLLECTION_TIME_LIMIT_EXCEEDED",
+		"PENDING_REVIVAL_SCAN",
+		"INTEGRATION_CONNECTION_LOST",
+		"ACCESS_DENIED_TO_ENCRYPTION_KEY",
+		"UNSUPPORTED_LANGUAGE",
+		"NO_SCAN_CONFIGURATION_ASSOCIATED",
+		"SCAN_IN_PROGRESS",
+		"IMAGE_ARCHIVED",
+		"UNSUPPORTED_CODE_ARTIFACTS",
 	}
 }
 
@@ -2102,11 +2383,15 @@ type UsageType string
 
 // Enum values for UsageType
 const (
-	UsageTypeEc2InstanceHours        UsageType = "EC2_INSTANCE_HOURS"
-	UsageTypeEcrInitialScan          UsageType = "ECR_INITIAL_SCAN"
-	UsageTypeEcrRescan               UsageType = "ECR_RESCAN"
-	UsageTypeLambdaFunctionHours     UsageType = "LAMBDA_FUNCTION_HOURS"
-	UsageTypeLambdaFunctionCodeHours UsageType = "LAMBDA_FUNCTION_CODE_HOURS"
+	UsageTypeEc2InstanceHours          UsageType = "EC2_INSTANCE_HOURS"
+	UsageTypeEcrInitialScan            UsageType = "ECR_INITIAL_SCAN"
+	UsageTypeEcrRescan                 UsageType = "ECR_RESCAN"
+	UsageTypeLambdaFunctionHours       UsageType = "LAMBDA_FUNCTION_HOURS"
+	UsageTypeLambdaFunctionCodeHours   UsageType = "LAMBDA_FUNCTION_CODE_HOURS"
+	UsageTypeCodeRepositorySast        UsageType = "CODE_REPOSITORY_SAST"
+	UsageTypeCodeRepositoryIac         UsageType = "CODE_REPOSITORY_IAC"
+	UsageTypeCodeRepositorySca         UsageType = "CODE_REPOSITORY_SCA"
+	UsageTypeEc2AgentlessInstanceHours UsageType = "EC2_AGENTLESS_INSTANCE_HOURS"
 )
 
 // Values returns all known values for UsageType. Note that this can be expanded
@@ -2120,6 +2405,10 @@ func (UsageType) Values() []UsageType {
 		"ECR_RESCAN",
 		"LAMBDA_FUNCTION_HOURS",
 		"LAMBDA_FUNCTION_CODE_HOURS",
+		"CODE_REPOSITORY_SAST",
+		"CODE_REPOSITORY_IAC",
+		"CODE_REPOSITORY_SCA",
+		"EC2_AGENTLESS_INSTANCE_HOURS",
 	}
 }
 

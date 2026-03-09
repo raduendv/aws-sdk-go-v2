@@ -21,11 +21,11 @@ import (
 //
 // When you start a stream, you first specify the stream configuration in a
 // MedicalScribeConfigurationEvent . This event includes channel definitions,
-// encryption settings, and post-stream analytics settings, such as the output
-// configuration for aggregated transcript and clinical note generation. These are
-// additional streaming session configurations beyond those provided in your
-// initial start request headers. Whether you are starting a new session or
-// resuming an existing session, your first event must be a
+// encryption settings, medical scribe context, and post-stream analytics settings,
+// such as the output configuration for aggregated transcript and clinical note
+// generation. These are additional streaming session configurations beyond those
+// provided in your initial start request headers. Whether you are starting a new
+// session or resuming an existing session, your first event must be a
 // MedicalScribeConfigurationEvent .
 //
 // After you send a MedicalScribeConfigurationEvent , you start AudioEvents and
@@ -232,16 +232,13 @@ func (c *Client) addOperationStartMedicalScribeStreamMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

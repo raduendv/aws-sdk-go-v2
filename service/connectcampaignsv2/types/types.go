@@ -34,11 +34,6 @@ type Campaign struct {
 	// This member is required.
 	Arn *string
 
-	// Campaign Channel Subtype config
-	//
-	// This member is required.
-	ChannelSubtypeConfig *ChannelSubtypeConfig
-
 	// Amazon Connect Instance Id
 	//
 	// This member is required.
@@ -53,6 +48,9 @@ type Campaign struct {
 	//
 	// This member is required.
 	Name *string
+
+	// Campaign Channel Subtype config
+	ChannelSubtypeConfig *ChannelSubtypeConfig
 
 	// Communication limits config
 	CommunicationLimitsOverride *CommunicationLimitsConfig
@@ -71,6 +69,9 @@ type Campaign struct {
 
 	// Tag map with key and value.
 	Tags map[string]string
+
+	// The type of campaign externally exposed in APIs.
+	Type ExternalCampaignType
 
 	noSmithyDocumentSerde
 }
@@ -118,6 +119,9 @@ type CampaignSummary struct {
 	// Campaign schedule
 	Schedule *Schedule
 
+	// The type of campaign externally exposed in APIs.
+	Type ExternalCampaignType
+
 	noSmithyDocumentSerde
 }
 
@@ -133,6 +137,9 @@ type ChannelSubtypeConfig struct {
 	// Telephony Channel Subtype config
 	Telephony *TelephonyChannelSubtypeConfig
 
+	// WhatsApp Channel Subtype config
+	WhatsApp *WhatsAppChannelSubtypeConfig
+
 	noSmithyDocumentSerde
 }
 
@@ -143,6 +150,7 @@ type ChannelSubtypeConfig struct {
 //	ChannelSubtypeParametersMemberEmail
 //	ChannelSubtypeParametersMemberSms
 //	ChannelSubtypeParametersMemberTelephony
+//	ChannelSubtypeParametersMemberWhatsApp
 type ChannelSubtypeParameters interface {
 	isChannelSubtypeParameters()
 }
@@ -173,6 +181,15 @@ type ChannelSubtypeParametersMemberTelephony struct {
 }
 
 func (*ChannelSubtypeParametersMemberTelephony) isChannelSubtypeParameters() {}
+
+// Parameters for the WhatsApp Channel Subtype
+type ChannelSubtypeParametersMemberWhatsApp struct {
+	Value WhatsAppChannelSubtypeParameters
+
+	noSmithyDocumentSerde
+}
+
+func (*ChannelSubtypeParametersMemberWhatsApp) isChannelSubtypeParameters() {}
 
 // Communication Limit
 type CommunicationLimit struct {
@@ -220,6 +237,9 @@ type CommunicationLimitsConfig struct {
 	// Communication limits
 	AllChannelSubtypes CommunicationLimits
 
+	// Instance limits handling
+	InstanceLimitsHandling InstanceLimitsHandling
+
 	noSmithyDocumentSerde
 }
 
@@ -239,6 +259,9 @@ type CommunicationTimeConfig struct {
 
 	// Time window config
 	Telephony *TimeWindow
+
+	// Time window config
+	WhatsApp *TimeWindow
 
 	noSmithyDocumentSerde
 }
@@ -441,6 +464,15 @@ type FailedRequest struct {
 	noSmithyDocumentSerde
 }
 
+// Instance Communication limits config
+type InstanceCommunicationLimitsConfig struct {
+
+	// Communication limits
+	AllChannelSubtypes CommunicationLimits
+
+	noSmithyDocumentSerde
+}
+
 // Instance config object
 type InstanceConfig struct {
 
@@ -505,6 +537,7 @@ type InstanceOnboardingJobStatus struct {
 // The following types satisfy this interface:
 //
 //	IntegrationConfigMemberCustomerProfiles
+//	IntegrationConfigMemberLambda
 //	IntegrationConfigMemberQConnect
 type IntegrationConfig interface {
 	isIntegrationConfig()
@@ -518,6 +551,15 @@ type IntegrationConfigMemberCustomerProfiles struct {
 }
 
 func (*IntegrationConfigMemberCustomerProfiles) isIntegrationConfig() {}
+
+// Lambda integration config
+type IntegrationConfigMemberLambda struct {
+	Value LambdaIntegrationConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*IntegrationConfigMemberLambda) isIntegrationConfig() {}
 
 // Q Connect integration config
 type IntegrationConfigMemberQConnect struct {
@@ -533,6 +575,7 @@ func (*IntegrationConfigMemberQConnect) isIntegrationConfig() {}
 // The following types satisfy this interface:
 //
 //	IntegrationIdentifierMemberCustomerProfiles
+//	IntegrationIdentifierMemberLambda
 //	IntegrationIdentifierMemberQConnect
 type IntegrationIdentifier interface {
 	isIntegrationIdentifier()
@@ -546,6 +589,15 @@ type IntegrationIdentifierMemberCustomerProfiles struct {
 }
 
 func (*IntegrationIdentifierMemberCustomerProfiles) isIntegrationIdentifier() {}
+
+// Lambda integration identifier
+type IntegrationIdentifierMemberLambda struct {
+	Value LambdaIntegrationIdentifier
+
+	noSmithyDocumentSerde
+}
+
+func (*IntegrationIdentifierMemberLambda) isIntegrationIdentifier() {}
 
 // Q Connect integration identifier
 type IntegrationIdentifierMemberQConnect struct {
@@ -561,6 +613,7 @@ func (*IntegrationIdentifierMemberQConnect) isIntegrationIdentifier() {}
 // The following types satisfy this interface:
 //
 //	IntegrationSummaryMemberCustomerProfiles
+//	IntegrationSummaryMemberLambda
 //	IntegrationSummaryMemberQConnect
 type IntegrationSummary interface {
 	isIntegrationSummary()
@@ -575,6 +628,15 @@ type IntegrationSummaryMemberCustomerProfiles struct {
 
 func (*IntegrationSummaryMemberCustomerProfiles) isIntegrationSummary() {}
 
+// Lambda integration summary
+type IntegrationSummaryMemberLambda struct {
+	Value LambdaIntegrationSummary
+
+	noSmithyDocumentSerde
+}
+
+func (*IntegrationSummaryMemberLambda) isIntegrationSummary() {}
+
 // Q Connect integration summary
 type IntegrationSummaryMemberQConnect struct {
 	Value QConnectIntegrationSummary
@@ -583,6 +645,39 @@ type IntegrationSummaryMemberQConnect struct {
 }
 
 func (*IntegrationSummaryMemberQConnect) isIntegrationSummary() {}
+
+// Lambda integration config
+type LambdaIntegrationConfig struct {
+
+	// Lambda ARN for integration with Connect instances
+	//
+	// This member is required.
+	FunctionArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Lambda integration identifier
+type LambdaIntegrationIdentifier struct {
+
+	// Lambda ARN for integration with Connect instances
+	//
+	// This member is required.
+	FunctionArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Lambda integration summary
+type LambdaIntegrationSummary struct {
+
+	// Lambda ARN for integration with Connect instances
+	//
+	// This member is required.
+	FunctionArn *string
+
+	noSmithyDocumentSerde
+}
 
 // Local time zone config
 type LocalTimeZoneConfig struct {
@@ -643,6 +738,25 @@ type PredictiveConfig struct {
 	//
 	// This member is required.
 	BandwidthAllocation *float64
+
+	noSmithyDocumentSerde
+}
+
+// Preview config
+type PreviewConfig struct {
+
+	// The bandwidth allocation of a queue resource.
+	//
+	// This member is required.
+	BandwidthAllocation *float64
+
+	// Timeout Config for preview contacts.
+	//
+	// This member is required.
+	TimeoutConfig *TimeoutConfig
+
+	// Actions that can be performed by agent during preview phase.
+	AgentActions []AgentAction
 
 	noSmithyDocumentSerde
 }
@@ -959,6 +1073,9 @@ type TelephonyChannelSubtypeParameters struct {
 	// If you do not specify a source phone number, you must specify a queue.
 	ConnectSourcePhoneNumber *string
 
+	// Ring timeout for outbound calls
+	RingTimeout *int32
+
 	noSmithyDocumentSerde
 }
 
@@ -977,6 +1094,9 @@ type TelephonyOutboundConfig struct {
 	// If you do not specify a source phone number, you must specify a queue.
 	ConnectSourcePhoneNumber *string
 
+	// Ring timeout for outbound calls
+	RingTimeout *int32
+
 	noSmithyDocumentSerde
 }
 
@@ -986,6 +1106,7 @@ type TelephonyOutboundConfig struct {
 //
 //	TelephonyOutboundModeMemberAgentless
 //	TelephonyOutboundModeMemberPredictive
+//	TelephonyOutboundModeMemberPreview
 //	TelephonyOutboundModeMemberProgressive
 type TelephonyOutboundMode interface {
 	isTelephonyOutboundMode()
@@ -1009,6 +1130,15 @@ type TelephonyOutboundModeMemberPredictive struct {
 
 func (*TelephonyOutboundModeMemberPredictive) isTelephonyOutboundMode() {}
 
+// Preview config
+type TelephonyOutboundModeMemberPreview struct {
+	Value PreviewConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*TelephonyOutboundModeMemberPreview) isTelephonyOutboundMode() {}
+
 // Progressive config
 type TelephonyOutboundModeMemberProgressive struct {
 	Value ProgressiveConfig
@@ -1017,6 +1147,17 @@ type TelephonyOutboundModeMemberProgressive struct {
 }
 
 func (*TelephonyOutboundModeMemberProgressive) isTelephonyOutboundMode() {}
+
+// Timeout Config for preview contacts.
+type TimeoutConfig struct {
+
+	// Timeout duration for a preview contact in seconds.
+	//
+	// This member is required.
+	DurationInSeconds *int32
+
+	noSmithyDocumentSerde
+}
 
 // Time range in 24 hour format
 type TimeRange struct {
@@ -1048,6 +1189,84 @@ type TimeWindow struct {
 	noSmithyDocumentSerde
 }
 
+// WhatsApp Channel Subtype config
+type WhatsAppChannelSubtypeConfig struct {
+
+	// Default WhatsApp Outbound config
+	//
+	// This member is required.
+	DefaultOutboundConfig *WhatsAppOutboundConfig
+
+	// WhatsApp Outbound Mode
+	//
+	// This member is required.
+	OutboundMode WhatsAppOutboundMode
+
+	// Allocates outbound capacity for the specific channel subtype of this campaign
+	// between multiple active campaigns
+	Capacity *float64
+
+	noSmithyDocumentSerde
+}
+
+// Parameters for the WhatsApp Channel Subtype
+type WhatsAppChannelSubtypeParameters struct {
+
+	// The phone number of the customer, in E.164 format.
+	//
+	// This member is required.
+	DestinationPhoneNumber *string
+
+	// A custom key-value pair using an attribute map. The attributes are standard
+	// Amazon Connect attributes, and can be accessed in contact flows just like any
+	// other contact attributes.
+	//
+	// This member is required.
+	TemplateParameters map[string]string
+
+	// Amazon Resource Names(ARN)
+	ConnectSourcePhoneNumberArn *string
+
+	// Amazon Resource Names(ARN)
+	TemplateArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Default WhatsApp Outbound config
+type WhatsAppOutboundConfig struct {
+
+	// Amazon Resource Names(ARN)
+	//
+	// This member is required.
+	ConnectSourcePhoneNumberArn *string
+
+	// Amazon Resource Names(ARN)
+	//
+	// This member is required.
+	WisdomTemplateArn *string
+
+	noSmithyDocumentSerde
+}
+
+// WhatsApp Outbound Mode
+//
+// The following types satisfy this interface:
+//
+//	WhatsAppOutboundModeMemberAgentless
+type WhatsAppOutboundMode interface {
+	isWhatsAppOutboundMode()
+}
+
+// Agentless config
+type WhatsAppOutboundModeMemberAgentless struct {
+	Value AgentlessConfig
+
+	noSmithyDocumentSerde
+}
+
+func (*WhatsAppOutboundModeMemberAgentless) isWhatsAppOutboundMode() {}
+
 type noSmithyDocumentSerde = smithydocument.NoSerde
 
 // UnknownUnionMember is returned when a union member is returned over the wire,
@@ -1070,3 +1289,4 @@ func (*UnknownUnionMember) isRestrictedPeriods()        {}
 func (*UnknownUnionMember) isSmsOutboundMode()          {}
 func (*UnknownUnionMember) isSource()                   {}
 func (*UnknownUnionMember) isTelephonyOutboundMode()    {}
+func (*UnknownUnionMember) isWhatsAppOutboundMode()     {}

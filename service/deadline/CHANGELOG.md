@@ -1,3 +1,156 @@
+# v1.25.0 (2026-02-06)
+
+* **Feature**: Adds support for tagging jobs during job creation
+
+# v1.24.0 (2026-01-27)
+
+* **Feature**: AWS Deadline Cloud now supports editing job names and descriptions after submission.
+
+# v1.23.0 (2026-01-15)
+
+* **Feature**: AWS Deadline Cloud now supports tagging Budget resources with ABAC for permissions management and selecting up to 16 filter values in the monitor and Search API.
+
+# v1.22.8 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.22.7 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.22.6 (2025-12-02)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.22.5 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.22.4 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.22.3 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.22.2 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.22.1 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.22.0 (2025-10-30)
+
+* **Feature**: Update endpoint ruleset parameters casing
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.21.8 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.21.7 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.21.6 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.21.5 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.21.4 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.21.3 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.21.2 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.21.1 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.21.0 (2025-08-21)
+
+* **Feature**: Remove incorrect endpoint tests
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.20.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.20.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Feature**: Adds support for Wait and Save feature in service-managed fleets
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.19.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.18.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.18.0 (2025-07-29)
+
+* **Feature**: Adds support for tag management on monitors.
+
+# v1.17.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.16.0 (2025-07-21)
+
+* **Feature**: Add support for VPC resource endpoints in Service Managed Fleets
+
+# v1.15.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.15.0 (2025-07-03)
+
+* **Feature**: Added fields for output manifest reporting and task chunking parameters
+
+# v1.14.0 (2025-06-26)
+
+* **Feature**: Added fields to track cumulative task retry attempts for steps and jobs
+
+# v1.13.2 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.13.1 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.13.0 (2025-05-27)
+
+* **Feature**: AWS Deadline Cloud service-managed fleets now support storage profiles. With storage profiles, you can map file paths between a workstation and the worker hosts running the job.
+
+# v1.12.0 (2025-05-12)
+
+* **Feature**: AWS Deadline Cloud service-managed fleets now support configuration scripts. Configuration scripts make it easy to install additional software, like plugins and packages, onto a worker.
+
 # v1.11.0 (2025-04-30)
 
 * **Feature**: Adds support for tag management on workers and tag inheritance from fleets to their associated workers.

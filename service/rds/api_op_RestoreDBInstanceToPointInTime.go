@@ -57,6 +57,12 @@ type RestoreDBInstanceToPointInTimeInput struct {
 	// This member is required.
 	TargetDBInstanceIdentifier *string
 
+	// A list of additional storage volumes to restore to the DB instance. You can
+	// restore up to three additional storage volumes using the names rdsdbdata2 ,
+	// rdsdbdata3 , and rdsdbdata4 . Additional storage volumes are supported for RDS
+	// for Oracle and RDS for SQL Server DB instances only.
+	AdditionalStorageVolumes []types.AdditionalStorageVolume
+
 	// The amount of storage (in gibibytes) to allocate initially for the DB instance.
 	// Follow the allocation rules specified in CreateDBInstance .
 	//
@@ -89,10 +95,35 @@ type RestoreDBInstanceToPointInTimeInput struct {
 	// Example: us-east-1a
 	AvailabilityZone *string
 
+	// The number of days to retain automated backups. Setting this parameter to a
+	// positive number enables backups. Setting this parameter to 0 disables automated
+	// backups.
+	//
+	// Enabling and disabling backups can result in a brief I/O suspension that lasts
+	// from a few seconds to a few minutes, depending on the size and class of your DB
+	// instance.
+	//
+	// This setting doesn't apply to Amazon Aurora DB instances. The retention period
+	// for automated backups is managed by the DB cluster. For more information, see
+	// ModifyDBCluster .
+	//
+	// Default: Uses existing setting
+	//
+	// Constraints:
+	//
+	//   - Must be a value from 0 to 35.
+	//
+	//   - Can't be set to 0 if the DB instance is a source to read replicas.
+	//
+	//   - Can't be set to 0 for an RDS Custom for Oracle DB instance.
+	BackupRetentionPeriod *int32
+
 	// The location for storing automated backups and manual snapshots for the
 	// restored DB instance.
 	//
 	// Valid Values:
+	//
+	//   - local (Dedicated Local Zone)
 	//
 	//   - outposts (Amazon Web Services Outposts)
 	//
@@ -350,7 +381,7 @@ type RestoreDBInstanceToPointInTimeInput struct {
 	// You can use this setting to enroll your DB instance into Amazon RDS Extended
 	// Support. With RDS Extended Support, you can run the selected major engine
 	// version on your DB instance past the end of standard support for that engine
-	// version. For more information, see [Using Amazon RDS Extended Support]in the Amazon RDS User Guide.
+	// version. For more information, see [Amazon RDS Extended Support with Amazon RDS]in the Amazon RDS User Guide.
 	//
 	// This setting applies only to RDS for MySQL and RDS for PostgreSQL. For Amazon
 	// Aurora DB instances, the life cycle type is managed by the DB cluster.
@@ -360,7 +391,7 @@ type RestoreDBInstanceToPointInTimeInput struct {
 	//
 	// Default: open-source-rds-extended-support
 	//
-	// [Using Amazon RDS Extended Support]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
+	// [Amazon RDS Extended Support with Amazon RDS]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
 	EngineLifecycleSupport *string
 
 	// The amount of Provisioned IOPS (input/output operations per second) to
@@ -375,8 +406,8 @@ type RestoreDBInstanceToPointInTimeInput struct {
 
 	// The license model information for the restored DB instance.
 	//
-	// License models for RDS for Db2 require additional configuration. The Bring Your
-	// Own License (BYOL) model requires a custom parameter group and an Amazon Web
+	// License models for RDS for Db2 require additional configuration. The bring your
+	// own license (BYOL) model requires a custom parameter group and an Amazon Web
 	// Services License Manager self-managed license. The Db2 license through Amazon
 	// Web Services Marketplace model requires an Amazon Web Services Marketplace
 	// subscription. For more information, see [Amazon RDS for Db2 licensing options]in the Amazon RDS User Guide.
@@ -490,6 +521,30 @@ type RestoreDBInstanceToPointInTimeInput struct {
 	//   - The value must be 1150-65535 .
 	Port *int32
 
+	// The daily time range during which automated backups are created if automated
+	// backups are enabled, as determined by the BackupRetentionPeriod parameter.
+	// Changing this parameter doesn't result in an outage and the change is
+	// asynchronously applied as soon as possible. The default is a 30-minute window
+	// selected at random from an 8-hour block of time for each Amazon Web Services
+	// Region. For more information, see [Backup window]in the Amazon RDS User Guide.
+	//
+	// This setting doesn't apply to Amazon Aurora DB instances. The daily time range
+	// for creating automated backups is managed by the DB cluster. For more
+	// information, see ModifyDBCluster .
+	//
+	// Constraints:
+	//
+	//   - Must be in the format hh24:mi-hh24:mi .
+	//
+	//   - Must be in Universal Coordinated Time (UTC).
+	//
+	//   - Must not conflict with the preferred maintenance window.
+	//
+	//   - Must be at least 30 minutes.
+	//
+	// [Backup window]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html#USER_WorkingWithAutomatedBackups.BackupWindow
+	PreferredBackupWindow *string
+
 	// The number of CPU cores and the number of threads per core for the DB instance
 	// class of the DB instance.
 	//
@@ -557,6 +612,13 @@ type RestoreDBInstanceToPointInTimeInput struct {
 	//   - If you specify io1 , io2 , or gp3 , you must also include a value for the
 	//   Iops parameter.
 	StorageType *string
+
+	// Tags to assign to resources associated with the DB instance.
+	//
+	// Valid Values:
+	//
+	//   - auto-backup - The DB instance's automated backup.
+	TagSpecifications []types.TagSpecification
 
 	// A list of tags.
 	//
@@ -705,16 +767,13 @@ func (c *Client) addOperationRestoreDBInstanceToPointInTimeMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

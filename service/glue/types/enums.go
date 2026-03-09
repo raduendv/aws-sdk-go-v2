@@ -8,6 +8,7 @@ type AdditionalOptionKeys string
 const (
 	AdditionalOptionKeysCacheOption        AdditionalOptionKeys = "performanceTuning.caching"
 	AdditionalOptionKeysObservationsOption AdditionalOptionKeys = "observations.scope"
+	AdditionalOptionKeysCompositeOption    AdditionalOptionKeys = "compositeRuleEvaluation.method"
 )
 
 // Values returns all known values for AdditionalOptionKeys. Note that this can be
@@ -18,6 +19,7 @@ func (AdditionalOptionKeys) Values() []AdditionalOptionKeys {
 	return []AdditionalOptionKeys{
 		"performanceTuning.caching",
 		"observations.scope",
+		"compositeRuleEvaluation.method",
 	}
 }
 
@@ -274,6 +276,27 @@ func (ColumnStatisticsType) Values() []ColumnStatisticsType {
 	}
 }
 
+type CompactionStrategy string
+
+// Enum values for CompactionStrategy
+const (
+	CompactionStrategyBinpack CompactionStrategy = "binpack"
+	CompactionStrategySort    CompactionStrategy = "sort"
+	CompactionStrategyZorder  CompactionStrategy = "z-order"
+)
+
+// Values returns all known values for CompactionStrategy. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CompactionStrategy) Values() []CompactionStrategy {
+	return []CompactionStrategy{
+		"binpack",
+		"sort",
+		"z-order",
+	}
+}
+
 type Comparator string
 
 // Enum values for Comparator
@@ -386,6 +409,25 @@ func (ComputeEnvironment) Values() []ComputeEnvironment {
 		"SPARK",
 		"ATHENA",
 		"PYTHON",
+	}
+}
+
+type ConfigurationSource string
+
+// Enum values for ConfigurationSource
+const (
+	ConfigurationSourceCatalog ConfigurationSource = "catalog"
+	ConfigurationSourceTable   ConfigurationSource = "table"
+)
+
+// Values returns all known values for ConfigurationSource. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConfigurationSource) Values() []ConfigurationSource {
+	return []ConfigurationSource{
+		"catalog",
+		"table",
 	}
 }
 
@@ -527,35 +569,98 @@ type ConnectionType string
 
 // Enum values for ConnectionType
 const (
-	ConnectionTypeJdbc                     ConnectionType = "JDBC"
-	ConnectionTypeSftp                     ConnectionType = "SFTP"
-	ConnectionTypeMongodb                  ConnectionType = "MONGODB"
-	ConnectionTypeKafka                    ConnectionType = "KAFKA"
-	ConnectionTypeNetwork                  ConnectionType = "NETWORK"
-	ConnectionTypeMarketplace              ConnectionType = "MARKETPLACE"
-	ConnectionTypeCustom                   ConnectionType = "CUSTOM"
-	ConnectionTypeSalesforce               ConnectionType = "SALESFORCE"
-	ConnectionTypeViewValidationRedshift   ConnectionType = "VIEW_VALIDATION_REDSHIFT"
-	ConnectionTypeViewValidationAthena     ConnectionType = "VIEW_VALIDATION_ATHENA"
-	ConnectionTypeGoogleads                ConnectionType = "GOOGLEADS"
-	ConnectionTypeGooglesheets             ConnectionType = "GOOGLESHEETS"
-	ConnectionTypeGoogleanalytics4         ConnectionType = "GOOGLEANALYTICS4"
-	ConnectionTypeServicenow               ConnectionType = "SERVICENOW"
-	ConnectionTypeMarketo                  ConnectionType = "MARKETO"
-	ConnectionTypeSapodata                 ConnectionType = "SAPODATA"
-	ConnectionTypeZendesk                  ConnectionType = "ZENDESK"
-	ConnectionTypeJiracloud                ConnectionType = "JIRACLOUD"
-	ConnectionTypeNetsuiteerp              ConnectionType = "NETSUITEERP"
-	ConnectionTypeHubspot                  ConnectionType = "HUBSPOT"
-	ConnectionTypeFacebookads              ConnectionType = "FACEBOOKADS"
-	ConnectionTypeInstagramads             ConnectionType = "INSTAGRAMADS"
-	ConnectionTypeZohocrm                  ConnectionType = "ZOHOCRM"
-	ConnectionTypeSalesforcepardot         ConnectionType = "SALESFORCEPARDOT"
-	ConnectionTypeSalesforcemarketingcloud ConnectionType = "SALESFORCEMARKETINGCLOUD"
-	ConnectionTypeSlack                    ConnectionType = "SLACK"
-	ConnectionTypeStripe                   ConnectionType = "STRIPE"
-	ConnectionTypeIntercom                 ConnectionType = "INTERCOM"
-	ConnectionTypeSnapchatads              ConnectionType = "SNAPCHATADS"
+	ConnectionTypeJdbc                             ConnectionType = "JDBC"
+	ConnectionTypeSftp                             ConnectionType = "SFTP"
+	ConnectionTypeMongodb                          ConnectionType = "MONGODB"
+	ConnectionTypeKafka                            ConnectionType = "KAFKA"
+	ConnectionTypeNetwork                          ConnectionType = "NETWORK"
+	ConnectionTypeMarketplace                      ConnectionType = "MARKETPLACE"
+	ConnectionTypeCustom                           ConnectionType = "CUSTOM"
+	ConnectionTypeSalesforce                       ConnectionType = "SALESFORCE"
+	ConnectionTypeViewValidationRedshift           ConnectionType = "VIEW_VALIDATION_REDSHIFT"
+	ConnectionTypeViewValidationAthena             ConnectionType = "VIEW_VALIDATION_ATHENA"
+	ConnectionTypeGoogleads                        ConnectionType = "GOOGLEADS"
+	ConnectionTypeGooglesheets                     ConnectionType = "GOOGLESHEETS"
+	ConnectionTypeGoogleanalytics4                 ConnectionType = "GOOGLEANALYTICS4"
+	ConnectionTypeServicenow                       ConnectionType = "SERVICENOW"
+	ConnectionTypeMarketo                          ConnectionType = "MARKETO"
+	ConnectionTypeSapodata                         ConnectionType = "SAPODATA"
+	ConnectionTypeZendesk                          ConnectionType = "ZENDESK"
+	ConnectionTypeJiracloud                        ConnectionType = "JIRACLOUD"
+	ConnectionTypeNetsuiteerp                      ConnectionType = "NETSUITEERP"
+	ConnectionTypeHubspot                          ConnectionType = "HUBSPOT"
+	ConnectionTypeFacebookads                      ConnectionType = "FACEBOOKADS"
+	ConnectionTypeInstagramads                     ConnectionType = "INSTAGRAMADS"
+	ConnectionTypeZohocrm                          ConnectionType = "ZOHOCRM"
+	ConnectionTypeSalesforcepardot                 ConnectionType = "SALESFORCEPARDOT"
+	ConnectionTypeSalesforcemarketingcloud         ConnectionType = "SALESFORCEMARKETINGCLOUD"
+	ConnectionTypeAdobeanalytics                   ConnectionType = "ADOBEANALYTICS"
+	ConnectionTypeSlack                            ConnectionType = "SLACK"
+	ConnectionTypeLinkedin                         ConnectionType = "LINKEDIN"
+	ConnectionTypeMixpanel                         ConnectionType = "MIXPANEL"
+	ConnectionTypeAsana                            ConnectionType = "ASANA"
+	ConnectionTypeStripe                           ConnectionType = "STRIPE"
+	ConnectionTypeSmartsheet                       ConnectionType = "SMARTSHEET"
+	ConnectionTypeDatadog                          ConnectionType = "DATADOG"
+	ConnectionTypeWoocommerce                      ConnectionType = "WOOCOMMERCE"
+	ConnectionTypeIntercom                         ConnectionType = "INTERCOM"
+	ConnectionTypeSnapchatads                      ConnectionType = "SNAPCHATADS"
+	ConnectionTypePaypal                           ConnectionType = "PAYPAL"
+	ConnectionTypeQuickbooks                       ConnectionType = "QUICKBOOKS"
+	ConnectionTypeFacebookpageinsights             ConnectionType = "FACEBOOKPAGEINSIGHTS"
+	ConnectionTypeFreshdesk                        ConnectionType = "FRESHDESK"
+	ConnectionTypeTwilio                           ConnectionType = "TWILIO"
+	ConnectionTypeDocusignmonitor                  ConnectionType = "DOCUSIGNMONITOR"
+	ConnectionTypeFreshsales                       ConnectionType = "FRESHSALES"
+	ConnectionTypeZoom                             ConnectionType = "ZOOM"
+	ConnectionTypeGooglesearchconsole              ConnectionType = "GOOGLESEARCHCONSOLE"
+	ConnectionTypeSalesforcecommercecloud          ConnectionType = "SALESFORCECOMMERCECLOUD"
+	ConnectionTypeSapconcur                        ConnectionType = "SAPCONCUR"
+	ConnectionTypeDynatrace                        ConnectionType = "DYNATRACE"
+	ConnectionTypeMicrosoftdynamic365financeandops ConnectionType = "MICROSOFTDYNAMIC365FINANCEANDOPS"
+	ConnectionTypeMicrosoftteams                   ConnectionType = "MICROSOFTTEAMS"
+	ConnectionTypeBlackbaudraiseredgenxt           ConnectionType = "BLACKBAUDRAISEREDGENXT"
+	ConnectionTypeMailchimp                        ConnectionType = "MAILCHIMP"
+	ConnectionTypeGitlab                           ConnectionType = "GITLAB"
+	ConnectionTypePendo                            ConnectionType = "PENDO"
+	ConnectionTypeProductboard                     ConnectionType = "PRODUCTBOARD"
+	ConnectionTypeCircleci                         ConnectionType = "CIRCLECI"
+	ConnectionTypePipedive                         ConnectionType = "PIPEDIVE"
+	ConnectionTypeSendgrid                         ConnectionType = "SENDGRID"
+	ConnectionTypeAzurecosmos                      ConnectionType = "AZURECOSMOS"
+	ConnectionTypeAzuresql                         ConnectionType = "AZURESQL"
+	ConnectionTypeBigquery                         ConnectionType = "BIGQUERY"
+	ConnectionTypeBlackbaud                        ConnectionType = "BLACKBAUD"
+	ConnectionTypeClouderahive                     ConnectionType = "CLOUDERAHIVE"
+	ConnectionTypeClouderaimpala                   ConnectionType = "CLOUDERAIMPALA"
+	ConnectionTypeCloudwatch                       ConnectionType = "CLOUDWATCH"
+	ConnectionTypeCloudwatchmetrics                ConnectionType = "CLOUDWATCHMETRICS"
+	ConnectionTypeCmdb                             ConnectionType = "CMDB"
+	ConnectionTypeDatalakegen2                     ConnectionType = "DATALAKEGEN2"
+	ConnectionTypeDb2                              ConnectionType = "DB2"
+	ConnectionTypeDb2as400                         ConnectionType = "DB2AS400"
+	ConnectionTypeDocumentdb                       ConnectionType = "DOCUMENTDB"
+	ConnectionTypeDomo                             ConnectionType = "DOMO"
+	ConnectionTypeDynamodb                         ConnectionType = "DYNAMODB"
+	ConnectionTypeGooglecloudstorage               ConnectionType = "GOOGLECLOUDSTORAGE"
+	ConnectionTypeHbase                            ConnectionType = "HBASE"
+	ConnectionTypeKustomer                         ConnectionType = "KUSTOMER"
+	ConnectionTypeMicrosoftdynamics365crm          ConnectionType = "MICROSOFTDYNAMICS365CRM"
+	ConnectionTypeMonday                           ConnectionType = "MONDAY"
+	ConnectionTypeMysql                            ConnectionType = "MYSQL"
+	ConnectionTypeOkta                             ConnectionType = "OKTA"
+	ConnectionTypeOpensearch                       ConnectionType = "OPENSEARCH"
+	ConnectionTypeOracle                           ConnectionType = "ORACLE"
+	ConnectionTypePipedrive                        ConnectionType = "PIPEDRIVE"
+	ConnectionTypePostgresql                       ConnectionType = "POSTGRESQL"
+	ConnectionTypeSaphana                          ConnectionType = "SAPHANA"
+	ConnectionTypeSqlserver                        ConnectionType = "SQLSERVER"
+	ConnectionTypeSynapse                          ConnectionType = "SYNAPSE"
+	ConnectionTypeTeradata                         ConnectionType = "TERADATA"
+	ConnectionTypeTeradatanos                      ConnectionType = "TERADATANOS"
+	ConnectionTypeTimestream                       ConnectionType = "TIMESTREAM"
+	ConnectionTypeTpcds                            ConnectionType = "TPCDS"
+	ConnectionTypeVertica                          ConnectionType = "VERTICA"
 )
 
 // Values returns all known values for ConnectionType. Note that this can be
@@ -589,10 +694,113 @@ func (ConnectionType) Values() []ConnectionType {
 		"ZOHOCRM",
 		"SALESFORCEPARDOT",
 		"SALESFORCEMARKETINGCLOUD",
+		"ADOBEANALYTICS",
 		"SLACK",
+		"LINKEDIN",
+		"MIXPANEL",
+		"ASANA",
 		"STRIPE",
+		"SMARTSHEET",
+		"DATADOG",
+		"WOOCOMMERCE",
 		"INTERCOM",
 		"SNAPCHATADS",
+		"PAYPAL",
+		"QUICKBOOKS",
+		"FACEBOOKPAGEINSIGHTS",
+		"FRESHDESK",
+		"TWILIO",
+		"DOCUSIGNMONITOR",
+		"FRESHSALES",
+		"ZOOM",
+		"GOOGLESEARCHCONSOLE",
+		"SALESFORCECOMMERCECLOUD",
+		"SAPCONCUR",
+		"DYNATRACE",
+		"MICROSOFTDYNAMIC365FINANCEANDOPS",
+		"MICROSOFTTEAMS",
+		"BLACKBAUDRAISEREDGENXT",
+		"MAILCHIMP",
+		"GITLAB",
+		"PENDO",
+		"PRODUCTBOARD",
+		"CIRCLECI",
+		"PIPEDIVE",
+		"SENDGRID",
+		"AZURECOSMOS",
+		"AZURESQL",
+		"BIGQUERY",
+		"BLACKBAUD",
+		"CLOUDERAHIVE",
+		"CLOUDERAIMPALA",
+		"CLOUDWATCH",
+		"CLOUDWATCHMETRICS",
+		"CMDB",
+		"DATALAKEGEN2",
+		"DB2",
+		"DB2AS400",
+		"DOCUMENTDB",
+		"DOMO",
+		"DYNAMODB",
+		"GOOGLECLOUDSTORAGE",
+		"HBASE",
+		"KUSTOMER",
+		"MICROSOFTDYNAMICS365CRM",
+		"MONDAY",
+		"MYSQL",
+		"OKTA",
+		"OPENSEARCH",
+		"ORACLE",
+		"PIPEDRIVE",
+		"POSTGRESQL",
+		"SAPHANA",
+		"SQLSERVER",
+		"SYNAPSE",
+		"TERADATA",
+		"TERADATANOS",
+		"TIMESTREAM",
+		"TPCDS",
+		"VERTICA",
+	}
+}
+
+type ConnectorOAuth2GrantType string
+
+// Enum values for ConnectorOAuth2GrantType
+const (
+	ConnectorOAuth2GrantTypeClientCredentials ConnectorOAuth2GrantType = "CLIENT_CREDENTIALS"
+	ConnectorOAuth2GrantTypeJwtBearer         ConnectorOAuth2GrantType = "JWT_BEARER"
+	ConnectorOAuth2GrantTypeAuthorizationCode ConnectorOAuth2GrantType = "AUTHORIZATION_CODE"
+)
+
+// Values returns all known values for ConnectorOAuth2GrantType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConnectorOAuth2GrantType) Values() []ConnectorOAuth2GrantType {
+	return []ConnectorOAuth2GrantType{
+		"CLIENT_CREDENTIALS",
+		"JWT_BEARER",
+		"AUTHORIZATION_CODE",
+	}
+}
+
+type ContentType string
+
+// Enum values for ContentType
+const (
+	ContentTypeApplicationJson ContentType = "APPLICATION_JSON"
+	ContentTypeUrlEncoded      ContentType = "URL_ENCODED"
+)
+
+// Values returns all known values for ContentType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ContentType) Values() []ContentType {
+	return []ContentType{
+		"APPLICATION_JSON",
+		"URL_ENCODED",
 	}
 }
 
@@ -732,7 +940,8 @@ type DatabaseAttributes string
 
 // Enum values for DatabaseAttributes
 const (
-	DatabaseAttributesName DatabaseAttributes = "NAME"
+	DatabaseAttributesName           DatabaseAttributes = "NAME"
+	DatabaseAttributesTargetDatabase DatabaseAttributes = "TARGET_DATABASE"
 )
 
 // Values returns all known values for DatabaseAttributes. Note that this can be
@@ -742,6 +951,7 @@ const (
 func (DatabaseAttributes) Values() []DatabaseAttributes {
 	return []DatabaseAttributes{
 		"NAME",
+		"TARGET_DATABASE",
 	}
 }
 
@@ -843,6 +1053,25 @@ func (DataQualityRuleResultStatus) Values() []DataQualityRuleResultStatus {
 		"PASS",
 		"FAIL",
 		"ERROR",
+	}
+}
+
+type DdbExportType string
+
+// Enum values for DdbExportType
+const (
+	DdbExportTypeDdb DdbExportType = "ddb"
+	DdbExportTypeS3  DdbExportType = "s3"
+)
+
+// Values returns all known values for DdbExportType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DdbExportType) Values() []DdbExportType {
+	return []DdbExportType{
+		"ddb",
+		"s3",
 	}
 }
 
@@ -1077,6 +1306,8 @@ const (
 	FieldDataTypeShort     FieldDataType = "SHORT"
 	FieldDataTypeDouble    FieldDataType = "DOUBLE"
 	FieldDataTypeStruct    FieldDataType = "STRUCT"
+	FieldDataTypeBinary    FieldDataType = "BINARY"
+	FieldDataTypeUnion     FieldDataType = "UNION"
 )
 
 // Values returns all known values for FieldDataType. Note that this can be
@@ -1101,6 +1332,8 @@ func (FieldDataType) Values() []FieldDataType {
 		"SHORT",
 		"DOUBLE",
 		"STRUCT",
+		"BINARY",
+		"UNION",
 	}
 }
 
@@ -1256,6 +1489,27 @@ func (FilterValueType) Values() []FilterValueType {
 	}
 }
 
+type FunctionType string
+
+// Enum values for FunctionType
+const (
+	FunctionTypeRegularFunction   FunctionType = "REGULAR_FUNCTION"
+	FunctionTypeAggregateFunction FunctionType = "AGGREGATE_FUNCTION"
+	FunctionTypeStoredProcedure   FunctionType = "STORED_PROCEDURE"
+)
+
+// Values returns all known values for FunctionType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (FunctionType) Values() []FunctionType {
+	return []FunctionType{
+		"REGULAR_FUNCTION",
+		"AGGREGATE_FUNCTION",
+		"STORED_PROCEDURE",
+	}
+}
+
 type GlueRecordType string
 
 // Enum values for GlueRecordType
@@ -1291,6 +1545,25 @@ func (GlueRecordType) Values() []GlueRecordType {
 	}
 }
 
+type HTTPMethod string
+
+// Enum values for HTTPMethod
+const (
+	HTTPMethodGet  HTTPMethod = "GET"
+	HTTPMethodPost HTTPMethod = "POST"
+)
+
+// Values returns all known values for HTTPMethod. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (HTTPMethod) Values() []HTTPMethod {
+	return []HTTPMethod{
+		"GET",
+		"POST",
+	}
+}
+
 type HudiTargetCompressionType string
 
 // Enum values for HudiTargetCompressionType
@@ -1311,6 +1584,139 @@ func (HudiTargetCompressionType) Values() []HudiTargetCompressionType {
 		"lzo",
 		"uncompressed",
 		"snappy",
+	}
+}
+
+type HyperTargetCompressionType string
+
+// Enum values for HyperTargetCompressionType
+const (
+	HyperTargetCompressionTypeUncompressed HyperTargetCompressionType = "uncompressed"
+)
+
+// Values returns all known values for HyperTargetCompressionType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (HyperTargetCompressionType) Values() []HyperTargetCompressionType {
+	return []HyperTargetCompressionType{
+		"uncompressed",
+	}
+}
+
+type IcebergNullOrder string
+
+// Enum values for IcebergNullOrder
+const (
+	IcebergNullOrderNullsFirst IcebergNullOrder = "nulls-first"
+	IcebergNullOrderNullsLast  IcebergNullOrder = "nulls-last"
+)
+
+// Values returns all known values for IcebergNullOrder. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IcebergNullOrder) Values() []IcebergNullOrder {
+	return []IcebergNullOrder{
+		"nulls-first",
+		"nulls-last",
+	}
+}
+
+type IcebergSortDirection string
+
+// Enum values for IcebergSortDirection
+const (
+	IcebergSortDirectionAsc  IcebergSortDirection = "asc"
+	IcebergSortDirectionDesc IcebergSortDirection = "desc"
+)
+
+// Values returns all known values for IcebergSortDirection. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IcebergSortDirection) Values() []IcebergSortDirection {
+	return []IcebergSortDirection{
+		"asc",
+		"desc",
+	}
+}
+
+type IcebergStructTypeEnum string
+
+// Enum values for IcebergStructTypeEnum
+const (
+	IcebergStructTypeEnumStruct IcebergStructTypeEnum = "struct"
+)
+
+// Values returns all known values for IcebergStructTypeEnum. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IcebergStructTypeEnum) Values() []IcebergStructTypeEnum {
+	return []IcebergStructTypeEnum{
+		"struct",
+	}
+}
+
+type IcebergTargetCompressionType string
+
+// Enum values for IcebergTargetCompressionType
+const (
+	IcebergTargetCompressionTypeGzip         IcebergTargetCompressionType = "gzip"
+	IcebergTargetCompressionTypeLzo          IcebergTargetCompressionType = "lzo"
+	IcebergTargetCompressionTypeUncompressed IcebergTargetCompressionType = "uncompressed"
+	IcebergTargetCompressionTypeSnappy       IcebergTargetCompressionType = "snappy"
+)
+
+// Values returns all known values for IcebergTargetCompressionType. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IcebergTargetCompressionType) Values() []IcebergTargetCompressionType {
+	return []IcebergTargetCompressionType{
+		"gzip",
+		"lzo",
+		"uncompressed",
+		"snappy",
+	}
+}
+
+type IcebergUpdateAction string
+
+// Enum values for IcebergUpdateAction
+const (
+	IcebergUpdateActionAddSchema           IcebergUpdateAction = "add-schema"
+	IcebergUpdateActionSetCurrentSchema    IcebergUpdateAction = "set-current-schema"
+	IcebergUpdateActionAddSpec             IcebergUpdateAction = "add-spec"
+	IcebergUpdateActionSetDefaultSpec      IcebergUpdateAction = "set-default-spec"
+	IcebergUpdateActionAddSortOrder        IcebergUpdateAction = "add-sort-order"
+	IcebergUpdateActionSetDefaultSortOrder IcebergUpdateAction = "set-default-sort-order"
+	IcebergUpdateActionSetLocation         IcebergUpdateAction = "set-location"
+	IcebergUpdateActionSetProperties       IcebergUpdateAction = "set-properties"
+	IcebergUpdateActionRemoveProperties    IcebergUpdateAction = "remove-properties"
+	IcebergUpdateActionAddEncryptionKey    IcebergUpdateAction = "add-encryption-key"
+	IcebergUpdateActionRemoveEncryptionKey IcebergUpdateAction = "remove-encryption-key"
+)
+
+// Values returns all known values for IcebergUpdateAction. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IcebergUpdateAction) Values() []IcebergUpdateAction {
+	return []IcebergUpdateAction{
+		"add-schema",
+		"set-current-schema",
+		"add-spec",
+		"set-default-spec",
+		"add-sort-order",
+		"set-default-sort-order",
+		"set-location",
+		"set-properties",
+		"remove-properties",
+		"add-encryption-key",
+		"remove-encryption-key",
 	}
 }
 
@@ -1359,6 +1765,23 @@ func (IntegrationStatus) Values() []IntegrationStatus {
 		"DELETING",
 		"SYNCING",
 		"NEEDS_ATTENTION",
+	}
+}
+
+type IntegrationType string
+
+// Enum values for IntegrationType
+const (
+	IntegrationTypeRest IntegrationType = "REST"
+)
+
+// Values returns all known values for IntegrationType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IntegrationType) Values() []IntegrationType {
+	return []IntegrationType{
+		"REST",
 	}
 }
 
@@ -1641,6 +2064,25 @@ func (LastCrawlStatus) Values() []LastCrawlStatus {
 	}
 }
 
+type LastRefreshType string
+
+// Enum values for LastRefreshType
+const (
+	LastRefreshTypeFull        LastRefreshType = "FULL"
+	LastRefreshTypeIncremental LastRefreshType = "INCREMENTAL"
+)
+
+// Values returns all known values for LastRefreshType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (LastRefreshType) Values() []LastRefreshType {
+	return []LastRefreshType{
+		"FULL",
+		"INCREMENTAL",
+	}
+}
+
 type Logical string
 
 // Enum values for Logical
@@ -1674,6 +2116,51 @@ const (
 func (LogicalOperator) Values() []LogicalOperator {
 	return []LogicalOperator{
 		"EQUALS",
+	}
+}
+
+type MaterializedViewRefreshState string
+
+// Enum values for MaterializedViewRefreshState
+const (
+	MaterializedViewRefreshStateStarting  MaterializedViewRefreshState = "STARTING"
+	MaterializedViewRefreshStateRunning   MaterializedViewRefreshState = "RUNNING"
+	MaterializedViewRefreshStateSucceeded MaterializedViewRefreshState = "SUCCEEDED"
+	MaterializedViewRefreshStateFailed    MaterializedViewRefreshState = "FAILED"
+	MaterializedViewRefreshStateStopped   MaterializedViewRefreshState = "STOPPED"
+)
+
+// Values returns all known values for MaterializedViewRefreshState. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MaterializedViewRefreshState) Values() []MaterializedViewRefreshState {
+	return []MaterializedViewRefreshState{
+		"STARTING",
+		"RUNNING",
+		"SUCCEEDED",
+		"FAILED",
+		"STOPPED",
+	}
+}
+
+type MaterializedViewRefreshType string
+
+// Enum values for MaterializedViewRefreshType
+const (
+	MaterializedViewRefreshTypeFull        MaterializedViewRefreshType = "FULL"
+	MaterializedViewRefreshTypeIncremental MaterializedViewRefreshType = "INCREMENTAL"
+)
+
+// Values returns all known values for MaterializedViewRefreshType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MaterializedViewRefreshType) Values() []MaterializedViewRefreshType {
+	return []MaterializedViewRefreshType{
+		"FULL",
+		"INCREMENTAL",
 	}
 }
 
@@ -1792,6 +2279,8 @@ const (
 	ParquetCompressionTypeSnappy       ParquetCompressionType = "snappy"
 	ParquetCompressionTypeLzo          ParquetCompressionType = "lzo"
 	ParquetCompressionTypeGzip         ParquetCompressionType = "gzip"
+	ParquetCompressionTypeBrotli       ParquetCompressionType = "brotli"
+	ParquetCompressionTypeLz4          ParquetCompressionType = "lz4"
 	ParquetCompressionTypeUncompressed ParquetCompressionType = "uncompressed"
 	ParquetCompressionTypeNone         ParquetCompressionType = "none"
 )
@@ -1805,6 +2294,8 @@ func (ParquetCompressionType) Values() []ParquetCompressionType {
 		"snappy",
 		"lzo",
 		"gzip",
+		"brotli",
+		"lz4",
 		"uncompressed",
 		"none",
 	}
@@ -1893,10 +2384,13 @@ type PiiType string
 
 // Enum values for PiiType
 const (
-	PiiTypeRowAudit      PiiType = "RowAudit"
-	PiiTypeRowMasking    PiiType = "RowMasking"
-	PiiTypeColumnAudit   PiiType = "ColumnAudit"
-	PiiTypeColumnMasking PiiType = "ColumnMasking"
+	PiiTypeRowAudit          PiiType = "RowAudit"
+	PiiTypeRowHashing        PiiType = "RowHashing"
+	PiiTypeRowMasking        PiiType = "RowMasking"
+	PiiTypeRowPartialMasking PiiType = "RowPartialMasking"
+	PiiTypeColumnAudit       PiiType = "ColumnAudit"
+	PiiTypeColumnHashing     PiiType = "ColumnHashing"
+	PiiTypeColumnMasking     PiiType = "ColumnMasking"
 )
 
 // Values returns all known values for PiiType. Note that this can be expanded in
@@ -1906,8 +2400,11 @@ const (
 func (PiiType) Values() []PiiType {
 	return []PiiType{
 		"RowAudit",
+		"RowHashing",
 		"RowMasking",
+		"RowPartialMasking",
 		"ColumnAudit",
+		"ColumnHashing",
 		"ColumnMasking",
 	}
 }
@@ -1930,6 +2427,29 @@ func (PrincipalType) Values() []PrincipalType {
 		"USER",
 		"ROLE",
 		"GROUP",
+	}
+}
+
+type PropertyLocation string
+
+// Enum values for PropertyLocation
+const (
+	PropertyLocationHeader     PropertyLocation = "HEADER"
+	PropertyLocationBody       PropertyLocation = "BODY"
+	PropertyLocationQueryParam PropertyLocation = "QUERY_PARAM"
+	PropertyLocationPath       PropertyLocation = "PATH"
+)
+
+// Values returns all known values for PropertyLocation. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (PropertyLocation) Values() []PropertyLocation {
+	return []PropertyLocation{
+		"HEADER",
+		"BODY",
+		"QUERY_PARAM",
+		"PATH",
 	}
 }
 
@@ -2525,6 +3045,9 @@ const (
 	TargetFormatParquet TargetFormat = "parquet"
 	TargetFormatHudi    TargetFormat = "hudi"
 	TargetFormatDelta   TargetFormat = "delta"
+	TargetFormatIceberg TargetFormat = "iceberg"
+	TargetFormatHyper   TargetFormat = "hyper"
+	TargetFormatXml     TargetFormat = "xml"
 )
 
 // Values returns all known values for TargetFormat. Note that this can be
@@ -2540,6 +3063,9 @@ func (TargetFormat) Values() []TargetFormat {
 		"parquet",
 		"hudi",
 		"delta",
+		"iceberg",
+		"hyper",
+		"xml",
 	}
 }
 

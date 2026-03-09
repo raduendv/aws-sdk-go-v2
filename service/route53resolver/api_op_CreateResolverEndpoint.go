@@ -46,10 +46,13 @@ type CreateResolverEndpointInput struct {
 	// Specify the applicable value:
 	//
 	//   - INBOUND : Resolver forwards DNS queries to the DNS service for a VPC from
-	//   your network
+	//   your network.
 	//
 	//   - OUTBOUND : Resolver forwards DNS queries from the DNS service for a VPC to
-	//   your network
+	//   your network.
+	//
+	//   - INBOUND_DELEGATION : Resolver delegates queries to Route 53 private hosted
+	//   zones from your network.
 	//
 	// This member is required.
 	Direction types.ResolverEndpointDirection
@@ -95,9 +98,9 @@ type CreateResolverEndpointInput struct {
 	PreferredInstanceType *string
 
 	//  The protocols you want to use for the endpoint. DoH-FIPS is applicable for
-	// inbound endpoints only.
+	// default inbound endpoints only.
 	//
-	// For an inbound endpoint you can apply the protocols as follows:
+	// For a default inbound endpoint you can apply the protocols as follows:
 	//
 	//   - Do53 and DoH in combination.
 	//
@@ -110,6 +113,8 @@ type CreateResolverEndpointInput struct {
 	//   - DoH-FIPS alone.
 	//
 	//   - None, which is treated as Do53.
+	//
+	// For a delegation inbound endpoint you can use Do53 only.
 	//
 	// For an outbound endpoint you can apply the protocols as follows:
 	//
@@ -127,8 +132,31 @@ type CreateResolverEndpointInput struct {
 	// endpoint type is applied to all IP addresses.
 	ResolverEndpointType types.ResolverEndpointType
 
+	// Specifies whether RNI enhanced metrics are enabled for the Resolver endpoints.
+	// When set to true, one-minute granular metrics are published in CloudWatch for
+	// each RNI associated with this endpoint. When set to false, metrics are not
+	// published. Default is false.
+	//
+	// Standard CloudWatch pricing and charges are applied for using the Route 53
+	// Resolver endpoint RNI enhanced metrics. For more information, see [Detailed metrics].
+	//
+	// [Detailed metrics]: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-resolver-with-cloudwatch.html
+	RniEnhancedMetricsEnabled *bool
+
 	// A list of the tag keys and values that you want to associate with the endpoint.
 	Tags []types.Tag
+
+	// Specifies whether target name server metrics are enabled for the outbound
+	// Resolver endpoints. When set to true, one-minute granular metrics are published
+	// in CloudWatch for each target name server associated with this endpoint. When
+	// set to false, metrics are not published. Default is false. This is not supported
+	// for inbound Resolver endpoints.
+	//
+	// Standard CloudWatch pricing and charges are applied for using the Route 53
+	// Resolver endpoint target name server metrics. For more information, see [Detailed metrics].
+	//
+	// [Detailed metrics]: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-resolver-with-cloudwatch.html
+	TargetNameServerMetricsEnabled *bool
 
 	noSmithyDocumentSerde
 }
@@ -233,16 +261,13 @@ func (c *Client) addOperationCreateResolverEndpointMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

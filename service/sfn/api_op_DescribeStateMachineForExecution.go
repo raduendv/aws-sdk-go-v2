@@ -89,7 +89,7 @@ type DescribeStateMachineForExecutionOutput struct {
 	EncryptionConfiguration *types.EncryptionConfiguration
 
 	// A user-defined or an auto-generated string that identifies a Map state. This
-	// ﬁeld is returned only if the executionArn is a child workflow execution that
+	// field is returned only if the executionArn is a child workflow execution that
 	// was started by a Distributed Map state.
 	Label *string
 
@@ -210,16 +210,13 @@ func (c *Client) addOperationDescribeStateMachineForExecutionMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -40,7 +40,7 @@ type GetWorkflowVersionInput struct {
 	// This member is required.
 	VersionName *string
 
-	// The workflow's ID.
+	// The workflow's ID. The workflowId is not the UUID.
 	//
 	// This member is required.
 	WorkflowId *string
@@ -51,7 +51,9 @@ type GetWorkflowVersionInput struct {
 	// The workflow's type.
 	Type types.WorkflowType
 
-	// Amazon Web Services Id of the owner of the workflow.
+	// The 12-digit account ID of the workflow owner. The workflow owner ID can be
+	// retrieved using the GetShare API operation. If you are the workflow owner, you
+	// do not need to include this ID.
 	WorkflowOwnerId *string
 
 	noSmithyDocumentSerde
@@ -65,11 +67,18 @@ type GetWorkflowVersionOutput struct {
 	// ARN of the workflow version.
 	Arn *string
 
+	// The registry map that this workflow version uses.
+	ContainerRegistryMap *types.ContainerRegistryMap
+
 	// When the workflow version was created.
 	CreationTime *time.Time
 
 	// Definition of the workflow version.
 	Definition *string
+
+	// Details about the source code repository that hosts the workflow version
+	// definition files.
+	DefinitionRepositoryDetails *types.DefinitionRepositoryDetails
 
 	// Description of the workflow version.
 	Description *string
@@ -88,6 +97,16 @@ type GetWorkflowVersionOutput struct {
 
 	// The parameter template for the workflow version.
 	ParameterTemplate map[string]types.WorkflowParameter
+
+	// The README content for the workflow version, providing documentation and usage
+	// information specific to this version.
+	Readme *string
+
+	// The path to the workflow version README markdown file within the repository.
+	// This file provides documentation and usage information for the workflow. If not
+	// specified, the README.md file from the root directory of the repository will be
+	// used.
+	ReadmePath *string
 
 	// The workflow version status
 	Status types.WorkflowStatus
@@ -216,16 +235,13 @@ func (c *Client) addOperationGetWorkflowVersionMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

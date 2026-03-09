@@ -29,6 +29,12 @@ func (c *Client) ListServiceNetworkResourceAssociations(ctx context.Context, par
 
 type ListServiceNetworkResourceAssociationsInput struct {
 
+	// Include service network resource associations of the child resource
+	// configuration with the grouped resource configuration.
+	//
+	// The type is boolean and the default value is false.
+	IncludeChildren *bool
+
 	// The maximum page size.
 	MaxResults *int32
 
@@ -36,7 +42,7 @@ type ListServiceNetworkResourceAssociationsInput struct {
 	// results.
 	NextToken *string
 
-	// The ID of the resource configurationk.
+	// The ID of the resource configuration.
 	ResourceConfigurationIdentifier *string
 
 	// The ID of the service network.
@@ -147,16 +153,13 @@ func (c *Client) addOperationListServiceNetworkResourceAssociationsMiddlewares(s
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

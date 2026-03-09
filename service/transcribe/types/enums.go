@@ -186,6 +186,7 @@ const (
 	LanguageCodeCsCz  LanguageCode = "cs-CZ"
 	LanguageCodeCyWl  LanguageCode = "cy-WL"
 	LanguageCodeElGr  LanguageCode = "el-GR"
+	LanguageCodeEtEe  LanguageCode = "et-EE"
 	LanguageCodeEtEt  LanguageCode = "et-ET"
 	LanguageCodeEuEs  LanguageCode = "eu-ES"
 	LanguageCodeFiFi  LanguageCode = "fi-FI"
@@ -298,6 +299,7 @@ func (LanguageCode) Values() []LanguageCode {
 		"cs-CZ",
 		"cy-WL",
 		"el-GR",
+		"et-EE",
 		"et-ET",
 		"eu-ES",
 		"fi-FI",
@@ -447,6 +449,11 @@ type MedicalScribeNoteTemplate string
 const (
 	MedicalScribeNoteTemplateHistoryAndPhysical MedicalScribeNoteTemplate = "HISTORY_AND_PHYSICAL"
 	MedicalScribeNoteTemplateGirpp              MedicalScribeNoteTemplate = "GIRPP"
+	MedicalScribeNoteTemplateBirp               MedicalScribeNoteTemplate = "BIRP"
+	MedicalScribeNoteTemplateSirp               MedicalScribeNoteTemplate = "SIRP"
+	MedicalScribeNoteTemplateDap                MedicalScribeNoteTemplate = "DAP"
+	MedicalScribeNoteTemplateBehavioralSoap     MedicalScribeNoteTemplate = "BEHAVIORAL_SOAP"
+	MedicalScribeNoteTemplatePhysicalSoap       MedicalScribeNoteTemplate = "PHYSICAL_SOAP"
 )
 
 // Values returns all known values for MedicalScribeNoteTemplate. Note that this
@@ -457,6 +464,11 @@ func (MedicalScribeNoteTemplate) Values() []MedicalScribeNoteTemplate {
 	return []MedicalScribeNoteTemplate{
 		"HISTORY_AND_PHYSICAL",
 		"GIRPP",
+		"BIRP",
+		"SIRP",
+		"DAP",
+		"BEHAVIORAL_SOAP",
+		"PHYSICAL_SOAP",
 	}
 }
 
@@ -575,6 +587,27 @@ func (PiiEntityType) Values() []PiiEntityType {
 		"PHONE",
 		"SSN",
 		"ALL",
+	}
+}
+
+type Pronouns string
+
+// Enum values for Pronouns
+const (
+	PronounsHeHim    Pronouns = "HE_HIM"
+	PronounsSheHer   Pronouns = "SHE_HER"
+	PronounsTheyThem Pronouns = "THEY_THEM"
+)
+
+// Values returns all known values for Pronouns. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Pronouns) Values() []Pronouns {
+	return []Pronouns{
+		"HE_HIM",
+		"SHE_HER",
+		"THEY_THEM",
 	}
 }
 

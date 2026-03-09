@@ -210,6 +210,46 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpRebootDbCluster struct {
+}
+
+func (*validateOpRebootDbCluster) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpRebootDbCluster) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*RebootDbClusterInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpRebootDbClusterInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpRebootDbInstance struct {
+}
+
+func (*validateOpRebootDbInstance) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpRebootDbInstance) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*RebootDbInstanceInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpRebootDbInstanceInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpTagResource struct {
 }
 
@@ -330,6 +370,14 @@ func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
 }
 
+func addOpRebootDbClusterValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpRebootDbCluster{}, middleware.After)
+}
+
+func addOpRebootDbInstanceValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpRebootDbInstance{}, middleware.After)
+}
+
 func addOpTagResourceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpTagResource{}, middleware.After)
 }
@@ -416,6 +464,174 @@ func validateInfluxDBv2Parameters(v *types.InfluxDBv2Parameters) error {
 	}
 }
 
+func validateInfluxDBv3CoreParameters(v *types.InfluxDBv3CoreParameters) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "InfluxDBv3CoreParameters"}
+	if v.DataFusionRuntimeThreadKeepAlive != nil {
+		if err := validateDuration(v.DataFusionRuntimeThreadKeepAlive); err != nil {
+			invalidParams.AddNested("DataFusionRuntimeThreadKeepAlive", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.PreemptiveCacheAge != nil {
+		if err := validateDuration(v.PreemptiveCacheAge); err != nil {
+			invalidParams.AddNested("PreemptiveCacheAge", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.ParquetMemCachePruneInterval != nil {
+		if err := validateDuration(v.ParquetMemCachePruneInterval); err != nil {
+			invalidParams.AddNested("ParquetMemCachePruneInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.ParquetMemCacheQueryPathDuration != nil {
+		if err := validateDuration(v.ParquetMemCacheQueryPathDuration); err != nil {
+			invalidParams.AddNested("ParquetMemCacheQueryPathDuration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.LastCacheEvictionInterval != nil {
+		if err := validateDuration(v.LastCacheEvictionInterval); err != nil {
+			invalidParams.AddNested("LastCacheEvictionInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.DistinctCacheEvictionInterval != nil {
+		if err := validateDuration(v.DistinctCacheEvictionInterval); err != nil {
+			invalidParams.AddNested("DistinctCacheEvictionInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Gen1Duration != nil {
+		if err := validateDuration(v.Gen1Duration); err != nil {
+			invalidParams.AddNested("Gen1Duration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Gen1LookbackDuration != nil {
+		if err := validateDuration(v.Gen1LookbackDuration); err != nil {
+			invalidParams.AddNested("Gen1LookbackDuration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.RetentionCheckInterval != nil {
+		if err := validateDuration(v.RetentionCheckInterval); err != nil {
+			invalidParams.AddNested("RetentionCheckInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.DeleteGracePeriod != nil {
+		if err := validateDuration(v.DeleteGracePeriod); err != nil {
+			invalidParams.AddNested("DeleteGracePeriod", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.HardDeleteDefaultDuration != nil {
+		if err := validateDuration(v.HardDeleteDefaultDuration); err != nil {
+			invalidParams.AddNested("HardDeleteDefaultDuration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateInfluxDBv3EnterpriseParameters(v *types.InfluxDBv3EnterpriseParameters) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "InfluxDBv3EnterpriseParameters"}
+	if v.DataFusionRuntimeThreadKeepAlive != nil {
+		if err := validateDuration(v.DataFusionRuntimeThreadKeepAlive); err != nil {
+			invalidParams.AddNested("DataFusionRuntimeThreadKeepAlive", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.PreemptiveCacheAge != nil {
+		if err := validateDuration(v.PreemptiveCacheAge); err != nil {
+			invalidParams.AddNested("PreemptiveCacheAge", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.ParquetMemCachePruneInterval != nil {
+		if err := validateDuration(v.ParquetMemCachePruneInterval); err != nil {
+			invalidParams.AddNested("ParquetMemCachePruneInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.ParquetMemCacheQueryPathDuration != nil {
+		if err := validateDuration(v.ParquetMemCacheQueryPathDuration); err != nil {
+			invalidParams.AddNested("ParquetMemCacheQueryPathDuration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.LastCacheEvictionInterval != nil {
+		if err := validateDuration(v.LastCacheEvictionInterval); err != nil {
+			invalidParams.AddNested("LastCacheEvictionInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.DistinctCacheEvictionInterval != nil {
+		if err := validateDuration(v.DistinctCacheEvictionInterval); err != nil {
+			invalidParams.AddNested("DistinctCacheEvictionInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Gen1Duration != nil {
+		if err := validateDuration(v.Gen1Duration); err != nil {
+			invalidParams.AddNested("Gen1Duration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Gen1LookbackDuration != nil {
+		if err := validateDuration(v.Gen1LookbackDuration); err != nil {
+			invalidParams.AddNested("Gen1LookbackDuration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.RetentionCheckInterval != nil {
+		if err := validateDuration(v.RetentionCheckInterval); err != nil {
+			invalidParams.AddNested("RetentionCheckInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.DeleteGracePeriod != nil {
+		if err := validateDuration(v.DeleteGracePeriod); err != nil {
+			invalidParams.AddNested("DeleteGracePeriod", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.HardDeleteDefaultDuration != nil {
+		if err := validateDuration(v.HardDeleteDefaultDuration); err != nil {
+			invalidParams.AddNested("HardDeleteDefaultDuration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.IngestQueryInstances == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("IngestQueryInstances"))
+	}
+	if v.QueryOnlyInstances == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("QueryOnlyInstances"))
+	}
+	if v.DedicatedCompactor == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DedicatedCompactor"))
+	}
+	if v.CompactionGen2Duration != nil {
+		if err := validateDuration(v.CompactionGen2Duration); err != nil {
+			invalidParams.AddNested("CompactionGen2Duration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.CompactionCleanupWait != nil {
+		if err := validateDuration(v.CompactionCleanupWait); err != nil {
+			invalidParams.AddNested("CompactionCleanupWait", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.CompactionCheckInterval != nil {
+		if err := validateDuration(v.CompactionCheckInterval); err != nil {
+			invalidParams.AddNested("CompactionCheckInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.ReplicationInterval != nil {
+		if err := validateDuration(v.ReplicationInterval); err != nil {
+			invalidParams.AddNested("ReplicationInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.CatalogSyncInterval != nil {
+		if err := validateDuration(v.CatalogSyncInterval); err != nil {
+			invalidParams.AddNested("CatalogSyncInterval", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateLogDeliveryConfiguration(v *types.LogDeliveryConfiguration) error {
 	if v == nil {
 		return nil
@@ -444,6 +660,16 @@ func validateParameters(v types.Parameters) error {
 	case *types.ParametersMemberInfluxDBv2:
 		if err := validateInfluxDBv2Parameters(&uv.Value); err != nil {
 			invalidParams.AddNested("[InfluxDBv2]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.ParametersMemberInfluxDBv3Core:
+		if err := validateInfluxDBv3CoreParameters(&uv.Value); err != nil {
+			invalidParams.AddNested("[InfluxDBv3Core]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.ParametersMemberInfluxDBv3Enterprise:
+		if err := validateInfluxDBv3EnterpriseParameters(&uv.Value); err != nil {
+			invalidParams.AddNested("[InfluxDBv3Enterprise]", err.(smithy.InvalidParamsError))
 		}
 
 	}
@@ -480,23 +706,14 @@ func validateOpCreateDbClusterInput(v *CreateDbClusterInput) error {
 	if v.Name == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Name"))
 	}
-	if v.Password == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("Password"))
-	}
 	if len(v.DbInstanceType) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("DbInstanceType"))
-	}
-	if v.AllocatedStorage == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("AllocatedStorage"))
 	}
 	if v.VpcSubnetIds == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("VpcSubnetIds"))
 	}
 	if v.VpcSecurityGroupIds == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("VpcSecurityGroupIds"))
-	}
-	if len(v.DeploymentType) == 0 {
-		invalidParams.Add(smithy.NewErrParamRequired("DeploymentType"))
 	}
 	if v.LogDeliveryConfiguration != nil {
 		if err := validateLogDeliveryConfiguration(v.LogDeliveryConfiguration); err != nil {
@@ -662,6 +879,36 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ListTagsForResourceInput"}
 	if v.ResourceArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpRebootDbClusterInput(v *RebootDbClusterInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RebootDbClusterInput"}
+	if v.DbClusterId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DbClusterId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpRebootDbInstanceInput(v *RebootDbInstanceInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RebootDbInstanceInput"}
+	if v.Identifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Identifier"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

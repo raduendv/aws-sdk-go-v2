@@ -645,6 +645,11 @@ func awsRestjson1_serializeOpDocumentCreateIPSetInput(v *CreateIPSetInput, value
 		ok.String(*v.ClientToken)
 	}
 
+	if v.ExpectedBucketOwner != nil {
+		ok := object.Key("expectedBucketOwner")
+		ok.String(*v.ExpectedBucketOwner)
+	}
+
 	if len(v.Format) > 0 {
 		ok := object.Key("format")
 		ok.String(string(v.Format))
@@ -976,6 +981,13 @@ func awsRestjson1_serializeOpDocumentCreatePublishingDestinationInput(v *CreateP
 		ok.String(string(v.DestinationType))
 	}
 
+	if v.Tags != nil {
+		ok := object.Key("tags")
+		if err := awsRestjson1_serializeDocumentTagMap(v.Tags, ok); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -1068,6 +1080,132 @@ func awsRestjson1_serializeOpDocumentCreateSampleFindingsInput(v *CreateSampleFi
 	if v.FindingTypes != nil {
 		ok := object.Key("findingTypes")
 		if err := awsRestjson1_serializeDocumentFindingTypes(v.FindingTypes, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpCreateThreatEntitySet struct {
+}
+
+func (*awsRestjson1_serializeOpCreateThreatEntitySet) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpCreateThreatEntitySet) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*CreateThreatEntitySetInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/threatentityset")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "POST"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsCreateThreatEntitySetInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentCreateThreatEntitySetInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsCreateThreatEntitySetInput(v *CreateThreatEntitySetInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentCreateThreatEntitySetInput(v *CreateThreatEntitySetInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Activate != nil {
+		ok := object.Key("activate")
+		ok.Boolean(*v.Activate)
+	}
+
+	if v.ClientToken != nil {
+		ok := object.Key("clientToken")
+		ok.String(*v.ClientToken)
+	}
+
+	if v.ExpectedBucketOwner != nil {
+		ok := object.Key("expectedBucketOwner")
+		ok.String(*v.ExpectedBucketOwner)
+	}
+
+	if len(v.Format) > 0 {
+		ok := object.Key("format")
+		ok.String(string(v.Format))
+	}
+
+	if v.Location != nil {
+		ok := object.Key("location")
+		ok.String(*v.Location)
+	}
+
+	if v.Name != nil {
+		ok := object.Key("name")
+		ok.String(*v.Name)
+	}
+
+	if v.Tags != nil {
+		ok := object.Key("tags")
+		if err := awsRestjson1_serializeDocumentTagMap(v.Tags, ok); err != nil {
 			return err
 		}
 	}
@@ -1169,6 +1307,137 @@ func awsRestjson1_serializeOpDocumentCreateThreatIntelSetInput(v *CreateThreatIn
 	if v.ClientToken != nil {
 		ok := object.Key("clientToken")
 		ok.String(*v.ClientToken)
+	}
+
+	if v.ExpectedBucketOwner != nil {
+		ok := object.Key("expectedBucketOwner")
+		ok.String(*v.ExpectedBucketOwner)
+	}
+
+	if len(v.Format) > 0 {
+		ok := object.Key("format")
+		ok.String(string(v.Format))
+	}
+
+	if v.Location != nil {
+		ok := object.Key("location")
+		ok.String(*v.Location)
+	}
+
+	if v.Name != nil {
+		ok := object.Key("name")
+		ok.String(*v.Name)
+	}
+
+	if v.Tags != nil {
+		ok := object.Key("tags")
+		if err := awsRestjson1_serializeDocumentTagMap(v.Tags, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpCreateTrustedEntitySet struct {
+}
+
+func (*awsRestjson1_serializeOpCreateTrustedEntitySet) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpCreateTrustedEntitySet) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*CreateTrustedEntitySetInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/trustedentityset")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "POST"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsCreateTrustedEntitySetInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentCreateTrustedEntitySetInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsCreateTrustedEntitySetInput(v *CreateTrustedEntitySetInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentCreateTrustedEntitySetInput(v *CreateTrustedEntitySetInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Activate != nil {
+		ok := object.Key("activate")
+		ok.Boolean(*v.Activate)
+	}
+
+	if v.ClientToken != nil {
+		ok := object.Key("clientToken")
+		ok.String(*v.ClientToken)
+	}
+
+	if v.ExpectedBucketOwner != nil {
+		ok := object.Key("expectedBucketOwner")
+		ok.String(*v.ExpectedBucketOwner)
 	}
 
 	if len(v.Format) > 0 {
@@ -1840,6 +2109,86 @@ func awsRestjson1_serializeOpHttpBindingsDeletePublishingDestinationInput(v *Del
 	return nil
 }
 
+type awsRestjson1_serializeOpDeleteThreatEntitySet struct {
+}
+
+func (*awsRestjson1_serializeOpDeleteThreatEntitySet) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpDeleteThreatEntitySet) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*DeleteThreatEntitySetInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/threatentityset/{ThreatEntitySetId}")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "DELETE"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsDeleteThreatEntitySetInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsDeleteThreatEntitySetInput(v *DeleteThreatEntitySetInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	if v.ThreatEntitySetId == nil || len(*v.ThreatEntitySetId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member ThreatEntitySetId must not be empty")}
+	}
+	if v.ThreatEntitySetId != nil {
+		if err := encoder.SetURI("ThreatEntitySetId").String(*v.ThreatEntitySetId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpDeleteThreatIntelSet struct {
 }
 
@@ -1913,6 +2262,86 @@ func awsRestjson1_serializeOpHttpBindingsDeleteThreatIntelSetInput(v *DeleteThre
 	}
 	if v.ThreatIntelSetId != nil {
 		if err := encoder.SetURI("ThreatIntelSetId").String(*v.ThreatIntelSetId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpDeleteTrustedEntitySet struct {
+}
+
+func (*awsRestjson1_serializeOpDeleteTrustedEntitySet) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpDeleteTrustedEntitySet) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*DeleteTrustedEntitySetInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/trustedentityset/{TrustedEntitySetId}")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "DELETE"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsDeleteTrustedEntitySetInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsDeleteTrustedEntitySetInput(v *DeleteTrustedEntitySetInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	if v.TrustedEntitySetId == nil || len(*v.TrustedEntitySetId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member TrustedEntitySetId must not be empty")}
+	}
+	if v.TrustedEntitySetId != nil {
+		if err := encoder.SetURI("TrustedEntitySetId").String(*v.TrustedEntitySetId); err != nil {
 			return err
 		}
 	}
@@ -3347,6 +3776,77 @@ func awsRestjson1_serializeOpHttpBindingsGetMalwareProtectionPlanInput(v *GetMal
 	return nil
 }
 
+type awsRestjson1_serializeOpGetMalwareScan struct {
+}
+
+func (*awsRestjson1_serializeOpGetMalwareScan) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpGetMalwareScan) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*GetMalwareScanInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/malware-scan/{ScanId}")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsGetMalwareScanInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsGetMalwareScanInput(v *GetMalwareScanInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.ScanId == nil || len(*v.ScanId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member ScanId must not be empty")}
+	}
+	if v.ScanId != nil {
+		if err := encoder.SetURI("ScanId").String(*v.ScanId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpGetMalwareScanSettings struct {
 }
 
@@ -3835,6 +4335,86 @@ func awsRestjson1_serializeOpDocumentGetRemainingFreeTrialDaysInput(v *GetRemain
 	return nil
 }
 
+type awsRestjson1_serializeOpGetThreatEntitySet struct {
+}
+
+func (*awsRestjson1_serializeOpGetThreatEntitySet) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpGetThreatEntitySet) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*GetThreatEntitySetInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/threatentityset/{ThreatEntitySetId}")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsGetThreatEntitySetInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsGetThreatEntitySetInput(v *GetThreatEntitySetInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	if v.ThreatEntitySetId == nil || len(*v.ThreatEntitySetId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member ThreatEntitySetId must not be empty")}
+	}
+	if v.ThreatEntitySetId != nil {
+		if err := encoder.SetURI("ThreatEntitySetId").String(*v.ThreatEntitySetId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpGetThreatIntelSet struct {
 }
 
@@ -3908,6 +4488,86 @@ func awsRestjson1_serializeOpHttpBindingsGetThreatIntelSetInput(v *GetThreatInte
 	}
 	if v.ThreatIntelSetId != nil {
 		if err := encoder.SetURI("ThreatIntelSetId").String(*v.ThreatIntelSetId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpGetTrustedEntitySet struct {
+}
+
+func (*awsRestjson1_serializeOpGetTrustedEntitySet) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpGetTrustedEntitySet) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*GetTrustedEntitySetInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/trustedentityset/{TrustedEntitySetId}")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsGetTrustedEntitySetInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsGetTrustedEntitySetInput(v *GetTrustedEntitySetInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	if v.TrustedEntitySetId == nil || len(*v.TrustedEntitySetId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member TrustedEntitySetId must not be empty")}
+	}
+	if v.TrustedEntitySetId != nil {
+		if err := encoder.SetURI("TrustedEntitySetId").String(*v.TrustedEntitySetId); err != nil {
 			return err
 		}
 	}
@@ -4727,6 +5387,108 @@ func awsRestjson1_serializeOpHttpBindingsListMalwareProtectionPlansInput(v *List
 	return nil
 }
 
+type awsRestjson1_serializeOpListMalwareScans struct {
+}
+
+func (*awsRestjson1_serializeOpListMalwareScans) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpListMalwareScans) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*ListMalwareScansInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/malware-scan")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "POST"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsListMalwareScansInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentListMalwareScansInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsListMalwareScansInput(v *ListMalwareScansInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.MaxResults != nil {
+		encoder.SetQuery("maxResults").Integer(*v.MaxResults)
+	}
+
+	if v.NextToken != nil {
+		encoder.SetQuery("nextToken").String(*v.NextToken)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentListMalwareScansInput(v *ListMalwareScansInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.FilterCriteria != nil {
+		ok := object.Key("filterCriteria")
+		if err := awsRestjson1_serializeDocumentListMalwareScansFilterCriteria(v.FilterCriteria, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.SortCriteria != nil {
+		ok := object.Key("sortCriteria")
+		if err := awsRestjson1_serializeDocumentSortCriteria(v.SortCriteria, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpListMembers struct {
 }
 
@@ -5030,6 +5792,85 @@ func awsRestjson1_serializeOpHttpBindingsListTagsForResourceInput(v *ListTagsFor
 	return nil
 }
 
+type awsRestjson1_serializeOpListThreatEntitySets struct {
+}
+
+func (*awsRestjson1_serializeOpListThreatEntitySets) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpListThreatEntitySets) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*ListThreatEntitySetsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/threatentityset")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsListThreatEntitySetsInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsListThreatEntitySetsInput(v *ListThreatEntitySetsInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	if v.MaxResults != nil {
+		encoder.SetQuery("maxResults").Integer(*v.MaxResults)
+	}
+
+	if v.NextToken != nil {
+		encoder.SetQuery("nextToken").String(*v.NextToken)
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpListThreatIntelSets struct {
 }
 
@@ -5109,6 +5950,168 @@ func awsRestjson1_serializeOpHttpBindingsListThreatIntelSetsInput(v *ListThreatI
 	return nil
 }
 
+type awsRestjson1_serializeOpListTrustedEntitySets struct {
+}
+
+func (*awsRestjson1_serializeOpListTrustedEntitySets) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpListTrustedEntitySets) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*ListTrustedEntitySetsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/trustedentityset")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsListTrustedEntitySetsInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsListTrustedEntitySetsInput(v *ListTrustedEntitySetsInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	if v.MaxResults != nil {
+		encoder.SetQuery("maxResults").Integer(*v.MaxResults)
+	}
+
+	if v.NextToken != nil {
+		encoder.SetQuery("nextToken").String(*v.NextToken)
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpSendObjectMalwareScan struct {
+}
+
+func (*awsRestjson1_serializeOpSendObjectMalwareScan) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpSendObjectMalwareScan) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*SendObjectMalwareScanInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/object-malware-scan/send")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "POST"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentSendObjectMalwareScanInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsSendObjectMalwareScanInput(v *SendObjectMalwareScanInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentSendObjectMalwareScanInput(v *SendObjectMalwareScanInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.S3Object != nil {
+		ok := object.Key("s3Object")
+		if err := awsRestjson1_serializeDocumentS3ObjectForSendObjectMalwareScan(v.S3Object, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpStartMalwareScan struct {
 }
 
@@ -5182,9 +6185,21 @@ func awsRestjson1_serializeOpDocumentStartMalwareScanInput(v *StartMalwareScanIn
 	object := value.Object()
 	defer object.Close()
 
+	if v.ClientToken != nil {
+		ok := object.Key("clientToken")
+		ok.String(*v.ClientToken)
+	}
+
 	if v.ResourceArn != nil {
 		ok := object.Key("resourceArn")
 		ok.String(*v.ResourceArn)
+	}
+
+	if v.ScanConfiguration != nil {
+		ok := object.Key("scanConfiguration")
+		if err := awsRestjson1_serializeDocumentStartMalwareScanConfiguration(v.ScanConfiguration, ok); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -6090,6 +7105,11 @@ func awsRestjson1_serializeOpDocumentUpdateIPSetInput(v *UpdateIPSetInput, value
 		ok.Boolean(*v.Activate)
 	}
 
+	if v.ExpectedBucketOwner != nil {
+		ok := object.Key("expectedBucketOwner")
+		ok.String(*v.ExpectedBucketOwner)
+	}
+
 	if v.Location != nil {
 		ok := object.Key("location")
 		ok.String(*v.Location)
@@ -6640,6 +7660,124 @@ func awsRestjson1_serializeOpDocumentUpdatePublishingDestinationInput(v *UpdateP
 	return nil
 }
 
+type awsRestjson1_serializeOpUpdateThreatEntitySet struct {
+}
+
+func (*awsRestjson1_serializeOpUpdateThreatEntitySet) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpUpdateThreatEntitySet) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*UpdateThreatEntitySetInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/threatentityset/{ThreatEntitySetId}")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "POST"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsUpdateThreatEntitySetInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentUpdateThreatEntitySetInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsUpdateThreatEntitySetInput(v *UpdateThreatEntitySetInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	if v.ThreatEntitySetId == nil || len(*v.ThreatEntitySetId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member ThreatEntitySetId must not be empty")}
+	}
+	if v.ThreatEntitySetId != nil {
+		if err := encoder.SetURI("ThreatEntitySetId").String(*v.ThreatEntitySetId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentUpdateThreatEntitySetInput(v *UpdateThreatEntitySetInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Activate != nil {
+		ok := object.Key("activate")
+		ok.Boolean(*v.Activate)
+	}
+
+	if v.ExpectedBucketOwner != nil {
+		ok := object.Key("expectedBucketOwner")
+		ok.String(*v.ExpectedBucketOwner)
+	}
+
+	if v.Location != nil {
+		ok := object.Key("location")
+		ok.String(*v.Location)
+	}
+
+	if v.Name != nil {
+		ok := object.Key("name")
+		ok.String(*v.Name)
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpUpdateThreatIntelSet struct {
 }
 
@@ -6738,6 +7876,129 @@ func awsRestjson1_serializeOpDocumentUpdateThreatIntelSetInput(v *UpdateThreatIn
 	if v.Activate != nil {
 		ok := object.Key("activate")
 		ok.Boolean(*v.Activate)
+	}
+
+	if v.ExpectedBucketOwner != nil {
+		ok := object.Key("expectedBucketOwner")
+		ok.String(*v.ExpectedBucketOwner)
+	}
+
+	if v.Location != nil {
+		ok := object.Key("location")
+		ok.String(*v.Location)
+	}
+
+	if v.Name != nil {
+		ok := object.Key("name")
+		ok.String(*v.Name)
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpUpdateTrustedEntitySet struct {
+}
+
+func (*awsRestjson1_serializeOpUpdateTrustedEntitySet) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpUpdateTrustedEntitySet) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*UpdateTrustedEntitySetInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/detector/{DetectorId}/trustedentityset/{TrustedEntitySetId}")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "POST"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsUpdateTrustedEntitySetInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentUpdateTrustedEntitySetInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsUpdateTrustedEntitySetInput(v *UpdateTrustedEntitySetInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.DetectorId == nil || len(*v.DetectorId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member DetectorId must not be empty")}
+	}
+	if v.DetectorId != nil {
+		if err := encoder.SetURI("DetectorId").String(*v.DetectorId); err != nil {
+			return err
+		}
+	}
+
+	if v.TrustedEntitySetId == nil || len(*v.TrustedEntitySetId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member TrustedEntitySetId must not be empty")}
+	}
+	if v.TrustedEntitySetId != nil {
+		if err := encoder.SetURI("TrustedEntitySetId").String(*v.TrustedEntitySetId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentUpdateTrustedEntitySetInput(v *UpdateTrustedEntitySetInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Activate != nil {
+		ok := object.Key("activate")
+		ok.Boolean(*v.Activate)
+	}
+
+	if v.ExpectedBucketOwner != nil {
+		ok := object.Key("expectedBucketOwner")
+		ok.String(*v.ExpectedBucketOwner)
 	}
 
 	if v.Location != nil {
@@ -6852,6 +8113,13 @@ func awsRestjson1_serializeDocumentCondition(v *types.Condition, value smithyjso
 		ok.Integer(*v.Lte)
 	}
 
+	if v.Matches != nil {
+		ok := object.Key("matches")
+		if err := awsRestjson1_serializeDocumentMatches(v.Matches, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Neq != nil {
 		ok := object.Key("neq")
 		if err := awsRestjson1_serializeDocumentNeq(v.Neq, ok); err != nil {
@@ -6862,6 +8130,13 @@ func awsRestjson1_serializeDocumentCondition(v *types.Condition, value smithyjso
 	if v.NotEquals != nil {
 		ok := object.Key("notEquals")
 		if err := awsRestjson1_serializeDocumentNotEquals(v.NotEquals, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.NotMatches != nil {
+		ok := object.Key("notMatches")
+		if err := awsRestjson1_serializeDocumentNotMatches(v.NotMatches, ok); err != nil {
 			return err
 		}
 	}
@@ -7271,6 +8546,18 @@ func awsRestjson1_serializeDocumentFindingTypes(v []string, value smithyjson.Val
 	return nil
 }
 
+func awsRestjson1_serializeDocumentIncrementalScanDetails(v *types.IncrementalScanDetails, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.BaselineResourceArn != nil {
+		ok := object.Key("baselineResourceArn")
+		ok.String(*v.BaselineResourceArn)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentKubernetesAuditLogsConfiguration(v *types.KubernetesAuditLogsConfiguration, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -7294,6 +8581,52 @@ func awsRestjson1_serializeDocumentKubernetesConfiguration(v *types.KubernetesCo
 		}
 	}
 
+	return nil
+}
+
+func awsRestjson1_serializeDocumentListMalwareScansFilterCriteria(v *types.ListMalwareScansFilterCriteria, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ListMalwareScansFilterCriterion != nil {
+		ok := object.Key("filterCriterion")
+		if err := awsRestjson1_serializeDocumentListMalwareScansFilterCriterionList(v.ListMalwareScansFilterCriterion, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentListMalwareScansFilterCriterion(v *types.ListMalwareScansFilterCriterion, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.FilterCondition != nil {
+		ok := object.Key("filterCondition")
+		if err := awsRestjson1_serializeDocumentFilterCondition(v.FilterCondition, ok); err != nil {
+			return err
+		}
+	}
+
+	if len(v.ListMalwareScansCriterionKey) > 0 {
+		ok := object.Key("criterionKey")
+		ok.String(string(v.ListMalwareScansCriterionKey))
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentListMalwareScansFilterCriterionList(v []types.ListMalwareScansFilterCriterion, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentListMalwareScansFilterCriterion(&v[i], av); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -7357,6 +8690,17 @@ func awsRestjson1_serializeDocumentMapEquals(v []types.ScanConditionPair, value 
 		if err := awsRestjson1_serializeDocumentScanConditionPair(&v[i], av); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentMatches(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
 	}
 	return nil
 }
@@ -7440,6 +8784,17 @@ func awsRestjson1_serializeDocumentNeq(v []string, value smithyjson.Value) error
 }
 
 func awsRestjson1_serializeDocumentNotEquals(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentNotMatches(v []string, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
 
@@ -7623,6 +8978,18 @@ func awsRestjson1_serializeDocumentOrganizationScanEc2InstanceWithFindings(v *ty
 	return nil
 }
 
+func awsRestjson1_serializeDocumentRecoveryPoint(v *types.RecoveryPoint, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.BackupVaultName != nil {
+		ok := object.Key("backupVaultName")
+		ok.String(*v.BackupVaultName)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentResourceList(v []string, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -7641,6 +9008,28 @@ func awsRestjson1_serializeDocumentS3LogsConfiguration(v *types.S3LogsConfigurat
 	if v.Enable != nil {
 		ok := object.Key("enable")
 		ok.Boolean(*v.Enable)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentS3ObjectForSendObjectMalwareScan(v *types.S3ObjectForSendObjectMalwareScan, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Bucket != nil {
+		ok := object.Key("bucket")
+		ok.String(*v.Bucket)
+	}
+
+	if v.Key != nil {
+		ok := object.Key("key")
+		ok.String(*v.Key)
+	}
+
+	if v.VersionId != nil {
+		ok := object.Key("versionId")
+		ok.String(*v.VersionId)
 	}
 
 	return nil
@@ -7736,6 +9125,32 @@ func awsRestjson1_serializeDocumentSortCriteria(v *types.SortCriteria, value smi
 	if len(v.OrderBy) > 0 {
 		ok := object.Key("orderBy")
 		ok.String(string(v.OrderBy))
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentStartMalwareScanConfiguration(v *types.StartMalwareScanConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.IncrementalScanDetails != nil {
+		ok := object.Key("incrementalScanDetails")
+		if err := awsRestjson1_serializeDocumentIncrementalScanDetails(v.IncrementalScanDetails, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.RecoveryPoint != nil {
+		ok := object.Key("recoveryPoint")
+		if err := awsRestjson1_serializeDocumentRecoveryPoint(v.RecoveryPoint, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.Role != nil {
+		ok := object.Key("role")
+		ok.String(*v.Role)
 	}
 
 	return nil

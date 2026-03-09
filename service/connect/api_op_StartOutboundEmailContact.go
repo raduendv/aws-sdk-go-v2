@@ -53,7 +53,7 @@ type StartOutboundEmailContactInput struct {
 	// This member is required.
 	InstanceId *string
 
-	// The addtional recipients address of email in CC.
+	// The additional recipients address of email in CC.
 	AdditionalRecipients *types.OutboundAdditionalRecipients
 
 	// A unique, case-sensitive identifier that you provide to ensure the idempotency
@@ -63,7 +63,7 @@ type StartOutboundEmailContactInput struct {
 	// [Making retries safe with idempotent APIs]: https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/
 	ClientToken *string
 
-	// The email address associated with the instance.
+	// The email address associated with the Amazon Connect instance.
 	FromEmailAddress *types.EmailAddressInfo
 
 	noSmithyDocumentSerde
@@ -171,16 +171,13 @@ func (c *Client) addOperationStartOutboundEmailContactMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

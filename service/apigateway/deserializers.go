@@ -20,16 +20,7 @@ import (
 	"io/ioutil"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpCreateApiKey struct {
 }
@@ -1562,6 +1553,15 @@ func awsRestjson1_deserializeOpDocumentCreateDomainNameOutput(v **CreateDomainNa
 				sv.DomainNameStatusMessage = ptr.String(jtv)
 			}
 
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
+			}
+
 		case "endpointConfiguration":
 			if err := awsRestjson1_deserializeDocumentEndpointConfiguration(&sv.EndpointConfiguration, value); err != nil {
 				return err
@@ -1633,6 +1633,15 @@ func awsRestjson1_deserializeOpDocumentCreateDomainNameOutput(v **CreateDomainNa
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RegionalHostedZoneId = ptr.String(jtv)
+			}
+
+		case "routingMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected RoutingMode to be of type string, got %T instead", value)
+				}
+				sv.RoutingMode = types.RoutingMode(jtv)
 			}
 
 		case "securityPolicy":
@@ -2625,6 +2634,24 @@ func awsRestjson1_deserializeOpDocumentCreateRestApiOutput(v **CreateRestApiOutp
 				sv.ApiKeySource = types.ApiKeySourceType(jtv)
 			}
 
+		case "apiStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ApiStatus to be of type string, got %T instead", value)
+				}
+				sv.ApiStatus = types.ApiStatus(jtv)
+			}
+
+		case "apiStatusMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.ApiStatusMessage = ptr.String(jtv)
+			}
+
 		case "binaryMediaTypes":
 			if err := awsRestjson1_deserializeDocumentListOfString(&sv.BinaryMediaTypes, value); err != nil {
 				return err
@@ -2662,6 +2689,15 @@ func awsRestjson1_deserializeOpDocumentCreateRestApiOutput(v **CreateRestApiOutp
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.DisableExecuteApiEndpoint = jtv
+			}
+
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
 			}
 
 		case "endpointConfiguration":
@@ -2716,6 +2752,15 @@ func awsRestjson1_deserializeOpDocumentCreateRestApiOutput(v **CreateRestApiOutp
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RootResourceId = ptr.String(jtv)
+			}
+
+		case "securityPolicy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SecurityPolicy to be of type string, got %T instead", value)
+				}
+				sv.SecurityPolicy = types.SecurityPolicy(jtv)
 			}
 
 		case "tags":
@@ -9552,6 +9597,15 @@ func awsRestjson1_deserializeOpDocumentGetDomainNameOutput(v **GetDomainNameOutp
 				sv.DomainNameStatusMessage = ptr.String(jtv)
 			}
 
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
+			}
+
 		case "endpointConfiguration":
 			if err := awsRestjson1_deserializeDocumentEndpointConfiguration(&sv.EndpointConfiguration, value); err != nil {
 				return err
@@ -9623,6 +9677,15 @@ func awsRestjson1_deserializeOpDocumentGetDomainNameOutput(v **GetDomainNameOutp
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RegionalHostedZoneId = ptr.String(jtv)
+			}
+
+		case "routingMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected RoutingMode to be of type string, got %T instead", value)
+				}
+				sv.RoutingMode = types.RoutingMode(jtv)
 			}
 
 		case "securityPolicy":
@@ -10714,6 +10777,15 @@ func awsRestjson1_deserializeOpDocumentGetIntegrationOutput(v **GetIntegrationOu
 				return err
 			}
 
+		case "integrationTarget":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.IntegrationTarget = ptr.String(jtv)
+			}
+
 		case "passthroughBehavior":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -10731,6 +10803,15 @@ func awsRestjson1_deserializeOpDocumentGetIntegrationOutput(v **GetIntegrationOu
 		case "requestTemplates":
 			if err := awsRestjson1_deserializeDocumentMapOfStringToString(&sv.RequestTemplates, value); err != nil {
 				return err
+			}
+
+		case "responseTransferMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResponseTransferMode to be of type string, got %T instead", value)
+				}
+				sv.ResponseTransferMode = types.ResponseTransferMode(jtv)
 			}
 
 		case "timeoutInMillis":
@@ -12793,6 +12874,24 @@ func awsRestjson1_deserializeOpDocumentGetRestApiOutput(v **GetRestApiOutput, va
 				sv.ApiKeySource = types.ApiKeySourceType(jtv)
 			}
 
+		case "apiStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ApiStatus to be of type string, got %T instead", value)
+				}
+				sv.ApiStatus = types.ApiStatus(jtv)
+			}
+
+		case "apiStatusMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.ApiStatusMessage = ptr.String(jtv)
+			}
+
 		case "binaryMediaTypes":
 			if err := awsRestjson1_deserializeDocumentListOfString(&sv.BinaryMediaTypes, value); err != nil {
 				return err
@@ -12830,6 +12929,15 @@ func awsRestjson1_deserializeOpDocumentGetRestApiOutput(v **GetRestApiOutput, va
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.DisableExecuteApiEndpoint = jtv
+			}
+
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
 			}
 
 		case "endpointConfiguration":
@@ -12884,6 +12992,15 @@ func awsRestjson1_deserializeOpDocumentGetRestApiOutput(v **GetRestApiOutput, va
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RootResourceId = ptr.String(jtv)
+			}
+
+		case "securityPolicy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SecurityPolicy to be of type string, got %T instead", value)
+				}
+				sv.SecurityPolicy = types.SecurityPolicy(jtv)
 			}
 
 		case "tags":
@@ -16050,6 +16167,24 @@ func awsRestjson1_deserializeOpDocumentImportRestApiOutput(v **ImportRestApiOutp
 				sv.ApiKeySource = types.ApiKeySourceType(jtv)
 			}
 
+		case "apiStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ApiStatus to be of type string, got %T instead", value)
+				}
+				sv.ApiStatus = types.ApiStatus(jtv)
+			}
+
+		case "apiStatusMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.ApiStatusMessage = ptr.String(jtv)
+			}
+
 		case "binaryMediaTypes":
 			if err := awsRestjson1_deserializeDocumentListOfString(&sv.BinaryMediaTypes, value); err != nil {
 				return err
@@ -16087,6 +16222,15 @@ func awsRestjson1_deserializeOpDocumentImportRestApiOutput(v **ImportRestApiOutp
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.DisableExecuteApiEndpoint = jtv
+			}
+
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
 			}
 
 		case "endpointConfiguration":
@@ -16141,6 +16285,15 @@ func awsRestjson1_deserializeOpDocumentImportRestApiOutput(v **ImportRestApiOutp
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RootResourceId = ptr.String(jtv)
+			}
+
+		case "securityPolicy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SecurityPolicy to be of type string, got %T instead", value)
+				}
+				sv.SecurityPolicy = types.SecurityPolicy(jtv)
 			}
 
 		case "tags":
@@ -16587,6 +16740,15 @@ func awsRestjson1_deserializeOpDocumentPutIntegrationOutput(v **PutIntegrationOu
 				return err
 			}
 
+		case "integrationTarget":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.IntegrationTarget = ptr.String(jtv)
+			}
+
 		case "passthroughBehavior":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -16604,6 +16766,15 @@ func awsRestjson1_deserializeOpDocumentPutIntegrationOutput(v **PutIntegrationOu
 		case "requestTemplates":
 			if err := awsRestjson1_deserializeDocumentMapOfStringToString(&sv.RequestTemplates, value); err != nil {
 				return err
+			}
+
+		case "responseTransferMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResponseTransferMode to be of type string, got %T instead", value)
+				}
+				sv.ResponseTransferMode = types.ResponseTransferMode(jtv)
 			}
 
 		case "timeoutInMillis":
@@ -17434,6 +17605,24 @@ func awsRestjson1_deserializeOpDocumentPutRestApiOutput(v **PutRestApiOutput, va
 				sv.ApiKeySource = types.ApiKeySourceType(jtv)
 			}
 
+		case "apiStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ApiStatus to be of type string, got %T instead", value)
+				}
+				sv.ApiStatus = types.ApiStatus(jtv)
+			}
+
+		case "apiStatusMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.ApiStatusMessage = ptr.String(jtv)
+			}
+
 		case "binaryMediaTypes":
 			if err := awsRestjson1_deserializeDocumentListOfString(&sv.BinaryMediaTypes, value); err != nil {
 				return err
@@ -17471,6 +17660,15 @@ func awsRestjson1_deserializeOpDocumentPutRestApiOutput(v **PutRestApiOutput, va
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.DisableExecuteApiEndpoint = jtv
+			}
+
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
 			}
 
 		case "endpointConfiguration":
@@ -17525,6 +17723,15 @@ func awsRestjson1_deserializeOpDocumentPutRestApiOutput(v **PutRestApiOutput, va
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RootResourceId = ptr.String(jtv)
+			}
+
+		case "securityPolicy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SecurityPolicy to be of type string, got %T instead", value)
+				}
+				sv.SecurityPolicy = types.SecurityPolicy(jtv)
 			}
 
 		case "tags":
@@ -20258,6 +20465,15 @@ func awsRestjson1_deserializeOpDocumentUpdateDomainNameOutput(v **UpdateDomainNa
 				sv.DomainNameStatusMessage = ptr.String(jtv)
 			}
 
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
+			}
+
 		case "endpointConfiguration":
 			if err := awsRestjson1_deserializeDocumentEndpointConfiguration(&sv.EndpointConfiguration, value); err != nil {
 				return err
@@ -20329,6 +20545,15 @@ func awsRestjson1_deserializeOpDocumentUpdateDomainNameOutput(v **UpdateDomainNa
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RegionalHostedZoneId = ptr.String(jtv)
+			}
+
+		case "routingMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected RoutingMode to be of type string, got %T instead", value)
+				}
+				sv.RoutingMode = types.RoutingMode(jtv)
 			}
 
 		case "securityPolicy":
@@ -20770,6 +20995,15 @@ func awsRestjson1_deserializeOpDocumentUpdateIntegrationOutput(v **UpdateIntegra
 				return err
 			}
 
+		case "integrationTarget":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.IntegrationTarget = ptr.String(jtv)
+			}
+
 		case "passthroughBehavior":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -20787,6 +21021,15 @@ func awsRestjson1_deserializeOpDocumentUpdateIntegrationOutput(v **UpdateIntegra
 		case "requestTemplates":
 			if err := awsRestjson1_deserializeDocumentMapOfStringToString(&sv.RequestTemplates, value); err != nil {
 				return err
+			}
+
+		case "responseTransferMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResponseTransferMode to be of type string, got %T instead", value)
+				}
+				sv.ResponseTransferMode = types.ResponseTransferMode(jtv)
 			}
 
 		case "timeoutInMillis":
@@ -22219,6 +22462,24 @@ func awsRestjson1_deserializeOpDocumentUpdateRestApiOutput(v **UpdateRestApiOutp
 				sv.ApiKeySource = types.ApiKeySourceType(jtv)
 			}
 
+		case "apiStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ApiStatus to be of type string, got %T instead", value)
+				}
+				sv.ApiStatus = types.ApiStatus(jtv)
+			}
+
+		case "apiStatusMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.ApiStatusMessage = ptr.String(jtv)
+			}
+
 		case "binaryMediaTypes":
 			if err := awsRestjson1_deserializeDocumentListOfString(&sv.BinaryMediaTypes, value); err != nil {
 				return err
@@ -22256,6 +22517,15 @@ func awsRestjson1_deserializeOpDocumentUpdateRestApiOutput(v **UpdateRestApiOutp
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.DisableExecuteApiEndpoint = jtv
+			}
+
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
 			}
 
 		case "endpointConfiguration":
@@ -22310,6 +22580,15 @@ func awsRestjson1_deserializeOpDocumentUpdateRestApiOutput(v **UpdateRestApiOutp
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RootResourceId = ptr.String(jtv)
+			}
+
+		case "securityPolicy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SecurityPolicy to be of type string, got %T instead", value)
+				}
+				sv.SecurityPolicy = types.SecurityPolicy(jtv)
 			}
 
 		case "tags":
@@ -24643,6 +24922,15 @@ func awsRestjson1_deserializeDocumentDomainName(v **types.DomainName, value inte
 				sv.DomainNameStatusMessage = ptr.String(jtv)
 			}
 
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
+			}
+
 		case "endpointConfiguration":
 			if err := awsRestjson1_deserializeDocumentEndpointConfiguration(&sv.EndpointConfiguration, value); err != nil {
 				return err
@@ -24714,6 +25002,15 @@ func awsRestjson1_deserializeDocumentDomainName(v **types.DomainName, value inte
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RegionalHostedZoneId = ptr.String(jtv)
+			}
+
+		case "routingMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected RoutingMode to be of type string, got %T instead", value)
+				}
+				sv.RoutingMode = types.RoutingMode(jtv)
 			}
 
 		case "securityPolicy":
@@ -25015,6 +25312,15 @@ func awsRestjson1_deserializeDocumentIntegration(v **types.Integration, value in
 				return err
 			}
 
+		case "integrationTarget":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.IntegrationTarget = ptr.String(jtv)
+			}
+
 		case "passthroughBehavior":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -25032,6 +25338,15 @@ func awsRestjson1_deserializeDocumentIntegration(v **types.Integration, value in
 		case "requestTemplates":
 			if err := awsRestjson1_deserializeDocumentMapOfStringToString(&sv.RequestTemplates, value); err != nil {
 				return err
+			}
+
+		case "responseTransferMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ResponseTransferMode to be of type string, got %T instead", value)
+				}
+				sv.ResponseTransferMode = types.ResponseTransferMode(jtv)
 			}
 
 		case "timeoutInMillis":
@@ -27243,6 +27558,24 @@ func awsRestjson1_deserializeDocumentRestApi(v **types.RestApi, value interface{
 				sv.ApiKeySource = types.ApiKeySourceType(jtv)
 			}
 
+		case "apiStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ApiStatus to be of type string, got %T instead", value)
+				}
+				sv.ApiStatus = types.ApiStatus(jtv)
+			}
+
+		case "apiStatusMessage":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.ApiStatusMessage = ptr.String(jtv)
+			}
+
 		case "binaryMediaTypes":
 			if err := awsRestjson1_deserializeDocumentListOfString(&sv.BinaryMediaTypes, value); err != nil {
 				return err
@@ -27280,6 +27613,15 @@ func awsRestjson1_deserializeDocumentRestApi(v **types.RestApi, value interface{
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
 				}
 				sv.DisableExecuteApiEndpoint = jtv
+			}
+
+		case "endpointAccessMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EndpointAccessMode to be of type string, got %T instead", value)
+				}
+				sv.EndpointAccessMode = types.EndpointAccessMode(jtv)
 			}
 
 		case "endpointConfiguration":
@@ -27334,6 +27676,15 @@ func awsRestjson1_deserializeDocumentRestApi(v **types.RestApi, value interface{
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.RootResourceId = ptr.String(jtv)
+			}
+
+		case "securityPolicy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SecurityPolicy to be of type string, got %T instead", value)
+				}
+				sv.SecurityPolicy = types.SecurityPolicy(jtv)
 			}
 
 		case "tags":

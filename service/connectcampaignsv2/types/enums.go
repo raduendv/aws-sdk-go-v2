@@ -2,6 +2,23 @@
 
 package types
 
+type AgentAction string
+
+// Enum values for AgentAction
+const (
+	AgentActionDiscard AgentAction = "DISCARD"
+)
+
+// Values returns all known values for AgentAction. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AgentAction) Values() []AgentAction {
+	return []AgentAction{
+		"DISCARD",
+	}
+}
+
 type CampaignDeletionPolicy string
 
 // Enum values for CampaignDeletionPolicy
@@ -61,6 +78,7 @@ const (
 	ChannelSubtypeTelephony ChannelSubtype = "TELEPHONY"
 	ChannelSubtypeSms       ChannelSubtype = "SMS"
 	ChannelSubtypeEmail     ChannelSubtype = "EMAIL"
+	ChannelSubtypeWhatsapp  ChannelSubtype = "WHATSAPP"
 )
 
 // Values returns all known values for ChannelSubtype. Note that this can be
@@ -72,6 +90,7 @@ func (ChannelSubtype) Values() []ChannelSubtype {
 		"TELEPHONY",
 		"SMS",
 		"EMAIL",
+		"WHATSAPP",
 	}
 }
 
@@ -117,6 +136,7 @@ const (
 	CommunicationTimeConfigTypeTelephony CommunicationTimeConfigType = "TELEPHONY"
 	CommunicationTimeConfigTypeSms       CommunicationTimeConfigType = "SMS"
 	CommunicationTimeConfigTypeEmail     CommunicationTimeConfigType = "EMAIL"
+	CommunicationTimeConfigTypeWhatsapp  CommunicationTimeConfigType = "WHATSAPP"
 )
 
 // Values returns all known values for CommunicationTimeConfigType. Note that this
@@ -128,6 +148,7 @@ func (CommunicationTimeConfigType) Values() []CommunicationTimeConfigType {
 		"TELEPHONY",
 		"SMS",
 		"EMAIL",
+		"WHATSAPP",
 	}
 }
 
@@ -185,6 +206,7 @@ const (
 	EventTypeCampaignSms           EventType = "Campaign-SMS"
 	EventTypeCampaignTelephony     EventType = "Campaign-Telephony"
 	EventTypeCampaignOrchestration EventType = "Campaign-Orchestration"
+	EventTypeCampaignWhatsApp      EventType = "Campaign-WhatsApp"
 )
 
 // Values returns all known values for EventType. Note that this can be expanded
@@ -197,6 +219,26 @@ func (EventType) Values() []EventType {
 		"Campaign-SMS",
 		"Campaign-Telephony",
 		"Campaign-Orchestration",
+		"Campaign-WhatsApp",
+	}
+}
+
+type ExternalCampaignType string
+
+// Enum values for ExternalCampaignType
+const (
+	ExternalCampaignTypeManaged ExternalCampaignType = "MANAGED"
+	ExternalCampaignTypeJourney ExternalCampaignType = "JOURNEY"
+)
+
+// Values returns all known values for ExternalCampaignType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ExternalCampaignType) Values() []ExternalCampaignType {
+	return []ExternalCampaignType{
+		"MANAGED",
+		"JOURNEY",
 	}
 }
 
@@ -264,6 +306,25 @@ const (
 func (InstanceIdFilterOperator) Values() []InstanceIdFilterOperator {
 	return []InstanceIdFilterOperator{
 		"Eq",
+	}
+}
+
+type InstanceLimitsHandling string
+
+// Enum values for InstanceLimitsHandling
+const (
+	InstanceLimitsHandlingOptIn  InstanceLimitsHandling = "OPT_IN"
+	InstanceLimitsHandlingOptOut InstanceLimitsHandling = "OPT_OUT"
+)
+
+// Values returns all known values for InstanceLimitsHandling. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (InstanceLimitsHandling) Values() []InstanceLimitsHandling {
+	return []InstanceLimitsHandling{
+		"OPT_IN",
+		"OPT_OUT",
 	}
 }
 

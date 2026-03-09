@@ -12,6 +12,8 @@ import (
 )
 
 // Retrieves information about a data store.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) DescribeDatastore(ctx context.Context, params *DescribeDatastoreInput, optFns ...func(*Options)) (*DescribeDatastoreOutput, error) {
 	if params == nil {
 		params = &DescribeDatastoreInput{}
@@ -32,11 +34,15 @@ type DescribeDatastoreInput struct {
 	// The name of the data store
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	DatastoreName *string
 
 	// If true, additional statistical information about the data store is included in
 	// the response. This feature can't be used with a data store whose S3 storage is
 	// customer-managed.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	IncludeStatistics bool
 
 	noSmithyDocumentSerde
@@ -45,10 +51,14 @@ type DescribeDatastoreInput struct {
 type DescribeDatastoreOutput struct {
 
 	// Information about the data store.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Datastore *types.Datastore
 
 	// Additional statistical information about the data store. Included if the
 	// includeStatistics parameter is set to true in the request.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Statistics *types.DatastoreStatistics
 
 	// Metadata pertaining to the operation's result.
@@ -145,16 +155,13 @@ func (c *Client) addOperationDescribeDatastoreMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

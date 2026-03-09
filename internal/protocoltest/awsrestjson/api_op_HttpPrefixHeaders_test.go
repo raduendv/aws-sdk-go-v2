@@ -40,17 +40,17 @@ func TestClient_HttpPrefixHeaders_awsRestjson1Serialize(t *testing.T) {
 			Params: &HttpPrefixHeadersInput{
 				Foo: ptr.String("Foo"),
 				FooMap: map[string]string{
-					"Abc": "Abc value",
-					"Def": "Def value",
+					"abc": "Abc value",
+					"def": "Def value",
 				},
 			},
 			ExpectMethod:  "GET",
 			ExpectURIPath: "/HttpPrefixHeaders",
 			ExpectQuery:   []smithytesting.QueryItem{},
 			ExpectHeader: http.Header{
-				"X-Foo":     []string{"Foo"},
-				"X-Foo-Abc": []string{"Abc value"},
-				"X-Foo-Def": []string{"Def value"},
+				"x-foo":     []string{"Foo"},
+				"x-foo-abc": []string{"Abc value"},
+				"x-foo-def": []string{"Def value"},
 			},
 			BodyAssert: func(actual io.Reader) error {
 				return smithytesting.CompareReaderEmpty(actual)
@@ -66,7 +66,7 @@ func TestClient_HttpPrefixHeaders_awsRestjson1Serialize(t *testing.T) {
 			ExpectURIPath: "/HttpPrefixHeaders",
 			ExpectQuery:   []smithytesting.QueryItem{},
 			ExpectHeader: http.Header{
-				"X-Foo": []string{"Foo"},
+				"x-foo": []string{"Foo"},
 			},
 			BodyAssert: func(actual io.Reader) error {
 				return smithytesting.CompareReaderEmpty(actual)
@@ -76,14 +76,14 @@ func TestClient_HttpPrefixHeaders_awsRestjson1Serialize(t *testing.T) {
 		"RestJsonHttpPrefixEmptyHeaders": {
 			Params: &HttpPrefixHeadersInput{
 				FooMap: map[string]string{
-					"Abc": "",
+					"abc": "",
 				},
 			},
 			ExpectMethod:  "GET",
 			ExpectURIPath: "/HttpPrefixHeaders",
 			ExpectQuery:   []smithytesting.QueryItem{},
 			ExpectHeader: http.Header{
-				"X-Foo-Abc": []string{""},
+				"x-foo-abc": []string{""},
 			},
 			BodyAssert: func(actual io.Reader) error {
 				return smithytesting.CompareReaderEmpty(actual)
@@ -166,9 +166,9 @@ func TestClient_HttpPrefixHeaders_awsRestjson1Deserialize(t *testing.T) {
 		"RestJsonHttpPrefixHeadersArePresent": {
 			StatusCode: 200,
 			Header: http.Header{
-				"X-Foo":     []string{"Foo"},
-				"X-Foo-Abc": []string{"Abc value"},
-				"X-Foo-Def": []string{"Def value"},
+				"x-foo":     []string{"Foo"},
+				"x-foo-abc": []string{"Abc value"},
+				"x-foo-def": []string{"Def value"},
 			},
 			ExpectResult: &HttpPrefixHeadersOutput{
 				Foo: ptr.String("Foo"),

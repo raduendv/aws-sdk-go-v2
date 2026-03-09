@@ -11,7 +11,7 @@ import (
 )
 
 // Returns the corresponding Match ID of a customer record if the record has been
-// processed in a rule-based matching workflow or ML matching workflow.
+// processed in a rule-based matching workflow.
 //
 // You can call this API as a dry run of an incremental load on the rule-based
 // matching workflow.
@@ -153,16 +153,13 @@ func (c *Client) addOperationGetMatchIdMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

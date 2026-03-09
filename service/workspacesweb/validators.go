@@ -90,6 +90,26 @@ func (m *validateOpAssociateNetworkSettings) HandleInitialize(ctx context.Contex
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpAssociateSessionLogger struct {
+}
+
+func (*validateOpAssociateSessionLogger) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpAssociateSessionLogger) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*AssociateSessionLoggerInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpAssociateSessionLoggerInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpAssociateTrustStore struct {
 }
 
@@ -265,6 +285,26 @@ func (m *validateOpCreatePortal) HandleInitialize(ctx context.Context, in middle
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpCreatePortalInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpCreateSessionLogger struct {
+}
+
+func (*validateOpCreateSessionLogger) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateSessionLogger) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateSessionLoggerInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateSessionLoggerInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -450,6 +490,26 @@ func (m *validateOpDeletePortal) HandleInitialize(ctx context.Context, in middle
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpDeleteSessionLogger struct {
+}
+
+func (*validateOpDeleteSessionLogger) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteSessionLogger) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteSessionLoggerInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteSessionLoggerInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeleteTrustStore struct {
 }
 
@@ -585,6 +645,26 @@ func (m *validateOpDisassociateNetworkSettings) HandleInitialize(ctx context.Con
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDisassociateNetworkSettingsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDisassociateSessionLogger struct {
+}
+
+func (*validateOpDisassociateSessionLogger) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDisassociateSessionLogger) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DisassociateSessionLoggerInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDisassociateSessionLoggerInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -825,6 +905,26 @@ func (m *validateOpGetSession) HandleInitialize(ctx context.Context, in middlewa
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpGetSessionInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetSessionLogger struct {
+}
+
+func (*validateOpGetSessionLogger) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetSessionLogger) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetSessionLoggerInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetSessionLoggerInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1150,6 +1250,26 @@ func (m *validateOpUpdatePortal) HandleInitialize(ctx context.Context, in middle
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateSessionLogger struct {
+}
+
+func (*validateOpUpdateSessionLogger) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateSessionLogger) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateSessionLoggerInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateSessionLoggerInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpUpdateTrustStore struct {
 }
 
@@ -1226,6 +1346,10 @@ func addOpAssociateNetworkSettingsValidationMiddleware(stack *middleware.Stack) 
 	return stack.Initialize.Add(&validateOpAssociateNetworkSettings{}, middleware.After)
 }
 
+func addOpAssociateSessionLoggerValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpAssociateSessionLogger{}, middleware.After)
+}
+
 func addOpAssociateTrustStoreValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpAssociateTrustStore{}, middleware.After)
 }
@@ -1260,6 +1384,10 @@ func addOpCreateNetworkSettingsValidationMiddleware(stack *middleware.Stack) err
 
 func addOpCreatePortalValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreatePortal{}, middleware.After)
+}
+
+func addOpCreateSessionLoggerValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateSessionLogger{}, middleware.After)
 }
 
 func addOpCreateTrustStoreValidationMiddleware(stack *middleware.Stack) error {
@@ -1298,6 +1426,10 @@ func addOpDeletePortalValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeletePortal{}, middleware.After)
 }
 
+func addOpDeleteSessionLoggerValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteSessionLogger{}, middleware.After)
+}
+
 func addOpDeleteTrustStoreValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteTrustStore{}, middleware.After)
 }
@@ -1324,6 +1456,10 @@ func addOpDisassociateIpAccessSettingsValidationMiddleware(stack *middleware.Sta
 
 func addOpDisassociateNetworkSettingsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDisassociateNetworkSettings{}, middleware.After)
+}
+
+func addOpDisassociateSessionLoggerValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDisassociateSessionLogger{}, middleware.After)
 }
 
 func addOpDisassociateTrustStoreValidationMiddleware(stack *middleware.Stack) error {
@@ -1372,6 +1508,10 @@ func addOpGetPortalServiceProviderMetadataValidationMiddleware(stack *middleware
 
 func addOpGetSessionValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetSession{}, middleware.After)
+}
+
+func addOpGetSessionLoggerValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetSessionLogger{}, middleware.After)
 }
 
 func addOpGetTrustStoreCertificateValidationMiddleware(stack *middleware.Stack) error {
@@ -1438,6 +1578,10 @@ func addOpUpdatePortalValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdatePortal{}, middleware.After)
 }
 
+func addOpUpdateSessionLoggerValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateSessionLogger{}, middleware.After)
+}
+
 func addOpUpdateTrustStoreValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateTrustStore{}, middleware.After)
 }
@@ -1448,6 +1592,54 @@ func addOpUpdateUserAccessLoggingSettingsValidationMiddleware(stack *middleware.
 
 func addOpUpdateUserSettingsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateUserSettings{}, middleware.After)
+}
+
+func validateBrandingConfigurationCreateInput(v *types.BrandingConfigurationCreateInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "BrandingConfigurationCreateInput"}
+	if v.Logo == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Logo"))
+	}
+	if v.Wallpaper == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Wallpaper"))
+	}
+	if v.Favicon == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Favicon"))
+	}
+	if v.LocalizedStrings == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("LocalizedStrings"))
+	} else if v.LocalizedStrings != nil {
+		if err := validateLocalizedBrandingStringMap(v.LocalizedStrings); err != nil {
+			invalidParams.AddNested("LocalizedStrings", err.(smithy.InvalidParamsError))
+		}
+	}
+	if len(v.ColorTheme) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ColorTheme"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateBrandingConfigurationUpdateInput(v *types.BrandingConfigurationUpdateInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "BrandingConfigurationUpdateInput"}
+	if v.LocalizedStrings != nil {
+		if err := validateLocalizedBrandingStringMap(v.LocalizedStrings); err != nil {
+			invalidParams.AddNested("LocalizedStrings", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
 }
 
 func validateCookieSpecification(v *types.CookieSpecification) error {
@@ -1616,6 +1808,59 @@ func validateIpRuleList(v []types.IpRule) error {
 	}
 }
 
+func validateLocalizedBrandingStringMap(v map[string]types.LocalizedBrandingStrings) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "LocalizedBrandingStringMap"}
+	for key := range v {
+		value := v[key]
+		if err := validateLocalizedBrandingStrings(&value); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%q]", key), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateLocalizedBrandingStrings(v *types.LocalizedBrandingStrings) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "LocalizedBrandingStrings"}
+	if v.BrowserTabTitle == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("BrowserTabTitle"))
+	}
+	if v.WelcomeText == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("WelcomeText"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateLogConfiguration(v *types.LogConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "LogConfiguration"}
+	if v.S3 != nil {
+		if err := validateS3LogConfiguration(v.S3); err != nil {
+			invalidParams.AddNested("S3", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateRedactionPlaceHolder(v *types.RedactionPlaceHolder) error {
 	if v == nil {
 		return nil
@@ -1623,6 +1868,27 @@ func validateRedactionPlaceHolder(v *types.RedactionPlaceHolder) error {
 	invalidParams := smithy.InvalidParamsError{Context: "RedactionPlaceHolder"}
 	if len(v.RedactionPlaceHolderType) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("RedactionPlaceHolderType"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateS3LogConfiguration(v *types.S3LogConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "S3LogConfiguration"}
+	if v.Bucket == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Bucket"))
+	}
+	if len(v.LogFileFormat) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("LogFileFormat"))
+	}
+	if len(v.FolderStructure) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("FolderStructure"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1738,6 +2004,24 @@ func validateOpAssociateNetworkSettingsInput(v *AssociateNetworkSettingsInput) e
 	}
 }
 
+func validateOpAssociateSessionLoggerInput(v *AssociateSessionLoggerInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AssociateSessionLoggerInput"}
+	if v.PortalArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("PortalArn"))
+	}
+	if v.SessionLoggerArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SessionLoggerArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpAssociateTrustStoreInput(v *AssociateTrustStoreInput) error {
 	if v == nil {
 		return nil
@@ -1801,9 +2085,6 @@ func validateOpCreateBrowserSettingsInput(v *CreateBrowserSettingsInput) error {
 		if err := validateTagList(v.Tags); err != nil {
 			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
 		}
-	}
-	if v.BrowserPolicy == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("BrowserPolicy"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1930,6 +2211,33 @@ func validateOpCreatePortalInput(v *CreatePortalInput) error {
 	}
 }
 
+func validateOpCreateSessionLoggerInput(v *CreateSessionLoggerInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateSessionLoggerInput"}
+	if v.EventFilter == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EventFilter"))
+	}
+	if v.LogConfiguration == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("LogConfiguration"))
+	} else if v.LogConfiguration != nil {
+		if err := validateLogConfiguration(v.LogConfiguration); err != nil {
+			invalidParams.AddNested("LogConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Tags != nil {
+		if err := validateTagList(v.Tags); err != nil {
+			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateTrustStoreInput(v *CreateTrustStoreInput) error {
 	if v == nil {
 		return nil
@@ -1998,6 +2306,11 @@ func validateOpCreateUserSettingsInput(v *CreateUserSettingsInput) error {
 	if v.CookieSynchronizationConfiguration != nil {
 		if err := validateCookieSynchronizationConfiguration(v.CookieSynchronizationConfiguration); err != nil {
 			invalidParams.AddNested("CookieSynchronizationConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.BrandingConfigurationInput != nil {
+		if err := validateBrandingConfigurationCreateInput(v.BrandingConfigurationInput); err != nil {
+			invalidParams.AddNested("BrandingConfigurationInput", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -2089,6 +2402,21 @@ func validateOpDeletePortalInput(v *DeletePortalInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DeletePortalInput"}
 	if v.PortalArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("PortalArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteSessionLoggerInput(v *DeleteSessionLoggerInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteSessionLoggerInput"}
+	if v.SessionLoggerArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SessionLoggerArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2192,6 +2520,21 @@ func validateOpDisassociateNetworkSettingsInput(v *DisassociateNetworkSettingsIn
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "DisassociateNetworkSettingsInput"}
+	if v.PortalArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("PortalArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDisassociateSessionLoggerInput(v *DisassociateSessionLoggerInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DisassociateSessionLoggerInput"}
 	if v.PortalArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("PortalArn"))
 	}
@@ -2380,6 +2723,21 @@ func validateOpGetSessionInput(v *GetSessionInput) error {
 	}
 	if v.SessionId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("SessionId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetSessionLoggerInput(v *GetSessionLoggerInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetSessionLoggerInput"}
+	if v.SessionLoggerArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SessionLoggerArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2651,6 +3009,26 @@ func validateOpUpdatePortalInput(v *UpdatePortalInput) error {
 	}
 }
 
+func validateOpUpdateSessionLoggerInput(v *UpdateSessionLoggerInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateSessionLoggerInput"}
+	if v.SessionLoggerArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SessionLoggerArn"))
+	}
+	if v.LogConfiguration != nil {
+		if err := validateLogConfiguration(v.LogConfiguration); err != nil {
+			invalidParams.AddNested("LogConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpUpdateTrustStoreInput(v *UpdateTrustStoreInput) error {
 	if v == nil {
 		return nil
@@ -2692,6 +3070,11 @@ func validateOpUpdateUserSettingsInput(v *UpdateUserSettingsInput) error {
 	if v.CookieSynchronizationConfiguration != nil {
 		if err := validateCookieSynchronizationConfiguration(v.CookieSynchronizationConfiguration); err != nil {
 			invalidParams.AddNested("CookieSynchronizationConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.BrandingConfigurationInput != nil {
+		if err := validateBrandingConfigurationUpdateInput(v.BrandingConfigurationInput); err != nil {
+			invalidParams.AddNested("BrandingConfigurationInput", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

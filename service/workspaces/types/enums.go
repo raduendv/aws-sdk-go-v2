@@ -2,6 +2,23 @@
 
 package types
 
+type AccessEndpointType string
+
+// Enum values for AccessEndpointType
+const (
+	AccessEndpointTypeStreamingWsp AccessEndpointType = "STREAMING_WSP"
+)
+
+// Values returns all known values for AccessEndpointType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AccessEndpointType) Values() []AccessEndpointType {
+	return []AccessEndpointType{
+		"STREAMING_WSP",
+	}
+}
+
 type AccessPropertyValue string
 
 // Enum values for AccessPropertyValue
@@ -193,11 +210,12 @@ type AssociationErrorCode string
 
 // Enum values for AssociationErrorCode
 const (
-	AssociationErrorCodeInsufficientDiskspace      AssociationErrorCode = "ValidationError.InsufficientDiskSpace"
-	AssociationErrorCodeInsufficientMemory         AssociationErrorCode = "ValidationError.InsufficientMemory"
-	AssociationErrorCodeUnsupportedOperatingSystem AssociationErrorCode = "ValidationError.UnsupportedOperatingSystem"
-	AssociationErrorCodeInternalServerError        AssociationErrorCode = "DeploymentError.InternalServerError"
-	AssociationErrorCodeWorkspaceUnreachable       AssociationErrorCode = "DeploymentError.WorkspaceUnreachable"
+	AssociationErrorCodeInsufficientDiskspace             AssociationErrorCode = "ValidationError.InsufficientDiskSpace"
+	AssociationErrorCodeInsufficientMemory                AssociationErrorCode = "ValidationError.InsufficientMemory"
+	AssociationErrorCodeUnsupportedOperatingSystem        AssociationErrorCode = "ValidationError.UnsupportedOperatingSystem"
+	AssociationErrorCodeInternalServerError               AssociationErrorCode = "DeploymentError.InternalServerError"
+	AssociationErrorCodeWorkspaceUnreachable              AssociationErrorCode = "DeploymentError.WorkspaceUnreachable"
+	AssociationErrorCodeApplicationOldversionexistFailure AssociationErrorCode = "ValidationError.ApplicationOldVersionExists"
 )
 
 // Values returns all known values for AssociationErrorCode. Note that this can be
@@ -211,6 +229,7 @@ func (AssociationErrorCode) Values() []AssociationErrorCode {
 		"ValidationError.UnsupportedOperatingSystem",
 		"DeploymentError.InternalServerError",
 		"DeploymentError.WorkspaceUnreachable",
+		"ValidationError.ApplicationOldVersionExists",
 	}
 }
 
@@ -388,6 +407,18 @@ const (
 	ComputeGraphicspro           Compute = "GRAPHICSPRO"
 	ComputeGraphicsG4dn          Compute = "GRAPHICS_G4DN"
 	ComputeGraphicsproG4dn       Compute = "GRAPHICSPRO_G4DN"
+	ComputeGraphicsG6Xlarge      Compute = "GRAPHICS_G6_XLARGE"
+	ComputeGraphicsG62xlarge     Compute = "GRAPHICS_G6_2XLARGE"
+	ComputeGraphicsG64xlarge     Compute = "GRAPHICS_G6_4XLARGE"
+	ComputeGraphicsG68xlarge     Compute = "GRAPHICS_G6_8XLARGE"
+	ComputeGraphicsG616xlarge    Compute = "GRAPHICS_G6_16XLARGE"
+	ComputeGraphicsGr64xlarge    Compute = "GRAPHICS_GR6_4XLARGE"
+	ComputeGraphicsGr68xlarge    Compute = "GRAPHICS_GR6_8XLARGE"
+	ComputeGraphicsG6fLarge      Compute = "GRAPHICS_G6F_LARGE"
+	ComputeGraphicsG6fXlarge     Compute = "GRAPHICS_G6F_XLARGE"
+	ComputeGraphicsG6f2xlarge    Compute = "GRAPHICS_G6F_2XLARGE"
+	ComputeGraphicsG6f4xlarge    Compute = "GRAPHICS_G6F_4XLARGE"
+	ComputeGraphicsGr6f4xlarge   Compute = "GRAPHICS_GR6F_4XLARGE"
 )
 
 // Values returns all known values for Compute. Note that this can be expanded in
@@ -407,6 +438,18 @@ func (Compute) Values() []Compute {
 		"GRAPHICSPRO",
 		"GRAPHICS_G4DN",
 		"GRAPHICSPRO_G4DN",
+		"GRAPHICS_G6_XLARGE",
+		"GRAPHICS_G6_2XLARGE",
+		"GRAPHICS_G6_4XLARGE",
+		"GRAPHICS_G6_8XLARGE",
+		"GRAPHICS_G6_16XLARGE",
+		"GRAPHICS_GR6_4XLARGE",
+		"GRAPHICS_GR6_8XLARGE",
+		"GRAPHICS_G6F_LARGE",
+		"GRAPHICS_G6F_XLARGE",
+		"GRAPHICS_G6F_2XLARGE",
+		"GRAPHICS_G6F_4XLARGE",
+		"GRAPHICS_GR6F_4XLARGE",
 	}
 }
 
@@ -449,6 +492,71 @@ func (ConnectionState) Values() []ConnectionState {
 		"CONNECTED",
 		"DISCONNECTED",
 		"UNKNOWN",
+	}
+}
+
+type CustomImageProtocol string
+
+// Enum values for CustomImageProtocol
+const (
+	CustomImageProtocolPcoip CustomImageProtocol = "PCOIP"
+	CustomImageProtocolDcv   CustomImageProtocol = "DCV"
+	CustomImageProtocolByop  CustomImageProtocol = "BYOP"
+)
+
+// Values returns all known values for CustomImageProtocol. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CustomImageProtocol) Values() []CustomImageProtocol {
+	return []CustomImageProtocol{
+		"PCOIP",
+		"DCV",
+		"BYOP",
+	}
+}
+
+type CustomWorkspaceImageImportState string
+
+// Enum values for CustomWorkspaceImageImportState
+const (
+	CustomWorkspaceImageImportStatePending                    CustomWorkspaceImageImportState = "PENDING"
+	CustomWorkspaceImageImportStateInProgress                 CustomWorkspaceImageImportState = "IN_PROGRESS"
+	CustomWorkspaceImageImportStateProcessingSourceImage      CustomWorkspaceImageImportState = "PROCESSING_SOURCE_IMAGE"
+	CustomWorkspaceImageImportStateImageTestingStart          CustomWorkspaceImageImportState = "IMAGE_TESTING_START"
+	CustomWorkspaceImageImportStateUpdatingOperatingSystem    CustomWorkspaceImageImportState = "UPDATING_OPERATING_SYSTEM"
+	CustomWorkspaceImageImportStateImageCompatibilityChecking CustomWorkspaceImageImportState = "IMAGE_COMPATIBILITY_CHECKING"
+	CustomWorkspaceImageImportStateImageTestingGeneralization CustomWorkspaceImageImportState = "IMAGE_TESTING_GENERALIZATION"
+	CustomWorkspaceImageImportStateCreatingTestInstance       CustomWorkspaceImageImportState = "CREATING_TEST_INSTANCE"
+	CustomWorkspaceImageImportStateInstallingComponents       CustomWorkspaceImageImportState = "INSTALLING_COMPONENTS"
+	CustomWorkspaceImageImportStateGeneralizing               CustomWorkspaceImageImportState = "GENERALIZING"
+	CustomWorkspaceImageImportStateValidating                 CustomWorkspaceImageImportState = "VALIDATING"
+	CustomWorkspaceImageImportStatePublishing                 CustomWorkspaceImageImportState = "PUBLISHING"
+	CustomWorkspaceImageImportStateCompleted                  CustomWorkspaceImageImportState = "COMPLETED"
+	CustomWorkspaceImageImportStateError                      CustomWorkspaceImageImportState = "ERROR"
+)
+
+// Values returns all known values for CustomWorkspaceImageImportState. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CustomWorkspaceImageImportState) Values() []CustomWorkspaceImageImportState {
+	return []CustomWorkspaceImageImportState{
+		"PENDING",
+		"IN_PROGRESS",
+		"PROCESSING_SOURCE_IMAGE",
+		"IMAGE_TESTING_START",
+		"UPDATING_OPERATING_SYSTEM",
+		"IMAGE_COMPATIBILITY_CHECKING",
+		"IMAGE_TESTING_GENERALIZATION",
+		"CREATING_TEST_INSTANCE",
+		"INSTALLING_COMPONENTS",
+		"GENERALIZING",
+		"VALIDATING",
+		"PUBLISHING",
+		"COMPLETED",
+		"ERROR",
 	}
 }
 
@@ -684,6 +792,27 @@ func (ImageAssociatedResourceType) Values() []ImageAssociatedResourceType {
 	}
 }
 
+type ImageComputeType string
+
+// Enum values for ImageComputeType
+const (
+	ImageComputeTypeBase         ImageComputeType = "BASE"
+	ImageComputeTypeGraphicsG4dn ImageComputeType = "GRAPHICS_G4DN"
+	ImageComputeTypeGraphicsG6   ImageComputeType = "GRAPHICS_G6"
+)
+
+// Values returns all known values for ImageComputeType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ImageComputeType) Values() []ImageComputeType {
+	return []ImageComputeType{
+		"BASE",
+		"GRAPHICS_G4DN",
+		"GRAPHICS_G6",
+	}
+}
+
 type ImageType string
 
 // Enum values for ImageType
@@ -700,6 +829,23 @@ func (ImageType) Values() []ImageType {
 	return []ImageType{
 		"OWNED",
 		"SHARED",
+	}
+}
+
+type InternetFallbackProtocol string
+
+// Enum values for InternetFallbackProtocol
+const (
+	InternetFallbackProtocolPcoip InternetFallbackProtocol = "PCOIP"
+)
+
+// Values returns all known values for InternetFallbackProtocol. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (InternetFallbackProtocol) Values() []InternetFallbackProtocol {
+	return []InternetFallbackProtocol{
+		"PCOIP",
 	}
 }
 
@@ -819,6 +965,61 @@ func (OperatingSystemType) Values() []OperatingSystemType {
 	return []OperatingSystemType{
 		"WINDOWS",
 		"LINUX",
+	}
+}
+
+type OSVersion string
+
+// Enum values for OSVersion
+const (
+	OSVersionWindows10 OSVersion = "Windows_10"
+	OSVersionWindows11 OSVersion = "Windows_11"
+)
+
+// Values returns all known values for OSVersion. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OSVersion) Values() []OSVersion {
+	return []OSVersion{
+		"Windows_10",
+		"Windows_11",
+	}
+}
+
+type Platform string
+
+// Enum values for Platform
+const (
+	PlatformWindows Platform = "WINDOWS"
+)
+
+// Values returns all known values for Platform. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (Platform) Values() []Platform {
+	return []Platform{
+		"WINDOWS",
+	}
+}
+
+type PoolsRunningMode string
+
+// Enum values for PoolsRunningMode
+const (
+	PoolsRunningModeAutoStop PoolsRunningMode = "AUTO_STOP"
+	PoolsRunningModeAlwaysOn PoolsRunningMode = "ALWAYS_ON"
+)
+
+// Values returns all known values for PoolsRunningMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (PoolsRunningMode) Values() []PoolsRunningMode {
+	return []PoolsRunningMode{
+		"AUTO_STOP",
+		"ALWAYS_ON",
 	}
 }
 
@@ -1277,6 +1478,9 @@ const (
 	WorkspaceImageErrorDetailCodeStagedAppxPackage                      WorkspaceImageErrorDetailCode = "StagedAppxPackage"
 	WorkspaceImageErrorDetailCodeUnsupportedOsUpgrade                   WorkspaceImageErrorDetailCode = "UnsupportedOsUpgrade"
 	WorkspaceImageErrorDetailCodeInsufficientRearmCount                 WorkspaceImageErrorDetailCode = "InsufficientRearmCount"
+	WorkspaceImageErrorDetailCodeIncompatibleProtocol                   WorkspaceImageErrorDetailCode = "ProtocolOSIncompatibility"
+	WorkspaceImageErrorDetailCodeIncompatibleMemoryIntegrity            WorkspaceImageErrorDetailCode = "MemoryIntegrityIncompatibility"
+	WorkspaceImageErrorDetailCodeRestrictedDriveLetter                  WorkspaceImageErrorDetailCode = "RestrictedDriveLetterInUse"
 )
 
 // Values returns all known values for WorkspaceImageErrorDetailCode. Note that
@@ -1331,6 +1535,9 @@ func (WorkspaceImageErrorDetailCode) Values() []WorkspaceImageErrorDetailCode {
 		"StagedAppxPackage",
 		"UnsupportedOsUpgrade",
 		"InsufficientRearmCount",
+		"ProtocolOSIncompatibility",
+		"MemoryIntegrityIncompatibility",
+		"RestrictedDriveLetterInUse",
 	}
 }
 

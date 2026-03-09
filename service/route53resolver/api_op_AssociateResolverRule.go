@@ -50,6 +50,10 @@ type AssociateResolverRuleInput struct {
 
 	// A name for the association that you're creating between a Resolver rule and a
 	// VPC.
+	//
+	// The name can be up to 64 characters long and can contain letters (a-z, A-Z),
+	// numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist
+	// of only numbers.
 	Name *string
 
 	noSmithyDocumentSerde
@@ -155,16 +159,13 @@ func (c *Client) addOperationAssociateResolverRuleMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

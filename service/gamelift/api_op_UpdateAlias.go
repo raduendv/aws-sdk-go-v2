@@ -11,10 +11,13 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Updates properties for an alias. Specify the unique identifier of the alias to
-// be updated and the new property values. When reassigning an alias to a new
-// fleet, provide an updated routing strategy. If successful, the updated alias
-// record is returned.
+// be updated and the new property values.
+//
+// When reassigning an alias to a new fleet, provide an updated routing strategy.
+// If successful, the updated alias record is returned.
 //
 // # Related actions
 //
@@ -157,16 +160,13 @@ func (c *Client) addOperationUpdateAliasMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

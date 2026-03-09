@@ -145,6 +145,17 @@ type AdConditioningConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration parameters for customizing HTTP requests sent to the ad decision
+// server (ADS). This allows you to specify the HTTP method, headers, request body,
+// and compression settings for ADS requests.
+type AdDecisionServerConfiguration struct {
+
+	// The HTTP request configuration parameters for the ad decision server.
+	HttpRequest *HttpRequest
+
+	noSmithyDocumentSerde
+}
+
 // For HLS, when set to true , MediaTailor passes through EXT-X-CUE-IN ,
 // EXT-X-CUE-OUT , and EXT-X-SPLICEPOINT-SCTE35 ad markers from the origin
 // manifest to the MediaTailor personalized manifest.
@@ -597,6 +608,30 @@ type HttpPackageConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// HTTP request configuration parameters that define how MediaTailor communicates
+// with the ad decision server.
+type HttpRequest struct {
+
+	// The request body content to send with HTTP requests to the ad decision server.
+	// This value is only eligible for POST requests.
+	Body *string
+
+	// The compression method to apply to requests sent to the ad decision server.
+	// Supported values are NONE and GZIP . This value is only eligible for POST
+	// requests.
+	CompressRequest CompressionMethod
+
+	// Custom HTTP headers to include in requests to the ad decision server. Specify
+	// headers as key-value pairs. This value is only eligible for POST requests.
+	Headers map[string]string
+
+	// The HTTP method to use when making requests to the ad decision server.
+	// Supported values are GET and POST .
+	Method Method
+
+	noSmithyDocumentSerde
+}
+
 // For SCTE35_ENHANCED output, defines a key and corresponding value. MediaTailor
 // generates these pairs within the EXT-X-ASSET tag.
 type KeyValuePair struct {
@@ -679,6 +714,16 @@ type LiveSource struct {
 // configuration.
 type LogConfiguration struct {
 
+	// The method used for collecting logs from AWS Elemental MediaTailor.
+	// LEGACY_CLOUDWATCH indicates that MediaTailor is sending logs directly to Amazon
+	// CloudWatch Logs. VENDED_LOGS indicates that MediaTailor is sending logs to
+	// CloudWatch, which then vends the logs to your destination of choice. Supported
+	// destinations are CloudWatch Logs log group, Amazon S3 bucket, and Amazon Data
+	// Firehose stream.
+	//
+	// This member is required.
+	EnabledLoggingStrategies []LoggingStrategy
+
 	// The percentage of session logs that MediaTailor sends to your configured log
 	// destination. For example, if your playback configuration has 1000 sessions and
 	// percentEnabled is set to 60 , MediaTailor sends logs for 600 of the sessions to
@@ -696,14 +741,6 @@ type LogConfiguration struct {
 	// Settings for customizing what events are included in logs for interactions with
 	// the ad decision server (ADS).
 	AdsInteractionLog *AdsInteractionLog
-
-	// The method used for collecting logs from AWS Elemental MediaTailor.
-	// LEGACY_CLOUDWATCH indicates that MediaTailor is sending logs directly to Amazon
-	// CloudWatch Logs. VENDED_LOGS indicates that MediaTailor is sending logs to
-	// CloudWatch, which then vends the logs to your destination of choice. Supported
-	// destinations are CloudWatch Logs log group, Amazon S3 bucket, and Amazon Data
-	// Firehose stream.
-	EnabledLoggingStrategies []LoggingStrategy
 
 	// Settings for customizing what events are included in logs for interactions with
 	// the origin server.
@@ -763,6 +800,11 @@ type PlaybackConfiguration struct {
 	// that the ad decision server (ADS) returns, and what priority MediaTailor uses
 	// when inserting ads.
 	AdConditioningConfiguration *AdConditioningConfiguration
+
+	// Configuration parameters for customizing HTTP requests sent to the ad decision
+	// server (ADS). This allows you to specify the HTTP method, headers, request body,
+	// and compression settings for ADS requests.
+	AdDecisionServerConfiguration *AdDecisionServerConfiguration
 
 	// The URL for the ad decision server (ADS). This includes the specification of
 	// static parameters and placeholders for dynamic parameters. AWS Elemental
@@ -923,12 +965,19 @@ type PrefetchRetrieval struct {
 	// possible.
 	StartTime *time.Time
 
-	// Configuration for spreading ADS traffic across a set window instead of sending
-	// ADS requests for all sessions at the same time.
+	// The configuration that tells Elemental MediaTailor how many seconds to spread
+	// out requests to the ad decision server (ADS). Instead of sending ADS requests
+	// for all sessions at the same time, MediaTailor spreads the requests across the
+	// amount of time specified in the retrieval window.
 	TrafficShapingRetrievalWindow *TrafficShapingRetrievalWindow
 
-	// Indicates if this configuration uses a retrieval window for traffic shaping and
-	// limiting the number of requests to the ADS at one time.
+	// The configuration for TPS-based traffic shaping. This approach limits requests
+	// to the ad decision server (ADS) based on transactions per second and concurrent
+	// users.
+	TrafficShapingTpsConfiguration *TrafficShapingTpsConfiguration
+
+	// Indicates the type of traffic shaping used to limit the number of requests to
+	// the ADS at one time.
 	TrafficShapingType TrafficShapingType
 
 	noSmithyDocumentSerde
@@ -1043,12 +1092,19 @@ type RecurringRetrieval struct {
 	// ADS.
 	DynamicVariables map[string]string
 
-	// Configuration for spreading ADS traffic across a set window instead of sending
-	// ADS requests for all sessions at the same time.
+	// The configuration that tells Elemental MediaTailor how many seconds to spread
+	// out requests to the ad decision server (ADS). Instead of sending ADS requests
+	// for all sessions at the same time, MediaTailor spreads the requests across the
+	// amount of time specified in the retrieval window.
 	TrafficShapingRetrievalWindow *TrafficShapingRetrievalWindow
 
-	// Indicates if this configuration uses a retrieval window for traffic shaping and
-	// limiting the number of requests to the ADS at one time.
+	// The configuration for TPS-based traffic shaping. This approach limits requests
+	// to the ad decision server (ADS) based on transactions per second and concurrent
+	// users.
+	TrafficShapingTpsConfiguration *TrafficShapingTpsConfiguration
+
+	// Indicates the type of traffic shaping used to limit the number of requests to
+	// the ADS at one time.
 	TrafficShapingType TrafficShapingType
 
 	noSmithyDocumentSerde
@@ -1401,15 +1457,34 @@ type TimeSignalMessage struct {
 	noSmithyDocumentSerde
 }
 
-// The configuration that tells Elemental MediaTailor how to spread out requests
-// to the ad decision server (ADS). Instead of sending ADS requests for all
-// sessions at the same time, MediaTailor spreads the requests across the amount of
-// time specified in the retrieval window.
+// The configuration that tells Elemental MediaTailor how many seconds to spread
+// out requests to the ad decision server (ADS). Instead of sending ADS requests
+// for all sessions at the same time, MediaTailor spreads the requests across the
+// amount of time specified in the retrieval window.
 type TrafficShapingRetrievalWindow struct {
 
 	// The amount of time, in seconds, that MediaTailor spreads prefetch requests to
 	// the ADS.
 	RetrievalWindowDurationSeconds *int32
+
+	noSmithyDocumentSerde
+}
+
+// The configuration for TPS-based traffic shaping. This approach limits requests
+// to the ad decision server (ADS) based on transactions per second and concurrent
+// users.
+type TrafficShapingTpsConfiguration struct {
+
+	// The expected peak number of concurrent viewers for your content. MediaTailor
+	// uses this value along with peak TPS to determine how to distribute prefetch
+	// requests across the available capacity without exceeding your ADS limits.
+	PeakConcurrentUsers *int32
+
+	// The maximum number of transactions per second (TPS) that your ad decision
+	// server (ADS) can handle. MediaTailor uses this value along with concurrent users
+	// and headroom multiplier to calculate optimal traffic distribution and prevent
+	// ADS overload.
+	PeakTps *int32
 
 	noSmithyDocumentSerde
 }

@@ -108,6 +108,7 @@
         "api_op_FailoverPrimaryCompute.go",
         "api_op_GetClusterCredentials.go",
         "api_op_GetClusterCredentialsWithIAM.go",
+        "api_op_GetIdentityCenterAuthToken.go",
         "api_op_GetReservedNodeExchangeConfigurationOptions.go",
         "api_op_GetReservedNodeExchangeOfferings.go",
         "api_op_GetResourcePolicy.go",
@@ -126,6 +127,7 @@
         "api_op_ModifyEndpointAccess.go",
         "api_op_ModifyEventSubscription.go",
         "api_op_ModifyIntegration.go",
+        "api_op_ModifyLakehouseConfiguration.go",
         "api_op_ModifyRedshiftIdcApplication.go",
         "api_op_ModifyScheduledAction.go",
         "api_op_ModifySnapshotCopyRetentionPeriod.go",
@@ -167,7 +169,7 @@
         "types/types_exported_test.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/redshift",
     "unstable": false
 }

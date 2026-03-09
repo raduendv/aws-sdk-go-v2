@@ -510,6 +510,26 @@ func (m *validateOpListImportFailures) HandleInitialize(ctx context.Context, in 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpListInsightsData struct {
+}
+
+func (*validateOpListInsightsData) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListInsightsData) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListInsightsDataInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListInsightsDataInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpListInsightsMetricData struct {
 }
 
@@ -585,6 +605,26 @@ func (m *validateOpLookupEvents) HandleInitialize(ctx context.Context, in middle
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpLookupEventsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpPutEventConfiguration struct {
+}
+
+func (*validateOpPutEventConfiguration) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpPutEventConfiguration) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*PutEventConfigurationInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpPutEventConfigurationInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1050,6 +1090,10 @@ func addOpListImportFailuresValidationMiddleware(stack *middleware.Stack) error 
 	return stack.Initialize.Add(&validateOpListImportFailures{}, middleware.After)
 }
 
+func addOpListInsightsDataValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListInsightsData{}, middleware.After)
+}
+
 func addOpListInsightsMetricDataValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListInsightsMetricData{}, middleware.After)
 }
@@ -1064,6 +1108,10 @@ func addOpListTagsValidationMiddleware(stack *middleware.Stack) error {
 
 func addOpLookupEventsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpLookupEvents{}, middleware.After)
+}
+
+func addOpPutEventConfigurationValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpPutEventConfiguration{}, middleware.After)
 }
 
 func addOpPutEventSelectorsValidationMiddleware(stack *middleware.Stack) error {
@@ -1196,6 +1244,76 @@ func validateAdvancedFieldSelectors(v []types.AdvancedFieldSelector) error {
 	invalidParams := smithy.InvalidParamsError{Context: "AdvancedFieldSelectors"}
 	for i := range v {
 		if err := validateAdvancedFieldSelector(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateAggregationConfiguration(v *types.AggregationConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AggregationConfiguration"}
+	if v.Templates == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Templates"))
+	}
+	if len(v.EventCategory) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("EventCategory"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateAggregationConfigurations(v []types.AggregationConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AggregationConfigurations"}
+	for i := range v {
+		if err := validateAggregationConfiguration(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateContextKeySelector(v *types.ContextKeySelector) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ContextKeySelector"}
+	if len(v.Type) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Type"))
+	}
+	if v.Equals == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Equals"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateContextKeySelectors(v []types.ContextKeySelector) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ContextKeySelectors"}
+	for i := range v {
+		if err := validateContextKeySelector(&v[i]); err != nil {
 			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
 		}
 	}
@@ -1814,6 +1932,24 @@ func validateOpListImportFailuresInput(v *ListImportFailuresInput) error {
 	}
 }
 
+func validateOpListInsightsDataInput(v *ListInsightsDataInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListInsightsDataInput"}
+	if v.InsightSource == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("InsightSource"))
+	}
+	if len(v.DataType) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("DataType"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpListInsightsMetricDataInput(v *ListInsightsMetricDataInput) error {
 	if v == nil {
 		return nil
@@ -1873,6 +2009,28 @@ func validateOpLookupEventsInput(v *LookupEventsInput) error {
 	if v.LookupAttributes != nil {
 		if err := validateLookupAttributesList(v.LookupAttributes); err != nil {
 			invalidParams.AddNested("LookupAttributes", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpPutEventConfigurationInput(v *PutEventConfigurationInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "PutEventConfigurationInput"}
+	if v.ContextKeySelectors != nil {
+		if err := validateContextKeySelectors(v.ContextKeySelectors); err != nil {
+			invalidParams.AddNested("ContextKeySelectors", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.AggregationConfigurations != nil {
+		if err := validateAggregationConfigurations(v.AggregationConfigurations); err != nil {
+			invalidParams.AddNested("AggregationConfigurations", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

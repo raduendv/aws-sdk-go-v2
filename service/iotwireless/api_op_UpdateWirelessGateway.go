@@ -43,6 +43,8 @@ type UpdateWirelessGatewayInput struct {
 	MaxEirp *float32
 
 	// The new name of the resource.
+	//
+	// The following special characters aren't accepted: <>^#~$
 	Name *string
 
 	// A list of NetId values that are used by LoRa gateways to filter the uplink
@@ -147,16 +149,13 @@ func (c *Client) addOperationUpdateWirelessGatewayMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

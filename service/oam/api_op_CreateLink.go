@@ -59,6 +59,11 @@ type CreateLinkInput struct {
 	//   - $AccountEmailNoDomain is the email address of the account without the domain
 	//   name
 	//
+	// In the Amazon Web Services GovCloud (US-East) and Amazon Web Services GovCloud
+	// (US-West) Regions, the only supported option is to use custom labels, and the
+	// $AccountName , $AccountEmail , and $AccountEmailNoDomain variables all resolve
+	// as account-id instead of the specified variable.
+	//
 	// This member is required.
 	LabelTemplate *string
 
@@ -220,16 +225,13 @@ func (c *Client) addOperationCreateLinkMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

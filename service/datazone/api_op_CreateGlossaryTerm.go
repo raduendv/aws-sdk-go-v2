@@ -12,6 +12,26 @@ import (
 )
 
 // Creates a business glossary term.
+//
+// A glossary term represents an individual entry within the Amazon DataZone
+// glossary, serving as a standardized definition for a specific business concept
+// or data element. Each term can include rich metadata such as detailed
+// definitions, synonyms, related terms, and usage examples. Glossary terms can be
+// linked directly to data assets, providing business context to technical data
+// elements. This linking capability helps users understand the business meaning of
+// data fields and ensures consistent interpretation across different systems and
+// teams. Terms can also have relationships with other terms, creating a semantic
+// network that reflects the complexity of business concepts.
+//
+// Prerequisites:
+//
+//   - Domain must exist.
+//
+//   - Glossary must exist.
+//
+//   - The term name must be unique within the glossary.
+//
+//   - Ensure term does not conflict with existing terms in hierarchy.
 func (c *Client) CreateGlossaryTerm(ctx context.Context, params *CreateGlossaryTermInput, optFns ...func(*Options)) (*CreateGlossaryTermOutput, error) {
 	if params == nil {
 		params = &CreateGlossaryTermInput{}
@@ -100,6 +120,9 @@ type CreateGlossaryTermOutput struct {
 
 	// The term relations of this business glossary term.
 	TermRelations *types.TermRelations
+
+	// The usage restriction of the restricted glossary.
+	UsageRestrictions []types.GlossaryUsageRestriction
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -198,16 +221,13 @@ func (c *Client) addOperationCreateGlossaryTermMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

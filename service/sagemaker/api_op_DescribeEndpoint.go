@@ -128,6 +128,9 @@ type DescribeEndpointOutput struct {
 	// The most recent deployment configuration for the endpoint.
 	LastDeploymentConfig *types.DeploymentConfig
 
+	// The configuration parameters for utilization metrics.
+	MetricsConfig *types.MetricsConfig
+
 	// Returns the summary of an in-progress deployment. This field is only returned
 	// when the endpoint is creating or updating with a new endpoint configuration.
 	PendingDeploymentSummary *types.PendingDeploymentSummary
@@ -238,16 +241,13 @@ func (c *Client) addOperationDescribeEndpointMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -276,7 +276,7 @@ type EndpointDeletedWaiterOptions struct {
 	MinDelay time.Duration
 
 	// MaxDelay is the maximum amount of time to delay between retries. If unset or
-	// set to zero, EndpointDeletedWaiter will use default max delay of 120 seconds.
+	// set to zero, EndpointDeletedWaiter will use default max delay of 1800 seconds.
 	// Note that MaxDelay must resolve to value greater than or equal to the MinDelay.
 	MaxDelay time.Duration
 
@@ -306,7 +306,7 @@ type EndpointDeletedWaiter struct {
 func NewEndpointDeletedWaiter(client DescribeEndpointAPIClient, optFns ...func(*EndpointDeletedWaiterOptions)) *EndpointDeletedWaiter {
 	options := EndpointDeletedWaiterOptions{}
 	options.MinDelay = 30 * time.Second
-	options.MaxDelay = 120 * time.Second
+	options.MaxDelay = 1800 * time.Second
 	options.Retryable = endpointDeletedStateRetryable
 
 	for _, fn := range optFns {
@@ -341,7 +341,7 @@ func (w *EndpointDeletedWaiter) WaitForOutput(ctx context.Context, params *Descr
 	}
 
 	if options.MaxDelay <= 0 {
-		options.MaxDelay = 120 * time.Second
+		options.MaxDelay = 1800 * time.Second
 	}
 
 	if options.MinDelay > options.MaxDelay {
@@ -463,7 +463,7 @@ type EndpointInServiceWaiterOptions struct {
 	MinDelay time.Duration
 
 	// MaxDelay is the maximum amount of time to delay between retries. If unset or
-	// set to zero, EndpointInServiceWaiter will use default max delay of 120 seconds.
+	// set to zero, EndpointInServiceWaiter will use default max delay of 3600 seconds.
 	// Note that MaxDelay must resolve to value greater than or equal to the MinDelay.
 	MaxDelay time.Duration
 
@@ -493,7 +493,7 @@ type EndpointInServiceWaiter struct {
 func NewEndpointInServiceWaiter(client DescribeEndpointAPIClient, optFns ...func(*EndpointInServiceWaiterOptions)) *EndpointInServiceWaiter {
 	options := EndpointInServiceWaiterOptions{}
 	options.MinDelay = 30 * time.Second
-	options.MaxDelay = 120 * time.Second
+	options.MaxDelay = 3600 * time.Second
 	options.Retryable = endpointInServiceStateRetryable
 
 	for _, fn := range optFns {
@@ -528,7 +528,7 @@ func (w *EndpointInServiceWaiter) WaitForOutput(ctx context.Context, params *Des
 	}
 
 	if options.MaxDelay <= 0 {
-		options.MaxDelay = 120 * time.Second
+		options.MaxDelay = 3600 * time.Second
 	}
 
 	if options.MinDelay > options.MaxDelay {

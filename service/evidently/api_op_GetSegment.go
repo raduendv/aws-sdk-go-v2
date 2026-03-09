@@ -13,6 +13,8 @@ import (
 
 // Returns information about the specified segment. Specify the segment you want
 // to view by specifying its ARN.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) GetSegment(ctx context.Context, params *GetSegmentInput, optFns ...func(*Options)) (*GetSegmentOutput, error) {
 	if params == nil {
 		params = &GetSegmentInput{}
@@ -33,6 +35,8 @@ type GetSegmentInput struct {
 	// The ARN of the segment to return information for.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Segment *string
 
 	noSmithyDocumentSerde
@@ -43,6 +47,8 @@ type GetSegmentOutput struct {
 	// A structure that contains the complete information about the segment.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Segment *types.Segment
 
 	// Metadata pertaining to the operation's result.
@@ -139,16 +145,13 @@ func (c *Client) addOperationGetSegmentMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

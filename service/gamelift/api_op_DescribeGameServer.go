@@ -11,9 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	This operation is used with the Amazon GameLift FleetIQ solution and game
-//
-// server groups.
+//	This API works with the following fleet types: EC2 (FleetIQ)
 //
 // Retrieves information for a registered game server. Information includes game
 // server status, health check info, and the instance that the game server is
@@ -24,9 +22,9 @@ import (
 //
 // # Learn more
 //
-// [Amazon GameLift FleetIQ Guide]
+// [Amazon GameLift Servers FleetIQ Guide]
 //
-// [Amazon GameLift FleetIQ Guide]: https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html
+// [Amazon GameLift Servers FleetIQ Guide]: https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html
 func (c *Client) DescribeGameServer(ctx context.Context, params *DescribeGameServerInput, optFns ...func(*Options)) (*DescribeGameServerOutput, error) {
 	if params == nil {
 		params = &DescribeGameServerInput{}
@@ -157,16 +155,13 @@ func (c *Client) addOperationDescribeGameServerMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -118,6 +118,46 @@ func (CompressionEnum) Values() []CompressionEnum {
 	}
 }
 
+type ConnectorEgressType string
+
+// Enum values for ConnectorEgressType
+const (
+	ConnectorEgressTypeServiceManaged ConnectorEgressType = "SERVICE_MANAGED"
+	ConnectorEgressTypeVpcLattice     ConnectorEgressType = "VPC_LATTICE"
+)
+
+// Values returns all known values for ConnectorEgressType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConnectorEgressType) Values() []ConnectorEgressType {
+	return []ConnectorEgressType{
+		"SERVICE_MANAGED",
+		"VPC_LATTICE",
+	}
+}
+
+type ConnectorStatus string
+
+// Enum values for ConnectorStatus
+const (
+	ConnectorStatusActive  ConnectorStatus = "ACTIVE"
+	ConnectorStatusErrored ConnectorStatus = "ERRORED"
+	ConnectorStatusPending ConnectorStatus = "PENDING"
+)
+
+// Values returns all known values for ConnectorStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConnectorStatus) Values() []ConnectorStatus {
+	return []ConnectorStatus{
+		"ACTIVE",
+		"ERRORED",
+		"PENDING",
+	}
+}
+
 type CustomStepStatus string
 
 // Enum values for CustomStepStatus
@@ -354,6 +394,25 @@ func (IdentityProviderType) Values() []IdentityProviderType {
 	}
 }
 
+type IpAddressType string
+
+// Enum values for IpAddressType
+const (
+	IpAddressTypeIpv4      IpAddressType = "IPV4"
+	IpAddressTypeDualstack IpAddressType = "DUALSTACK"
+)
+
+// Values returns all known values for IpAddressType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IpAddressType) Values() []IpAddressType {
+	return []IpAddressType{
+		"IPV4",
+		"DUALSTACK",
+	}
+}
+
 type MapType string
 
 // Enum values for MapType
@@ -377,8 +436,9 @@ type MdnResponse string
 
 // Enum values for MdnResponse
 const (
-	MdnResponseSync MdnResponse = "SYNC"
-	MdnResponseNone MdnResponse = "NONE"
+	MdnResponseSync  MdnResponse = "SYNC"
+	MdnResponseNone  MdnResponse = "NONE"
+	MdnResponseAsync MdnResponse = "ASYNC"
 )
 
 // Values returns all known values for MdnResponse. Note that this can be expanded
@@ -389,6 +449,7 @@ func (MdnResponse) Values() []MdnResponse {
 	return []MdnResponse{
 		"SYNC",
 		"NONE",
+		"ASYNC",
 	}
 }
 
@@ -710,6 +771,25 @@ func (WebAppEndpointPolicy) Values() []WebAppEndpointPolicy {
 	return []WebAppEndpointPolicy{
 		"FIPS",
 		"STANDARD",
+	}
+}
+
+type WebAppEndpointType string
+
+// Enum values for WebAppEndpointType
+const (
+	WebAppEndpointTypePublic WebAppEndpointType = "PUBLIC"
+	WebAppEndpointTypeVpc    WebAppEndpointType = "VPC"
+)
+
+// Values returns all known values for WebAppEndpointType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (WebAppEndpointType) Values() []WebAppEndpointType {
+	return []WebAppEndpointType{
+		"PUBLIC",
+		"VPC",
 	}
 }
 

@@ -48,12 +48,16 @@ type CreateSecurityConfigInput struct {
 	// A description of the security configuration.
 	Description *string
 
+	// Describes IAM federation options in the form of a key-value map. This field is
+	// required if you specify iamFederation for the type parameter.
+	IamFederationOptions *types.IamFederationConfigOptions
+
 	// Describes IAM Identity Center options in the form of a key-value map. This
 	// field is required if you specify iamidentitycenter for the type parameter.
 	IamIdentityCenterOptions *types.CreateIamIdentityCenterConfigOptions
 
-	// Describes SAML options in in the form of a key-value map. This field is
-	// required if you specify saml for the type parameter.
+	// Describes SAML options in the form of a key-value map. This field is required
+	// if you specify SAML for the type parameter.
 	SamlOptions *types.SamlConfigOptions
 
 	noSmithyDocumentSerde
@@ -161,16 +165,13 @@ func (c *Client) addOperationCreateSecurityConfigMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

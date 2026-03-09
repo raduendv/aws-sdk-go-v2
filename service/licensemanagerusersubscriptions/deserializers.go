@@ -18,16 +18,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpAssociateUser struct {
 }
@@ -3135,6 +3126,15 @@ func awsRestjson1_deserializeDocumentActiveDirectoryIdentityProvider(v **types.A
 				sv.DirectoryId = ptr.String(jtv)
 			}
 
+		case "IsSharedActiveDirectory":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.IsSharedActiveDirectory = ptr.Bool(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -3173,6 +3173,11 @@ func awsRestjson1_deserializeDocumentActiveDirectorySettings(v **types.ActiveDir
 
 		case "DomainIpv4List":
 			if err := awsRestjson1_deserializeDocumentIpV4List(&sv.DomainIpv4List, value); err != nil {
+				return err
+			}
+
+		case "DomainIpv6List":
+			if err := awsRestjson1_deserializeDocumentIpV6List(&sv.DomainIpv6List, value); err != nil {
 				return err
 			}
 
@@ -3400,6 +3405,15 @@ func awsRestjson1_deserializeDocumentIdentityProviderSummary(v **types.IdentityP
 				sv.IdentityProviderArn = ptr.String(jtv)
 			}
 
+		case "OwnerAccountId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.OwnerAccountId = ptr.String(jtv)
+			}
+
 		case "Product":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -3488,6 +3502,11 @@ func awsRestjson1_deserializeDocumentInstanceSummary(v **types.InstanceSummary, 
 
 	for key, value := range shape {
 		switch key {
+		case "IdentityProvider":
+			if err := awsRestjson1_deserializeDocumentIdentityProvider(&sv.IdentityProvider, value); err != nil {
+				return err
+			}
+
 		case "InstanceId":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -3504,6 +3523,15 @@ func awsRestjson1_deserializeDocumentInstanceSummary(v **types.InstanceSummary, 
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.LastStatusCheckDate = ptr.String(jtv)
+			}
+
+		case "OwnerAccountId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.OwnerAccountId = ptr.String(jtv)
 			}
 
 		case "Products":
@@ -3790,6 +3818,42 @@ func awsRestjson1_deserializeDocumentIpV4List(v *[]string, value interface{}) er
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentIpV6List(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected IpV6 to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentLicenseServer(v **types.LicenseServer, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3828,6 +3892,15 @@ func awsRestjson1_deserializeDocumentLicenseServer(v **types.LicenseServer, valu
 					return fmt.Errorf("expected String to be of type string, got %T instead", value)
 				}
 				sv.Ipv4Address = ptr.String(jtv)
+			}
+
+		case "Ipv6Address":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected String to be of type string, got %T instead", value)
+				}
+				sv.Ipv6Address = ptr.String(jtv)
 			}
 
 		case "ProvisioningStatus":

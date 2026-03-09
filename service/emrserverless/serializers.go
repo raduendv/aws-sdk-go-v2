@@ -93,6 +93,10 @@ func awsRestjson1_serializeOpHttpBindingsCancelJobRunInput(v *CancelJobRunInput,
 		}
 	}
 
+	if v.ShutdownGracePeriodInSeconds != nil {
+		encoder.SetQuery("shutdownGracePeriodInSeconds").Integer(*v.ShutdownGracePeriodInSeconds)
+	}
+
 	return nil
 }
 
@@ -193,6 +197,20 @@ func awsRestjson1_serializeOpDocumentCreateApplicationInput(v *CreateApplication
 		ok.String(*v.ClientToken)
 	}
 
+	if v.DiskEncryptionConfiguration != nil {
+		ok := object.Key("diskEncryptionConfiguration")
+		if err := awsRestjson1_serializeDocumentDiskEncryptionConfiguration(v.DiskEncryptionConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.IdentityCenterConfiguration != nil {
+		ok := object.Key("identityCenterConfiguration")
+		if err := awsRestjson1_serializeDocumentIdentityCenterConfigurationInput(v.IdentityCenterConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.ImageConfiguration != nil {
 		ok := object.Key("imageConfiguration")
 		if err := awsRestjson1_serializeDocumentImageConfigurationInput(v.ImageConfiguration, ok); err != nil {
@@ -210,6 +228,13 @@ func awsRestjson1_serializeOpDocumentCreateApplicationInput(v *CreateApplication
 	if v.InteractiveConfiguration != nil {
 		ok := object.Key("interactiveConfiguration")
 		if err := awsRestjson1_serializeDocumentInteractiveConfiguration(v.InteractiveConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.JobLevelCostAllocationConfiguration != nil {
+		ok := object.Key("jobLevelCostAllocationConfiguration")
+		if err := awsRestjson1_serializeDocumentJobLevelCostAllocationConfiguration(v.JobLevelCostAllocationConfiguration, ok); err != nil {
 			return err
 		}
 	}
@@ -1096,6 +1121,13 @@ func awsRestjson1_serializeOpDocumentStartJobRunInput(v *StartJobRunInput, value
 		}
 	}
 
+	if v.ExecutionIamPolicy != nil {
+		ok := object.Key("executionIamPolicy")
+		if err := awsRestjson1_serializeDocumentJobRunExecutionIamPolicy(v.ExecutionIamPolicy, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.ExecutionRoleArn != nil {
 		ok := object.Key("executionRoleArn")
 		ok.String(*v.ExecutionRoleArn)
@@ -1494,6 +1526,20 @@ func awsRestjson1_serializeOpDocumentUpdateApplicationInput(v *UpdateApplication
 		ok.String(*v.ClientToken)
 	}
 
+	if v.DiskEncryptionConfiguration != nil {
+		ok := object.Key("diskEncryptionConfiguration")
+		if err := awsRestjson1_serializeDocumentDiskEncryptionConfiguration(v.DiskEncryptionConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.IdentityCenterConfiguration != nil {
+		ok := object.Key("identityCenterConfiguration")
+		if err := awsRestjson1_serializeDocumentIdentityCenterConfigurationInput(v.IdentityCenterConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.ImageConfiguration != nil {
 		ok := object.Key("imageConfiguration")
 		if err := awsRestjson1_serializeDocumentImageConfigurationInput(v.ImageConfiguration, ok); err != nil {
@@ -1511,6 +1557,13 @@ func awsRestjson1_serializeOpDocumentUpdateApplicationInput(v *UpdateApplication
 	if v.InteractiveConfiguration != nil {
 		ok := object.Key("interactiveConfiguration")
 		if err := awsRestjson1_serializeDocumentInteractiveConfiguration(v.InteractiveConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.JobLevelCostAllocationConfiguration != nil {
+		ok := object.Key("jobLevelCostAllocationConfiguration")
+		if err := awsRestjson1_serializeDocumentJobLevelCostAllocationConfiguration(v.JobLevelCostAllocationConfiguration, ok); err != nil {
 			return err
 		}
 	}
@@ -1678,6 +1731,13 @@ func awsRestjson1_serializeDocumentConfigurationOverrides(v *types.Configuration
 		}
 	}
 
+	if v.DiskEncryptionConfiguration != nil {
+		ok := object.Key("diskEncryptionConfiguration")
+		if err := awsRestjson1_serializeDocumentDiskEncryptionConfiguration(v.DiskEncryptionConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.MonitoringConfiguration != nil {
 		ok := object.Key("monitoringConfiguration")
 		if err := awsRestjson1_serializeDocumentMonitoringConfiguration(v.MonitoringConfiguration, ok); err != nil {
@@ -1685,6 +1745,36 @@ func awsRestjson1_serializeDocumentConfigurationOverrides(v *types.Configuration
 		}
 	}
 
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDiskEncryptionConfiguration(v *types.DiskEncryptionConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.EncryptionContext != nil {
+		ok := object.Key("encryptionContext")
+		if err := awsRestjson1_serializeDocumentEncryptionContext(v.EncryptionContext, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.EncryptionKeyArn != nil {
+		ok := object.Key("encryptionKeyArn")
+		ok.String(*v.EncryptionKeyArn)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentEncryptionContext(v map[string]string, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	for key := range v {
+		om := object.Key(key)
+		om.String(v[key])
+	}
 	return nil
 }
 
@@ -1716,6 +1806,23 @@ func awsRestjson1_serializeDocumentHive(v *types.Hive, value smithyjson.Value) e
 	if v.Query != nil {
 		ok := object.Key("query")
 		ok.String(*v.Query)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentIdentityCenterConfigurationInput(v *types.IdentityCenterConfigurationInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.IdentityCenterInstanceArn != nil {
+		ok := object.Key("identityCenterInstanceArn")
+		ok.String(*v.IdentityCenterInstanceArn)
+	}
+
+	if v.UserBackgroundSessionsEnabled != nil {
+		ok := object.Key("userBackgroundSessionsEnabled")
+		ok.Boolean(*v.UserBackgroundSessionsEnabled)
 	}
 
 	return nil
@@ -1804,6 +1911,37 @@ func awsRestjson1_serializeDocumentJobDriver(v types.JobDriver, value smithyjson
 		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
 
 	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentJobLevelCostAllocationConfiguration(v *types.JobLevelCostAllocationConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Enabled != nil {
+		ok := object.Key("enabled")
+		ok.Boolean(*v.Enabled)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentJobRunExecutionIamPolicy(v *types.JobRunExecutionIamPolicy, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Policy != nil {
+		ok := object.Key("policy")
+		ok.String(*v.Policy)
+	}
+
+	if v.PolicyArns != nil {
+		ok := object.Key("policyArns")
+		if err := awsRestjson1_serializeDocumentPolicyArnList(v.PolicyArns, ok); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -1926,6 +2064,17 @@ func awsRestjson1_serializeDocumentNetworkConfiguration(v *types.NetworkConfigur
 		}
 	}
 
+	return nil
+}
+
+func awsRestjson1_serializeDocumentPolicyArnList(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
 	return nil
 }
 

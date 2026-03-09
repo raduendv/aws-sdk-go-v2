@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Gets the status, metrics, and errors (if there are any) that are associated
+// Returns the status, metrics, and errors (if there are any) that are associated
 // with a job.
 func (c *Client) GetMatchingJob(ctx context.Context, params *GetMatchingJobInput, optFns ...func(*Options)) (*GetMatchingJobOutput, error) {
 	if params == nil {
@@ -46,7 +46,7 @@ type GetMatchingJobInput struct {
 
 type GetMatchingJobOutput struct {
 
-	// The ID of the job.
+	// The unique identifier of the matching job.
 	//
 	// This member is required.
 	JobId *string
@@ -168,16 +168,13 @@ func (c *Client) addOperationGetMatchingJobMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

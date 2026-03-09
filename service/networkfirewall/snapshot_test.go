@@ -62,6 +62,30 @@ func testSnapshot(stack *middleware.Stack, operation string) error {
 	}
 	return snapshotOK{}
 }
+func TestCheckSnapshot_AcceptNetworkFirewallTransitGatewayAttachment(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AcceptNetworkFirewallTransitGatewayAttachment(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AcceptNetworkFirewallTransitGatewayAttachment")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_AssociateAvailabilityZones(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AssociateAvailabilityZones(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AssociateAvailabilityZones")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_AssociateFirewallPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.AssociateFirewallPolicy(context.Background(), nil, func(o *Options) {
@@ -79,6 +103,18 @@ func TestCheckSnapshot_AssociateSubnets(t *testing.T) {
 	_, err := svc.AssociateSubnets(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "AssociateSubnets")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_AttachRuleGroupsToProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AttachRuleGroupsToProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AttachRuleGroupsToProxyConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -110,6 +146,54 @@ func TestCheckSnapshot_CreateFirewallPolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateProxy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateProxy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateProxy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateProxyRuleGroup(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateProxyRuleGroup(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateProxyRuleGroup")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateProxyRules(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateProxyRules(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateProxyRules")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateRuleGroup(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateRuleGroup(context.Background(), nil, func(o *Options) {
@@ -134,6 +218,18 @@ func TestCheckSnapshot_CreateTLSInspectionConfiguration(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateVpcEndpointAssociation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateVpcEndpointAssociation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateVpcEndpointAssociation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteFirewall(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteFirewall(context.Background(), nil, func(o *Options) {
@@ -151,6 +247,66 @@ func TestCheckSnapshot_DeleteFirewallPolicy(t *testing.T) {
 	_, err := svc.DeleteFirewallPolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteFirewallPolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteNetworkFirewallTransitGatewayAttachment(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteNetworkFirewallTransitGatewayAttachment(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteNetworkFirewallTransitGatewayAttachment")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteProxy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProxy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteProxy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteProxyRuleGroup(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProxyRuleGroup(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteProxyRuleGroup")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteProxyRules(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProxyRules(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteProxyRules")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -194,11 +350,35 @@ func TestCheckSnapshot_DeleteTLSInspectionConfiguration(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteVpcEndpointAssociation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteVpcEndpointAssociation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteVpcEndpointAssociation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeFirewall(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeFirewall(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeFirewall")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeFirewallMetadata(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeFirewallMetadata(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeFirewallMetadata")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -242,6 +422,54 @@ func TestCheckSnapshot_DescribeLoggingConfiguration(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeProxy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeProxy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeProxy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeProxyRule(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeProxyRule(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeProxyRule")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeProxyRuleGroup(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeProxyRuleGroup(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeProxyRuleGroup")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeResourcePolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeResourcePolicy(context.Background(), nil, func(o *Options) {
@@ -278,11 +506,59 @@ func TestCheckSnapshot_DescribeRuleGroupMetadata(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeRuleGroupSummary(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeRuleGroupSummary(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeRuleGroupSummary")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeTLSInspectionConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeTLSInspectionConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeTLSInspectionConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeVpcEndpointAssociation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeVpcEndpointAssociation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeVpcEndpointAssociation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DetachRuleGroupsFromProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DetachRuleGroupsFromProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DetachRuleGroupsFromProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DisassociateAvailabilityZones(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DisassociateAvailabilityZones(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DisassociateAvailabilityZones")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -374,6 +650,42 @@ func TestCheckSnapshot_ListFlowOperations(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListProxies(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListProxies(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListProxies")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListProxyConfigurations(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListProxyConfigurations(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListProxyConfigurations")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListProxyRuleGroups(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListProxyRuleGroups(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListProxyRuleGroups")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListRuleGroups(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListRuleGroups(context.Background(), nil, func(o *Options) {
@@ -410,11 +722,35 @@ func TestCheckSnapshot_ListTLSInspectionConfigurations(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListVpcEndpointAssociations(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListVpcEndpointAssociations(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListVpcEndpointAssociations")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_PutResourcePolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutResourcePolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "PutResourcePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_RejectNetworkFirewallTransitGatewayAttachment(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RejectNetworkFirewallTransitGatewayAttachment(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "RejectNetworkFirewallTransitGatewayAttachment")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -475,6 +811,18 @@ func TestCheckSnapshot_UntagResource(t *testing.T) {
 	_, err := svc.UntagResource(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UntagResource")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateAvailabilityZoneChangeProtection(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateAvailabilityZoneChangeProtection(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateAvailabilityZoneChangeProtection")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -566,6 +914,66 @@ func TestCheckSnapshot_UpdateLoggingConfiguration(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateProxy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateProxy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateProxyRule(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxyRule(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateProxyRule")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateProxyRuleGroupPriorities(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxyRuleGroupPriorities(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateProxyRuleGroupPriorities")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateProxyRulePriorities(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxyRulePriorities(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateProxyRulePriorities")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateRuleGroup(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateRuleGroup(context.Background(), nil, func(o *Options) {
@@ -601,6 +1009,30 @@ func TestCheckSnapshot_UpdateTLSInspectionConfiguration(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func TestUpdateSnapshot_AcceptNetworkFirewallTransitGatewayAttachment(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AcceptNetworkFirewallTransitGatewayAttachment(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AcceptNetworkFirewallTransitGatewayAttachment")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_AssociateAvailabilityZones(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AssociateAvailabilityZones(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AssociateAvailabilityZones")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_AssociateFirewallPolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.AssociateFirewallPolicy(context.Background(), nil, func(o *Options) {
@@ -618,6 +1050,18 @@ func TestUpdateSnapshot_AssociateSubnets(t *testing.T) {
 	_, err := svc.AssociateSubnets(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "AssociateSubnets")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_AttachRuleGroupsToProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AttachRuleGroupsToProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AttachRuleGroupsToProxyConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -649,6 +1093,54 @@ func TestUpdateSnapshot_CreateFirewallPolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateProxy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateProxy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateProxy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateProxyRuleGroup(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateProxyRuleGroup(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateProxyRuleGroup")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateProxyRules(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateProxyRules(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateProxyRules")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateRuleGroup(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateRuleGroup(context.Background(), nil, func(o *Options) {
@@ -673,6 +1165,18 @@ func TestUpdateSnapshot_CreateTLSInspectionConfiguration(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateVpcEndpointAssociation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateVpcEndpointAssociation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateVpcEndpointAssociation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteFirewall(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteFirewall(context.Background(), nil, func(o *Options) {
@@ -690,6 +1194,66 @@ func TestUpdateSnapshot_DeleteFirewallPolicy(t *testing.T) {
 	_, err := svc.DeleteFirewallPolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteFirewallPolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteNetworkFirewallTransitGatewayAttachment(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteNetworkFirewallTransitGatewayAttachment(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteNetworkFirewallTransitGatewayAttachment")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteProxy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProxy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteProxy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteProxyRuleGroup(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProxyRuleGroup(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteProxyRuleGroup")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteProxyRules(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProxyRules(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteProxyRules")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -733,11 +1297,35 @@ func TestUpdateSnapshot_DeleteTLSInspectionConfiguration(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteVpcEndpointAssociation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteVpcEndpointAssociation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteVpcEndpointAssociation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeFirewall(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeFirewall(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeFirewall")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeFirewallMetadata(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeFirewallMetadata(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeFirewallMetadata")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -781,6 +1369,54 @@ func TestUpdateSnapshot_DescribeLoggingConfiguration(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeProxy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeProxy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeProxy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeProxyRule(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeProxyRule(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeProxyRule")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeProxyRuleGroup(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeProxyRuleGroup(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeProxyRuleGroup")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeResourcePolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeResourcePolicy(context.Background(), nil, func(o *Options) {
@@ -817,11 +1453,59 @@ func TestUpdateSnapshot_DescribeRuleGroupMetadata(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeRuleGroupSummary(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeRuleGroupSummary(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeRuleGroupSummary")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeTLSInspectionConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeTLSInspectionConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeTLSInspectionConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeVpcEndpointAssociation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeVpcEndpointAssociation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeVpcEndpointAssociation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DetachRuleGroupsFromProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DetachRuleGroupsFromProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DetachRuleGroupsFromProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DisassociateAvailabilityZones(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DisassociateAvailabilityZones(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DisassociateAvailabilityZones")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -913,6 +1597,42 @@ func TestUpdateSnapshot_ListFlowOperations(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListProxies(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListProxies(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListProxies")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListProxyConfigurations(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListProxyConfigurations(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListProxyConfigurations")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListProxyRuleGroups(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListProxyRuleGroups(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListProxyRuleGroups")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListRuleGroups(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListRuleGroups(context.Background(), nil, func(o *Options) {
@@ -949,11 +1669,35 @@ func TestUpdateSnapshot_ListTLSInspectionConfigurations(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListVpcEndpointAssociations(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListVpcEndpointAssociations(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListVpcEndpointAssociations")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_PutResourcePolicy(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutResourcePolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "PutResourcePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_RejectNetworkFirewallTransitGatewayAttachment(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RejectNetworkFirewallTransitGatewayAttachment(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "RejectNetworkFirewallTransitGatewayAttachment")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1014,6 +1758,18 @@ func TestUpdateSnapshot_UntagResource(t *testing.T) {
 	_, err := svc.UntagResource(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UntagResource")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateAvailabilityZoneChangeProtection(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateAvailabilityZoneChangeProtection(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateAvailabilityZoneChangeProtection")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1098,6 +1854,66 @@ func TestUpdateSnapshot_UpdateLoggingConfiguration(t *testing.T) {
 	_, err := svc.UpdateLoggingConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateProxy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateProxy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateProxyConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxyConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateProxyConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateProxyRule(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxyRule(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateProxyRule")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateProxyRuleGroupPriorities(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxyRuleGroupPriorities(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateProxyRuleGroupPriorities")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateProxyRulePriorities(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateProxyRulePriorities(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateProxyRulePriorities")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

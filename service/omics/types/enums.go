@@ -833,6 +833,27 @@ func (ShareStatus) Values() []ShareStatus {
 	}
 }
 
+type SourceReferenceType string
+
+// Enum values for SourceReferenceType
+const (
+	SourceReferenceTypeBranch SourceReferenceType = "BRANCH"
+	SourceReferenceTypeTag    SourceReferenceType = "TAG"
+	SourceReferenceTypeCommit SourceReferenceType = "COMMIT"
+)
+
+// Values returns all known values for SourceReferenceType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SourceReferenceType) Values() []SourceReferenceType {
+	return []SourceReferenceType{
+		"BRANCH",
+		"TAG",
+		"COMMIT",
+	}
+}
+
 type StorageType string
 
 // Enum values for StorageType
@@ -988,9 +1009,10 @@ type WorkflowEngine string
 
 // Enum values for WorkflowEngine
 const (
-	WorkflowEngineWdl      WorkflowEngine = "WDL"
-	WorkflowEngineNextflow WorkflowEngine = "NEXTFLOW"
-	WorkflowEngineCwl      WorkflowEngine = "CWL"
+	WorkflowEngineWdl        WorkflowEngine = "WDL"
+	WorkflowEngineNextflow   WorkflowEngine = "NEXTFLOW"
+	WorkflowEngineCwl        WorkflowEngine = "CWL"
+	WorkflowEngineWdlLenient WorkflowEngine = "WDL_LENIENT"
 )
 
 // Values returns all known values for WorkflowEngine. Note that this can be
@@ -1002,6 +1024,7 @@ func (WorkflowEngine) Values() []WorkflowEngine {
 		"WDL",
 		"NEXTFLOW",
 		"CWL",
+		"WDL_LENIENT",
 	}
 }
 
@@ -1010,6 +1033,7 @@ type WorkflowExport string
 // Enum values for WorkflowExport
 const (
 	WorkflowExportDefinition WorkflowExport = "DEFINITION"
+	WorkflowExportReadme     WorkflowExport = "README"
 )
 
 // Values returns all known values for WorkflowExport. Note that this can be
@@ -1019,6 +1043,7 @@ const (
 func (WorkflowExport) Values() []WorkflowExport {
 	return []WorkflowExport{
 		"DEFINITION",
+		"README",
 	}
 }
 

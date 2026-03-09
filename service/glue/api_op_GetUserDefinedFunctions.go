@@ -43,6 +43,14 @@ type GetUserDefinedFunctionsInput struct {
 	// provided, functions from all the databases across the catalog will be returned.
 	DatabaseName *string
 
+	// An optional function-type pattern string that filters the function definitions
+	// returned from Amazon Redshift Federated Permissions Catalog.
+	//
+	// Specify a value of REGULAR_FUNCTION or STORED_PROCEDURE . The STORED_PROCEDURE
+	// function type is only compatible with Amazon Redshift Federated Permissions
+	// Catalog.
+	FunctionType types.FunctionType
+
 	// The maximum number of functions to return in one response.
 	MaxResults *int32
 
@@ -155,16 +163,13 @@ func (c *Client) addOperationGetUserDefinedFunctionsMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

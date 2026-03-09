@@ -601,6 +601,25 @@ func (AnalyticsUtteranceSortByName) Values() []AnalyticsUtteranceSortByName {
 	}
 }
 
+type AssistedNluMode string
+
+// Enum values for AssistedNluMode
+const (
+	AssistedNluModePrimary  AssistedNluMode = "Primary"
+	AssistedNluModeFallback AssistedNluMode = "Fallback"
+)
+
+// Values returns all known values for AssistedNluMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AssistedNluMode) Values() []AssistedNluMode {
+	return []AssistedNluMode{
+		"Primary",
+		"Fallback",
+	}
+}
+
 type AssociatedTranscriptFilterName string
 
 // Enum values for AssociatedTranscriptFilterName
@@ -1840,6 +1859,48 @@ func (SortOrder) Values() []SortOrder {
 	return []SortOrder{
 		"Ascending",
 		"Descending",
+	}
+}
+
+type SpeechDetectionSensitivity string
+
+// Enum values for SpeechDetectionSensitivity
+const (
+	SpeechDetectionSensitivityDefault               SpeechDetectionSensitivity = "Default"
+	SpeechDetectionSensitivityHighNoiseTolerance    SpeechDetectionSensitivity = "HighNoiseTolerance"
+	SpeechDetectionSensitivityMaximumNoiseTolerance SpeechDetectionSensitivity = "MaximumNoiseTolerance"
+)
+
+// Values returns all known values for SpeechDetectionSensitivity. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SpeechDetectionSensitivity) Values() []SpeechDetectionSensitivity {
+	return []SpeechDetectionSensitivity{
+		"Default",
+		"HighNoiseTolerance",
+		"MaximumNoiseTolerance",
+	}
+}
+
+type SpeechModelPreference string
+
+// Enum values for SpeechModelPreference
+const (
+	SpeechModelPreferenceStandard SpeechModelPreference = "Standard"
+	SpeechModelPreferenceNeural   SpeechModelPreference = "Neural"
+	SpeechModelPreferenceDeepgram SpeechModelPreference = "Deepgram"
+)
+
+// Values returns all known values for SpeechModelPreference. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SpeechModelPreference) Values() []SpeechModelPreference {
+	return []SpeechModelPreference{
+		"Standard",
+		"Neural",
+		"Deepgram",
 	}
 }
 

@@ -11,7 +11,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Provides a list of the first 100 RUNNABLE jobs associated to a single job queue.
+// Provides a list of the first 100 RUNNABLE jobs associated to a single job queue
+// and includes capacity utilization, including total usage and breakdown by share
+// for fairshare scheduling job queues.
 func (c *Client) GetJobQueueSnapshot(ctx context.Context, params *GetJobQueueSnapshotInput, optFns ...func(*Options)) (*GetJobQueueSnapshotOutput, error) {
 	if params == nil {
 		params = &GetJobQueueSnapshotInput{}
@@ -44,6 +46,10 @@ type GetJobQueueSnapshotOutput struct {
 	// time. For fair-share scheduling (FSS) job queues, jobs are ordered based on
 	// their job priority and share usage.
 	FrontOfQueue *types.FrontOfQueueDetail
+
+	// The job queue's capacity utilization, including total usage and breakdown by
+	// fairshare scheduling queue.
+	QueueUtilization *types.QueueSnapshotUtilizationDetail
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -139,16 +145,13 @@ func (c *Client) addOperationGetJobQueueSnapshotMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

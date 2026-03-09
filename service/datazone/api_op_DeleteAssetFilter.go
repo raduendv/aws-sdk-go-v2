@@ -11,6 +11,14 @@ import (
 )
 
 // Deletes an asset filter.
+//
+// Prerequisites:
+//
+//   - The asset filter must exist.
+//
+//   - The domain and asset must not have been deleted.
+//
+//   - Ensure the --identifier refers to a valid filter ID.
 func (c *Client) DeleteAssetFilter(ctx context.Context, params *DeleteAssetFilterInput, optFns ...func(*Options)) (*DeleteAssetFilterOutput, error) {
 	if params == nil {
 		params = &DeleteAssetFilterInput{}
@@ -141,16 +149,13 @@ func (c *Client) addOperationDeleteAssetFilterMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

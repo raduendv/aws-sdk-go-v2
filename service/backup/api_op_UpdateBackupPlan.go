@@ -64,6 +64,10 @@ type UpdateBackupPlanOutput struct {
 	// 12:11:30.087 AM.
 	CreationDate *time.Time
 
+	// Contains your scanning configuration for the backup plan and includes the
+	// Malware scanner, your selected resources, and scanner role.
+	ScanSettings []types.ScanSetting
+
 	// Unique, randomly generated, Unicode, UTF-8 encoded strings that are at most
 	// 1,024 bytes long. Version Ids cannot be edited.
 	VersionId *string
@@ -162,16 +166,13 @@ func (c *Client) addOperationUpdateBackupPlanMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Grants permission to close an existing case.
+// Closes an existing case.
 func (c *Client) CloseCase(ctx context.Context, params *CloseCaseInput, optFns ...func(*Options)) (*CloseCaseOutput, error) {
 	if params == nil {
 		params = &CloseCaseInput{}
@@ -42,11 +42,12 @@ type CloseCaseInput struct {
 type CloseCaseOutput struct {
 
 	// A response element providing responses for requests to CloseCase. This element
-	// responds with the case status following the action.
+	// responds Closed  if successful.
 	CaseStatus types.CaseStatus
 
 	// A response element providing responses for requests to CloseCase. This element
-	// responds with the case closure date following the action.
+	// responds with the ISO-8601 formatted timestamp of the moment when the case was
+	// closed.
 	ClosedDate *time.Time
 
 	// Metadata pertaining to the operation's result.
@@ -143,16 +144,13 @@ func (c *Client) addOperationCloseCaseMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

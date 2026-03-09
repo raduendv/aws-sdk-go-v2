@@ -53,7 +53,7 @@ type ExportTableToPointInTimeInput struct {
 	//
 	// If you submit a request with the same client token but a change in other
 	// parameters within the 8-hour idempotency window, DynamoDB returns an
-	// ImportConflictException .
+	// ExportConflictException .
 	ClientToken *string
 
 	// The format for the exported data. Valid values for ExportFormat are
@@ -217,16 +217,13 @@ func (c *Client) addOperationExportTableToPointInTimeMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

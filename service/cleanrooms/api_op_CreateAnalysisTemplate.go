@@ -44,8 +44,7 @@ type CreateAnalysisTemplateInput struct {
 	// This member is required.
 	Name *string
 
-	// The information in the analysis template. Currently supports text , the query
-	// text for the analysis template.
+	// The information in the analysis template.
 	//
 	// This member is required.
 	Source types.AnalysisSource
@@ -56,8 +55,18 @@ type CreateAnalysisTemplateInput struct {
 	// The description of the analysis template.
 	Description *string
 
+	// The configuration that specifies the level of detail in error messages returned
+	// by analyses using this template. When set to DETAILED , error messages include
+	// more information to help troubleshoot issues with PySpark jobs. Detailed error
+	// messages may expose underlying data, including sensitive information.
+	// Recommended for faster troubleshooting in development and testing environments.
+	ErrorMessageConfiguration *types.ErrorMessageConfiguration
+
 	// A relation within an analysis.
 	Schema *types.AnalysisSchema
+
+	// The parameters for generating synthetic data when running the analysis template.
+	SyntheticDataParameters types.SyntheticDataParameters
 
 	// An optional label that you can assign to a resource when you create it. Each
 	// tag consists of a key and an optional value, both of which you define. When you
@@ -169,16 +178,13 @@ func (c *Client) addOperationCreateAnalysisTemplateMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

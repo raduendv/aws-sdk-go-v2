@@ -32,11 +32,9 @@ type ListComponentBuildVersionsInput struct {
 
 	// The component version Amazon Resource Name (ARN) whose versions you want to
 	// list.
-	//
-	// This member is required.
 	ComponentVersionArn *string
 
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	MaxResults *int32
 
 	// A token to specify where to start paginating. This is the nextToken from a
@@ -132,9 +130,6 @@ func (c *Client) addOperationListComponentBuildVersionsMiddlewares(stack *middle
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
-	if err = addOpListComponentBuildVersionsValidationMiddleware(stack); err != nil {
-		return err
-	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opListComponentBuildVersions(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -153,16 +148,13 @@ func (c *Client) addOperationListComponentBuildVersionsMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -171,7 +163,7 @@ func (c *Client) addOperationListComponentBuildVersionsMiddlewares(stack *middle
 // ListComponentBuildVersionsPaginatorOptions is the paginator options for
 // ListComponentBuildVersions
 type ListComponentBuildVersionsPaginatorOptions struct {
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	Limit int32
 
 	// Set to true if pagination should stop if the service returns a pagination token

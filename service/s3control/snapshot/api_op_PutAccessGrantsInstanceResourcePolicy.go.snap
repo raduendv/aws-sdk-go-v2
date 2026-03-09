@@ -1,15 +1,12 @@
 PutAccessGrantsInstanceResourcePolicy
 	Initialize stack step
-		spanInitializeStart
 		S3Shared:ARNLookup
 		S3Control:BackfillInput
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		stashOperationInput
 		ResolveEndpoint
 		setArnFieldName
@@ -25,10 +22,11 @@ PutAccessGrantsInstanceResourcePolicy
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

@@ -11,7 +11,7 @@ import (
 )
 
 // This API is in preview release for Amazon Connect and is subject to change. To
-// request access to this API, contact Amazon Web ServicesSupport.
+// request access to this API, contact Amazon Web Services Support.
 //
 // Updates the selected authentication profile.
 func (c *Client) UpdateAuthenticationProfile(ctx context.Context, params *UpdateAuthenticationProfileInput, optFns ...func(*Options)) (*UpdateAuthenticationProfileOutput, error) {
@@ -71,7 +71,17 @@ type UpdateAuthenticationProfileInput struct {
 	// configure IP addresses, see [Configure session timeouts]in the Amazon Connect Administrator Guide.
 	//
 	// [Configure session timeouts]: https://docs.aws.amazon.com/connect/latest/adminguide/authentication-profiles.html#configure-session-timeouts
+	//
+	// Deprecated: PeriodicSessionDuration is deprecated. Use
+	// SessionInactivityDuration instead.
 	PeriodicSessionDuration *int32
+
+	// The period, in minutes, before an agent is automatically signed out of the
+	// contact center when they go inactive.
+	SessionInactivityDuration *int32
+
+	// Determines if automatic logout on user inactivity is enabled.
+	SessionInactivityHandlingEnabled *bool
 
 	noSmithyDocumentSerde
 }
@@ -171,16 +181,13 @@ func (c *Client) addOperationUpdateAuthenticationProfileMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

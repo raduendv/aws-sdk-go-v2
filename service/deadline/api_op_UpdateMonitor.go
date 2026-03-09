@@ -41,7 +41,7 @@ type UpdateMonitorInput struct {
 	// of this field.
 	DisplayName *string
 
-	// The Amazon Resource Name (ARN) of the new IAM role to use with the monitor.
+	// The Amazon Resource Name of the new IAM role to use with the monitor.
 	RoleArn *string
 
 	// The new value of the subdomain to use when forming the monitor URL.
@@ -148,16 +148,13 @@ func (c *Client) addOperationUpdateMonitorMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,8 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves information on the compute resources in an Amazon GameLift fleet. Use
-// the pagination parameters to retrieve results in a set of sequential pages.
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
+// Retrieves information on the compute resources in an Amazon GameLift Servers
+// fleet. Use the pagination parameters to retrieve results in a set of sequential
+// pages.
 //
 // Request options
 //
@@ -74,9 +77,9 @@ type ListComputeInput struct {
 	Limit *int32
 
 	// The name of a location to retrieve compute resources for. For an Amazon
-	// GameLift Anywhere fleet, use a custom location. For a managed fleet, provide a
-	// Amazon Web Services Region or Local Zone code (for example: us-west-2 or
-	// us-west-2-lax-1 ).
+	// GameLift Servers Anywhere fleet, use a custom location. For a managed fleet,
+	// provide a Amazon Web Services Region or Local Zone code (for example: us-west-2
+	// or us-west-2-lax-1 ).
 	Location *string
 
 	// A token that indicates the start of the next sequential page of results. Use
@@ -191,16 +194,13 @@ func (c *Client) addOperationListComputeMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

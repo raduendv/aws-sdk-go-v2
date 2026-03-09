@@ -11,21 +11,21 @@ import (
 )
 
 // Generates a session URL and authorization code that you can use to embed the
-// Amazon Amazon QuickSight console in your web server code. Use GetSessionEmbedUrl
-// where you want to provide an authoring portal that allows users to create data
-// sources, datasets, analyses, and dashboards. The users who access an embedded
-// Amazon QuickSight console need belong to the author or admin security cohort. If
-// you want to restrict permissions to some of these features, add a custom
-// permissions profile to the user with the [UpdateUser]API operation. Use [RegisterUser] API operation to
-// add a new user with a custom permission profile attached. For more information,
-// see the following sections in the Amazon QuickSight User Guide:
+// Amazon Amazon Quick Sight console in your web server code. Use
+// GetSessionEmbedUrl where you want to provide an authoring portal that allows
+// users to create data sources, datasets, analyses, and dashboards. The users who
+// access an embedded Amazon Quick Sight console need belong to the author or admin
+// security cohort. If you want to restrict permissions to some of these features,
+// add a custom permissions profile to the user with the [UpdateUser]API operation. Use [RegisterUser] API
+// operation to add a new user with a custom permission profile attached. For more
+// information, see the following sections in the Amazon Quick Suite User Guide:
 //
 // [Embedding Analytics]
 //
-// [Customizing Access to the Amazon QuickSight Console]
+// [Customizing Access to the Amazon Quick Suite Console]
 //
-// [Customizing Access to the Amazon QuickSight Console]: https://docs.aws.amazon.com/quicksight/latest/user/customizing-permissions-to-the-quicksight-console.html
 // [UpdateUser]: https://docs.aws.amazon.com/quicksight/latest/APIReference/API_UpdateUser.html
+// [Customizing Access to the Amazon Quick Suite Console]: https://docs.aws.amazon.com/quicksight/latest/user/customizing-permissions-to-the-quicksight-console.html
 // [RegisterUser]: https://docs.aws.amazon.com/quicksight/latest/APIReference/API_RegisterUser.html
 // [Embedding Analytics]: https://docs.aws.amazon.com/quicksight/latest/user/embedded-analytics.html
 func (c *Client) GetSessionEmbedUrl(ctx context.Context, params *GetSessionEmbedUrlInput, optFns ...func(*Options)) (*GetSessionEmbedUrlOutput, error) {
@@ -45,8 +45,8 @@ func (c *Client) GetSessionEmbedUrl(ctx context.Context, params *GetSessionEmbed
 
 type GetSessionEmbedUrlInput struct {
 
-	// The ID for the Amazon Web Services account associated with your Amazon
-	// QuickSight subscription.
+	// The ID for the Amazon Web Services account associated with your Amazon Quick
+	// Sight subscription.
 	//
 	// This member is required.
 	AwsAccountId *string
@@ -63,20 +63,20 @@ type GetSessionEmbedUrlInput struct {
 	//   - /start/favorites
 	//
 	//   - /dashboards/DashboardId - where DashboardId is the actual ID key from the
-	//   Amazon QuickSight console URL of the dashboard
+	//   Amazon Quick Sight console URL of the dashboard
 	//
 	//   - /analyses/AnalysisId - where AnalysisId is the actual ID key from the Amazon
-	//   QuickSight console URL of the analysis
+	//   Quick Sight console URL of the analysis
 	EntryPoint *string
 
 	// How many minutes the session is valid. The session lifetime must be 15-600
 	// minutes.
 	SessionLifetimeInMinutes *int64
 
-	// The Amazon QuickSight user's Amazon Resource Name (ARN), for use with QUICKSIGHT
-	// identity type. You can use this for any type of Amazon QuickSight users in your
-	// account (readers, authors, or admins). They need to be authenticated as one of
-	// the following:
+	// The Amazon Quick Suite user's Amazon Resource Name (ARN), for use with
+	// QUICKSIGHT identity type. You can use this for any type of Amazon Quick Suite
+	// users in your account (readers, authors, or admins). They need to be
+	// authenticated as one of the following:
 	//
 	//   - Active Directory (AD) users or group members
 	//
@@ -95,9 +95,9 @@ type GetSessionEmbedUrlInput struct {
 type GetSessionEmbedUrlOutput struct {
 
 	// A single-use URL that you can put into your server-side web page to embed your
-	// Amazon QuickSight session. This URL is valid for 5 minutes. The API operation
-	// provides the URL with an auth_code value that enables one (and only one)
-	// sign-on to a user session that is valid for 10 hours.
+	// Quick Suite session. This URL is valid for 5 minutes. The API operation provides
+	// the URL with an auth_code value that enables one (and only one) sign-on to a
+	// user session that is valid for 10 hours.
 	EmbedUrl *string
 
 	// The Amazon Web Services request ID for this operation.
@@ -200,16 +200,13 @@ func (c *Client) addOperationGetSessionEmbedUrlMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

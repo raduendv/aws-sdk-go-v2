@@ -73,6 +73,12 @@ type UpdateInputInput struct {
 	// Destinations empty.
 	Sources []types.InputSourceRequest
 
+	// When using MediaConnect Router as the source of a MediaLive input there's a
+	// special handoff that occurs when a router output is created. This group of
+	// settings is set on your behalf by the MediaConnect Router service using this set
+	// of settings. This setting object can only by used by that service.
+	SpecialRouterSettings *types.SpecialRouterSettings
+
 	// The settings associated with an SRT input.
 	SrtSettings *types.SrtSettingsRequest
 
@@ -179,16 +185,13 @@ func (c *Client) addOperationUpdateInputMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

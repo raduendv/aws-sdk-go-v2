@@ -36,7 +36,7 @@ func (c *Client) PutTableMaintenanceConfiguration(ctx context.Context, params *P
 
 type PutTableMaintenanceConfigurationInput struct {
 
-	// The name of the maintenance configuration.
+	// The name of the table.
 	//
 	// This member is required.
 	Name *string
@@ -160,16 +160,13 @@ func (c *Client) addOperationPutTableMaintenanceConfigurationMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

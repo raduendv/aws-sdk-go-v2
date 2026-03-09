@@ -15,6 +15,8 @@ import (
 // of an environment template is a version that isn't backwards compatible. A minor
 // version of an environment template is a version that's backwards compatible
 // within its major version.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) CreateEnvironmentTemplateVersion(ctx context.Context, params *CreateEnvironmentTemplateVersionInput, optFns ...func(*Options)) (*CreateEnvironmentTemplateVersionOutput, error) {
 	if params == nil {
 		params = &CreateEnvironmentTemplateVersionInput{}
@@ -172,16 +174,13 @@ func (c *Client) addOperationCreateEnvironmentTemplateVersionMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

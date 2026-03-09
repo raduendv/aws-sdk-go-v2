@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Changes the state of a signing job to REVOKED. This indicates that the
+// Changes the state of a signing job to REVOKED . This indicates that the
 // signature is no longer valid.
 func (c *Client) RevokeSignature(ctx context.Context, params *RevokeSignatureInput, optFns ...func(*Options)) (*RevokeSignatureOutput, error) {
 	if params == nil {
@@ -140,16 +140,13 @@ func (c *Client) addOperationRevokeSignatureMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

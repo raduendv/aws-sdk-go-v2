@@ -69,6 +69,11 @@ type GetIPSetOutput struct {
 	// This member is required.
 	Status types.IpSetStatus
 
+	// The Amazon Web Services account ID that owns the Amazon S3 bucket specified in
+	// the location parameter. This field appears in the response only if it was
+	// provided during IPSet creation or update.
+	ExpectedBucketOwner *string
+
 	// The tags of the IPSet resource.
 	Tags map[string]string
 
@@ -166,16 +171,13 @@ func (c *Client) addOperationGetIPSetMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

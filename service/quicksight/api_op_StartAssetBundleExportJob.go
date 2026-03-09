@@ -13,13 +13,13 @@ import (
 
 // Starts an Asset Bundle export job.
 //
-// An Asset Bundle export job exports specified Amazon QuickSight assets. You can
+// An Asset Bundle export job exports specified Amazon Quick Sight assets. You can
 // also choose to export any asset dependencies in the same job. Export jobs run
 // asynchronously and can be polled with a DescribeAssetBundleExportJob API call.
 // When a job is successfully completed, a download URL that contains the exported
 // assets is returned. The URL is valid for 5 minutes and can be refreshed with a
-// DescribeAssetBundleExportJob API call. Each Amazon QuickSight account can run up
-// to 5 export jobs concurrently.
+// DescribeAssetBundleExportJob API call. Each Amazon Quick Sight account can run
+// up to 5 export jobs concurrently.
 //
 // The API caller must have the necessary permissions in their IAM role to access
 // each resource before the resources can be exported.
@@ -231,16 +231,13 @@ func (c *Client) addOperationStartAssetBundleExportJobMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

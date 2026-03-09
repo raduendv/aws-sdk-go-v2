@@ -49,7 +49,7 @@ type ListStackInstanceResourceDriftsInput struct {
 	// This member is required.
 	StackInstanceRegion *string
 
-	// The name or unique ID of the stack set that you want to list drifted resources
+	// The name or unique ID of the StackSet that you want to list drifted resources
 	// for.
 	//
 	// This member is required.
@@ -59,7 +59,7 @@ type ListStackInstanceResourceDriftsInput struct {
 	// administrator in the organization's management account or as a delegated
 	// administrator in a member account.
 	//
-	// By default, SELF is specified. Use SELF for stack sets with self-managed
+	// By default, SELF is specified. Use SELF for StackSets with self-managed
 	// permissions.
 	//
 	//   - If you are signed in to the management account, specify SELF .
@@ -80,11 +80,8 @@ type ListStackInstanceResourceDriftsInput struct {
 	// set of results.
 	MaxResults *int32
 
-	// If the previous paginated request didn't return all of the remaining results,
-	// the response object's NextToken parameter value is set to a token. To retrieve
-	// the next set of results, call this action again and assign that token to the
-	// request object's NextToken parameter. If there are no remaining results, the
-	// previous response object's NextToken parameter is set to null .
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	// The resource drift status of the stack instance.
@@ -211,16 +208,13 @@ func (c *Client) addOperationListStackInstanceResourceDriftsMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

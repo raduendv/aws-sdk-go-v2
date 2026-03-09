@@ -44,11 +44,6 @@ type ListAssociatedContactsInput struct {
 	InstanceId *string
 
 	// The maximum number of results to return per page.
-	//
-	// The maximum number of results to return per page. The default MaxResult size is
-	// 25.
-	//
-	// Valid Range: Minimum value of 1. Maximum value of 100.
 	MaxResults *int32
 
 	// The token for the next set of results. Use the value returned in the previous
@@ -161,16 +156,13 @@ func (c *Client) addOperationListAssociatedContactsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

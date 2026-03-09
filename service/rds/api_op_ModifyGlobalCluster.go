@@ -36,6 +36,16 @@ func (c *Client) ModifyGlobalCluster(ctx context.Context, params *ModifyGlobalCl
 
 type ModifyGlobalClusterInput struct {
 
+	// The cluster identifier for the global cluster to modify. This parameter isn't
+	// case-sensitive.
+	//
+	// Constraints:
+	//
+	//   - Must match the identifier of an existing global database cluster.
+	//
+	// This member is required.
+	GlobalClusterIdentifier *string
+
 	// Specifies whether to allow major version upgrades.
 	//
 	// Constraints: Must be enabled if you specify a value for the EngineVersion
@@ -66,14 +76,6 @@ type ModifyGlobalClusterInput struct {
 	//     aws rds describe-db-engine-versions --engine aurora-postgresql --query
 	//     '*[]|[?SupportsGlobalDatabases == `true`].[EngineVersion]'
 	EngineVersion *string
-
-	// The cluster identifier for the global cluster to modify. This parameter isn't
-	// case-sensitive.
-	//
-	// Constraints:
-	//
-	//   - Must match the identifier of an existing global database cluster.
-	GlobalClusterIdentifier *string
 
 	// The new cluster identifier for the global database cluster. This value is
 	// stored as a lowercase string.
@@ -170,6 +172,9 @@ func (c *Client) addOperationModifyGlobalClusterMiddlewares(stack *middleware.St
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
+	if err = addOpModifyGlobalClusterValidationMiddleware(stack); err != nil {
+		return err
+	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opModifyGlobalCluster(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -188,16 +193,13 @@ func (c *Client) addOperationModifyGlobalClusterMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

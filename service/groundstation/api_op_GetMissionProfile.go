@@ -47,8 +47,8 @@ type GetMissionProfileOutput struct {
 	// indicating an upcoming pass.
 	ContactPrePassDurationSeconds *int32
 
-	// A list of lists of ARNs. Each list of ARNs is an edge, with a from Config and a
-	// to Config .
+	// A list of lists of ARNs. Each list of ARNs is an edge, with a from  Config and
+	// a to Config .
 	DataflowEdges [][]string
 
 	// Smallest amount of time in seconds that you’d like to see for an available
@@ -76,6 +76,9 @@ type GetMissionProfileOutput struct {
 
 	// Tags assigned to a mission profile.
 	Tags map[string]string
+
+	// ARN of a telemetry sink Config .
+	TelemetrySinkConfigArn *string
 
 	// ARN of a tracking Config .
 	TrackingConfigArn *string
@@ -174,16 +177,13 @@ func (c *Client) addOperationGetMissionProfileMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

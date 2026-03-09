@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates the privacy budget template for the specified membership.
+// Updates the privacy budget template for the specified collaboration.
 func (c *Client) UpdatePrivacyBudgetTemplate(ctx context.Context, params *UpdatePrivacyBudgetTemplateInput, optFns ...func(*Options)) (*UpdatePrivacyBudgetTemplateOutput, error) {
 	if params == nil {
 		params = &UpdatePrivacyBudgetTemplateInput{}
@@ -153,16 +153,13 @@ func (c *Client) addOperationUpdatePrivacyBudgetTemplateMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

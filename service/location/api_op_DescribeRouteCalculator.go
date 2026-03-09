@@ -12,6 +12,25 @@ import (
 	"time"
 )
 
+// This operation is no longer current and may be deprecated in the future. We
+// recommend you upgrade to the Routes API V2 unless you require Grab data.
+//
+//   - DescribeRouteCalculator is part of a previous Amazon Location Service Routes
+//     API (version 1) which has been superseded by a more intuitive, powerful, and
+//     complete API (version 2).
+//
+//   - The Routes API version 2 has a simplified interface that can be used
+//     without creating or managing route calculator resources.
+//
+//   - If you are using an Amazon Web Services SDK or the Amazon Web Services CLI,
+//     note that the Routes API version 2 is found under geo-routes or geo_routes ,
+//     not under location .
+//
+//   - Since Grab is not yet fully supported in Routes API version 2, we recommend
+//     you continue using API version 1 when using Grab.
+//
+//   - Start your version 2 API journey with the Routes V2 API Referenceor the Developer Guide.
+//
 // Retrieves the route calculator resource details.
 func (c *Client) DescribeRouteCalculator(ctx context.Context, params *DescribeRouteCalculatorInput, optFns ...func(*Options)) (*DescribeRouteCalculatorOutput, error) {
 	if params == nil {
@@ -75,7 +94,7 @@ type DescribeRouteCalculatorOutput struct {
 	//
 	// For more information about data providers, see [Amazon Location Service data providers].
 	//
-	// [Amazon Location Service data providers]: https://docs.aws.amazon.com/location/latest/developerguide/what-is-data-provider.html
+	// [Amazon Location Service data providers]: https://docs.aws.amazon.com/location/previous/developerguide/what-is-data-provider.html
 	//
 	// This member is required.
 	DataSource *string
@@ -200,16 +219,13 @@ func (c *Client) addOperationDescribeRouteCalculatorMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

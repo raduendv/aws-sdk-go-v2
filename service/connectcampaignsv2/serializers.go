@@ -147,6 +147,11 @@ func awsRestjson1_serializeOpDocumentCreateCampaignInput(v *CreateCampaignInput,
 		}
 	}
 
+	if len(v.Type) > 0 {
+		ok := object.Key("type")
+		ok.String(string(v.Type))
+	}
+
 	return nil
 }
 
@@ -984,6 +989,77 @@ func awsRestjson1_serializeOpHttpBindingsGetConnectInstanceConfigInput(v *GetCon
 	return nil
 }
 
+type awsRestjson1_serializeOpGetInstanceCommunicationLimits struct {
+}
+
+func (*awsRestjson1_serializeOpGetInstanceCommunicationLimits) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpGetInstanceCommunicationLimits) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*GetInstanceCommunicationLimitsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/v2/connect-instance/{connectInstanceId}/communication-limits")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "GET"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsGetInstanceCommunicationLimitsInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsGetInstanceCommunicationLimitsInput(v *GetInstanceCommunicationLimitsInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.ConnectInstanceId == nil || len(*v.ConnectInstanceId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member connectInstanceId must not be empty")}
+	}
+	if v.ConnectInstanceId != nil {
+		if err := encoder.SetURI("connectInstanceId").String(*v.ConnectInstanceId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpGetInstanceOnboardingJobStatus struct {
 }
 
@@ -1458,6 +1534,102 @@ func awsRestjson1_serializeOpDocumentPutConnectInstanceIntegrationInput(v *PutCo
 	if v.IntegrationConfig != nil {
 		ok := object.Key("integrationConfig")
 		if err := awsRestjson1_serializeDocumentIntegrationConfig(v.IntegrationConfig, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpPutInstanceCommunicationLimits struct {
+}
+
+func (*awsRestjson1_serializeOpPutInstanceCommunicationLimits) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpPutInstanceCommunicationLimits) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*PutInstanceCommunicationLimitsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/v2/connect-instance/{connectInstanceId}/communication-limits")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "PUT"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if err := awsRestjson1_serializeOpHttpBindingsPutInstanceCommunicationLimitsInput(input, restEncoder); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentPutInstanceCommunicationLimitsInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsPutInstanceCommunicationLimitsInput(v *PutInstanceCommunicationLimitsInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	if v.ConnectInstanceId == nil || len(*v.ConnectInstanceId) == 0 {
+		return &smithy.SerializationError{Err: fmt.Errorf("input member connectInstanceId must not be empty")}
+	}
+	if v.ConnectInstanceId != nil {
+		if err := encoder.SetURI("connectInstanceId").String(*v.ConnectInstanceId); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentPutInstanceCommunicationLimitsInput(v *PutInstanceCommunicationLimitsInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.CommunicationLimitsConfig != nil {
+		ok := object.Key("communicationLimitsConfig")
+		if err := awsRestjson1_serializeDocumentInstanceCommunicationLimitsConfig(v.CommunicationLimitsConfig, ok); err != nil {
 			return err
 		}
 	}
@@ -2807,6 +2979,17 @@ func awsRestjson1_serializeOpDocumentUpdateCampaignSourceInput(v *UpdateCampaign
 	return nil
 }
 
+func awsRestjson1_serializeDocumentAgentActions(v []types.AgentAction, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(string(v[i]))
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocumentAgentlessConfig(v *types.AgentlessConfig, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -2892,6 +3075,13 @@ func awsRestjson1_serializeDocumentChannelSubtypeConfig(v *types.ChannelSubtypeC
 		}
 	}
 
+	if v.WhatsApp != nil {
+		ok := object.Key("whatsApp")
+		if err := awsRestjson1_serializeDocumentWhatsAppChannelSubtypeConfig(v.WhatsApp, ok); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -2915,6 +3105,12 @@ func awsRestjson1_serializeDocumentChannelSubtypeParameters(v types.ChannelSubty
 	case *types.ChannelSubtypeParametersMemberTelephony:
 		av := object.Key("telephony")
 		if err := awsRestjson1_serializeDocumentTelephonyChannelSubtypeParameters(&uv.Value, av); err != nil {
+			return err
+		}
+
+	case *types.ChannelSubtypeParametersMemberWhatsApp:
+		av := object.Key("whatsApp")
+		if err := awsRestjson1_serializeDocumentWhatsAppChannelSubtypeParameters(&uv.Value, av); err != nil {
 			return err
 		}
 
@@ -2989,6 +3185,11 @@ func awsRestjson1_serializeDocumentCommunicationLimitsConfig(v *types.Communicat
 		}
 	}
 
+	if len(v.InstanceLimitsHandling) > 0 {
+		ok := object.Key("instanceLimitsHandling")
+		ok.String(string(v.InstanceLimitsHandling))
+	}
+
 	return nil
 }
 
@@ -3020,6 +3221,13 @@ func awsRestjson1_serializeDocumentCommunicationTimeConfig(v *types.Communicatio
 	if v.Telephony != nil {
 		ok := object.Key("telephony")
 		if err := awsRestjson1_serializeDocumentTimeWindow(v.Telephony, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.WhatsApp != nil {
+		ok := object.Key("whatsApp")
+		if err := awsRestjson1_serializeDocumentTimeWindow(v.WhatsApp, ok); err != nil {
 			return err
 		}
 	}
@@ -3216,6 +3424,20 @@ func awsRestjson1_serializeDocumentEventTrigger(v *types.EventTrigger, value smi
 	return nil
 }
 
+func awsRestjson1_serializeDocumentInstanceCommunicationLimitsConfig(v *types.InstanceCommunicationLimitsConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.AllChannelSubtypes != nil {
+		ok := object.Key("allChannelSubtypes")
+		if err := awsRestjson1_serializeDocumentCommunicationLimits(v.AllChannelSubtypes, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentInstanceIdFilter(v *types.InstanceIdFilter, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -3244,6 +3466,12 @@ func awsRestjson1_serializeDocumentIntegrationConfig(v types.IntegrationConfig, 
 			return err
 		}
 
+	case *types.IntegrationConfigMemberLambda:
+		av := object.Key("lambda")
+		if err := awsRestjson1_serializeDocumentLambdaIntegrationConfig(&uv.Value, av); err != nil {
+			return err
+		}
+
 	case *types.IntegrationConfigMemberQConnect:
 		av := object.Key("qConnect")
 		if err := awsRestjson1_serializeDocumentQConnectIntegrationConfig(&uv.Value, av); err != nil {
@@ -3268,6 +3496,12 @@ func awsRestjson1_serializeDocumentIntegrationIdentifier(v types.IntegrationIden
 			return err
 		}
 
+	case *types.IntegrationIdentifierMemberLambda:
+		av := object.Key("lambda")
+		if err := awsRestjson1_serializeDocumentLambdaIntegrationIdentifier(&uv.Value, av); err != nil {
+			return err
+		}
+
 	case *types.IntegrationIdentifierMemberQConnect:
 		av := object.Key("qConnect")
 		if err := awsRestjson1_serializeDocumentQConnectIntegrationIdentifier(&uv.Value, av); err != nil {
@@ -3278,6 +3512,30 @@ func awsRestjson1_serializeDocumentIntegrationIdentifier(v types.IntegrationIden
 		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
 
 	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentLambdaIntegrationConfig(v *types.LambdaIntegrationConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.FunctionArn != nil {
+		ok := object.Key("functionArn")
+		ok.String(*v.FunctionArn)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentLambdaIntegrationIdentifier(v *types.LambdaIntegrationIdentifier, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.FunctionArn != nil {
+		ok := object.Key("functionArn")
+		ok.String(*v.FunctionArn)
+	}
+
 	return nil
 }
 
@@ -3396,6 +3654,45 @@ func awsRestjson1_serializeDocumentPredictiveConfig(v *types.PredictiveConfig, v
 		default:
 			ok.Double(*v.BandwidthAllocation)
 
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentPreviewConfig(v *types.PreviewConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.AgentActions != nil {
+		ok := object.Key("agentActions")
+		if err := awsRestjson1_serializeDocumentAgentActions(v.AgentActions, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.BandwidthAllocation != nil {
+		ok := object.Key("bandwidthAllocation")
+		switch {
+		case math.IsNaN(*v.BandwidthAllocation):
+			ok.String("NaN")
+
+		case math.IsInf(*v.BandwidthAllocation, 1):
+			ok.String("Infinity")
+
+		case math.IsInf(*v.BandwidthAllocation, -1):
+			ok.String("-Infinity")
+
+		default:
+			ok.Double(*v.BandwidthAllocation)
+
+		}
+	}
+
+	if v.TimeoutConfig != nil {
+		ok := object.Key("timeoutConfig")
+		if err := awsRestjson1_serializeDocumentTimeoutConfig(v.TimeoutConfig, ok); err != nil {
+			return err
 		}
 	}
 
@@ -3769,6 +4066,11 @@ func awsRestjson1_serializeDocumentTelephonyChannelSubtypeParameters(v *types.Te
 		ok.String(*v.DestinationPhoneNumber)
 	}
 
+	if v.RingTimeout != nil {
+		ok := object.Key("ringTimeout")
+		ok.Integer(*v.RingTimeout)
+	}
+
 	return nil
 }
 
@@ -3793,6 +4095,11 @@ func awsRestjson1_serializeDocumentTelephonyOutboundConfig(v *types.TelephonyOut
 		ok.String(*v.ConnectSourcePhoneNumber)
 	}
 
+	if v.RingTimeout != nil {
+		ok := object.Key("ringTimeout")
+		ok.Integer(*v.RingTimeout)
+	}
+
 	return nil
 }
 
@@ -3813,6 +4120,12 @@ func awsRestjson1_serializeDocumentTelephonyOutboundMode(v types.TelephonyOutbou
 			return err
 		}
 
+	case *types.TelephonyOutboundModeMemberPreview:
+		av := object.Key("preview")
+		if err := awsRestjson1_serializeDocumentPreviewConfig(&uv.Value, av); err != nil {
+			return err
+		}
+
 	case *types.TelephonyOutboundModeMemberProgressive:
 		av := object.Key("progressive")
 		if err := awsRestjson1_serializeDocumentProgressiveConfig(&uv.Value, av); err != nil {
@@ -3823,6 +4136,18 @@ func awsRestjson1_serializeDocumentTelephonyOutboundMode(v types.TelephonyOutbou
 		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
 
 	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentTimeoutConfig(v *types.TimeoutConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.DurationInSeconds != nil {
+		ok := object.Key("durationInSeconds")
+		ok.Integer(*v.DurationInSeconds)
+	}
+
 	return nil
 }
 
@@ -3874,5 +4199,108 @@ func awsRestjson1_serializeDocumentTimeWindow(v *types.TimeWindow, value smithyj
 		}
 	}
 
+	return nil
+}
+
+func awsRestjson1_serializeDocumentWhatsAppChannelSubtypeConfig(v *types.WhatsAppChannelSubtypeConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Capacity != nil {
+		ok := object.Key("capacity")
+		switch {
+		case math.IsNaN(*v.Capacity):
+			ok.String("NaN")
+
+		case math.IsInf(*v.Capacity, 1):
+			ok.String("Infinity")
+
+		case math.IsInf(*v.Capacity, -1):
+			ok.String("-Infinity")
+
+		default:
+			ok.Double(*v.Capacity)
+
+		}
+	}
+
+	if v.DefaultOutboundConfig != nil {
+		ok := object.Key("defaultOutboundConfig")
+		if err := awsRestjson1_serializeDocumentWhatsAppOutboundConfig(v.DefaultOutboundConfig, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.OutboundMode != nil {
+		ok := object.Key("outboundMode")
+		if err := awsRestjson1_serializeDocumentWhatsAppOutboundMode(v.OutboundMode, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentWhatsAppChannelSubtypeParameters(v *types.WhatsAppChannelSubtypeParameters, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ConnectSourcePhoneNumberArn != nil {
+		ok := object.Key("connectSourcePhoneNumberArn")
+		ok.String(*v.ConnectSourcePhoneNumberArn)
+	}
+
+	if v.DestinationPhoneNumber != nil {
+		ok := object.Key("destinationPhoneNumber")
+		ok.String(*v.DestinationPhoneNumber)
+	}
+
+	if v.TemplateArn != nil {
+		ok := object.Key("templateArn")
+		ok.String(*v.TemplateArn)
+	}
+
+	if v.TemplateParameters != nil {
+		ok := object.Key("templateParameters")
+		if err := awsRestjson1_serializeDocumentAttributes(v.TemplateParameters, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentWhatsAppOutboundConfig(v *types.WhatsAppOutboundConfig, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ConnectSourcePhoneNumberArn != nil {
+		ok := object.Key("connectSourcePhoneNumberArn")
+		ok.String(*v.ConnectSourcePhoneNumberArn)
+	}
+
+	if v.WisdomTemplateArn != nil {
+		ok := object.Key("wisdomTemplateArn")
+		ok.String(*v.WisdomTemplateArn)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentWhatsAppOutboundMode(v types.WhatsAppOutboundMode, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	switch uv := v.(type) {
+	case *types.WhatsAppOutboundModeMemberAgentless:
+		av := object.Key("agentless")
+		if err := awsRestjson1_serializeDocumentAgentlessConfig(&uv.Value, av); err != nil {
+			return err
+		}
+
+	default:
+		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
+
+	}
 	return nil
 }

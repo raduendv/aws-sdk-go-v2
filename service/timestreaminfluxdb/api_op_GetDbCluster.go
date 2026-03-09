@@ -73,6 +73,9 @@ type GetDbClusterOutput struct {
 	// and read operations.
 	Endpoint *string
 
+	// The engine type of your DB cluster.
+	EngineType types.EngineType
+
 	// The configured failover mode for the DB cluster.
 	FailoverMode types.FailoverMode
 
@@ -204,16 +207,13 @@ func (c *Client) addOperationGetDbClusterMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

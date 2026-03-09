@@ -43,6 +43,9 @@ type UpdateProjectInput struct {
 	// The description to be updated as part of the UpdateProject action.
 	Description *string
 
+	// The ID of the domain unit.
+	DomainUnitId *string
+
 	// The environment deployment details of the project.
 	EnvironmentDeploymentDetails *types.EnvironmentDeploymentDetails
 
@@ -55,6 +58,9 @@ type UpdateProjectInput struct {
 	// The project profile version to which the project should be updated. You can
 	// only specify the following string for this parameter: latest .
 	ProjectProfileVersion *string
+
+	// The resource tags of the project.
+	ResourceTags map[string]string
 
 	// The user parameters of the project.
 	UserParameters []types.EnvironmentConfigurationUserParameter
@@ -111,6 +117,9 @@ type UpdateProjectOutput struct {
 
 	// The status of the project.
 	ProjectStatus types.ProjectStatus
+
+	// The resource tags of the project.
+	ResourceTags []types.ResourceTag
 
 	// The user parameters of the project.
 	UserParameters []types.EnvironmentConfigurationUserParameter
@@ -209,16 +218,13 @@ func (c *Client) addOperationUpdateProjectMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -49,6 +49,10 @@ type ListRestoreJobsInput struct {
 	// Returns only restore jobs that were created before the specified date.
 	ByCreatedBefore *time.Time
 
+	// This is a filter to list child (nested) restore jobs based on parent restore
+	// job ID.
+	ByParentJobId *string
+
 	// Include this parameter to return only restore jobs for the specified resources:
 	//
 	//   - Aurora for Amazon Aurora
@@ -207,16 +211,13 @@ func (c *Client) addOperationListRestoreJobsMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

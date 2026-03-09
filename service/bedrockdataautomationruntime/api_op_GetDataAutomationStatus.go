@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/bedrockdataautomationruntime/types"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
+	"time"
 )
 
 // API used to get data automation status.
@@ -46,6 +47,15 @@ type GetDataAutomationStatusOutput struct {
 
 	// Error Type.
 	ErrorType *string
+
+	// Job completion time.
+	JobCompletionTime *time.Time
+
+	// Job duration in seconds.
+	JobDurationInSeconds *int32
+
+	// Job Submission time.
+	JobSubmissionTime *time.Time
 
 	// Output configuration.
 	OutputConfiguration *types.OutputConfiguration
@@ -147,16 +157,13 @@ func (c *Client) addOperationGetDataAutomationStatusMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

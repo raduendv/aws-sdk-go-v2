@@ -10,9 +10,12 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2
+//
 // Deletes a fleet scaling policy. Once deleted, the policy is no longer in force
-// and Amazon GameLift removes all record of it. To delete a scaling policy,
-// specify both the scaling policy name and the fleet ID it is associated with.
+// and Amazon GameLift Servers removes all record of it. To delete a scaling
+// policy, specify both the scaling policy name and the fleet ID it is associated
+// with.
 //
 // To temporarily suspend scaling policies, use [StopFleetActions]. This operation suspends all
 // policies for the fleet.
@@ -145,16 +148,13 @@ func (c *Client) addOperationDeleteScalingPolicyMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

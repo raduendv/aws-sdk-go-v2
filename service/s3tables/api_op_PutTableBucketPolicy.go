@@ -10,9 +10,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Creates a new maintenance configuration or replaces an existing table bucket
-// policy for a table bucket. For more information, see [Adding a table bucket policy]in the Amazon Simple
-// Storage Service User Guide.
+// Creates a new table bucket policy or replaces an existing table bucket policy
+// for a table bucket. For more information, see [Adding a table bucket policy]in the Amazon Simple Storage
+// Service User Guide.
 //
 // Permissions You must have the s3tables:PutTableBucketPolicy permission to use
 // this operation.
@@ -143,16 +143,13 @@ func (c *Client) addOperationPutTableBucketPolicyMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

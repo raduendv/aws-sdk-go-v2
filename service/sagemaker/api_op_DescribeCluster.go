@@ -56,8 +56,15 @@ type DescribeClusterOutput struct {
 	// This member is required.
 	InstanceGroups []types.ClusterInstanceGroupDetails
 
+	// The current autoscaling configuration and status for the autoscaler.
+	AutoScaling *types.ClusterAutoScalingConfigOutput
+
 	// The name of the SageMaker HyperPod cluster.
 	ClusterName *string
+
+	// The Amazon Resource Name (ARN) of the IAM role that HyperPod uses for cluster
+	// autoscaling operations.
+	ClusterRole *string
 
 	// The time when the SageMaker Cluster is created.
 	CreationTime *time.Time
@@ -65,11 +72,23 @@ type DescribeClusterOutput struct {
 	// The failure message of the SageMaker HyperPod cluster.
 	FailureMessage *string
 
+	// The mode used for provisioning nodes in the cluster.
+	NodeProvisioningMode types.ClusterNodeProvisioningMode
+
 	// The node recovery mode configured for the SageMaker HyperPod cluster.
 	NodeRecovery types.ClusterNodeRecovery
 
 	// The type of orchestrator used for the SageMaker HyperPod cluster.
 	Orchestrator *types.ClusterOrchestrator
+
+	// The specialized instance groups for training models like Amazon Nova to be
+	// created in the SageMaker HyperPod cluster.
+	RestrictedInstanceGroups []types.ClusterRestrictedInstanceGroupDetails
+
+	// The current configuration for managed tier checkpointing on the HyperPod
+	// cluster. For example, this shows whether the feature is enabled and the
+	// percentage of cluster memory allocated for checkpoint storage.
+	TieredStorageConfig *types.ClusterTieredStorageConfig
 
 	// Specifies an Amazon Virtual Private Cloud (VPC) that your SageMaker jobs,
 	// hosted models, and compute resources have access to. You can control access to
@@ -172,16 +191,13 @@ func (c *Client) addOperationDescribeClusterMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -79,6 +79,9 @@ type DescribeStreamInput struct {
 	// The ARN of the stream.
 	StreamARN *string
 
+	// Not Implemented. Reserved for future use.
+	StreamId *string
+
 	// The name of the stream to describe.
 	StreamName *string
 
@@ -88,6 +91,7 @@ type DescribeStreamInput struct {
 func (in *DescribeStreamInput) bindEndpointParams(p *EndpointParameters) {
 
 	p.StreamARN = in.StreamARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("control")
 }
 
@@ -192,16 +196,13 @@ func (c *Client) addOperationDescribeStreamMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

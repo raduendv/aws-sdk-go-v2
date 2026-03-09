@@ -1,15 +1,12 @@
 PutBucketOwnershipControls
 	Initialize stack step
-		spanInitializeStart
 		AWSChecksum:SetupInputContext
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		S3Shared:ARNLookup
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		putBucketContext
 		setOperationInput
 		ResolveEndpoint
@@ -28,11 +25,12 @@ PutBucketOwnershipControls
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		DisableAcceptEncodingGzip
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

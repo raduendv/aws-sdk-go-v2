@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Container
+//
 // Removes locations from a multi-location fleet. When deleting a location, all
 // game server process and all instances that are still active in the location are
 // shut down.
@@ -24,9 +26,9 @@ import (
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift fleets]
+// [Setting up Amazon GameLift Servers fleets]
 //
-// [Setting up Amazon GameLift fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
+// [Setting up Amazon GameLift Servers fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 func (c *Client) DeleteFleetLocations(ctx context.Context, params *DeleteFleetLocationsInput, optFns ...func(*Options)) (*DeleteFleetLocationsOutput, error) {
 	if params == nil {
 		params = &DeleteFleetLocationsInput{}
@@ -61,7 +63,7 @@ type DeleteFleetLocationsInput struct {
 
 type DeleteFleetLocationsOutput struct {
 
-	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift fleet
+	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift Servers fleet
 	// resource and uniquely identifies it. ARNs are unique across all Regions. Format
 	// is arn:aws:gamelift:::fleet/fleet-a1234567-b8c9-0d1e-2fa3-b45c6d7e8912 .
 	//
@@ -170,16 +172,13 @@ func (c *Client) addOperationDeleteFleetLocationsMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

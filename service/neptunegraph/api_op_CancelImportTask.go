@@ -69,7 +69,7 @@ type CancelImportTaskOutput struct {
 	TaskId *string
 
 	// Specifies the format of S3 data to be imported. Valid values are CSV , which
-	// identifies the [Gremlin CSV format]or OPENCYPHER , which identies the [openCypher load format].
+	// identifies the [Gremlin CSV format]or OPENCYPHER , which identifies the [openCypher load format].
 	//
 	// [Gremlin CSV format]: https://docs.aws.amazon.com/neptune/latest/userguide/bulk-load-tutorial-format-gremlin.html
 	// [openCypher load format]: https://docs.aws.amazon.com/neptune/latest/userguide/bulk-load-tutorial-format-opencypher.html
@@ -175,16 +175,13 @@ func (c *Client) addOperationCancelImportTaskMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

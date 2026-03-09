@@ -10,9 +10,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes the run, given the run ARN.
+// Deletes the run, given the run ARN. You cannot delete a run if it is still
+// active.
 //
-// Deleting this resource does not stop an in-progress run.
+// You cannot undo this operation.
 func (c *Client) DeleteRun(ctx context.Context, params *DeleteRunInput, optFns ...func(*Options)) (*DeleteRunOutput, error) {
 	if params == nil {
 		params = &DeleteRunInput{}
@@ -135,16 +136,13 @@ func (c *Client) addOperationDeleteRunMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

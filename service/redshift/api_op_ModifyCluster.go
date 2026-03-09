@@ -174,6 +174,12 @@ type ModifyClusterInput struct {
 	// [Enhanced VPC Routing]: https://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html
 	EnhancedVpcRouting *bool
 
+	// If true , allocates additional compute resources for running automatic
+	// optimization operations.
+	//
+	// Default: false
+	ExtraComputeForAutomaticOptimization *bool
+
 	// Specifies the name of the HSM client certificate the Amazon Redshift cluster
 	// uses to retrieve the data encryption keys stored in an HSM.
 	HsmClientCertificateIdentifier *string
@@ -430,16 +436,13 @@ func (c *Client) addOperationModifyClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

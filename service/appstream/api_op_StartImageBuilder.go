@@ -34,8 +34,9 @@ type StartImageBuilderInput struct {
 	// This member is required.
 	Name *string
 
-	// The version of the AppStream 2.0 agent to use for this image builder. To use
-	// the latest version of the AppStream 2.0 agent, specify [LATEST].
+	// The version of the WorkSpaces Applications agent to use for this image builder.
+	// To use the latest version of the WorkSpaces Applications agent, specify
+	// [LATEST].
 	AppstreamAgentVersion *string
 
 	noSmithyDocumentSerde
@@ -140,16 +141,13 @@ func (c *Client) addOperationStartImageBuilderMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

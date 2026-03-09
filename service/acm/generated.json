@@ -22,6 +22,7 @@
         "api_op_RenewCertificate.go",
         "api_op_RequestCertificate.go",
         "api_op_ResendValidationEmail.go",
+        "api_op_RevokeCertificate.go",
         "api_op_UpdateCertificateOptions.go",
         "auth.go",
         "deserializers.go",
@@ -42,7 +43,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/acm",
     "unstable": false
 }

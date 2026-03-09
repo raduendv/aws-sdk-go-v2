@@ -42,6 +42,10 @@ type UpdateLakeFormationIdentityCenterConfigurationInput struct {
 	// applications that are allowed to access data managed by Lake Formation.
 	ExternalFiltering *types.ExternalFilteringConfiguration
 
+	// A list of service integrations for enabling trusted identity propagation with
+	// external services such as Redshift.
+	ServiceIntegrations []types.ServiceIntegrationUnion
+
 	// A list of Amazon Web Services account IDs or Amazon Web Services
 	// organization/organizational unit ARNs that are allowed to access to access data
 	// managed by Lake Formation.
@@ -154,16 +158,13 @@ func (c *Client) addOperationUpdateLakeFormationIdentityCenterConfigurationMiddl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

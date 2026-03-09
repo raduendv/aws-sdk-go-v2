@@ -27,6 +27,7 @@
         "api_op_GenerateQuery.go",
         "api_op_GetChannel.go",
         "api_op_GetDashboard.go",
+        "api_op_GetEventConfiguration.go",
         "api_op_GetEventDataStore.go",
         "api_op_GetEventSelectors.go",
         "api_op_GetImport.go",
@@ -40,12 +41,14 @@
         "api_op_ListEventDataStores.go",
         "api_op_ListImportFailures.go",
         "api_op_ListImports.go",
+        "api_op_ListInsightsData.go",
         "api_op_ListInsightsMetricData.go",
         "api_op_ListPublicKeys.go",
         "api_op_ListQueries.go",
         "api_op_ListTags.go",
         "api_op_ListTrails.go",
         "api_op_LookupEvents.go",
+        "api_op_PutEventConfiguration.go",
         "api_op_PutEventSelectors.go",
         "api_op_PutInsightSelectors.go",
         "api_op_PutResourcePolicy.go",
@@ -84,7 +87,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/cloudtrail",
     "unstable": false
 }

@@ -11,9 +11,17 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: Container
+//
 // Updates the properties of a managed container fleet. Depending on the
 // properties being updated, this operation might initiate a fleet deployment. You
 // can track deployments for a fleet using [https://docs.aws.amazon.com/gamelift/latest/apireference/API_DescribeFleetDeployment.html].
+//
+// A managed fleet's runtime environment, which depends on the fleet's Amazon
+// Machine Image {AMI} version, can't be updated. You must create a new fleet. As a
+// best practice, we recommend replacing your managed fleets every 30 days to
+// maintain a secure and up-to-date runtime environment for your hosted game
+// servers. For guidance, see [Security best practices for Amazon GameLift Servers].
 //
 // # Request options
 //
@@ -54,6 +62,7 @@ import (
 // progress, the first deployment is cancelled.
 //
 // [https://docs.aws.amazon.com/gamelift/latest/apireference/API_DescribeFleetDeployment.html]: https://docs.aws.amazon.com/gamelift/latest/apireference/API_DescribeFleetDeployment.html
+// [Security best practices for Amazon GameLift Servers]: https://docs.aws.amazon.com/gameliftservers/latest/developerguide/security-best-practices.html
 func (c *Client) UpdateContainerFleet(ctx context.Context, params *UpdateContainerFleetInput, optFns ...func(*Options)) (*UpdateContainerFleetOutput, error) {
 	if params == nil {
 		params = &UpdateContainerFleetInput{}
@@ -100,11 +109,11 @@ type UpdateContainerFleetInput struct {
 	GameServerContainerGroupDefinitionName *string
 
 	// The number of times to replicate the game server container group on each fleet
-	// instance. By default, Amazon GameLift calculates the maximum number of game
-	// server container groups that can fit on each instance. You can remove this
+	// instance. By default, Amazon GameLift Servers calculates the maximum number of
+	// game server container groups that can fit on each instance. You can remove this
 	// property value to use the calculated value, or set it manually. If you set this
-	// number manually, Amazon GameLift uses your value as long as it's less than the
-	// calculated maximum.
+	// number manually, Amazon GameLift Servers uses your value as long as it's less
+	// than the calculated maximum.
 	GameServerContainerGroupsPerInstance *int32
 
 	// A policy that limits the number of game sessions that each individual player
@@ -113,7 +122,7 @@ type UpdateContainerFleetInput struct {
 	GameSessionCreationLimitPolicy *types.GameSessionCreationLimitPolicy
 
 	// A revised set of port numbers to open on each fleet instance. By default,
-	// Amazon GameLift calculates an optimal port range based on your fleet
+	// Amazon GameLift Servers calculates an optimal port range based on your fleet
 	// configuration. If you previously set this parameter manually, you can't reset
 	// this to use the calculated settings.
 	InstanceConnectionPortRange *types.ConnectionPortRange
@@ -258,16 +267,13 @@ func (c *Client) addOperationUpdateContainerFleetMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

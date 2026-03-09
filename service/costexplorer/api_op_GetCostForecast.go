@@ -31,7 +31,7 @@ func (c *Client) GetCostForecast(ctx context.Context, params *GetCostForecastInp
 type GetCostForecastInput struct {
 
 	// How granular you want the forecast to be. You can get 3 months of DAILY
-	// forecasts or 12 months of MONTHLY forecasts.
+	// forecasts or 18 months of MONTHLY forecasts.
 	//
 	// The GetCostForecast operation supports only DAILY and MONTHLY granularities.
 	//
@@ -232,16 +232,13 @@ func (c *Client) addOperationGetCostForecastMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

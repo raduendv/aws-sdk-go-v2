@@ -634,6 +634,23 @@ func addOpUpdateTransformerValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateTransformer{}, middleware.After)
 }
 
+func validateAdvancedOptions(v *types.AdvancedOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AdvancedOptions"}
+	if v.X12 != nil {
+		if err := validateX12AdvancedOptions(v.X12); err != nil {
+			invalidParams.AddNested("X12", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateCapabilityConfiguration(v types.CapabilityConfiguration) error {
 	if v == nil {
 		return nil
@@ -645,6 +662,28 @@ func validateCapabilityConfiguration(v types.CapabilityConfiguration) error {
 			invalidParams.AddNested("[edi]", err.(smithy.InvalidParamsError))
 		}
 
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateCapabilityOptions(v *types.CapabilityOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CapabilityOptions"}
+	if v.OutboundEdi != nil {
+		if err := validateOutboundEdiOptions(v.OutboundEdi); err != nil {
+			invalidParams.AddNested("OutboundEdi", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.InboundEdi != nil {
+		if err := validateInboundEdiOptions(v.InboundEdi); err != nil {
+			invalidParams.AddNested("InboundEdi", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -679,6 +718,11 @@ func validateConversionTarget(v *types.ConversionTarget) error {
 	if len(v.FileFormat) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("FileFormat"))
 	}
+	if v.AdvancedOptions != nil {
+		if err := validateAdvancedOptions(v.AdvancedOptions); err != nil {
+			invalidParams.AddNested("AdvancedOptions", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -710,6 +754,23 @@ func validateEdiConfiguration(v *types.EdiConfiguration) error {
 	}
 }
 
+func validateInboundEdiOptions(v *types.InboundEdiOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "InboundEdiOptions"}
+	if v.X12 != nil {
+		if err := validateX12InboundEdiOptions(v.X12); err != nil {
+			invalidParams.AddNested("X12", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateInputConversion(v *types.InputConversion) error {
 	if v == nil {
 		return nil
@@ -717,6 +778,11 @@ func validateInputConversion(v *types.InputConversion) error {
 	invalidParams := smithy.InvalidParamsError{Context: "InputConversion"}
 	if len(v.FromFormat) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("FromFormat"))
+	}
+	if v.AdvancedOptions != nil {
+		if err := validateAdvancedOptions(v.AdvancedOptions); err != nil {
+			invalidParams.AddNested("AdvancedOptions", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -740,6 +806,25 @@ func validateMapping(v *types.Mapping) error {
 	}
 }
 
+func validateOutboundEdiOptions(v types.OutboundEdiOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "OutboundEdiOptions"}
+	switch uv := v.(type) {
+	case *types.OutboundEdiOptionsMemberX12:
+		if err := validateX12Envelope(&uv.Value); err != nil {
+			invalidParams.AddNested("[x12]", err.(smithy.InvalidParamsError))
+		}
+
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOutputConversion(v *types.OutputConversion) error {
 	if v == nil {
 		return nil
@@ -747,6 +832,11 @@ func validateOutputConversion(v *types.OutputConversion) error {
 	invalidParams := smithy.InvalidParamsError{Context: "OutputConversion"}
 	if len(v.ToFormat) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("ToFormat"))
+	}
+	if v.AdvancedOptions != nil {
+		if err := validateAdvancedOptions(v.AdvancedOptions); err != nil {
+			invalidParams.AddNested("AdvancedOptions", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -808,6 +898,227 @@ func validateTagList(v []types.Tag) error {
 	}
 }
 
+func validateWrapOptions(v *types.WrapOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "WrapOptions"}
+	if len(v.WrapBy) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("WrapBy"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12AcknowledgmentOptions(v *types.X12AcknowledgmentOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12AcknowledgmentOptions"}
+	if len(v.FunctionalAcknowledgment) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("FunctionalAcknowledgment"))
+	}
+	if len(v.TechnicalAcknowledgment) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("TechnicalAcknowledgment"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12AdvancedOptions(v *types.X12AdvancedOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12AdvancedOptions"}
+	if v.SplitOptions != nil {
+		if err := validateX12SplitOptions(v.SplitOptions); err != nil {
+			invalidParams.AddNested("SplitOptions", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.ValidationOptions != nil {
+		if err := validateX12ValidationOptions(v.ValidationOptions); err != nil {
+			invalidParams.AddNested("ValidationOptions", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12CodeListValidationRule(v *types.X12CodeListValidationRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12CodeListValidationRule"}
+	if v.ElementId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ElementId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12ElementLengthValidationRule(v *types.X12ElementLengthValidationRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12ElementLengthValidationRule"}
+	if v.ElementId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ElementId"))
+	}
+	if v.MaxLength == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("MaxLength"))
+	}
+	if v.MinLength == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("MinLength"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12ElementRequirementValidationRule(v *types.X12ElementRequirementValidationRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12ElementRequirementValidationRule"}
+	if v.ElementPosition == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ElementPosition"))
+	}
+	if len(v.Requirement) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Requirement"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12Envelope(v *types.X12Envelope) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12Envelope"}
+	if v.WrapOptions != nil {
+		if err := validateWrapOptions(v.WrapOptions); err != nil {
+			invalidParams.AddNested("WrapOptions", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12InboundEdiOptions(v *types.X12InboundEdiOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12InboundEdiOptions"}
+	if v.AcknowledgmentOptions != nil {
+		if err := validateX12AcknowledgmentOptions(v.AcknowledgmentOptions); err != nil {
+			invalidParams.AddNested("AcknowledgmentOptions", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12SplitOptions(v *types.X12SplitOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12SplitOptions"}
+	if len(v.SplitBy) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("SplitBy"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12ValidationOptions(v *types.X12ValidationOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12ValidationOptions"}
+	if v.ValidationRules != nil {
+		if err := validateX12ValidationRules(v.ValidationRules); err != nil {
+			invalidParams.AddNested("ValidationRules", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12ValidationRule(v types.X12ValidationRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12ValidationRule"}
+	switch uv := v.(type) {
+	case *types.X12ValidationRuleMemberCodeListValidationRule:
+		if err := validateX12CodeListValidationRule(&uv.Value); err != nil {
+			invalidParams.AddNested("[codeListValidationRule]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.X12ValidationRuleMemberElementLengthValidationRule:
+		if err := validateX12ElementLengthValidationRule(&uv.Value); err != nil {
+			invalidParams.AddNested("[elementLengthValidationRule]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.X12ValidationRuleMemberElementRequirementValidationRule:
+		if err := validateX12ElementRequirementValidationRule(&uv.Value); err != nil {
+			invalidParams.AddNested("[elementRequirementValidationRule]", err.(smithy.InvalidParamsError))
+		}
+
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateX12ValidationRules(v []types.X12ValidationRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "X12ValidationRules"}
+	for i := range v {
+		if err := validateX12ValidationRule(v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateCapabilityInput(v *CreateCapabilityInput) error {
 	if v == nil {
 		return nil
@@ -854,6 +1165,11 @@ func validateOpCreatePartnershipInput(v *CreatePartnershipInput) error {
 	}
 	if v.Capabilities == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Capabilities"))
+	}
+	if v.CapabilityOptions != nil {
+		if err := validateCapabilityOptions(v.CapabilityOptions); err != nil {
+			invalidParams.AddNested("CapabilityOptions", err.(smithy.InvalidParamsError))
+		}
 	}
 	if v.Tags != nil {
 		if err := validateTagList(v.Tags); err != nil {
@@ -1232,6 +1548,11 @@ func validateOpTestParsingInput(v *TestParsingInput) error {
 	if v.EdiType == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("EdiType"))
 	}
+	if v.AdvancedOptions != nil {
+		if err := validateAdvancedOptions(v.AdvancedOptions); err != nil {
+			invalidParams.AddNested("AdvancedOptions", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -1284,6 +1605,11 @@ func validateOpUpdatePartnershipInput(v *UpdatePartnershipInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "UpdatePartnershipInput"}
 	if v.PartnershipId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("PartnershipId"))
+	}
+	if v.CapabilityOptions != nil {
+		if err := validateCapabilityOptions(v.CapabilityOptions); err != nil {
+			invalidParams.AddNested("CapabilityOptions", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

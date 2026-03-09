@@ -11,8 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Creates an analysis in Amazon QuickSight. Analyses can be created either from a
-// template or from an AnalysisDefinition .
+// Creates an analysis in Amazon Quick Sight. Analyses can be created either from
+// a template or from an AnalysisDefinition .
 func (c *Client) CreateAnalysis(ctx context.Context, params *CreateAnalysisInput, optFns ...func(*Options)) (*CreateAnalysisOutput, error) {
 	if params == nil {
 		params = &CreateAnalysisInput{}
@@ -42,7 +42,7 @@ type CreateAnalysisInput struct {
 	AwsAccountId *string
 
 	// A descriptive name for the analysis that you're creating. This name displays
-	// for the analysis in the Amazon QuickSight console.
+	// for the analysis in the Amazon Quick Sight console.
 	//
 	// This member is required.
 	Name *string
@@ -56,7 +56,7 @@ type CreateAnalysisInput struct {
 	// to be valid.
 	Definition *types.AnalysisDefinition
 
-	// When you create the analysis, Amazon QuickSight adds the analysis to these
+	// When you create the analysis, Amazon Quick Sight adds the analysis to these
 	// folders.
 	FolderArns []string
 
@@ -85,7 +85,7 @@ type CreateAnalysisInput struct {
 	Tags []types.Tag
 
 	// The ARN for the theme to apply to the analysis that you're creating. To see the
-	// theme in the Amazon QuickSight console, make sure that you have access to it.
+	// theme in the Amazon Quick Sight console, make sure that you have access to it.
 	ThemeArn *string
 
 	// The option to relax the validation needed to create an analysis with definition
@@ -206,16 +206,13 @@ func (c *Client) addOperationCreateAnalysisMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

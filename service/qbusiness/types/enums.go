@@ -242,6 +242,30 @@ func (ChatMode) Values() []ChatMode {
 	}
 }
 
+type ChatResponseConfigurationStatus string
+
+// Enum values for ChatResponseConfigurationStatus
+const (
+	ChatResponseConfigurationStatusCreating ChatResponseConfigurationStatus = "CREATING"
+	ChatResponseConfigurationStatusUpdating ChatResponseConfigurationStatus = "UPDATING"
+	ChatResponseConfigurationStatusFailed   ChatResponseConfigurationStatus = "FAILED"
+	ChatResponseConfigurationStatusActive   ChatResponseConfigurationStatus = "ACTIVE"
+)
+
+// Values returns all known values for ChatResponseConfigurationStatus. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ChatResponseConfigurationStatus) Values() []ChatResponseConfigurationStatus {
+	return []ChatResponseConfigurationStatus{
+		"CREATING",
+		"UPDATING",
+		"FAILED",
+		"ACTIVE",
+	}
+}
+
 type ContentType string
 
 // Enum values for ContentType
@@ -297,6 +321,26 @@ func (CreatorModeControl) Values() []CreatorModeControl {
 	return []CreatorModeControl{
 		"ENABLED",
 		"DISABLED",
+	}
+}
+
+type DataAccessorAuthenticationType string
+
+// Enum values for DataAccessorAuthenticationType
+const (
+	DataAccessorAuthenticationTypeAwsIamIdcTti      DataAccessorAuthenticationType = "AWS_IAM_IDC_TTI"
+	DataAccessorAuthenticationTypeAwsIamIdcAuthCode DataAccessorAuthenticationType = "AWS_IAM_IDC_AUTH_CODE"
+)
+
+// Values returns all known values for DataAccessorAuthenticationType. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DataAccessorAuthenticationType) Values() []DataAccessorAuthenticationType {
+	return []DataAccessorAuthenticationType{
+		"AWS_IAM_IDC_TTI",
+		"AWS_IAM_IDC_AUTH_CODE",
 	}
 }
 
@@ -365,6 +409,8 @@ const (
 	DocumentAttributeBoostingLevelMedium   DocumentAttributeBoostingLevel = "MEDIUM"
 	DocumentAttributeBoostingLevelHigh     DocumentAttributeBoostingLevel = "HIGH"
 	DocumentAttributeBoostingLevelVeryHigh DocumentAttributeBoostingLevel = "VERY_HIGH"
+	DocumentAttributeBoostingLevelOne      DocumentAttributeBoostingLevel = "ONE"
+	DocumentAttributeBoostingLevelTwo      DocumentAttributeBoostingLevel = "TWO"
 )
 
 // Values returns all known values for DocumentAttributeBoostingLevel. Note that
@@ -379,6 +425,8 @@ func (DocumentAttributeBoostingLevel) Values() []DocumentAttributeBoostingLevel 
 		"MEDIUM",
 		"HIGH",
 		"VERY_HIGH",
+		"ONE",
+		"TWO",
 	}
 }
 
@@ -777,6 +825,42 @@ func (OrchestrationControl) Values() []OrchestrationControl {
 	}
 }
 
+type OutputFormat string
+
+// Enum values for OutputFormat
+const (
+	OutputFormatRaw       OutputFormat = "RAW"
+	OutputFormatExtracted OutputFormat = "EXTRACTED"
+)
+
+// Values returns all known values for OutputFormat. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (OutputFormat) Values() []OutputFormat {
+	return []OutputFormat{
+		"RAW",
+		"EXTRACTED",
+	}
+}
+
+type PermissionConditionOperator string
+
+// Enum values for PermissionConditionOperator
+const (
+	PermissionConditionOperatorStringEquals PermissionConditionOperator = "StringEquals"
+)
+
+// Values returns all known values for PermissionConditionOperator. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (PermissionConditionOperator) Values() []PermissionConditionOperator {
+	return []PermissionConditionOperator{
+		"StringEquals",
+	}
+}
+
 type PersonalizationControlMode string
 
 // Enum values for PersonalizationControlMode
@@ -956,6 +1040,23 @@ func (ReadAccessType) Values() []ReadAccessType {
 	}
 }
 
+type ResponseConfigurationType string
+
+// Enum values for ResponseConfigurationType
+const (
+	ResponseConfigurationTypeAll ResponseConfigurationType = "ALL"
+)
+
+// Values returns all known values for ResponseConfigurationType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResponseConfigurationType) Values() []ResponseConfigurationType {
+	return []ResponseConfigurationType{
+		"ALL",
+	}
+}
+
 type ResponseScope string
 
 // Enum values for ResponseScope
@@ -1086,6 +1187,11 @@ const (
 	StringAttributeValueBoostingLevelMedium   StringAttributeValueBoostingLevel = "MEDIUM"
 	StringAttributeValueBoostingLevelHigh     StringAttributeValueBoostingLevel = "HIGH"
 	StringAttributeValueBoostingLevelVeryHigh StringAttributeValueBoostingLevel = "VERY_HIGH"
+	StringAttributeValueBoostingLevelOne      StringAttributeValueBoostingLevel = "ONE"
+	StringAttributeValueBoostingLevelTwo      StringAttributeValueBoostingLevel = "TWO"
+	StringAttributeValueBoostingLevelThree    StringAttributeValueBoostingLevel = "THREE"
+	StringAttributeValueBoostingLevelFour     StringAttributeValueBoostingLevel = "FOUR"
+	StringAttributeValueBoostingLevelFive     StringAttributeValueBoostingLevel = "FIVE"
 )
 
 // Values returns all known values for StringAttributeValueBoostingLevel. Note
@@ -1099,6 +1205,11 @@ func (StringAttributeValueBoostingLevel) Values() []StringAttributeValueBoosting
 		"MEDIUM",
 		"HIGH",
 		"VERY_HIGH",
+		"ONE",
+		"TWO",
+		"THREE",
+		"FOUR",
+		"FIVE",
 	}
 }
 

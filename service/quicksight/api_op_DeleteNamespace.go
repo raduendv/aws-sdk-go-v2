@@ -31,8 +31,8 @@ func (c *Client) DeleteNamespace(ctx context.Context, params *DeleteNamespaceInp
 
 type DeleteNamespaceInput struct {
 
-	// The ID for the Amazon Web Services account that you want to delete the Amazon
-	// QuickSight namespace from.
+	// The ID for the Amazon Web Services account that you want to delete the Quick
+	// Sight namespace from.
 	//
 	// This member is required.
 	AwsAccountId *string
@@ -147,16 +147,13 @@ func (c *Client) addOperationDeleteNamespaceMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -40,16 +40,17 @@ type CreateConditionalForwarderInput struct {
 	// This member is required.
 	DirectoryId *string
 
-	// The IP addresses of the remote DNS server associated with RemoteDomainName.
-	//
-	// This member is required.
-	DnsIpAddrs []string
-
 	// The fully qualified domain name (FQDN) of the remote domain with which you will
 	// set up a trust relationship.
 	//
 	// This member is required.
 	RemoteDomainName *string
+
+	// The IP addresses of the remote DNS server associated with RemoteDomainName.
+	DnsIpAddrs []string
+
+	// The IPv6 addresses of the remote DNS server associated with RemoteDomainName.
+	DnsIpv6Addrs []string
 
 	noSmithyDocumentSerde
 }
@@ -150,16 +151,13 @@ func (c *Client) addOperationCreateConditionalForwarderMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

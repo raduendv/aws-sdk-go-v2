@@ -52,7 +52,9 @@ type ListAccountAliasesInput struct {
 	noSmithyDocumentSerde
 }
 
-// Contains the response to a successful ListAccountAliases request.
+// Contains the response to a successful [ListAccountAliases] request.
+//
+// [ListAccountAliases]: https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListAccountAliases.html
 type ListAccountAliasesOutput struct {
 
 	// A list of aliases associated with the account. Amazon Web Services supports
@@ -164,16 +166,13 @@ func (c *Client) addOperationListAccountAliasesMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

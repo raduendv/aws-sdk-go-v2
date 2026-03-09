@@ -1,12 +1,9 @@
 ListChecks
 	Initialize stack step
-		spanInitializeStart
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		SetLogger
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		setOperationInput
 		ResolveEndpoint
 		OperationSerializer
@@ -17,10 +14,11 @@ ListChecks
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

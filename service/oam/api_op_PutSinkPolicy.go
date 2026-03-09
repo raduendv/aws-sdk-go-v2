@@ -16,7 +16,8 @@ import (
 // accounts.
 //
 // You can also use a sink policy to limit the types of data that is shared. The
-// three types that you can allow or deny are:
+// six types of services with their respective resource types that you can allow or
+// deny are:
 //
 //   - Metrics - Specify with AWS::CloudWatch::Metric
 //
@@ -26,6 +27,11 @@ import (
 //
 //   - Application Insights - Applications - Specify with
 //     AWS::ApplicationInsights::Application
+//
+//   - Internet Monitor - Specify with AWS::InternetMonitor::Monitor
+//
+//   - Application Signals - Specify with AWS::ApplicationSignals::Service and
+//     AWS::ApplicationSignals::ServiceLevelObjective
 //
 // See the examples in this section to see how to specify permitted source
 // accounts and data types.
@@ -171,16 +177,13 @@ func (c *Client) addOperationPutSinkPolicyMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -25,7 +25,36 @@ type Alias struct {
 	noSmithyDocumentSerde
 }
 
-// Derivation data used to derive an ECDH key.
+// The metadata used to create the certificate signing request.
+type CertificateSubjectType struct {
+
+	// The name you provide to create the certificate signing request.
+	//
+	// This member is required.
+	CommonName *string
+
+	// The city you provide to create the certificate signing request.
+	City *string
+
+	// The country you provide to create the certificate signing request.
+	Country *string
+
+	// The email address you provide to create the certificate signing request.
+	EmailAddress *string
+
+	// The organization you provide to create the certificate signing request.
+	Organization *string
+
+	// The organization unit you provide to create the certificate signing request.
+	OrganizationUnit *string
+
+	// The state or province you provide to create the certificate signing request.
+	StateOrProvince *string
+
+	noSmithyDocumentSerde
+}
+
+// The shared information used when deriving a key using ECDH.
 //
 // The following types satisfy this interface:
 //
@@ -34,13 +63,14 @@ type DiffieHellmanDerivationData interface {
 	isDiffieHellmanDerivationData()
 }
 
-// A byte string containing information that binds the ECDH derived key to the two
+// A string containing information that binds the ECDH derived key to the two
 // parties involved or to the context of the key.
 //
 // It may include details like identities of the two parties deriving the key,
 // context of the operation, session IDs, and optionally a nonce. It must not
-// contain zero bytes, and re-using shared information for multiple ECDH key
-// derivations is not recommended.
+// contain zero bytes. It is not recommended to reuse shared information for
+// multiple ECDH key derivations, as it could result in derived key material being
+// the same across different derivations.
 type DiffieHellmanDerivationDataMemberSharedInformation struct {
 	Value string
 
@@ -48,6 +78,32 @@ type DiffieHellmanDerivationDataMemberSharedInformation struct {
 }
 
 func (*DiffieHellmanDerivationDataMemberSharedInformation) isDiffieHellmanDerivationData() {}
+
+// Parameter information for key material export using AS2805 key cryptogram
+// format.
+type ExportAs2805KeyCryptogram struct {
+
+	// The cryptographic usage of the key under export.
+	//
+	// This member is required.
+	As2805KeyVariant As2805KeyVariant
+
+	// A key identifier that can be either a key ARN or an alias name. This allows
+	// flexible key identification in operations.
+	//
+	// When using a key ARN, it must be a fully qualified ARN in the format:
+	// arn:aws:payment-cryptography:region:account:key/key-id .
+	//
+	// When using an alias, it must begin with alias/ followed by the alias name.
+	//
+	// Do not include confidential or sensitive information in this field. This field
+	// may be displayed in plaintext in CloudTrail logs and other output.
+	//
+	// This member is required.
+	WrappingKeyIdentifier *string
+
+	noSmithyDocumentSerde
+}
 
 // The attributes for IPEK generation during export.
 type ExportAttributes struct {
@@ -69,42 +125,44 @@ type ExportAttributes struct {
 	noSmithyDocumentSerde
 }
 
-// Parameter information for key material export using the asymmetric ECDH key
-// exchange method.
+// Key derivation parameter information for key material export using asymmetric
+// ECDH key exchange method.
 type ExportDiffieHellmanTr31KeyBlock struct {
 
-	// The keyARN of the certificate that signed the client's PublicKeyCertificate .
+	// The keyARN of the CA that signed the PublicKeyCertificate for the client's
+	// receiving ECC key pair.
 	//
 	// This member is required.
 	CertificateAuthorityPublicKeyIdentifier *string
 
-	// Derivation data used to derive an ECDH key.
+	// The shared information used when deriving a key using ECDH.
 	//
 	// This member is required.
 	DerivationData DiffieHellmanDerivationData
 
-	// The key algorithm of the derived ECDH key.
+	// The key algorithm of the shared derived ECDH key.
 	//
 	// This member is required.
 	DeriveKeyAlgorithm SymmetricKeyAlgorithm
 
-	// The key derivation function to use for deriving a key using ECDH.
+	// The key derivation function to use when deriving a key using ECDH.
 	//
 	// This member is required.
 	KeyDerivationFunction KeyDerivationFunction
 
-	// The hash type to use for deriving a key using ECDH.
+	// The hash type to use when deriving a key using ECDH.
 	//
 	// This member is required.
 	KeyDerivationHashAlgorithm KeyDerivationHashAlgorithm
 
-	// The keyARN of the asymmetric ECC key.
+	// The keyARN of the asymmetric ECC key created within Amazon Web Services Payment
+	// Cryptography.
 	//
 	// This member is required.
 	PrivateKeyIdentifier *string
 
-	// The client's public key certificate in PEM format (base64 encoded) to use for
-	// ECDH key derivation.
+	// The public key certificate of the client's receiving ECC key pair, in PEM
+	// format (base64 encoded), to use for ECDH key derivation.
 	//
 	// This member is required.
 	PublicKeyCertificate *string
@@ -158,6 +216,7 @@ type ExportKeyCryptogram struct {
 //
 // The following types satisfy this interface:
 //
+//	ExportKeyMaterialMemberAs2805KeyCryptogram
 //	ExportKeyMaterialMemberDiffieHellmanTr31KeyBlock
 //	ExportKeyMaterialMemberKeyCryptogram
 //	ExportKeyMaterialMemberTr31KeyBlock
@@ -166,8 +225,18 @@ type ExportKeyMaterial interface {
 	isExportKeyMaterial()
 }
 
-// Parameter information for key material export using the asymmetric ECDH key
-// exchange method.
+// Parameter information for key material export using AS2805 key cryptogram
+// format.
+type ExportKeyMaterialMemberAs2805KeyCryptogram struct {
+	Value ExportAs2805KeyCryptogram
+
+	noSmithyDocumentSerde
+}
+
+func (*ExportKeyMaterialMemberAs2805KeyCryptogram) isExportKeyMaterial() {}
+
+// Key derivation parameter information for key material export using asymmetric
+// ECDH key exchange method.
 type ExportKeyMaterialMemberDiffieHellmanTr31KeyBlock struct {
 	Value ExportDiffieHellmanTr31KeyBlock
 
@@ -233,17 +302,6 @@ type ExportTr34KeyBlock struct {
 	// This member is required.
 	CertificateAuthorityPublicKeyIdentifier *string
 
-	// The export token to initiate key export from Amazon Web Services Payment
-	// Cryptography. It also contains the signing key certificate that will sign the
-	// wrapped key during TR-34 key block generation. Call [GetParametersForExport]to receive an export token.
-	// It expires after 7 days. You can use the same export token to export multiple
-	// keys from the same service account.
-	//
-	// [GetParametersForExport]: https://docs.aws.amazon.com/payment-cryptography/latest/APIReference/API_GetParametersForExport.html
-	//
-	// This member is required.
-	ExportToken *string
-
 	// The format of key block that Amazon Web Services Payment Cryptography will use
 	// during key export.
 	//
@@ -256,6 +314,15 @@ type ExportTr34KeyBlock struct {
 	// This member is required.
 	WrappingKeyCertificate *string
 
+	// The export token to initiate key export from Amazon Web Services Payment
+	// Cryptography. It also contains the signing key certificate that will sign the
+	// wrapped key during TR-34 key block generation. Call [GetParametersForExport]to receive an export token.
+	// It expires after 30 days. You can use the same export token to export multiple
+	// keys from the same service account.
+	//
+	// [GetParametersForExport]: https://docs.aws.amazon.com/payment-cryptography/latest/APIReference/API_GetParametersForExport.html
+	ExportToken *string
+
 	// Optional metadata for export associated with the key material. This data is
 	// signed but transmitted in clear text.
 	KeyBlockHeaders *KeyBlockHeaders
@@ -265,45 +332,101 @@ type ExportTr34KeyBlock struct {
 	// TR-34 key block generated using 2 pass.
 	RandomNonce *string
 
+	// The certificate used to sign the TR-34 key block.
+	SigningKeyCertificate *string
+
+	// Key Identifier used for signing the export key
+	SigningKeyIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
-// Parameter information for key material import using the asymmetric ECDH key
-// exchange method.
+// Parameter information for key material import using AS2805 key cryptogram
+// format.
+type ImportAs2805KeyCryptogram struct {
+
+	// The cryptographic usage of the key under import.
+	//
+	// This member is required.
+	As2805KeyVariant As2805KeyVariant
+
+	// Specified whether the key is exportable. This data is immutable after the key
+	// is imported.
+	//
+	// This member is required.
+	Exportable *bool
+
+	// The key algorithm of the key under import.
+	//
+	// This member is required.
+	KeyAlgorithm KeyAlgorithm
+
+	// The list of cryptographic operations that you can perform using the key. The
+	// modes of use are deﬁned in section A.5.3 of the TR-31 spec.
+	//
+	// This member is required.
+	KeyModesOfUse *KeyModesOfUse
+
+	// The wrapped key cryptogram under import.
+	//
+	// This member is required.
+	WrappedKeyCryptogram *string
+
+	// A key identifier that can be either a key ARN or an alias name. This allows
+	// flexible key identification in operations.
+	//
+	// When using a key ARN, it must be a fully qualified ARN in the format:
+	// arn:aws:payment-cryptography:region:account:key/key-id .
+	//
+	// When using an alias, it must begin with alias/ followed by the alias name.
+	//
+	// Do not include confidential or sensitive information in this field. This field
+	// may be displayed in plaintext in CloudTrail logs and other output.
+	//
+	// This member is required.
+	WrappingKeyIdentifier *string
+
+	noSmithyDocumentSerde
+}
+
+// Key derivation parameter information for key material import using asymmetric
+// ECDH key exchange method.
 type ImportDiffieHellmanTr31KeyBlock struct {
 
-	// The keyARN of the certificate that signed the client's PublicKeyCertificate .
+	// The keyARN of the CA that signed the PublicKeyCertificate for the client's
+	// receiving ECC key pair.
 	//
 	// This member is required.
 	CertificateAuthorityPublicKeyIdentifier *string
 
-	// Derivation data used to derive an ECDH key.
+	// The shared information used when deriving a key using ECDH.
 	//
 	// This member is required.
 	DerivationData DiffieHellmanDerivationData
 
-	// The key algorithm of the derived ECDH key.
+	// The key algorithm of the shared derived ECDH key.
 	//
 	// This member is required.
 	DeriveKeyAlgorithm SymmetricKeyAlgorithm
 
-	// The key derivation function to use for deriving a key using ECDH.
+	// The key derivation function to use when deriving a key using ECDH.
 	//
 	// This member is required.
 	KeyDerivationFunction KeyDerivationFunction
 
-	// The hash type to use for deriving a key using ECDH.
+	// The hash type to use when deriving a key using ECDH.
 	//
 	// This member is required.
 	KeyDerivationHashAlgorithm KeyDerivationHashAlgorithm
 
-	// The keyARN of the asymmetric ECC key.
+	// The keyARN of the asymmetric ECC key created within Amazon Web Services Payment
+	// Cryptography.
 	//
 	// This member is required.
 	PrivateKeyIdentifier *string
 
-	// The client's public key certificate in PEM format (base64 encoded) to use for
-	// ECDH key derivation.
+	// The public key certificate of the client's receiving ECC key pair, in PEM
+	// format (base64 encoded), to use for ECDH key derivation.
 	//
 	// This member is required.
 	PublicKeyCertificate *string
@@ -326,7 +449,7 @@ type ImportKeyCryptogram struct {
 	Exportable *bool
 
 	// The import token that initiates key import using the asymmetric RSA wrap and
-	// unwrap key exchange method into AWS Payment Cryptography. It expires after 7
+	// unwrap key exchange method into AWS Payment Cryptography. It expires after 30
 	// days. You can use the same import token to import multiple keys to the same
 	// service account.
 	//
@@ -356,6 +479,7 @@ type ImportKeyCryptogram struct {
 //
 // The following types satisfy this interface:
 //
+//	ImportKeyMaterialMemberAs2805KeyCryptogram
 //	ImportKeyMaterialMemberDiffieHellmanTr31KeyBlock
 //	ImportKeyMaterialMemberKeyCryptogram
 //	ImportKeyMaterialMemberRootCertificatePublicKey
@@ -366,8 +490,18 @@ type ImportKeyMaterial interface {
 	isImportKeyMaterial()
 }
 
-// Parameter information for key material import using the asymmetric ECDH key
-// exchange method.
+// Parameter information for key material import using AS2805 key cryptogram
+// format.
+type ImportKeyMaterialMemberAs2805KeyCryptogram struct {
+	Value ImportAs2805KeyCryptogram
+
+	noSmithyDocumentSerde
+}
+
+func (*ImportKeyMaterialMemberAs2805KeyCryptogram) isImportKeyMaterial() {}
+
+// Key derivation parameter information for key material import using asymmetric
+// ECDH key exchange method.
 type ImportKeyMaterialMemberDiffieHellmanTr31KeyBlock struct {
 	Value ImportDiffieHellmanTr31KeyBlock
 
@@ -452,14 +586,6 @@ type ImportTr34KeyBlock struct {
 	// This member is required.
 	CertificateAuthorityPublicKeyIdentifier *string
 
-	// The import token that initiates key import using the asymmetric TR-34 key
-	// exchange method into Amazon Web Services Payment Cryptography. It expires after
-	// 7 days. You can use the same import token to import multiple keys to the same
-	// service account.
-	//
-	// This member is required.
-	ImportToken *string
-
 	// The key block format to use during key import. The only value allowed is
 	// X9_TR34_2012 .
 	//
@@ -477,10 +603,22 @@ type ImportTr34KeyBlock struct {
 	// This member is required.
 	WrappedKeyBlock *string
 
+	// The import token that initiates key import using the asymmetric TR-34 key
+	// exchange method into Amazon Web Services Payment Cryptography. It expires after
+	// 30 days. You can use the same import token to import multiple keys to the same
+	// service account.
+	ImportToken *string
+
 	// A random number value that is unique to the TR-34 key block generated using 2
 	// pass. The operation will fail, if a random nonce value is not provided for a
 	// TR-34 key block generated using 2 pass.
 	RandomNonce *string
+
+	// The certificate used to wrap the TR-34 key block.
+	WrappingKeyCertificate *string
+
+	// Key Identifier used for unwrapping the import key
+	WrappingKeyIdentifier *string
 
 	noSmithyDocumentSerde
 }
@@ -560,6 +698,34 @@ type Key struct {
 	// the TR-31 spec.
 	DeriveKeyUsage DeriveKeyUsage
 
+	// Indicates whether this key is a Multi-Region key and its role in the
+	// Multi-Region key hierarchy.
+	//
+	// Multi-Region replication keys allow the same key material to be used across
+	// multiple Amazon Web Services Regions. This field specifies whether the key is a
+	// Primary Region key (PRK) (which can be replicated to other Amazon Web Services
+	// Regions) or a Replica Region key (RRK) (which is a copy of a PRK in another
+	// Region). For more information, see [Multi-Region key replication].
+	//
+	// [Multi-Region key replication]: https://docs.aws.amazon.com/payment-cryptography/latest/userguide/keys-multi-region-replication.html
+	MultiRegionKeyType MultiRegionKeyType
+
+	// An Amazon Web Services Region identifier in the standard format (e.g., us-east-1
+	// , eu-west-1 ).
+	//
+	// Used to specify regions for key replication operations. The region must be a
+	// valid Amazon Web Services Region where Amazon Web Services Payment Cryptography
+	// is available.
+	PrimaryRegion *string
+
+	// Information about the replication status of the key across different Amazon Web
+	// Services Regions.
+	//
+	// This field provides details about the current state of key replication,
+	// including any status messages or operational information. It helps track the
+	// progress and health of key replication operations.
+	ReplicationStatus map[string]ReplicationStatusType
+
 	// The date and time after which Amazon Web Services Payment Cryptography will
 	// start using the key material for cryptographic operations.
 	UsageStartTimestamp *time.Time
@@ -567,6 +733,16 @@ type Key struct {
 	// The date and time after which Amazon Web Services Payment Cryptography will
 	// stop using the key material for cryptographic operations.
 	UsageStopTimestamp *time.Time
+
+	// Indicates whether this key is using the account's default replication regions
+	// configuration for [Multi-Region key replication].
+	//
+	// When set to true , the key automatically replicates to the regions specified in
+	// the account's default replication settings. When set to false , the key has a
+	// custom replication configuration that overrides the account defaults.
+	//
+	// [Multi-Region key replication]: https://docs.aws.amazon.com/payment-cryptography/latest/userguide/keys-multi-region-replication.html
+	UsingDefaultReplicationRegions *bool
 
 	noSmithyDocumentSerde
 }
@@ -729,6 +905,58 @@ type KeySummary struct {
 	//
 	// This member is required.
 	KeyState KeyState
+
+	// Indicates whether this key is a Multi-Region key and its role in the
+	// Multi-Region key hierarchy.
+	//
+	// Multi-Region replication keys allow the same key material to be used across
+	// multiple Amazon Web Services Regions. This field specifies whether the key is a
+	// Primary Region key (PRK) (which can be replicated to other Amazon Web Services
+	// Regions) or a Replica Region key (RRK) (which is a copy of a PRK in another
+	// Region). For more information, see [Multi-Region key replication].
+	//
+	// [Multi-Region key replication]: https://docs.aws.amazon.com/payment-cryptography/latest/userguide/keys-multi-region-replication.html
+	MultiRegionKeyType MultiRegionKeyType
+
+	// An Amazon Web Services Region identifier in the standard format (e.g., us-east-1
+	// , eu-west-1 ).
+	//
+	// Used to specify regions for key replication operations. The region must be a
+	// valid Amazon Web Services Region where Amazon Web Services Payment Cryptography
+	// is available.
+	PrimaryRegion *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents the replication status information for a key in a replication region
+// for [Multi-Region key replication].
+//
+// This structure contains details about the current state of key replication,
+// including any status messages and operational information about the replication
+// process.
+//
+// [Multi-Region key replication]: https://docs.aws.amazon.com/payment-cryptography/latest/userguide/keys-multi-region-replication.html
+type ReplicationStatusType struct {
+
+	// The current status of key replication in this Amazon Web Services Region.
+	//
+	// This field indicates whether the key replication is in progress, completed
+	// successfully, or has encountered an error. Possible values include states such
+	// as SYNCRHONIZED , IN_PROGRESS , DELETE_IN_PROGRESS , or FAILED . This provides
+	// visibility into the replication process for monitoring and troubleshooting
+	// purposes.
+	//
+	// This member is required.
+	Status KeyReplicationState
+
+	// A message that provides additional information about the current replication
+	// status of the key.
+	//
+	// This field contains details about any issues or progress updates related to key
+	// replication operations. It may include information about replication failures,
+	// synchronization status, or other operational details.
+	StatusMessage *string
 
 	noSmithyDocumentSerde
 }

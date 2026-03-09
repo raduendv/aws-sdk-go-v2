@@ -30,8 +30,19 @@ func (c *Client) UpdateGlobalSettings(ctx context.Context, params *UpdateGlobalS
 
 type UpdateGlobalSettingsInput struct {
 
+	// Inputs can include:
+	//
 	// A value for isCrossAccountBackupEnabled and a Region. Example:
 	// update-global-settings --global-settings isCrossAccountBackupEnabled=false
+	// --region us-west-2 .
+	//
+	// A value for Multi-party approval, styled as "Mpa": isMpaEnabled . Values can be
+	// true or false. Example: update-global-settings --global-settings
+	// isMpaEnabled=false --region us-west-2 .
+	//
+	// A value for Backup Service-Linked Role creation, styled as
+	// isDelegatedAdministratorEnabled . Values can be true or false. Example:
+	// update-global-settings --global-settings isDelegatedAdministratorEnabled=false
 	// --region us-west-2 .
 	GlobalSettings map[string]string
 
@@ -130,16 +141,13 @@ func (c *Client) addOperationUpdateGlobalSettingsMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

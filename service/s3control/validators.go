@@ -2638,6 +2638,11 @@ func validateJobOperation(v *types.JobOperation) error {
 			invalidParams.AddNested("S3PutObjectRetention", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.S3UpdateObjectEncryption != nil {
+		if err := validateS3UpdateObjectEncryptionOperation(v.S3UpdateObjectEncryption); err != nil {
+			invalidParams.AddNested("S3UpdateObjectEncryption", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -2789,6 +2794,23 @@ func validateMultiRegionAccessPointRoute(v *types.MultiRegionAccessPointRoute) e
 	invalidParams := smithy.InvalidParamsError{Context: "MultiRegionAccessPointRoute"}
 	if v.TrafficDialPercentage == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("TrafficDialPercentage"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateObjectEncryption(v *types.ObjectEncryption) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ObjectEncryption"}
+	if v.SSEKMS != nil {
+		if err := validateS3UpdateObjectEncryptionSSEKMS(v.SSEKMS); err != nil {
+			invalidParams.AddNested("SSEKMS", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3354,6 +3376,38 @@ func validateS3TagSet(v []types.S3Tag) error {
 	}
 }
 
+func validateS3UpdateObjectEncryptionOperation(v *types.S3UpdateObjectEncryptionOperation) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "S3UpdateObjectEncryptionOperation"}
+	if v.ObjectEncryption != nil {
+		if err := validateObjectEncryption(v.ObjectEncryption); err != nil {
+			invalidParams.AddNested("ObjectEncryption", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateS3UpdateObjectEncryptionSSEKMS(v *types.S3UpdateObjectEncryptionSSEKMS) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "S3UpdateObjectEncryptionSSEKMS"}
+	if v.KMSKeyArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("KMSKeyArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateSourceSelectionCriteria(v *types.SourceSelectionCriteria) error {
 	if v == nil {
 		return nil
@@ -3456,6 +3510,11 @@ func validateStorageLensConfiguration(v *types.StorageLensConfiguration) error {
 			invalidParams.AddNested("DataExport", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.ExpandedPrefixesDataExport != nil {
+		if err := validateStorageLensExpandedPrefixesDataExport(v.ExpandedPrefixesDataExport); err != nil {
+			invalidParams.AddNested("ExpandedPrefixesDataExport", err.(smithy.InvalidParamsError))
+		}
+	}
 	if v.AwsOrg != nil {
 		if err := validateStorageLensAwsOrg(v.AwsOrg); err != nil {
 			invalidParams.AddNested("AwsOrg", err.(smithy.InvalidParamsError))
@@ -3483,6 +3542,11 @@ func validateStorageLensDataExport(v *types.StorageLensDataExport) error {
 			invalidParams.AddNested("CloudWatchMetrics", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.StorageLensTableDestination != nil {
+		if err := validateStorageLensTableDestination(v.StorageLensTableDestination); err != nil {
+			invalidParams.AddNested("StorageLensTableDestination", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -3498,6 +3562,28 @@ func validateStorageLensDataExportEncryption(v *types.StorageLensDataExportEncry
 	if v.SSEKMS != nil {
 		if err := validateSSEKMS(v.SSEKMS); err != nil {
 			invalidParams.AddNested("SSEKMS", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateStorageLensExpandedPrefixesDataExport(v *types.StorageLensExpandedPrefixesDataExport) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StorageLensExpandedPrefixesDataExport"}
+	if v.S3BucketDestination != nil {
+		if err := validateS3BucketDestination(v.S3BucketDestination); err != nil {
+			invalidParams.AddNested("S3BucketDestination", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.StorageLensTableDestination != nil {
+		if err := validateStorageLensTableDestination(v.StorageLensTableDestination); err != nil {
+			invalidParams.AddNested("StorageLensTableDestination", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -3581,6 +3667,23 @@ func validateStorageLensGroupOrOperator(v *types.StorageLensGroupOrOperator) err
 	if v.MatchAnyTag != nil {
 		if err := validateMatchAnyTag(v.MatchAnyTag); err != nil {
 			invalidParams.AddNested("MatchAnyTag", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateStorageLensTableDestination(v *types.StorageLensTableDestination) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StorageLensTableDestination"}
+	if v.Encryption != nil {
+		if err := validateStorageLensDataExportEncryption(v.Encryption); err != nil {
+			invalidParams.AddNested("Encryption", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -3829,6 +3932,11 @@ func validateOpCreateAccessPointInput(v *CreateAccessPointInput) error {
 	if v.VpcConfiguration != nil {
 		if err := validateVpcConfiguration(v.VpcConfiguration); err != nil {
 			invalidParams.AddNested("VpcConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Tags != nil {
+		if err := validateTagList(v.Tags); err != nil {
+			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

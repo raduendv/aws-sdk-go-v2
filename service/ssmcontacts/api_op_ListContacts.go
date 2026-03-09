@@ -38,8 +38,7 @@ type ListContactsInput struct {
 	// The pagination token to continue to the next page of results.
 	NextToken *string
 
-	// The type of contact. A contact is type PERSONAL and an escalation plan is type
-	// ESCALATION .
+	// The type of contact.
 	Type types.ContactType
 
 	noSmithyDocumentSerde
@@ -144,16 +143,13 @@ func (c *Client) addOperationListContactsMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

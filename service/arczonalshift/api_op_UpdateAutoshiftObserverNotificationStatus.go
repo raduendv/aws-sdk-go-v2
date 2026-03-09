@@ -20,8 +20,8 @@ import (
 // includes only autoshift events for autoshifts when one or more of your resources
 // is included in the autoshift.
 //
-// For more information, see [Notifications for practice runs and autoshifts] in the Amazon Route 53 Application Recovery
-// Controller Developer Guide.
+// For more information, see [Notifications for practice runs and autoshifts] in the Amazon Application Recovery Controller
+// Developer Guide.
 //
 // [Notifications for practice runs and autoshifts]: https://docs.aws.amazon.com/r53recovery/latest/dg/arc-zonal-autoshift.how-it-works.html#ZAShiftNotification
 func (c *Client) UpdateAutoshiftObserverNotificationStatus(ctx context.Context, params *UpdateAutoshiftObserverNotificationStatusInput, optFns ...func(*Options)) (*UpdateAutoshiftObserverNotificationStatusOutput, error) {
@@ -154,16 +154,13 @@ func (c *Client) addOperationUpdateAutoshiftObserverNotificationStatusMiddleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -39,6 +39,9 @@ type SetV2LoggingOptionsInput struct {
 	// If true all logs are disabled. The default is false.
 	DisableAllLogs bool
 
+	//  The list of event configurations that override account-level logging.
+	EventConfigurations []types.LogEventConfiguration
+
 	// The ARN of the role that allows IoT to write to Cloudwatch logs.
 	RoleArn *string
 
@@ -119,6 +122,9 @@ func (c *Client) addOperationSetV2LoggingOptionsMiddlewares(stack *middleware.St
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
+	if err = addOpSetV2LoggingOptionsValidationMiddleware(stack); err != nil {
+		return err
+	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opSetV2LoggingOptions(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -137,16 +143,13 @@ func (c *Client) addOperationSetV2LoggingOptionsMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

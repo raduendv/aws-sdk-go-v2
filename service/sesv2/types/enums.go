@@ -301,6 +301,11 @@ const (
 	DkimSigningAttributesOriginAwsSesUsEast2      DkimSigningAttributesOrigin = "AWS_SES_US_EAST_2"
 	DkimSigningAttributesOriginAwsSesUsWest1      DkimSigningAttributesOrigin = "AWS_SES_US_WEST_1"
 	DkimSigningAttributesOriginAwsSesUsWest2      DkimSigningAttributesOrigin = "AWS_SES_US_WEST_2"
+	DkimSigningAttributesOriginAwsSesMeCentral1   DkimSigningAttributesOrigin = "AWS_SES_ME_CENTRAL_1"
+	DkimSigningAttributesOriginAwsSesApSouth2     DkimSigningAttributesOrigin = "AWS_SES_AP_SOUTH_2"
+	DkimSigningAttributesOriginAwsSesEuCentral2   DkimSigningAttributesOrigin = "AWS_SES_EU_CENTRAL_2"
+	DkimSigningAttributesOriginAwsSesApSoutheast5 DkimSigningAttributesOrigin = "AWS_SES_AP_SOUTHEAST_5"
+	DkimSigningAttributesOriginAwsSesCaWest1      DkimSigningAttributesOrigin = "AWS_SES_CA_WEST_1"
 )
 
 // Values returns all known values for DkimSigningAttributesOrigin. Note that this
@@ -333,6 +338,11 @@ func (DkimSigningAttributesOrigin) Values() []DkimSigningAttributesOrigin {
 		"AWS_SES_US_EAST_2",
 		"AWS_SES_US_WEST_1",
 		"AWS_SES_US_WEST_2",
+		"AWS_SES_ME_CENTRAL_1",
+		"AWS_SES_AP_SOUTH_2",
+		"AWS_SES_EU_CENTRAL_2",
+		"AWS_SES_AP_SOUTHEAST_5",
+		"AWS_SES_CA_WEST_1",
 	}
 }
 
@@ -377,6 +387,28 @@ func (DkimStatus) Values() []DkimStatus {
 		"FAILED",
 		"TEMPORARY_FAILURE",
 		"NOT_STARTED",
+	}
+}
+
+type EmailAddressInsightsConfidenceVerdict string
+
+// Enum values for EmailAddressInsightsConfidenceVerdict
+const (
+	EmailAddressInsightsConfidenceVerdictLow    EmailAddressInsightsConfidenceVerdict = "LOW"
+	EmailAddressInsightsConfidenceVerdictMedium EmailAddressInsightsConfidenceVerdict = "MEDIUM"
+	EmailAddressInsightsConfidenceVerdictHigh   EmailAddressInsightsConfidenceVerdict = "HIGH"
+)
+
+// Values returns all known values for EmailAddressInsightsConfidenceVerdict. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EmailAddressInsightsConfidenceVerdict) Values() []EmailAddressInsightsConfidenceVerdict {
+	return []EmailAddressInsightsConfidenceVerdict{
+		"LOW",
+		"MEDIUM",
+		"HIGH",
 	}
 }
 
@@ -582,6 +614,24 @@ func (ListRecommendationsFilterKey) Values() []ListRecommendationsFilterKey {
 	}
 }
 
+type ListTenantResourcesFilterKey string
+
+// Enum values for ListTenantResourcesFilterKey
+const (
+	ListTenantResourcesFilterKeyResourceType ListTenantResourcesFilterKey = "RESOURCE_TYPE"
+)
+
+// Values returns all known values for ListTenantResourcesFilterKey. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ListTenantResourcesFilterKey) Values() []ListTenantResourcesFilterKey {
+	return []ListTenantResourcesFilterKey{
+		"RESOURCE_TYPE",
+	}
+}
+
 type MailFromDomainStatus string
 
 // Enum values for MailFromDomainStatus
@@ -777,11 +827,14 @@ type RecommendationType string
 
 // Enum values for RecommendationType
 const (
-	RecommendationTypeDkim      RecommendationType = "DKIM"
-	RecommendationTypeDmarc     RecommendationType = "DMARC"
-	RecommendationTypeSpf       RecommendationType = "SPF"
-	RecommendationTypeBimi      RecommendationType = "BIMI"
-	RecommendationTypeComplaint RecommendationType = "COMPLAINT"
+	RecommendationTypeDkim       RecommendationType = "DKIM"
+	RecommendationTypeDmarc      RecommendationType = "DMARC"
+	RecommendationTypeSpf        RecommendationType = "SPF"
+	RecommendationTypeBimi       RecommendationType = "BIMI"
+	RecommendationTypeComplaint  RecommendationType = "COMPLAINT"
+	RecommendationTypeBounce     RecommendationType = "BOUNCE"
+	RecommendationTypeFeedback3p RecommendationType = "FEEDBACK_3P"
+	RecommendationTypeIpListing  RecommendationType = "IP_LISTING"
 )
 
 // Values returns all known values for RecommendationType. Note that this can be
@@ -795,6 +848,70 @@ func (RecommendationType) Values() []RecommendationType {
 		"SPF",
 		"BIMI",
 		"COMPLAINT",
+		"BOUNCE",
+		"FEEDBACK_3P",
+		"IP_LISTING",
+	}
+}
+
+type ReputationEntityFilterKey string
+
+// Enum values for ReputationEntityFilterKey
+const (
+	ReputationEntityFilterKeyEntityType            ReputationEntityFilterKey = "ENTITY_TYPE"
+	ReputationEntityFilterKeyReputationImpact      ReputationEntityFilterKey = "REPUTATION_IMPACT"
+	ReputationEntityFilterKeyStatus                ReputationEntityFilterKey = "SENDING_STATUS"
+	ReputationEntityFilterKeyEntityReferencePrefix ReputationEntityFilterKey = "ENTITY_REFERENCE_PREFIX"
+)
+
+// Values returns all known values for ReputationEntityFilterKey. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ReputationEntityFilterKey) Values() []ReputationEntityFilterKey {
+	return []ReputationEntityFilterKey{
+		"ENTITY_TYPE",
+		"REPUTATION_IMPACT",
+		"SENDING_STATUS",
+		"ENTITY_REFERENCE_PREFIX",
+	}
+}
+
+type ReputationEntityType string
+
+// Enum values for ReputationEntityType
+const (
+	ReputationEntityTypeResource ReputationEntityType = "RESOURCE"
+)
+
+// Values returns all known values for ReputationEntityType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ReputationEntityType) Values() []ReputationEntityType {
+	return []ReputationEntityType{
+		"RESOURCE",
+	}
+}
+
+type ResourceType string
+
+// Enum values for ResourceType
+const (
+	ResourceTypeEmailIdentity    ResourceType = "EMAIL_IDENTITY"
+	ResourceTypeConfigurationSet ResourceType = "CONFIGURATION_SET"
+	ResourceTypeEmailTemplate    ResourceType = "EMAIL_TEMPLATE"
+)
+
+// Values returns all known values for ResourceType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourceType) Values() []ResourceType {
+	return []ResourceType{
+		"EMAIL_IDENTITY",
+		"CONFIGURATION_SET",
+		"EMAIL_TEMPLATE",
 	}
 }
 
@@ -840,6 +957,27 @@ func (ScalingMode) Values() []ScalingMode {
 	}
 }
 
+type SendingStatus string
+
+// Enum values for SendingStatus
+const (
+	SendingStatusEnabled    SendingStatus = "ENABLED"
+	SendingStatusReinstated SendingStatus = "REINSTATED"
+	SendingStatusDisabled   SendingStatus = "DISABLED"
+)
+
+// Values returns all known values for SendingStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SendingStatus) Values() []SendingStatus {
+	return []SendingStatus{
+		"ENABLED",
+		"REINSTATED",
+		"DISABLED",
+	}
+}
+
 type Status string
 
 // Enum values for Status
@@ -879,6 +1017,28 @@ func (SubscriptionStatus) Values() []SubscriptionStatus {
 	return []SubscriptionStatus{
 		"OPT_IN",
 		"OPT_OUT",
+	}
+}
+
+type SuppressionConfidenceVerdictThreshold string
+
+// Enum values for SuppressionConfidenceVerdictThreshold
+const (
+	SuppressionConfidenceVerdictThresholdMedium  SuppressionConfidenceVerdictThreshold = "MEDIUM"
+	SuppressionConfidenceVerdictThresholdHigh    SuppressionConfidenceVerdictThreshold = "HIGH"
+	SuppressionConfidenceVerdictThresholdManaged SuppressionConfidenceVerdictThreshold = "MANAGED"
+)
+
+// Values returns all known values for SuppressionConfidenceVerdictThreshold. Note
+// that this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SuppressionConfidenceVerdictThreshold) Values() []SuppressionConfidenceVerdictThreshold {
+	return []SuppressionConfidenceVerdictThreshold{
+		"MEDIUM",
+		"HIGH",
+		"MANAGED",
 	}
 }
 
@@ -1003,8 +1163,9 @@ type WarmupStatus string
 
 // Enum values for WarmupStatus
 const (
-	WarmupStatusInProgress WarmupStatus = "IN_PROGRESS"
-	WarmupStatusDone       WarmupStatus = "DONE"
+	WarmupStatusInProgress    WarmupStatus = "IN_PROGRESS"
+	WarmupStatusDone          WarmupStatus = "DONE"
+	WarmupStatusNotApplicable WarmupStatus = "NOT_APPLICABLE"
 )
 
 // Values returns all known values for WarmupStatus. Note that this can be
@@ -1015,5 +1176,6 @@ func (WarmupStatus) Values() []WarmupStatus {
 	return []WarmupStatus{
 		"IN_PROGRESS",
 		"DONE",
+		"NOT_APPLICABLE",
 	}
 }

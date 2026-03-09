@@ -45,7 +45,7 @@ type AddProfilePermissionInput struct {
 	//
 	//   - signer:RevokeSignature . For details, see RevokeSignature.
 	//
-	// [Using cross-account signing with signing profiles]: https://docs.aws.amazon.com/signer/latest/developerguide/signing-profile-cross-account.html
+	// [Using cross-account signing with signing profiles]: http://docs.aws.amazon.com/signer/latest/developerguide/signing-profile-cross-account.html
 	//
 	// This member is required.
 	Action *string
@@ -174,16 +174,13 @@ func (c *Client) addOperationAddProfilePermissionMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

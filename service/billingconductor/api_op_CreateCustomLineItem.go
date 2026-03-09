@@ -61,9 +61,19 @@ type CreateCustomLineItemInput struct {
 	//  A time range for which the custom line item is effective.
 	BillingPeriodRange *types.CustomLineItemBillingPeriodRange
 
-	//  The token that is needed to support idempotency. Idempotency isn't currently
-	// supported, but will be implemented in a future update.
+	// A unique, case-sensitive identifier that you specify to ensure idempotency of
+	// the request. Idempotency ensures that an API request completes no more than one
+	// time. With an idempotent request, if the original request completes
+	// successfully, any subsequent retries complete successfully without performing
+	// any further actions.
 	ClientToken *string
+
+	//  Specifies how the custom line item charges are computed.
+	ComputationRule types.ComputationRuleEnum
+
+	//  Details controlling how the custom line item charges are presented in the
+	// bill. Contains specifications for which service the charges will be shown under.
+	PresentationDetails *types.PresentationObject
 
 	//  A map that contains tag keys and tag values that are attached to a custom line
 	// item.
@@ -174,16 +184,13 @@ func (c *Client) addOperationCreateCustomLineItemMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

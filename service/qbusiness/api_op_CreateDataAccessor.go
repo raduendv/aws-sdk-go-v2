@@ -58,6 +58,10 @@ type CreateDataAccessorInput struct {
 	// This member is required.
 	Principal *string
 
+	// The authentication configuration details for the data accessor. This specifies
+	// how the ISV will authenticate when accessing data through this data accessor.
+	AuthenticationDetail *types.DataAccessorAuthenticationDetail
+
 	// A unique, case-sensitive identifier you provide to ensure idempotency of the
 	// request.
 	ClientToken *string
@@ -183,16 +187,13 @@ func (c *Client) addOperationCreateDataAccessorMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

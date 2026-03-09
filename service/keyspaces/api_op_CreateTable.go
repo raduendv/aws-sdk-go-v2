@@ -114,6 +114,9 @@ type CreateTableInput struct {
 	// [Read/write capacity modes]: https://docs.aws.amazon.com/keyspaces/latest/devguide/ReadWriteCapacityMode.html
 	CapacitySpecification *types.CapacitySpecification
 
+	// The CDC stream settings of the table.
+	CdcSpecification *types.CdcSpecification
+
 	//  Enables client-side timestamps for the table. By default, the setting is
 	// disabled. You can enable client-side timestamps with the following option:
 	//
@@ -203,6 +206,16 @@ type CreateTableInput struct {
 	//
 	// [Expiring data by using Amazon Keyspaces Time to Live (TTL)]: https://docs.aws.amazon.com/keyspaces/latest/devguide/TTL.html
 	Ttl *types.TimeToLive
+
+	// Specifies the warm throughput settings for the table. Pre-warming a table helps
+	// you avoid capacity exceeded exceptions by pre-provisioning read and write
+	// capacity units to reduce cold start latency when your table receives traffic.
+	//
+	// For more information about pre-warming in Amazon Keyspaces, see [Pre-warm a table in Amazon Keyspaces] in the Amazon
+	// Keyspaces Developer Guide.
+	//
+	// [Pre-warm a table in Amazon Keyspaces]: https://docs.aws.amazon.com/keyspaces/latest/devguide/warm-throughput.html
+	WarmThroughputSpecification *types.WarmThroughputSpecification
 
 	noSmithyDocumentSerde
 }
@@ -309,16 +322,13 @@ func (c *Client) addOperationCreateTableMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

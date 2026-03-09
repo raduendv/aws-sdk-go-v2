@@ -13,8 +13,20 @@ import (
 
 // Updates the configuration of a canary that has already been created.
 //
+// For multibrowser canaries, you can add or remove browsers by updating the
+// browserConfig list in the update call. For example:
+//
+//   - To add Firefox to a canary that currently uses Chrome, specify
+//     browserConfigs as [CHROME, FIREFOX]
+//
+//   - To remove Firefox and keep only Chrome, specify browserConfigs as [CHROME]
+//
 // You can't use this operation to update the tags of an existing canary. To
 // change the tags of an existing canary, use [TagResource].
+//
+// When you use the dryRunId field when updating a canary, the only other field
+// you can provide is the Schedule . Adding any other field will thrown an
+// exception.
 //
 // [TagResource]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_TagResource.html
 func (c *Client) UpdateCanary(ctx context.Context, params *UpdateCanaryInput, optFns ...func(*Options)) (*UpdateCanaryOutput, error) {
@@ -50,13 +62,27 @@ type UpdateCanaryInput struct {
 
 	// The location in Amazon S3 where Synthetics stores artifacts from the test runs
 	// of this canary. Artifacts include the log file, screenshots, and HAR files. The
-	// name of the S3 bucket can't include a period (.).
+	// name of the Amazon S3 bucket can't include a period (.).
 	ArtifactS3Location *string
 
+	// A structure that specifies the browser type to use for a canary run. CloudWatch
+	// Synthetics supports running canaries on both CHROME and FIREFOX browsers.
+	//
+	// If not specified, browserConfigs defaults to Chrome.
+	BrowserConfigs []types.BrowserConfig
+
 	// A structure that includes the entry point from which the canary should start
-	// running your script. If the script is stored in an S3 bucket, the bucket name,
-	// key, and version are also included.
+	// running your script. If the script is stored in an Amazon S3 bucket, the bucket
+	// name, key, and version are also included.
 	Code *types.CanaryCodeInput
+
+	// Update the existing canary using the updated configurations from the DryRun
+	// associated with the DryRunId.
+	//
+	// When you use the dryRunId field when updating a canary, the only other field
+	// you can provide is the Schedule . Adding any other field will thrown an
+	// exception.
+	DryRunId *string
 
 	// The ARN of the IAM role to be used to run the canary. This role must already
 	// exist, and must include lambda.amazonaws.com as a principal in the trust
@@ -78,6 +104,11 @@ type UpdateCanaryInput struct {
 	ExecutionRoleArn *string
 
 	// The number of days to retain data about failed runs of this canary.
+	//
+	// This setting affects the range of information returned by [GetCanaryRuns], as well as the
+	// range of information displayed in the Synthetics console.
+	//
+	// [GetCanaryRuns]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_GetCanaryRuns.html
 	FailureRetentionPeriodInDays *int32
 
 	// Specifies whether to also delete the Lambda functions and layers used by this
@@ -93,8 +124,9 @@ type UpdateCanaryInput struct {
 	// A structure that contains the timeout value that is used for each individual
 	// run of the canary.
 	//
-	// The environment variables keys and values are not encrypted. Do not store
-	// sensitive information in this field.
+	// Environment variable keys and values are encrypted at rest using Amazon Web
+	// Services owned KMS keys. However, the environment variables are not encrypted on
+	// the client side. Do not store sensitive information in them.
 	RunConfig *types.CanaryRunConfigInput
 
 	// Specifies the runtime version to use for the canary. For a list of valid
@@ -108,6 +140,11 @@ type UpdateCanaryInput struct {
 	Schedule *types.CanaryScheduleInput
 
 	// The number of days to retain data about successful runs of this canary.
+	//
+	// This setting affects the range of information returned by [GetCanaryRuns], as well as the
+	// range of information displayed in the Synthetics console.
+	//
+	// [GetCanaryRuns]: https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_GetCanaryRuns.html
 	SuccessRetentionPeriodInDays *int32
 
 	// Defines the screenshots to use as the baseline for comparisons during visual
@@ -121,6 +158,29 @@ type UpdateCanaryInput struct {
 	// [Visual monitoring]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Library_SyntheticsLogger_VisualTesting.html
 	// [Visual monitoring blueprint]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Blueprints_VisualTesting.html
 	VisualReference *types.VisualReferenceInput
+
+	// A list of visual reference configurations for the canary, one for each browser
+	// type that the canary is configured to run on. Visual references are used for
+	// visual monitoring comparisons.
+	//
+	// syn-nodejs-puppeteer-11.0 and above, and syn-nodejs-playwright-3.0 and above,
+	// only supports visualReferences . visualReference field is not supported.
+	//
+	// Versions older than syn-nodejs-puppeteer-11.0 supports both visualReference and
+	// visualReferences for backward compatibility. It is recommended to use
+	// visualReferences for consistency and future compatibility.
+	//
+	// For multibrowser visual monitoring, you can update the baseline for all
+	// configured browsers in a single update call by specifying a list of
+	// VisualReference objects, one per browser. Each VisualReference object maps to a
+	// specific browser configuration, allowing you to manage visual baselines for
+	// multiple browsers simultaneously.
+	//
+	// For single configuration canaries using Chrome browser (default browser), use
+	// visualReferences for syn-nodejs-puppeteer-11.0 and above, and
+	// syn-nodejs-playwright-3.0 and above canaries. The browserType in the
+	// visualReference object is not mandatory.
+	VisualReferences []types.VisualReferenceInput
 
 	// If this canary is to test an endpoint in a VPC, this structure contains
 	// information about the subnet and security groups of the VPC endpoint. For more
@@ -227,16 +287,13 @@ func (c *Client) addOperationUpdateCanaryMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

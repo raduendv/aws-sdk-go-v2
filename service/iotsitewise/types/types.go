@@ -74,7 +74,8 @@ type ActionPayload struct {
 	noSmithyDocumentSerde
 }
 
-// Contains the summary of the actions.
+// Contains the summary of the actions, including information about where the
+// action resolves to.
 type ActionSummary struct {
 
 	// The ID of the action definition.
@@ -82,6 +83,9 @@ type ActionSummary struct {
 
 	// The ID of the action.
 	ActionId *string
+
+	// The detailed resource this action resolves to.
+	ResolveTo *ResolveTo
 
 	// The resource the action will be taken on.
 	TargetResource *TargetResource
@@ -155,6 +159,20 @@ type Alarms struct {
 	// [Managing alarm notifications]: https://docs.aws.amazon.com/iotevents/latest/developerguide/lambda-support.html
 	// [ARN]: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 	NotificationLambdaArn *string
+
+	noSmithyDocumentSerde
+}
+
+// A filter used to match data bindings based on a specific asset. This filter
+// identifies all computation models referencing a particular asset in their data
+// bindings.
+type AssetBindingValueFilter struct {
+
+	// The ID of the asset to filter data bindings by. Only data bindings referencing
+	// this specific asset are matched.
+	//
+	// This member is required.
+	AssetId *string
 
 	noSmithyDocumentSerde
 }
@@ -307,6 +325,20 @@ type AssetHierarchyInfo struct {
 
 	// The ID of the parent asset in this asset relationship.
 	ParentAssetId *string
+
+	noSmithyDocumentSerde
+}
+
+// A filter used to match data bindings based on a specific asset model. This
+// filter identifies all computation models referencing a particular asset model in
+// their data bindings.
+type AssetModelBindingValueFilter struct {
+
+	// The ID of the asset model to filter data bindings by. Only data bindings
+	// referemncing this specific asset model are matched.
+	//
+	// This member is required.
+	AssetModelId *string
 
 	noSmithyDocumentSerde
 }
@@ -582,6 +614,42 @@ type AssetModelProperty struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about an assetModelProperty binding value.
+type AssetModelPropertyBindingValue struct {
+
+	// The ID of the asset model, in UUID format.
+	//
+	// This member is required.
+	AssetModelId *string
+
+	// The ID of the asset model property used in data binding value.
+	//
+	// This member is required.
+	PropertyId *string
+
+	noSmithyDocumentSerde
+}
+
+// A filter used to match data bindings based on a specific asset model property.
+// This filter identifies all computation models that reference a particular
+// property of an asset model in their data bindings.
+type AssetModelPropertyBindingValueFilter struct {
+
+	// The ID of the asset model containing the filter property. This identifies the
+	// specific asset model that contains the property of interest.
+	//
+	// This member is required.
+	AssetModelId *string
+
+	// The ID of the property within the asset model to filter by. Only data bindings
+	// referencing this specific property of the specified asset model are matched.
+	//
+	// This member is required.
+	PropertyId *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains an asset model property definition. This property definition is
 // applied to all assets created from the asset model.
 type AssetModelPropertyDefinition struct {
@@ -644,7 +712,8 @@ type AssetModelPropertyPathSegment struct {
 	noSmithyDocumentSerde
 }
 
-// Contains a summary of a property associated with a model.
+// Contains a summary of a property associated with a model. This includes
+// information about which interfaces the property belongs to, if any.
 type AssetModelPropertySummary struct {
 
 	// The data type of the property.
@@ -678,6 +747,11 @@ type AssetModelPropertySummary struct {
 
 	// The ID of the property.
 	Id *string
+
+	// A list of interface summaries that describe which interfaces this property
+	// belongs to, including the interface asset model ID and the corresponding
+	// property ID in the interface.
+	InterfaceSummaries []InterfaceSummary
 
 	// The structured path to the property from the root of the asset model.
 	Path []AssetModelPropertyPathSegment
@@ -814,6 +888,46 @@ type AssetProperty struct {
 
 	// The unit (such as Newtons or RPM ) of the asset property.
 	Unit *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents a data binding value referencing a specific asset property. It's
+// used to bind computation model variables to actual asset property values for
+// processing.
+type AssetPropertyBindingValue struct {
+
+	// The ID of the asset containing the property. This identifies the specific asset
+	// instance's property value used in the computation model.
+	//
+	// This member is required.
+	AssetId *string
+
+	// The ID of the property within the asset. This identifies the specific
+	// property's value used in the computation model.
+	//
+	// This member is required.
+	PropertyId *string
+
+	noSmithyDocumentSerde
+}
+
+// A filter used to match data bindings based on a specific asset property. This
+// filter helps identify all computation models referencing a particular property
+// of an asset in their data bindings.
+type AssetPropertyBindingValueFilter struct {
+
+	// The ID of the asset containing the property to filter by. This identifies the
+	// specific asset instance containing the property of interest.
+	//
+	// This member is required.
+	AssetId *string
+
+	// The ID of the property within the asset to filter by. Only data bindings
+	// referencing this specific property of the specified asset are matched.
+	//
+	// This member is required.
+	PropertyId *string
 
 	noSmithyDocumentSerde
 }
@@ -1612,6 +1726,146 @@ type CompositionRelationshipSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Contains the configuration of the type of anomaly detection computation model.
+type ComputationModelAnomalyDetectionConfiguration struct {
+
+	// Define the variable name associated with input properties, with the following
+	// format ${VariableName} .
+	//
+	// This member is required.
+	InputProperties *string
+
+	// Define the variable name associated with the result property, and the following
+	// format ${VariableName} .
+	//
+	// This member is required.
+	ResultProperty *string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration for the computation model.
+type ComputationModelConfiguration struct {
+
+	// The configuration for the anomaly detection type of computation model.
+	AnomalyDetection *ComputationModelAnomalyDetectionConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// A summary of how a specific data binding is used across computation models.
+// This tracks dependencies between data sources and computation models, allowing
+// you to understand the impact of changes to data sources.
+type ComputationModelDataBindingUsageSummary struct {
+
+	// The list of computation model IDs that use this data binding. This allows
+	// identification of all computation models affected by changes to the referenced
+	// data source.
+	//
+	// This member is required.
+	ComputationModelIds []string
+
+	// The data binding matched by the filter criteria. Contains details about
+	// specific data binding values used by the computation models.
+	//
+	// This member is required.
+	MatchedDataBinding *MatchedDataBinding
+
+	noSmithyDocumentSerde
+}
+
+// Contains computation model data binding value information, which can be one of
+// assetModelProperty , list .
+type ComputationModelDataBindingValue struct {
+
+	// Specifies an asset model property data binding value.
+	AssetModelProperty *AssetModelPropertyBindingValue
+
+	// The asset property value used for computation model data binding.
+	AssetProperty *AssetPropertyBindingValue
+
+	// Specifies a list of data binding value.
+	List []ComputationModelDataBindingValue
+
+	noSmithyDocumentSerde
+}
+
+// A summary of the resource that a computation model resolves to.
+type ComputationModelResolveToResourceSummary struct {
+
+	// The detailed resource this execution summary resolves to.
+	ResolveTo *ResolveTo
+
+	noSmithyDocumentSerde
+}
+
+// Contains current status information for a computation model.
+type ComputationModelStatus struct {
+
+	// The current state of the computation model.
+	//
+	// This member is required.
+	State ComputationModelState
+
+	// Contains the details of an IoT SiteWise error.
+	Error *ErrorDetails
+
+	noSmithyDocumentSerde
+}
+
+// Contains a summary of a computation model.
+type ComputationModelSummary struct {
+
+	// The [ARN] of the computation model, which has the following format.
+	//
+	//     arn:${Partition}:iotsitewise:${Region}:${Account}:computation-model/${ComputationModelId}
+	//
+	// [ARN]: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
+	//
+	// This member is required.
+	Arn *string
+
+	// The model creation date, in Unix epoch time.
+	//
+	// This member is required.
+	CreationDate *time.Time
+
+	// The ID of the computation model.
+	//
+	// This member is required.
+	Id *string
+
+	// The time the model was last updated, in Unix epoch time.
+	//
+	// This member is required.
+	LastUpdateDate *time.Time
+
+	// The name of the computation model.
+	//
+	// This member is required.
+	Name *string
+
+	// The current status of the computation model.
+	//
+	// This member is required.
+	Status *ComputationModelStatus
+
+	// The type of the computation model.
+	//
+	// This member is required.
+	Type ComputationModelType
+
+	// The version of the computation model.
+	//
+	// This member is required.
+	Version *string
+
+	// The description of the computation model.
+	Description *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains the details of an IoT SiteWise configuration error.
 type ConfigurationErrorDetails struct {
 
@@ -1706,6 +1960,45 @@ type DashboardSummary struct {
 
 	// The date the dashboard was last updated, in Unix epoch time.
 	LastUpdateDate *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Represents a value used in a data binding. It can be an asset property or an
+// asset model property.
+type DataBindingValue struct {
+
+	// Contains information about an assetModelProperty binding value.
+	AssetModelProperty *AssetModelPropertyBindingValue
+
+	// The asset property value used in the data binding.
+	AssetProperty *AssetPropertyBindingValue
+
+	noSmithyDocumentSerde
+}
+
+// A filter used to match specific data binding values based on criteria. This
+// filter allows searching for data bindings by asset, asset model, asset property,
+// or asset model property.
+type DataBindingValueFilter struct {
+
+	// Filter criteria for matching data bindings based on a specific asset. Used to
+	// list all data bindings referencing a particular asset or its properties.
+	Asset *AssetBindingValueFilter
+
+	// Filter criteria for matching data bindings based on a specific asset model.
+	// Used to list all data bindings referencing a particular asset model or its
+	// properties.
+	AssetModel *AssetModelBindingValueFilter
+
+	// Filter criteria for matching data bindings based on a specific asset model
+	// property. Used to list all data bindings referencing a particular property of an
+	// asset model.
+	AssetModelProperty *AssetModelPropertyBindingValueFilter
+
+	// Filter criteria for matching data bindings based on a specific asset property.
+	// Used to list all data bindings referencing a particular property of an asset.
+	AssetProperty *AssetPropertyBindingValueFilter
 
 	noSmithyDocumentSerde
 }
@@ -1881,6 +2174,61 @@ type ErrorReportLocation struct {
 	noSmithyDocumentSerde
 }
 
+// The status of the execution.
+type ExecutionStatus struct {
+
+	// The current state of the computation model.
+	//
+	// This member is required.
+	State ExecutionState
+
+	noSmithyDocumentSerde
+}
+
+// Contains the execution summary of the computation model.
+type ExecutionSummary struct {
+
+	// The ID of the execution.
+	//
+	// This member is required.
+	ExecutionId *string
+
+	// The time the process started.
+	//
+	// This member is required.
+	ExecutionStartTime *time.Time
+
+	// The status of the execution process.
+	//
+	// This member is required.
+	ExecutionStatus *ExecutionStatus
+
+	// The resource the action will be taken on. This can include asset-based
+	// resources and computation model resources.
+	//
+	// This member is required.
+	TargetResource *TargetResource
+
+	// The version of the target resource.
+	//
+	// This member is required.
+	TargetResourceVersion *string
+
+	// The type of action exectued.
+	ActionType *string
+
+	// The time the process ended.
+	ExecutionEndTime *time.Time
+
+	// The execution entity version associated with the summary.
+	ExecutionEntityVersion *string
+
+	// The detailed resource this execution resolves to.
+	ResolveTo *ResolveTo
+
+	noSmithyDocumentSerde
+}
+
 // Contains expression variable information.
 type ExpressionVariable struct {
 
@@ -1945,28 +2293,26 @@ type ForwardingConfig struct {
 type GatewayCapabilitySummary struct {
 
 	// The namespace of the capability configuration. For example, if you configure
-	// OPC-UA sources from the IoT SiteWise console, your OPC-UA capability
-	// configuration has the namespace iotsitewise:opcuacollector:version , where
-	// version is a number such as 1 .
+	// OPC UA sources for an MQTT-enabled gateway, your OPC-UA capability configuration
+	// has the namespace iotsitewise:opcuacollector:3 .
 	//
 	// This member is required.
 	CapabilityNamespace *string
 
-	// The synchronization status of the capability configuration. The sync status can
-	// be one of the following:
+	// The synchronization status of the gateway capability configuration. The sync
+	// status can be one of the following:
 	//
-	//   - IN_SYNC – The gateway is running the capability configuration.
+	//   - IN_SYNC - The gateway is running with the latest configuration.
 	//
-	//   - NOT_APPLICABLE – Synchronization is not required for this capability
-	//   configuration. This is most common when integrating partner data sources,
-	//   because the data integration is handled externally by the partner.
+	//   - OUT_OF_SYNC - The gateway hasn't received the latest configuration.
 	//
-	//   - OUT_OF_SYNC – The gateway hasn't received the capability configuration.
+	//   - SYNC_FAILED - The gateway rejected the latest configuration.
 	//
-	//   - SYNC_FAILED – The gateway rejected the capability configuration.
+	//   - UNKNOWN - The gateway hasn't reported its sync status.
 	//
-	//   - UNKNOWN – The synchronization status is currently unknown due to an
-	//   undetermined or temporary error.
+	//   - NOT_APPLICABLE - The gateway doesn't support this capability. This is most
+	//   common when integrating partner data sources, because the data integration is
+	//   handled externally by the partner.
 	//
 	// This member is required.
 	CapabilitySyncStatus CapabilitySyncStatus
@@ -1974,7 +2320,18 @@ type GatewayCapabilitySummary struct {
 	noSmithyDocumentSerde
 }
 
-// Contains a gateway's platform information.
+// The gateway's platform configuration. You can only specify one platform type in
+// a gateway.
+//
+// (Legacy only) For Greengrass V1 gateways, specify the greengrass parameter with
+// a valid Greengrass group ARN.
+//
+// For Greengrass V2 gateways, specify the greengrassV2 parameter with a valid
+// core device thing name. If creating a V3 gateway ( gatewayVersion=3 ), you must
+// also specify the coreDeviceOperatingSystem .
+//
+// For Siemens Industrial Edge gateways, specify the siemensIE parameter with a
+// valid IoT Core thing name.
 type GatewayPlatform struct {
 
 	// A gateway that runs on IoT Greengrass.
@@ -2019,7 +2376,18 @@ type GatewaySummary struct {
 	// [DescribeGatewayCapabilityConfiguration]: https://docs.aws.amazon.com/iot-sitewise/latest/APIReference/API_DescribeGatewayCapabilityConfiguration.html
 	GatewayCapabilitySummaries []GatewayCapabilitySummary
 
-	// Contains a gateway's platform information.
+	// The gateway's platform configuration. You can only specify one platform type in
+	// a gateway.
+	//
+	// (Legacy only) For Greengrass V1 gateways, specify the greengrass parameter with
+	// a valid Greengrass group ARN.
+	//
+	// For Greengrass V2 gateways, specify the greengrassV2 parameter with a valid
+	// core device thing name. If creating a V3 gateway ( gatewayVersion=3 ), you must
+	// also specify the coreDeviceOperatingSystem .
+	//
+	// For Siemens Industrial Edge gateways, specify the siemensIE parameter with a
+	// valid IoT Core thing name.
 	GatewayPlatform *GatewayPlatform
 
 	// The version of the gateway. A value of 3 indicates an MQTT-enabled, V3 gateway,
@@ -2065,7 +2433,9 @@ type GreengrassV2 struct {
 	// This member is required.
 	CoreDeviceThingName *string
 
-	// The operating system of the core device in IoT Greengrass V2.
+	// The operating system of the core device in IoT Greengrass V2. Specifying the
+	// operating system is required for MQTT-enabled, V3 gateways ( gatewayVersion 3 )
+	// and not applicable for Classic stream, V2 gateways ( gatewayVersion 2 ).
 	CoreDeviceOperatingSystem CoreDeviceOperatingSystem
 
 	noSmithyDocumentSerde
@@ -2078,6 +2448,23 @@ type GroupIdentity struct {
 	//
 	// This member is required.
 	Id *string
+
+	noSmithyDocumentSerde
+}
+
+// Maps a hierarchy from an interface asset model to a hierarchy in the asset
+// model where the interface is applied.
+type HierarchyMapping struct {
+
+	// The ID of the hierarchy in the asset model where the interface is applied.
+	//
+	// This member is required.
+	AssetModelHierarchyId *string
+
+	// The ID of the hierarchy in the interface asset model.
+	//
+	// This member is required.
+	InterfaceAssetModelHierarchyId *string
 
 	noSmithyDocumentSerde
 }
@@ -2185,6 +2572,48 @@ type ImageLocation struct {
 	//
 	// This member is required.
 	Url *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the relationship between an asset model and an
+// interface asset model that is applied to it.
+type InterfaceRelationship struct {
+
+	// The ID of the asset model that has the interface applied to it.
+	//
+	// This member is required.
+	Id *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about an interface relationship, which defines how
+// an interface is applied to an asset model. This summary provides the essential
+// identifiers needed to retrieve detailed information about the relationship.
+type InterfaceRelationshipSummary struct {
+
+	// The ID of the asset model that has the interface applied to it.
+	//
+	// This member is required.
+	Id *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about an interface that a property belongs to.
+type InterfaceSummary struct {
+
+	// The ID of the interface asset model that contains this property.
+	//
+	// This member is required.
+	InterfaceAssetModelId *string
+
+	// The ID of the property in the interface asset model that corresponds to this
+	// property.
+	//
+	// This member is required.
+	InterfaceAssetModelPropertyId *string
 
 	noSmithyDocumentSerde
 }
@@ -2305,6 +2734,17 @@ type LoggingOptions struct {
 	noSmithyDocumentSerde
 }
 
+// Represents a data binding that matches the specified filter criteria.
+type MatchedDataBinding struct {
+
+	// The value of the matched data binding.
+	//
+	// This member is required.
+	Value *DataBindingValue
+
+	noSmithyDocumentSerde
+}
+
 // Contains an asset measurement property. For more information, see [Measurements] in the IoT
 // SiteWise User Guide.
 //
@@ -2346,6 +2786,12 @@ type MeasurementProcessingConfig struct {
 // [Metrics]: https://docs.aws.amazon.com/iot-sitewise/latest/userguide/asset-properties.html#metrics
 type Metric struct {
 
+	// The window (time interval) over which IoT SiteWise computes the metric's
+	// aggregation expression. IoT SiteWise computes one data point per window .
+	//
+	// This member is required.
+	Window *MetricWindow
+
 	// The mathematical expression that defines the metric aggregation function. You
 	// can specify up to 10 variables per expression. You can specify up to 10
 	// functions per expression.
@@ -2353,25 +2799,15 @@ type Metric struct {
 	// For more information, see [Quotas] in the IoT SiteWise User Guide.
 	//
 	// [Quotas]: https://docs.aws.amazon.com/iot-sitewise/latest/userguide/quotas.html
-	//
-	// This member is required.
 	Expression *string
-
-	// The list of variables used in the expression.
-	//
-	// This member is required.
-	Variables []ExpressionVariable
-
-	// The window (time interval) over which IoT SiteWise computes the metric's
-	// aggregation expression. IoT SiteWise computes one data point per window .
-	//
-	// This member is required.
-	Window *MetricWindow
 
 	// The processing configuration for the given metric property. You can configure
 	// metrics to be computed at the edge or in the Amazon Web Services Cloud. By
 	// default, metrics are forwarded to the cloud.
 	ProcessingConfig *MetricProcessingConfig
+
+	// The list of variables used in the expression.
+	Variables []ExpressionVariable
 
 	noSmithyDocumentSerde
 }
@@ -2598,6 +3034,42 @@ type Property struct {
 	noSmithyDocumentSerde
 }
 
+// Maps a property from an interface asset model to a property in the asset model
+// where the interface is applied.
+type PropertyMapping struct {
+
+	// The ID of the property in the asset model where the interface is applied.
+	//
+	// This member is required.
+	AssetModelPropertyId *string
+
+	// The ID of the property in the interface asset model.
+	//
+	// This member is required.
+	InterfaceAssetModelPropertyId *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains configuration options for mapping properties from an interface asset
+// model to an asset model where the interface is applied.
+type PropertyMappingConfiguration struct {
+
+	// If true, missing properties from the interface asset model are automatically
+	// created in the asset model where the interface is applied.
+	CreateMissingProperty bool
+
+	// If true, properties are matched by name between the interface asset model and
+	// the asset model where the interface is applied.
+	MatchByPropertyName bool
+
+	// A list of specific property mappings that override the automatic mapping by
+	// name when an interface is applied to an asset model.
+	Overrides []PropertyMapping
+
+	noSmithyDocumentSerde
+}
+
 // Contains asset property value notification information. When the notification
 // state is enabled, IoT SiteWise publishes property value updates to a unique MQTT
 // topic. For more information, see [Interacting with other services]in the IoT SiteWise User Guide.
@@ -2698,6 +3170,17 @@ type Reference struct {
 
 	// Contains the dataset reference information.
 	Dataset *DataSetReference
+
+	noSmithyDocumentSerde
+}
+
+// The detailed resource this execution summary resolves to.
+type ResolveTo struct {
+
+	// The ID of the asset that the resource resolves to.
+	//
+	// This member is required.
+	AssetId *string
 
 	noSmithyDocumentSerde
 }
@@ -2809,13 +3292,15 @@ type SourceDetail struct {
 	noSmithyDocumentSerde
 }
 
-// The resource the action will be taken on.
+// The resource the action will be taken on. This can include asset-based
+// resources and computation model resources.
 type TargetResource struct {
 
 	// The ID of the asset, in UUID format.
-	//
-	// This member is required.
 	AssetId *string
+
+	// The ID of the computation model.
+	ComputationModelId *string
 
 	noSmithyDocumentSerde
 }

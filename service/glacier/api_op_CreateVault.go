@@ -13,7 +13,7 @@ import (
 
 // This operation creates a new vault with the specified name. The name of the
 // vault must be unique within a region for an AWS account. You can create up to
-// 1,000 vaults per account. If you need to create more vaults, contact Amazon S3
+// 1,000 vaults per account. If you need to create more vaults, contact Amazon
 // Glacier.
 //
 // You must use the following guidelines when naming a vault.
@@ -72,7 +72,7 @@ type CreateVaultInput struct {
 	noSmithyDocumentSerde
 }
 
-// Contains the Amazon S3 Glacier response to your request.
+// Contains the Amazon Glacier response to your request.
 type CreateVaultOutput struct {
 
 	// The URI of the vault that was created.
@@ -181,16 +181,13 @@ func (c *Client) addOperationCreateVaultMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

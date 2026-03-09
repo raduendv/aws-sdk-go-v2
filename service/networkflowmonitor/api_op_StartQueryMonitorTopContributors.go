@@ -12,14 +12,19 @@ import (
 	"time"
 )
 
-// Start a query to return the data with the Network Flow Monitor query interface.
-// Specify the query that you want to return results for by providing a query ID
-// and a monitor name. This query returns the top contributors for a specific
-// monitor.
+// Create a query that you can use with the Network Flow Monitor query interface
+// to return the top contributors for a monitor. Specify the monitor that you want
+// to create the query for.
+//
+// The call returns a query ID that you can use with [GetQueryResultsMonitorTopContributors] to run the query and return
+// the top contributors for a specific monitor.
 //
 // Top contributors in Network Flow Monitor are network flows with the highest
-// values for a specific metric type, related to a scope (for workload insights) or
-// a monitor.
+// values for a specific metric type. Top contributors can be across all workload
+// insights, for a given scope, or for a specific monitor. Use the applicable APIs
+// for the top contributors that you want to be returned.
+//
+// [GetQueryResultsMonitorTopContributors]: https://docs.aws.amazon.com/networkflowmonitor/2.0/APIReference/API_GetQueryResultsMonitorTopContributors.html
 func (c *Client) StartQueryMonitorTopContributors(ctx context.Context, params *StartQueryMonitorTopContributorsInput, optFns ...func(*Options)) (*StartQueryMonitorTopContributorsOutput, error) {
 	if params == nil {
 		params = &StartQueryMonitorTopContributorsInput{}
@@ -44,6 +49,9 @@ type StartQueryMonitorTopContributorsInput struct {
 	//
 	//   - INTER_AZ : Top contributor network flows between Availability Zones
 	//
+	//   - INTER_REGION : Top contributor network flows between Regions (to the edge of
+	//   another Region)
+	//
 	//   - INTER_VPC : Top contributor network flows between VPCs
 	//
 	//   - AMAZON_S3 : Top contributor network flows to or from Amazon S3
@@ -63,9 +71,9 @@ type StartQueryMonitorTopContributorsInput struct {
 	EndTime *time.Time
 
 	// The metric that you want to query top contributors for. That is, you can
-	// specify this metric to return the top contributor network flows, for this type
-	// of metric, for a monitor and (optionally) within a specific category, such as
-	// network flows between Availability Zones.
+	// specify a metric with this call and return the top contributor network flows,
+	// for that type of metric, for a monitor and (optionally) within a specific
+	// category, such as network flows between Availability Zones.
 	//
 	// This member is required.
 	MetricName types.MonitorMetric
@@ -75,8 +83,8 @@ type StartQueryMonitorTopContributorsInput struct {
 	// This member is required.
 	MonitorName *string
 
-	// The timestamp that is the date and time beginning of the period that you want
-	// to retrieve results for with your query.
+	// The timestamp that is the date and time that is the beginning of the period
+	// that you want to retrieve results for with your query.
 	//
 	// This member is required.
 	StartTime *time.Time
@@ -189,16 +197,13 @@ func (c *Client) addOperationStartQueryMonitorTopContributorsMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

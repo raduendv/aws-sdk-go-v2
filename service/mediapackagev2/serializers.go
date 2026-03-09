@@ -640,6 +640,13 @@ func awsRestjson1_serializeOpDocumentCreateOriginEndpointInput(v *CreateOriginEn
 		}
 	}
 
+	if v.MssManifests != nil {
+		ok := object.Key("MssManifests")
+		if err := awsRestjson1_serializeDocumentCreateMssManifests(v.MssManifests, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.OriginEndpointName != nil {
 		ok := object.Key("OriginEndpointName")
 		ok.String(*v.OriginEndpointName)
@@ -2189,6 +2196,13 @@ func awsRestjson1_serializeOpDocumentPutOriginEndpointPolicyInput(v *PutOriginEn
 	object := value.Object()
 	defer object.Close()
 
+	if v.CdnAuthConfiguration != nil {
+		ok := object.Key("CdnAuthConfiguration")
+		if err := awsRestjson1_serializeDocumentCdnAuthConfiguration(v.CdnAuthConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Policy != nil {
 		ok := object.Key("Policy")
 		ok.String(*v.Policy)
@@ -2907,6 +2921,13 @@ func awsRestjson1_serializeOpDocumentUpdateOriginEndpointInput(v *UpdateOriginEn
 		}
 	}
 
+	if v.MssManifests != nil {
+		ok := object.Key("MssManifests")
+		if err := awsRestjson1_serializeDocumentCreateMssManifests(v.MssManifests, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Segment != nil {
 		ok := object.Key("Segment")
 		if err := awsRestjson1_serializeDocumentSegment(v.Segment, ok); err != nil {
@@ -2922,13 +2943,62 @@ func awsRestjson1_serializeOpDocumentUpdateOriginEndpointInput(v *UpdateOriginEn
 	return nil
 }
 
+func awsRestjson1_serializeDocumentCdnAuthConfiguration(v *types.CdnAuthConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.CdnIdentifierSecretArns != nil {
+		ok := object.Key("CdnIdentifierSecretArns")
+		if err := awsRestjson1_serializeDocumentCdnIdentifierSecretArns(v.CdnIdentifierSecretArns, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.SecretsRoleArn != nil {
+		ok := object.Key("SecretsRoleArn")
+		ok.String(*v.SecretsRoleArn)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentCdnIdentifierSecretArns(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocumentCreateDashManifestConfiguration(v *types.CreateDashManifestConfiguration, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
 
+	if v.BaseUrls != nil {
+		ok := object.Key("BaseUrls")
+		if err := awsRestjson1_serializeDocumentDashBaseUrls(v.BaseUrls, ok); err != nil {
+			return err
+		}
+	}
+
+	if len(v.Compactness) > 0 {
+		ok := object.Key("Compactness")
+		ok.String(string(v.Compactness))
+	}
+
 	if len(v.DrmSignaling) > 0 {
 		ok := object.Key("DrmSignaling")
 		ok.String(string(v.DrmSignaling))
+	}
+
+	if v.DvbSettings != nil {
+		ok := object.Key("DvbSettings")
+		if err := awsRestjson1_serializeDocumentDashDvbSettings(v.DvbSettings, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.FilterConfiguration != nil {
@@ -2965,6 +3035,20 @@ func awsRestjson1_serializeDocumentCreateDashManifestConfiguration(v *types.Crea
 		}
 	}
 
+	if v.Profiles != nil {
+		ok := object.Key("Profiles")
+		if err := awsRestjson1_serializeDocumentDashProfiles(v.Profiles, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ProgramInformation != nil {
+		ok := object.Key("ProgramInformation")
+		if err := awsRestjson1_serializeDocumentDashProgramInformation(v.ProgramInformation, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.ScteDash != nil {
 		ok := object.Key("ScteDash")
 		if err := awsRestjson1_serializeDocumentScteDash(v.ScteDash, ok); err != nil {
@@ -2975,6 +3059,13 @@ func awsRestjson1_serializeDocumentCreateDashManifestConfiguration(v *types.Crea
 	if len(v.SegmentTemplateFormat) > 0 {
 		ok := object.Key("SegmentTemplateFormat")
 		ok.String(string(v.SegmentTemplateFormat))
+	}
+
+	if v.SubtitleConfiguration != nil {
+		ok := object.Key("SubtitleConfiguration")
+		if err := awsRestjson1_serializeDocumentDashSubtitleConfiguration(v.SubtitleConfiguration, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.SuggestedPresentationDelaySeconds != nil {
@@ -3137,6 +3228,161 @@ func awsRestjson1_serializeDocumentCreateLowLatencyHlsManifests(v []types.Create
 	return nil
 }
 
+func awsRestjson1_serializeDocumentCreateMssManifestConfiguration(v *types.CreateMssManifestConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.FilterConfiguration != nil {
+		ok := object.Key("FilterConfiguration")
+		if err := awsRestjson1_serializeDocumentFilterConfiguration(v.FilterConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	if len(v.ManifestLayout) > 0 {
+		ok := object.Key("ManifestLayout")
+		ok.String(string(v.ManifestLayout))
+	}
+
+	if v.ManifestName != nil {
+		ok := object.Key("ManifestName")
+		ok.String(*v.ManifestName)
+	}
+
+	if v.ManifestWindowSeconds != nil {
+		ok := object.Key("ManifestWindowSeconds")
+		ok.Integer(*v.ManifestWindowSeconds)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentCreateMssManifests(v []types.CreateMssManifestConfiguration, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentCreateMssManifestConfiguration(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashBaseUrl(v *types.DashBaseUrl, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.DvbPriority != nil {
+		ok := object.Key("DvbPriority")
+		ok.Integer(*v.DvbPriority)
+	}
+
+	if v.DvbWeight != nil {
+		ok := object.Key("DvbWeight")
+		ok.Integer(*v.DvbWeight)
+	}
+
+	if v.ServiceLocation != nil {
+		ok := object.Key("ServiceLocation")
+		ok.String(*v.ServiceLocation)
+	}
+
+	if v.Url != nil {
+		ok := object.Key("Url")
+		ok.String(*v.Url)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashBaseUrls(v []types.DashBaseUrl, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentDashBaseUrl(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashDvbErrorMetrics(v []types.DashDvbMetricsReporting, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentDashDvbMetricsReporting(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashDvbFontDownload(v *types.DashDvbFontDownload, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.FontFamily != nil {
+		ok := object.Key("FontFamily")
+		ok.String(*v.FontFamily)
+	}
+
+	if v.MimeType != nil {
+		ok := object.Key("MimeType")
+		ok.String(*v.MimeType)
+	}
+
+	if v.Url != nil {
+		ok := object.Key("Url")
+		ok.String(*v.Url)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashDvbMetricsReporting(v *types.DashDvbMetricsReporting, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Probability != nil {
+		ok := object.Key("Probability")
+		ok.Integer(*v.Probability)
+	}
+
+	if v.ReportingUrl != nil {
+		ok := object.Key("ReportingUrl")
+		ok.String(*v.ReportingUrl)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashDvbSettings(v *types.DashDvbSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ErrorMetrics != nil {
+		ok := object.Key("ErrorMetrics")
+		if err := awsRestjson1_serializeDocumentDashDvbErrorMetrics(v.ErrorMetrics, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.FontDownload != nil {
+		ok := object.Key("FontDownload")
+		if err := awsRestjson1_serializeDocumentDashDvbFontDownload(v.FontDownload, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentDashPeriodTriggers(v []types.DashPeriodTrigger, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -3145,6 +3391,75 @@ func awsRestjson1_serializeDocumentDashPeriodTriggers(v []types.DashPeriodTrigge
 		av := array.Value()
 		av.String(string(v[i]))
 	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashProfiles(v []types.DashProfile, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(string(v[i]))
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashProgramInformation(v *types.DashProgramInformation, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.Copyright != nil {
+		ok := object.Key("Copyright")
+		ok.String(*v.Copyright)
+	}
+
+	if v.LanguageCode != nil {
+		ok := object.Key("LanguageCode")
+		ok.String(*v.LanguageCode)
+	}
+
+	if v.MoreInformationUrl != nil {
+		ok := object.Key("MoreInformationUrl")
+		ok.String(*v.MoreInformationUrl)
+	}
+
+	if v.Source != nil {
+		ok := object.Key("Source")
+		ok.String(*v.Source)
+	}
+
+	if v.Title != nil {
+		ok := object.Key("Title")
+		ok.String(*v.Title)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashSubtitleConfiguration(v *types.DashSubtitleConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.TtmlConfiguration != nil {
+		ok := object.Key("TtmlConfiguration")
+		if err := awsRestjson1_serializeDocumentDashTtmlConfiguration(v.TtmlConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDashTtmlConfiguration(v *types.DashTtmlConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.TtmlProfile) > 0 {
+		ok := object.Key("TtmlProfile")
+		ok.String(string(v.TtmlProfile))
+	}
+
 	return nil
 }
 
@@ -3193,6 +3508,11 @@ func awsRestjson1_serializeDocumentDrmSystems(v []types.DrmSystem, value smithyj
 func awsRestjson1_serializeDocumentEncryption(v *types.Encryption, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.CmafExcludeSegmentDrmMetadata != nil {
+		ok := object.Key("CmafExcludeSegmentDrmMetadata")
+		ok.Boolean(*v.CmafExcludeSegmentDrmMetadata)
+	}
 
 	if v.ConstantInitializationVector != nil {
 		ok := object.Key("ConstantInitializationVector")
@@ -3247,6 +3567,11 @@ func awsRestjson1_serializeDocumentEncryptionMethod(v *types.EncryptionMethod, v
 		ok.String(string(v.CmafEncryptionMethod))
 	}
 
+	if len(v.IsmEncryptionMethod) > 0 {
+		ok := object.Key("IsmEncryptionMethod")
+		ok.String(string(v.IsmEncryptionMethod))
+	}
+
 	if len(v.TsEncryptionMethod) > 0 {
 		ok := object.Key("TsEncryptionMethod")
 		ok.String(string(v.TsEncryptionMethod))
@@ -3273,6 +3598,11 @@ func awsRestjson1_serializeDocumentFilterConfiguration(v *types.FilterConfigurat
 	if v.ClipStartTime != nil {
 		ok := object.Key("ClipStartTime")
 		ok.Double(smithytime.FormatEpochSeconds(*v.ClipStartTime))
+	}
+
+	if v.DrmSettings != nil {
+		ok := object.Key("DrmSettings")
+		ok.String(*v.DrmSettings)
 	}
 
 	if v.End != nil {
@@ -3441,6 +3771,11 @@ func awsRestjson1_serializeDocumentInputSwitchConfiguration(v *types.InputSwitch
 		ok.Boolean(*v.MQCSInputSwitching)
 	}
 
+	if v.PreferredInput != nil {
+		ok := object.Key("PreferredInput")
+		ok.Integer(*v.PreferredInput)
+	}
+
 	return nil
 }
 
@@ -3482,6 +3817,11 @@ func awsRestjson1_serializeDocumentScte(v *types.Scte, value smithyjson.Value) e
 		if err := awsRestjson1_serializeDocumentScteFilterList(v.ScteFilter, ok); err != nil {
 			return err
 		}
+	}
+
+	if len(v.ScteInSegments) > 0 {
+		ok := object.Key("ScteInSegments")
+		ok.String(string(v.ScteInSegments))
 	}
 
 	return nil
@@ -3571,6 +3911,11 @@ func awsRestjson1_serializeDocumentSegment(v *types.Segment, value smithyjson.Va
 func awsRestjson1_serializeDocumentSpekeKeyProvider(v *types.SpekeKeyProvider, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.CertificateArn != nil {
+		ok := object.Key("CertificateArn")
+		ok.String(*v.CertificateArn)
+	}
 
 	if v.DrmSystems != nil {
 		ok := object.Key("DrmSystems")

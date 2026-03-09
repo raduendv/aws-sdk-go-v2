@@ -18,7 +18,11 @@ import (
 // This operation is not supported by directory buckets.
 //
 // Removes the PublicAccessBlock configuration for an Amazon Web Services account.
-// For more information, see [Using Amazon S3 block public access].
+// This operation might be restricted when the account is managed by
+// organization-level Block Public Access policies. You’ll get an Access Denied
+// (403) error when the account is managed by organization-level Block Public
+// Access policies. Organization-level policies override account-level settings,
+// preventing direct account-level modifications. For more information, see [Using Amazon S3 block public access].
 //
 // Related actions include:
 //
@@ -174,16 +178,13 @@ func (c *Client) addOperationDeletePublicAccessBlockMiddlewares(stack *middlewar
 	if err = s3controlcust.AddDisableHostPrefixMiddleware(stack); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

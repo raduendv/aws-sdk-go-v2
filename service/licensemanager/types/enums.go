@@ -280,6 +280,27 @@ func (InventoryFilterCondition) Values() []InventoryFilterCondition {
 	}
 }
 
+type LicenseAssetGroupStatus string
+
+// Enum values for LicenseAssetGroupStatus
+const (
+	LicenseAssetGroupStatusActive   LicenseAssetGroupStatus = "ACTIVE"
+	LicenseAssetGroupStatusDisabled LicenseAssetGroupStatus = "DISABLED"
+	LicenseAssetGroupStatusDeleted  LicenseAssetGroupStatus = "DELETED"
+)
+
+// Values returns all known values for LicenseAssetGroupStatus. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (LicenseAssetGroupStatus) Values() []LicenseAssetGroupStatus {
+	return []LicenseAssetGroupStatus{
+		"ACTIVE",
+		"DISABLED",
+		"DELETED",
+	}
+}
+
 type LicenseConfigurationStatus string
 
 // Enum values for LicenseConfigurationStatus
@@ -391,6 +412,23 @@ func (LicenseStatus) Values() []LicenseStatus {
 	}
 }
 
+type ProductCodeType string
+
+// Enum values for ProductCodeType
+const (
+	ProductCodeTypeMarketplace ProductCodeType = "marketplace"
+)
+
+// Values returns all known values for ProductCodeType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProductCodeType) Values() []ProductCodeType {
+	return []ProductCodeType{
+		"marketplace",
+	}
+}
+
 type ReceivedStatus string
 
 // Enum values for ReceivedStatus
@@ -447,9 +485,10 @@ type ReportFrequencyType string
 
 // Enum values for ReportFrequencyType
 const (
-	ReportFrequencyTypeDay   ReportFrequencyType = "DAY"
-	ReportFrequencyTypeWeek  ReportFrequencyType = "WEEK"
-	ReportFrequencyTypeMonth ReportFrequencyType = "MONTH"
+	ReportFrequencyTypeDay     ReportFrequencyType = "DAY"
+	ReportFrequencyTypeWeek    ReportFrequencyType = "WEEK"
+	ReportFrequencyTypeMonth   ReportFrequencyType = "MONTH"
+	ReportFrequencyTypeOneTime ReportFrequencyType = "ONE_TIME"
 )
 
 // Values returns all known values for ReportFrequencyType. Note that this can be
@@ -461,6 +500,7 @@ func (ReportFrequencyType) Values() []ReportFrequencyType {
 		"DAY",
 		"WEEK",
 		"MONTH",
+		"ONE_TIME",
 	}
 }
 
@@ -470,6 +510,7 @@ type ReportType string
 const (
 	ReportTypeLicenseConfigurationSummaryReport ReportType = "LicenseConfigurationSummaryReport"
 	ReportTypeLicenseConfigurationUsageReport   ReportType = "LicenseConfigurationUsageReport"
+	ReportTypeLicenseAssetGroupUsageReport      ReportType = "LicenseAssetGroupUsageReport"
 )
 
 // Values returns all known values for ReportType. Note that this can be expanded
@@ -480,6 +521,7 @@ func (ReportType) Values() []ReportType {
 	return []ReportType{
 		"LicenseConfigurationSummaryReport",
 		"LicenseConfigurationUsageReport",
+		"LicenseAssetGroupUsageReport",
 	}
 }
 

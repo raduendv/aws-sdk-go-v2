@@ -28,15 +28,16 @@ func (c *Client) RemoveIpRoutes(ctx context.Context, params *RemoveIpRoutesInput
 
 type RemoveIpRoutesInput struct {
 
-	// IP address blocks that you want to remove.
-	//
-	// This member is required.
-	CidrIps []string
-
 	// Identifier (ID) of the directory from which you want to remove the IP addresses.
 	//
 	// This member is required.
 	DirectoryId *string
+
+	// IP address blocks that you want to remove.
+	CidrIps []string
+
+	// IPv6 address blocks that you want to remove.
+	CidrIpv6s []string
 
 	noSmithyDocumentSerde
 }
@@ -136,16 +137,13 @@ func (c *Client) addOperationRemoveIpRoutesMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

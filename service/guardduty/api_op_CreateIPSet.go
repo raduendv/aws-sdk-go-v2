@@ -70,6 +70,10 @@ type CreateIPSetInput struct {
 	// The idempotency token for the create request.
 	ClientToken *string
 
+	// The Amazon Web Services account ID that owns the Amazon S3 bucket specified in
+	// the location parameter.
+	ExpectedBucketOwner *string
+
 	// The tags to be added to a new IP set resource.
 	Tags map[string]string
 
@@ -180,16 +184,13 @@ func (c *Client) addOperationCreateIPSetMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

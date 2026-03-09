@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves a list of your run caches.
+// Retrieves a list of your run caches and the metadata for each cache.
 func (c *Client) ListRunCaches(ctx context.Context, params *ListRunCachesInput, optFns ...func(*Options)) (*ListRunCachesOutput, error) {
 	if params == nil {
 		params = &ListRunCachesInput{}
@@ -142,16 +142,13 @@ func (c *Client) addOperationListRunCachesMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

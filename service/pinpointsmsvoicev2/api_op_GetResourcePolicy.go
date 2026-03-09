@@ -12,8 +12,8 @@ import (
 )
 
 // Retrieves the JSON text of the resource-based policy document attached to the
-// AWS End User Messaging SMS and Voice resource. A shared resource can be a Pool,
-// Opt-out list, Sender Id, or Phone number.
+// End User Messaging SMS resource. A shared resource can be a Pool, Opt-out list,
+// Sender Id, or Phone number.
 func (c *Client) GetResourcePolicy(ctx context.Context, params *GetResourcePolicyInput, optFns ...func(*Options)) (*GetResourcePolicyOutput, error) {
 	if params == nil {
 		params = &GetResourcePolicyInput{}
@@ -31,8 +31,8 @@ func (c *Client) GetResourcePolicy(ctx context.Context, params *GetResourcePolic
 
 type GetResourcePolicyInput struct {
 
-	// The Amazon Resource Name (ARN) of the AWS End User Messaging SMS and Voice
-	// resource attached to the resource-based policy.
+	// The Amazon Resource Name (ARN) of the End User Messaging SMS resource attached
+	// to the resource-based policy.
 	//
 	// This member is required.
 	ResourceArn *string
@@ -48,11 +48,11 @@ type GetResourcePolicyOutput struct {
 	CreatedTimestamp *time.Time
 
 	// The JSON formatted string that contains the resource-based policy attached to
-	// the AWS End User Messaging SMS and Voice resource.
+	// the End User Messaging SMS resource.
 	Policy *string
 
-	// The Amazon Resource Name (ARN) of the AWS End User Messaging SMS and Voice
-	// resource attached to the resource-based policy.
+	// The Amazon Resource Name (ARN) of the End User Messaging SMS resource attached
+	// to the resource-based policy.
 	ResourceArn *string
 
 	// Metadata pertaining to the operation's result.
@@ -149,16 +149,13 @@ func (c *Client) addOperationGetResourcePolicyMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

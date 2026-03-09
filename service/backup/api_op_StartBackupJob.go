@@ -105,6 +105,13 @@ type StartBackupJobInput struct {
 	// [Feature availability by resource]: https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html#features-by-resource
 	Lifecycle *types.Lifecycle
 
+	// The ARN of a logically air-gapped vault. ARN must be in the same account and
+	// Region. If provided, supported fully managed resources back up directly to
+	// logically air-gapped vault, while other supported resources create a temporary
+	// (billable) snapshot in backup vault, then copy it to logically air-gapped vault.
+	// Unsupported resources only back up to the specified backup vault.
+	LogicallyAirGappedBackupVaultArn *string
+
 	// The tags to assign to the resources.
 	RecoveryPointTags map[string]string
 
@@ -223,6 +230,9 @@ func (c *Client) addOperationStartBackupJobMiddlewares(stack *middleware.Stack, 
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
+	if err = addIdempotencyToken_opStartBackupJobMiddleware(stack, options); err != nil {
+		return err
+	}
 	if err = addOpStartBackupJobValidationMiddleware(stack); err != nil {
 		return err
 	}
@@ -244,19 +254,49 @@ func (c *Client) addOperationStartBackupJobMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
+}
+
+type idempotencyToken_initializeOpStartBackupJob struct {
+	tokenProvider IdempotencyTokenProvider
+}
+
+func (*idempotencyToken_initializeOpStartBackupJob) ID() string {
+	return "OperationIdempotencyTokenAutoFill"
+}
+
+func (m *idempotencyToken_initializeOpStartBackupJob) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	if m.tokenProvider == nil {
+		return next.HandleInitialize(ctx, in)
+	}
+
+	input, ok := in.Parameters.(*StartBackupJobInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("expected middleware input to be of type *StartBackupJobInput ")
+	}
+
+	if input.IdempotencyToken == nil {
+		t, err := m.tokenProvider.GetIdempotencyToken()
+		if err != nil {
+			return out, metadata, err
+		}
+		input.IdempotencyToken = &t
+	}
+	return next.HandleInitialize(ctx, in)
+}
+func addIdempotencyToken_opStartBackupJobMiddleware(stack *middleware.Stack, cfg Options) error {
+	return stack.Initialize.Add(&idempotencyToken_initializeOpStartBackupJob{tokenProvider: cfg.IdempotencyTokenProvider}, middleware.Before)
 }
 
 func newServiceMetadataMiddleware_opStartBackupJob(region string) *awsmiddleware.RegisterServiceMetadata {

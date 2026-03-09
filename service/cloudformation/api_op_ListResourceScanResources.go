@@ -37,13 +37,14 @@ type ListResourceScanResourcesInput struct {
 	// This member is required.
 	ResourceScanId *string
 
-	//  If the number of available results exceeds this maximum, the response includes
+	// If the number of available results exceeds this maximum, the response includes
 	// a NextToken value that you can use for the NextToken parameter to get the next
 	// set of results. By default the ListResourceScanResources API action will return
 	// at most 100 results in each response. The maximum value is 100.
 	MaxResults *int32
 
-	// A string that identifies the next page of resource scan results.
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	// If specified, the returned resources will have the specified resource
@@ -170,16 +171,13 @@ func (c *Client) addOperationListResourceScanResourcesMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -188,7 +186,7 @@ func (c *Client) addOperationListResourceScanResourcesMiddlewares(stack *middlew
 // ListResourceScanResourcesPaginatorOptions is the paginator options for
 // ListResourceScanResources
 type ListResourceScanResourcesPaginatorOptions struct {
-	//  If the number of available results exceeds this maximum, the response includes
+	// If the number of available results exceeds this maximum, the response includes
 	// a NextToken value that you can use for the NextToken parameter to get the next
 	// set of results. By default the ListResourceScanResources API action will return
 	// at most 100 results in each response. The maximum value is 100.

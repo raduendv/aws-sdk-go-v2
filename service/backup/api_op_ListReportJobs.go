@@ -45,7 +45,11 @@ type ListReportJobsInput struct {
 
 	// Returns only report jobs that are in the specified status. The statuses are:
 	//
-	//     CREATED | RUNNING | COMPLETED | FAILED
+	//     CREATED | RUNNING | COMPLETED | FAILED | COMPLETED_WITH_ISSUES
+	//
+	// Please note that only scanning jobs finish with state completed with issues.
+	// For backup jobs this is a console interpretation of a job that finishes in
+	// completed state and has a status message.
 	ByStatus *string
 
 	// The number of desired results from 1 to 1000. Optional. If unspecified, the
@@ -159,16 +163,13 @@ func (c *Client) addOperationListReportJobsMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

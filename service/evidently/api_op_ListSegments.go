@@ -13,6 +13,8 @@ import (
 
 // Returns a list of audience segments that you have created in your account in
 // this Region.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) ListSegments(ctx context.Context, params *ListSegmentsInput, optFns ...func(*Options)) (*ListSegmentsOutput, error) {
 	if params == nil {
 		params = &ListSegmentsInput{}
@@ -32,10 +34,14 @@ type ListSegmentsInput struct {
 
 	// The maximum number of results to include in the response. If you omit this, the
 	// default of 50 is used.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	MaxResults *int32
 
 	// The token to use when requesting the next set of results. You received this
 	// token from a previous ListSegments operation.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	NextToken *string
 
 	noSmithyDocumentSerde
@@ -45,10 +51,14 @@ type ListSegmentsOutput struct {
 
 	// The token to use in a subsequent ListSegments operation to return the next set
 	// of results.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	NextToken *string
 
 	// An array of structures that contain information about the segments in this
 	// Region.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Segments []types.Segment
 
 	// Metadata pertaining to the operation's result.
@@ -142,16 +152,13 @@ func (c *Client) addOperationListSegmentsMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

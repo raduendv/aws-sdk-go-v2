@@ -19,16 +19,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpCreateEnvironment struct {
 }
@@ -2151,6 +2142,9 @@ func awsRestjson1_deserializeOpErrorUpdateEnvironment(response *smithyhttp.Respo
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsRestjson1_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsRestjson1_deserializeErrorConflictException(response, errorBody)
+
 	case strings.EqualFold("InternalServerException", errorCode):
 		return awsRestjson1_deserializeErrorInternalServerException(response, errorBody)
 
@@ -2868,6 +2862,15 @@ func awsRestjson1_deserializeDocumentDevice(v **types.Device, value interface{})
 				}
 			}
 
+		case "lastUserId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UserId to be of type string, got %T instead", value)
+				}
+				sv.LastUserId = ptr.String(jtv)
+			}
+
 		case "model":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -2947,11 +2950,6 @@ func awsRestjson1_deserializeDocumentDevice(v **types.Device, value interface{})
 					return fmt.Errorf("expected DeviceStatus to be of type string, got %T instead", value)
 				}
 				sv.Status = types.DeviceStatus(jtv)
-			}
-
-		case "tags":
-			if err := awsRestjson1_deserializeDocumentTagsMap(&sv.Tags, value); err != nil {
-				return err
 			}
 
 		case "updatedAt":
@@ -3162,6 +3160,15 @@ func awsRestjson1_deserializeDocumentDeviceSummary(v **types.DeviceSummary, valu
 					return fmt.Errorf("expected Timestamp to be a JSON Number, got %T instead", value)
 
 				}
+			}
+
+		case "lastUserId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected UserId to be of type string, got %T instead", value)
+				}
+				sv.LastUserId = ptr.String(jtv)
 			}
 
 		case "model":
@@ -3428,11 +3435,6 @@ func awsRestjson1_deserializeDocumentEnvironment(v **types.Environment, value in
 					return fmt.Errorf("expected SoftwareSetUpdateSchedule to be of type string, got %T instead", value)
 				}
 				sv.SoftwareSetUpdateSchedule = types.SoftwareSetUpdateSchedule(jtv)
-			}
-
-		case "tags":
-			if err := awsRestjson1_deserializeDocumentTagsMap(&sv.Tags, value); err != nil {
-				return err
 			}
 
 		case "updatedAt":
@@ -4112,11 +4114,6 @@ func awsRestjson1_deserializeDocumentSoftwareSet(v **types.SoftwareSet, value in
 					return fmt.Errorf("expected Timestamp to be a JSON Number, got %T instead", value)
 
 				}
-			}
-
-		case "tags":
-			if err := awsRestjson1_deserializeDocumentTagsMap(&sv.Tags, value); err != nil {
-				return err
 			}
 
 		case "validationStatus":

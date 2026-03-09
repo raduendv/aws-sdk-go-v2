@@ -57,6 +57,13 @@ type GetQueryResultsInput struct {
 	// pass in the NextToken from the response object of the previous page call.
 	NextToken *string
 
+	//  When you set this to DATA_ROWS or empty, GetQueryResults returns the query
+	// results in rows. If set to DATA_MANIFEST , it returns the manifest file in rows.
+	// Only the query types CREATE TABLE AS SELECT , UNLOAD , and INSERT can generate
+	// a manifest file. If you use DATA_MANIFEST for other query types, the query will
+	// fail.
+	QueryResultType types.QueryResultType
+
 	noSmithyDocumentSerde
 }
 
@@ -168,16 +175,13 @@ func (c *Client) addOperationGetQueryResultsMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -29,12 +29,6 @@ func (c *Client) ListImageBuildVersions(ctx context.Context, params *ListImageBu
 
 type ListImageBuildVersionsInput struct {
 
-	// The Amazon Resource Name (ARN) of the image whose build versions you want to
-	// retrieve.
-	//
-	// This member is required.
-	ImageVersionArn *string
-
 	// Use the following filters to streamline results:
 	//
 	//   - name
@@ -48,7 +42,11 @@ type ListImageBuildVersionsInput struct {
 	//   - version
 	Filters []types.Filter
 
-	// The maximum items to return in a request.
+	// The Amazon Resource Name (ARN) of the image whose build versions you want to
+	// retrieve.
+	ImageVersionArn *string
+
+	// Specify the maximum number of items to return in a request.
 	MaxResults *int32
 
 	// A token to specify where to start paginating. This is the nextToken from a
@@ -144,9 +142,6 @@ func (c *Client) addOperationListImageBuildVersionsMiddlewares(stack *middleware
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
-	if err = addOpListImageBuildVersionsValidationMiddleware(stack); err != nil {
-		return err
-	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opListImageBuildVersions(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -165,16 +160,13 @@ func (c *Client) addOperationListImageBuildVersionsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -183,7 +175,7 @@ func (c *Client) addOperationListImageBuildVersionsMiddlewares(stack *middleware
 // ListImageBuildVersionsPaginatorOptions is the paginator options for
 // ListImageBuildVersions
 type ListImageBuildVersionsPaginatorOptions struct {
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	Limit int32
 
 	// Set to true if pagination should stop if the service returns a pagination token

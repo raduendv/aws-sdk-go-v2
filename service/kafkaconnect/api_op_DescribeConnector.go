@@ -82,6 +82,10 @@ type DescribeConnectorOutput struct {
 	// Details about delivering logs to Amazon CloudWatch Logs.
 	LogDelivery *types.LogDeliveryDescription
 
+	// The network type of the connector. It gives connectors connectivity to either
+	// IPv4 (IPV4) or IPv4 and IPv6 (DUAL) destinations. Defaults to IPV4.
+	NetworkType types.NetworkType
+
 	// Specifies which plugins were used for this connector.
 	Plugins []types.PluginDescription
 
@@ -189,16 +193,13 @@ func (c *Client) addOperationDescribeConnectorMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

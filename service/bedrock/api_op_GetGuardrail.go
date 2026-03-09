@@ -91,11 +91,19 @@ type GetGuardrailOutput struct {
 	// This member is required.
 	Version *string
 
+	// The current Automated Reasoning policy configuration for the guardrail, if any
+	// is configured.
+	AutomatedReasoningPolicy *types.GuardrailAutomatedReasoningPolicy
+
 	// The content policy that was configured for the guardrail.
 	ContentPolicy *types.GuardrailContentPolicy
 
 	// The contextual grounding policy used in the guardrail.
 	ContextualGroundingPolicy *types.GuardrailContextualGroundingPolicy
+
+	// Details about the system-defined guardrail profile that you're using with your
+	// guardrail, including the guardrail profile ID and Amazon Resource Name (ARN).
+	CrossRegionDetails *types.GuardrailCrossRegionDetails
 
 	// The description of the guardrail.
 	Description *string
@@ -214,16 +222,13 @@ func (c *Client) addOperationGetGuardrailMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

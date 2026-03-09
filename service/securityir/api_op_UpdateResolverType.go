@@ -11,11 +11,9 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Grants permission to update the resolver type for a case.
+// Updates the resolver type for a case.
 //
 // This is a one-way action and cannot be reversed.
-//
-// Options include self-supported > AWS-supported.
 func (c *Client) UpdateResolverType(ctx context.Context, params *UpdateResolverTypeInput, optFns ...func(*Options)) (*UpdateResolverTypeOutput, error) {
 	if params == nil {
 		params = &UpdateResolverTypeInput{}
@@ -154,16 +152,13 @@ func (c *Client) addOperationUpdateResolverTypeMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

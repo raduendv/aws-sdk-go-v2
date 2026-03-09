@@ -125,6 +125,9 @@ type App struct {
 	// The Amazon Resource Name (ARN) of the IAM service role for the Amplify app.
 	IamServiceRoleArn *string
 
+	// The configuration details that apply to the jobs for an Amplify app.
+	JobConfig *JobConfig
+
 	// Describes the information about a production branch of the Amplify app.
 	ProductionBranch *ProductionBranch
 
@@ -430,10 +433,11 @@ type CacheConfig struct {
 	//
 	// The AMPLIFY_MANAGED cache configuration automatically applies an optimized
 	// cache configuration for your app based on its platform, routing rules, and
-	// rewrite rules. This is the default setting.
+	// rewrite rules.
 	//
 	// The AMPLIFY_MANAGED_NO_COOKIES cache configuration type is the same as
-	// AMPLIFY_MANAGED , except that it excludes all cookies from the cache key.
+	// AMPLIFY_MANAGED , except that it excludes all cookies from the cache key. This
+	// is the default setting.
 	//
 	// This member is required.
 	Type CacheConfigType
@@ -632,6 +636,49 @@ type Job struct {
 	//
 	// This member is required.
 	Summary *JobSummary
+
+	noSmithyDocumentSerde
+}
+
+// Describes the configuration details that apply to the jobs for an Amplify app.
+//
+// Use JobConfig to apply configuration to jobs, such as customizing the build
+// instance size when you create or update an Amplify app. For more information
+// about customizable build instances, see [Custom build instances]in the Amplify User Guide.
+//
+// [Custom build instances]: https://docs.aws.amazon.com/amplify/latest/userguide/custom-build-instance.html
+type JobConfig struct {
+
+	// Specifies the size of the build instance. Amplify supports three instance
+	// sizes: STANDARD_8GB , LARGE_16GB , and XLARGE_72GB . If you don't specify a
+	// value, Amplify uses the STANDARD_8GB default.
+	//
+	// The following list describes the CPU, memory, and storage capacity for each
+	// build instance type:
+	//
+	// STANDARD_8GB
+	//   - vCPUs: 4
+	//
+	//   - Memory: 8 GiB
+	//
+	//   - Disk space: 128 GB
+	//
+	// LARGE_16GB
+	//   - vCPUs: 8
+	//
+	//   - Memory: 16 GiB
+	//
+	//   - Disk space: 128 GB
+	//
+	// XLARGE_72GB
+	//   - vCPUs: 36
+	//
+	//   - Memory: 72 GiB
+	//
+	//   - Disk space: 256 GB
+	//
+	// This member is required.
+	BuildComputeType BuildComputeType
 
 	noSmithyDocumentSerde
 }

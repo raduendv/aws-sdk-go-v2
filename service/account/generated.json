@@ -15,6 +15,7 @@
         "api_op_GetAccountInformation.go",
         "api_op_GetAlternateContact.go",
         "api_op_GetContactInformation.go",
+        "api_op_GetGovCloudAccountInformation.go",
         "api_op_GetPrimaryEmail.go",
         "api_op_GetRegionOptStatus.go",
         "api_op_ListRegions.go",
@@ -41,7 +42,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/account",
     "unstable": false
 }

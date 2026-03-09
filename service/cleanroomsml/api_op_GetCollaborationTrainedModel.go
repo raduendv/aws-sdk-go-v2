@@ -42,6 +42,10 @@ type GetCollaborationTrainedModelInput struct {
 	// This member is required.
 	TrainedModelArn *string
 
+	// The version identifier of the trained model to retrieve. If not specified, the
+	// operation returns information about the latest version of the trained model.
+	VersionIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
@@ -96,6 +100,11 @@ type GetCollaborationTrainedModelOutput struct {
 	// The description of the trained model.
 	Description *string
 
+	// Information about the incremental training data channels used to create this
+	// version of the trained model. This includes details about the base model that
+	// was used for incremental training and the channel configuration.
+	IncrementalTrainingDataChannels []types.IncrementalTrainingDataChannelOutput
+
 	// Status information for the logs.
 	LogsStatus types.LogsStatus
 
@@ -119,6 +128,15 @@ type GetCollaborationTrainedModelOutput struct {
 
 	// Information about the training container image.
 	TrainingContainerImageDigest *string
+
+	// The input mode that was used for accessing the training data when this trained
+	// model was created. This indicates how the training data was made available to
+	// the training algorithm.
+	TrainingInputMode types.TrainingInputMode
+
+	// The version identifier of the trained model. This unique identifier
+	// distinguishes this version from other versions of the same trained model.
+	VersionIdentifier *string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -214,16 +232,13 @@ func (c *Client) addOperationGetCollaborationTrainedModelMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

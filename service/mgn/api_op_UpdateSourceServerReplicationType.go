@@ -13,6 +13,8 @@ import (
 
 // Allows you to change between the AGENT_BASED replication type and the
 // SNAPSHOT_SHIPPING replication type.
+//
+// SNAPSHOT_SHIPPING should be used for agentless replication.
 func (c *Client) UpdateSourceServerReplicationType(ctx context.Context, params *UpdateSourceServerReplicationTypeInput, optFns ...func(*Options)) (*UpdateSourceServerReplicationTypeOutput, error) {
 	if params == nil {
 		params = &UpdateSourceServerReplicationTypeInput{}
@@ -184,16 +186,13 @@ func (c *Client) addOperationUpdateSourceServerReplicationTypeMiddlewares(stack 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

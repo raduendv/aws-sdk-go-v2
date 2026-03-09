@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Remove role from multiple users or groups in a private re:Post.
+// Remove a role from multiple users or groups in a private re:Post.
 func (c *Client) BatchRemoveRole(ctx context.Context, params *BatchRemoveRoleInput, optFns ...func(*Options)) (*BatchRemoveRoleOutput, error) {
 	if params == nil {
 		params = &BatchRemoveRoleInput{}
@@ -153,16 +153,13 @@ func (c *Client) addOperationBatchRemoveRoleMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

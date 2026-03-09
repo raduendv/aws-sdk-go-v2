@@ -34,6 +34,11 @@ type DeleteBillingViewInput struct {
 	// This member is required.
 	Arn *string
 
+	//  If set to true, forces deletion of the billing view even if it has derived
+	// resources (e.g. other billing views or budgets). Use with caution as this may
+	// break dependent resources.
+	Force bool
+
 	noSmithyDocumentSerde
 }
 
@@ -139,16 +144,13 @@ func (c *Client) addOperationDeleteBillingViewMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

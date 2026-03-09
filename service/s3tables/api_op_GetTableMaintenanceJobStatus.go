@@ -35,7 +35,7 @@ func (c *Client) GetTableMaintenanceJobStatus(ctx context.Context, params *GetTa
 
 type GetTableMaintenanceJobStatusInput struct {
 
-	// The name of the maintenance job.
+	// The name of the table containing the maintenance job status you want to check.
 	//
 	// This member is required.
 	Name *string
@@ -159,16 +159,13 @@ func (c *Client) addOperationGetTableMaintenanceJobStatusMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

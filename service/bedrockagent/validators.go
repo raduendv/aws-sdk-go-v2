@@ -1657,6 +1657,79 @@ func validateAgentFlowNodeConfiguration(v *types.AgentFlowNodeConfiguration) err
 	}
 }
 
+func validateAudioConfiguration(v *types.AudioConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AudioConfiguration"}
+	if v.SegmentationConfiguration == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SegmentationConfiguration"))
+	} else if v.SegmentationConfiguration != nil {
+		if err := validateAudioSegmentationConfiguration(v.SegmentationConfiguration); err != nil {
+			invalidParams.AddNested("SegmentationConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateAudioConfigurations(v []types.AudioConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AudioConfigurations"}
+	for i := range v {
+		if err := validateAudioConfiguration(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateAudioSegmentationConfiguration(v *types.AudioSegmentationConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AudioSegmentationConfiguration"}
+	if v.FixedLengthDuration == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("FixedLengthDuration"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateBedrockEmbeddingModelConfiguration(v *types.BedrockEmbeddingModelConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "BedrockEmbeddingModelConfiguration"}
+	if v.Audio != nil {
+		if err := validateAudioConfigurations(v.Audio); err != nil {
+			invalidParams.AddNested("Audio", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Video != nil {
+		if err := validateVideoConfigurations(v.Video); err != nil {
+			invalidParams.AddNested("Video", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateBedrockFoundationModelConfiguration(v *types.BedrockFoundationModelConfiguration) error {
 	if v == nil {
 		return nil
@@ -2206,6 +2279,23 @@ func validateDocumentMetadata(v *types.DocumentMetadata) error {
 	}
 }
 
+func validateEmbeddingModelConfiguration(v *types.EmbeddingModelConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "EmbeddingModelConfiguration"}
+	if v.BedrockEmbeddingModelConfiguration != nil {
+		if err := validateBedrockEmbeddingModelConfiguration(v.BedrockEmbeddingModelConfiguration); err != nil {
+			invalidParams.AddNested("BedrockEmbeddingModelConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateEnrichmentStrategyConfiguration(v *types.EnrichmentStrategyConfiguration) error {
 	if v == nil {
 		return nil
@@ -2213,6 +2303,38 @@ func validateEnrichmentStrategyConfiguration(v *types.EnrichmentStrategyConfigur
 	invalidParams := smithy.InvalidParamsError{Context: "EnrichmentStrategyConfiguration"}
 	if len(v.Method) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("Method"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateFieldForReranking(v *types.FieldForReranking) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "FieldForReranking"}
+	if v.FieldName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("FieldName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateFieldsForReranking(v []types.FieldForReranking) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "FieldsForReranking"}
+	for i := range v {
+		if err := validateFieldForReranking(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2231,6 +2353,21 @@ func validateFixedSizeChunkingConfiguration(v *types.FixedSizeChunkingConfigurat
 	}
 	if v.OverlapPercentage == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("OverlapPercentage"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateFlowAliasConcurrencyConfiguration(v *types.FlowAliasConcurrencyConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "FlowAliasConcurrencyConfiguration"}
+	if len(v.Type) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Type"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2463,6 +2600,16 @@ func validateFlowNodeConfiguration(v types.FlowNodeConfiguration) error {
 	case *types.FlowNodeConfigurationMemberLex:
 		if err := validateLexFlowNodeConfiguration(&uv.Value); err != nil {
 			invalidParams.AddNested("[lex]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.FlowNodeConfigurationMemberLoop:
+		if err := validateLoopFlowNodeConfiguration(&uv.Value); err != nil {
+			invalidParams.AddNested("[loop]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.FlowNodeConfigurationMemberLoopController:
+		if err := validateLoopControllerFlowNodeConfiguration(&uv.Value); err != nil {
+			invalidParams.AddNested("[loopController]", err.(smithy.InvalidParamsError))
 		}
 
 	case *types.FlowNodeConfigurationMemberPrompt:
@@ -2900,6 +3047,11 @@ func validateKnowledgeBaseFlowNodeConfiguration(v *types.KnowledgeBaseFlowNodeCo
 	if v.KnowledgeBaseId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("KnowledgeBaseId"))
 	}
+	if v.RerankingConfiguration != nil {
+		if err := validateVectorSearchRerankingConfiguration(v.RerankingConfiguration); err != nil {
+			invalidParams.AddNested("RerankingConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -2932,6 +3084,44 @@ func validateLexFlowNodeConfiguration(v *types.LexFlowNodeConfiguration) error {
 	}
 	if v.LocaleId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("LocaleId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateLoopControllerFlowNodeConfiguration(v *types.LoopControllerFlowNodeConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "LoopControllerFlowNodeConfiguration"}
+	if v.ContinueCondition == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ContinueCondition"))
+	} else if v.ContinueCondition != nil {
+		if err := validateFlowCondition(v.ContinueCondition); err != nil {
+			invalidParams.AddNested("ContinueCondition", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateLoopFlowNodeConfiguration(v *types.LoopFlowNodeConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "LoopFlowNodeConfiguration"}
+	if v.Definition == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Definition"))
+	} else if v.Definition != nil {
+		if err := validateFlowDefinition(v.Definition); err != nil {
+			invalidParams.AddNested("Definition", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3040,6 +3230,26 @@ func validateMetadataAttributeValue(v *types.MetadataAttributeValue) error {
 	invalidParams := smithy.InvalidParamsError{Context: "MetadataAttributeValue"}
 	if len(v.Type) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("Type"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateMetadataConfigurationForReranking(v *types.MetadataConfigurationForReranking) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "MetadataConfigurationForReranking"}
+	if len(v.SelectionMode) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("SelectionMode"))
+	}
+	if v.SelectiveModeConfiguration != nil {
+		if err := validateRerankingMetadataSelectiveModeConfiguration(v.SelectiveModeConfiguration); err != nil {
+			invalidParams.AddNested("SelectiveModeConfiguration", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4020,6 +4230,30 @@ func validateRedshiftServerlessConfiguration(v *types.RedshiftServerlessConfigur
 	}
 }
 
+func validateRerankingMetadataSelectiveModeConfiguration(v types.RerankingMetadataSelectiveModeConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RerankingMetadataSelectiveModeConfiguration"}
+	switch uv := v.(type) {
+	case *types.RerankingMetadataSelectiveModeConfigurationMemberFieldsToExclude:
+		if err := validateFieldsForReranking(uv.Value); err != nil {
+			invalidParams.AddNested("[fieldsToExclude]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.RerankingMetadataSelectiveModeConfigurationMemberFieldsToInclude:
+		if err := validateFieldsForReranking(uv.Value); err != nil {
+			invalidParams.AddNested("[fieldsToInclude]", err.(smithy.InvalidParamsError))
+		}
+
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateRetrievalFlowNodeConfiguration(v *types.RetrievalFlowNodeConfiguration) error {
 	if v == nil {
 		return nil
@@ -4753,10 +4987,125 @@ func validateVectorKnowledgeBaseConfiguration(v *types.VectorKnowledgeBaseConfig
 	if v.EmbeddingModelArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("EmbeddingModelArn"))
 	}
+	if v.EmbeddingModelConfiguration != nil {
+		if err := validateEmbeddingModelConfiguration(v.EmbeddingModelConfiguration); err != nil {
+			invalidParams.AddNested("EmbeddingModelConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
 	if v.SupplementalDataStorageConfiguration != nil {
 		if err := validateSupplementalDataStorageConfiguration(v.SupplementalDataStorageConfiguration); err != nil {
 			invalidParams.AddNested("SupplementalDataStorageConfiguration", err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateVectorSearchBedrockRerankingConfiguration(v *types.VectorSearchBedrockRerankingConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "VectorSearchBedrockRerankingConfiguration"}
+	if v.ModelConfiguration == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ModelConfiguration"))
+	} else if v.ModelConfiguration != nil {
+		if err := validateVectorSearchBedrockRerankingModelConfiguration(v.ModelConfiguration); err != nil {
+			invalidParams.AddNested("ModelConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.MetadataConfiguration != nil {
+		if err := validateMetadataConfigurationForReranking(v.MetadataConfiguration); err != nil {
+			invalidParams.AddNested("MetadataConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateVectorSearchBedrockRerankingModelConfiguration(v *types.VectorSearchBedrockRerankingModelConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "VectorSearchBedrockRerankingModelConfiguration"}
+	if v.ModelArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ModelArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateVectorSearchRerankingConfiguration(v *types.VectorSearchRerankingConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "VectorSearchRerankingConfiguration"}
+	if len(v.Type) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Type"))
+	}
+	if v.BedrockRerankingConfiguration != nil {
+		if err := validateVectorSearchBedrockRerankingConfiguration(v.BedrockRerankingConfiguration); err != nil {
+			invalidParams.AddNested("BedrockRerankingConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateVideoConfiguration(v *types.VideoConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "VideoConfiguration"}
+	if v.SegmentationConfiguration == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SegmentationConfiguration"))
+	} else if v.SegmentationConfiguration != nil {
+		if err := validateVideoSegmentationConfiguration(v.SegmentationConfiguration); err != nil {
+			invalidParams.AddNested("SegmentationConfiguration", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateVideoConfigurations(v []types.VideoConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "VideoConfigurations"}
+	for i := range v {
+		if err := validateVideoConfiguration(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateVideoSegmentationConfiguration(v *types.VideoSegmentationConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "VideoSegmentationConfiguration"}
+	if v.FixedLengthDuration == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("FixedLengthDuration"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4959,6 +5308,11 @@ func validateOpCreateFlowAliasInput(v *CreateFlowAliasInput) error {
 	}
 	if v.RoutingConfiguration == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("RoutingConfiguration"))
+	}
+	if v.ConcurrencyConfiguration != nil {
+		if err := validateFlowAliasConcurrencyConfiguration(v.ConcurrencyConfiguration); err != nil {
+			invalidParams.AddNested("ConcurrencyConfiguration", err.(smithy.InvalidParamsError))
+		}
 	}
 	if v.FlowIdentifier == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("FlowIdentifier"))
@@ -6068,6 +6422,11 @@ func validateOpUpdateFlowAliasInput(v *UpdateFlowAliasInput) error {
 	}
 	if v.RoutingConfiguration == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("RoutingConfiguration"))
+	}
+	if v.ConcurrencyConfiguration != nil {
+		if err := validateFlowAliasConcurrencyConfiguration(v.ConcurrencyConfiguration); err != nil {
+			invalidParams.AddNested("ConcurrencyConfiguration", err.(smithy.InvalidParamsError))
+		}
 	}
 	if v.FlowIdentifier == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("FlowIdentifier"))

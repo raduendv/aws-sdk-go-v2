@@ -1,15 +1,12 @@
 PutObject
 	Initialize stack step
-		spanInitializeStart
 		AWSChecksum:SetupInputContext
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		S3Shared:ARNLookup
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		putBucketContext
 		setOperationInput
 		ResolveEndpoint
@@ -29,11 +26,12 @@ PutObject
 		AddTimeOffsetMiddleware
 		S3100Continue
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		DisableAcceptEncodingGzip
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

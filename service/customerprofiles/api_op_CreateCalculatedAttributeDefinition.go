@@ -75,6 +75,10 @@ type CreateCalculatedAttributeDefinitionInput struct {
 	// The tags used to organize, track, or control access for this resource.
 	Tags map[string]string
 
+	// Whether historical data ingested before the Calculated Attribute was created
+	// should be included in calculations.
+	UseHistoricalData *bool
+
 	noSmithyDocumentSerde
 }
 
@@ -107,11 +111,23 @@ type CreateCalculatedAttributeDefinitionOutput struct {
 	// edited.
 	LastUpdatedAt *time.Time
 
+	// Information indicating if the Calculated Attribute is ready for use by
+	// confirming all historical data has been processed and reflected.
+	Readiness *types.Readiness
+
 	// The aggregation operation to perform for the calculated attribute.
 	Statistic types.Statistic
 
+	// Status of the Calculated Attribute creation (whether all historical data has
+	// been indexed.)
+	Status types.ReadinessStatus
+
 	// The tags used to organize, track, or control access for this resource.
 	Tags map[string]string
+
+	// Whether historical data ingested before the Calculated Attribute was created
+	// should be included in calculations.
+	UseHistoricalData *bool
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -207,16 +223,13 @@ func (c *Client) addOperationCreateCalculatedAttributeDefinitionMiddlewares(stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

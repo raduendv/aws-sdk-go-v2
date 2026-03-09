@@ -133,6 +133,19 @@ type StartLoaderJobInput struct {
 	// it to be cancelled.
 	Dependencies []string
 
+	// edgeOnlyLoad – A flag that controls file processing order during bulk loading.
+	//
+	// Allowed values: "TRUE" , "FALSE" .
+	//
+	// Default value: "FALSE" .
+	//
+	// When this parameter is set to "FALSE", the loader automatically loads vertex
+	// files first, then edge files afterwards. It does this by first scanning all
+	// files to determine their contents (vertices or edges). When this parameter is
+	// set to "TRUE", the loader skips the initial scanning phase and immediately loads
+	// all files in the order they appear.
+	EdgeOnlyLoad *bool
+
 	// failOnError – A flag to toggle a complete stop on an error.
 	//
 	// Allowed values: "TRUE" , "FALSE" .
@@ -390,16 +403,13 @@ func (c *Client) addOperationStartLoaderJobMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

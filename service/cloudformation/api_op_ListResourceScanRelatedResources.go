@@ -42,13 +42,14 @@ type ListResourceScanRelatedResourcesInput struct {
 	// This member is required.
 	Resources []types.ScannedResourceIdentifier
 
-	//  If the number of available results exceeds this maximum, the response includes
+	// If the number of available results exceeds this maximum, the response includes
 	// a NextToken value that you can use for the NextToken parameter to get the next
 	// set of results. By default the ListResourceScanRelatedResources API action will
 	// return up to 100 results in each response. The maximum value is 100.
 	MaxResults *int32
 
-	// A string that identifies the next page of resource scan results.
+	// The token for the next set of items to return. (You received this token from a
+	// previous call.)
 	NextToken *string
 
 	noSmithyDocumentSerde
@@ -161,16 +162,13 @@ func (c *Client) addOperationListResourceScanRelatedResourcesMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -179,7 +177,7 @@ func (c *Client) addOperationListResourceScanRelatedResourcesMiddlewares(stack *
 // ListResourceScanRelatedResourcesPaginatorOptions is the paginator options for
 // ListResourceScanRelatedResources
 type ListResourceScanRelatedResourcesPaginatorOptions struct {
-	//  If the number of available results exceeds this maximum, the response includes
+	// If the number of available results exceeds this maximum, the response includes
 	// a NextToken value that you can use for the NextToken parameter to get the next
 	// set of results. By default the ListResourceScanRelatedResources API action will
 	// return up to 100 results in each response. The maximum value is 100.

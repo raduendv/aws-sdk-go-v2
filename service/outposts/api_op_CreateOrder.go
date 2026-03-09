@@ -29,11 +29,6 @@ func (c *Client) CreateOrder(ctx context.Context, params *CreateOrderInput, optF
 
 type CreateOrderInput struct {
 
-	// The line items that make up the order.
-	//
-	// This member is required.
-	LineItems []types.LineItemRequest
-
 	//  The ID or the Amazon Resource Name (ARN) of the Outpost.
 	//
 	// This member is required.
@@ -43,6 +38,9 @@ type CreateOrderInput struct {
 	//
 	// This member is required.
 	PaymentOption types.PaymentOption
+
+	// The line items that make up the order.
+	LineItems []types.LineItemRequest
 
 	// The payment terms.
 	PaymentTerm types.PaymentTerm
@@ -149,16 +147,13 @@ func (c *Client) addOperationCreateOrderMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

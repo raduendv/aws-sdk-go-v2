@@ -35,7 +35,8 @@ type CreateVpcConnectorInput struct {
 	// service with a custom Amazon VPC. Specify IDs of subnets of a single Amazon VPC.
 	// App Runner determines the Amazon VPC from the subnets you specify.
 	//
-	// App Runner currently only provides support for IPv4.
+	// App Runner only supports subnets of IP address type IPv4 and dual stack (IPv4
+	// and IPv6).
 	//
 	// This member is required.
 	Subnets []string
@@ -159,16 +160,13 @@ func (c *Client) addOperationCreateVpcConnectorMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

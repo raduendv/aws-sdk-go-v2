@@ -130,6 +130,26 @@ func (m *validateOpCreateReplicator) HandleInitialize(ctx context.Context, in mi
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateTopic struct {
+}
+
+func (*validateOpCreateTopic) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateTopic) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateTopicInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateTopicInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateVpcConnection struct {
 }
 
@@ -225,6 +245,26 @@ func (m *validateOpDeleteReplicator) HandleInitialize(ctx context.Context, in mi
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDeleteReplicatorInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteTopic struct {
+}
+
+func (*validateOpDeleteTopic) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteTopic) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteTopicInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteTopicInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -385,6 +425,46 @@ func (m *validateOpDescribeReplicator) HandleInitialize(ctx context.Context, in 
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDescribeReplicatorInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDescribeTopic struct {
+}
+
+func (*validateOpDescribeTopic) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDescribeTopic) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DescribeTopicInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDescribeTopicInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDescribeTopicPartitions struct {
+}
+
+func (*validateOpDescribeTopicPartitions) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDescribeTopicPartitions) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DescribeTopicPartitionsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDescribeTopicPartitionsInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -585,6 +665,26 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListTagsForResourceInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpListTopics struct {
+}
+
+func (*validateOpListTopics) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListTopics) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListTopicsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListTopicsInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -850,6 +950,26 @@ func (m *validateOpUpdateMonitoring) HandleInitialize(ctx context.Context, in mi
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateRebalancing struct {
+}
+
+func (*validateOpUpdateRebalancing) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateRebalancing) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateRebalancingInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateRebalancingInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpUpdateReplicationInfo struct {
 }
 
@@ -910,6 +1030,26 @@ func (m *validateOpUpdateStorage) HandleInitialize(ctx context.Context, in middl
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateTopic struct {
+}
+
+func (*validateOpUpdateTopic) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateTopic) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateTopicInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateTopicInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 func addOpBatchAssociateScramSecretValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpBatchAssociateScramSecret{}, middleware.After)
 }
@@ -934,6 +1074,10 @@ func addOpCreateReplicatorValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateReplicator{}, middleware.After)
 }
 
+func addOpCreateTopicValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateTopic{}, middleware.After)
+}
+
 func addOpCreateVpcConnectionValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateVpcConnection{}, middleware.After)
 }
@@ -952,6 +1096,10 @@ func addOpDeleteConfigurationValidationMiddleware(stack *middleware.Stack) error
 
 func addOpDeleteReplicatorValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteReplicator{}, middleware.After)
+}
+
+func addOpDeleteTopicValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteTopic{}, middleware.After)
 }
 
 func addOpDeleteVpcConnectionValidationMiddleware(stack *middleware.Stack) error {
@@ -984,6 +1132,14 @@ func addOpDescribeConfigurationRevisionValidationMiddleware(stack *middleware.St
 
 func addOpDescribeReplicatorValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDescribeReplicator{}, middleware.After)
+}
+
+func addOpDescribeTopicValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDescribeTopic{}, middleware.After)
+}
+
+func addOpDescribeTopicPartitionsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDescribeTopicPartitions{}, middleware.After)
 }
 
 func addOpDescribeVpcConnectionValidationMiddleware(stack *middleware.Stack) error {
@@ -1024,6 +1180,10 @@ func addOpListScramSecretsValidationMiddleware(stack *middleware.Stack) error {
 
 func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
+}
+
+func addOpListTopicsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListTopics{}, middleware.After)
 }
 
 func addOpPutClusterPolicyValidationMiddleware(stack *middleware.Stack) error {
@@ -1078,6 +1238,10 @@ func addOpUpdateMonitoringValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateMonitoring{}, middleware.After)
 }
 
+func addOpUpdateRebalancingValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateRebalancing{}, middleware.After)
+}
+
 func addOpUpdateReplicationInfoValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateReplicationInfo{}, middleware.After)
 }
@@ -1088,6 +1252,10 @@ func addOpUpdateSecurityValidationMiddleware(stack *middleware.Stack) error {
 
 func addOpUpdateStorageValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateStorage{}, middleware.After)
+}
+
+func addOpUpdateTopicValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateTopic{}, middleware.After)
 }
 
 func validate__listOfBrokerEBSVolumeInfo(v []types.BrokerEBSVolumeInfo) error {
@@ -1813,6 +1981,30 @@ func validateOpCreateReplicatorInput(v *CreateReplicatorInput) error {
 	}
 }
 
+func validateOpCreateTopicInput(v *CreateTopicInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateTopicInput"}
+	if v.ClusterArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterArn"))
+	}
+	if v.TopicName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TopicName"))
+	}
+	if v.PartitionCount == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("PartitionCount"))
+	}
+	if v.ReplicationFactor == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReplicationFactor"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateVpcConnectionInput(v *CreateVpcConnectionInput) error {
 	if v == nil {
 		return nil
@@ -1892,6 +2084,24 @@ func validateOpDeleteReplicatorInput(v *DeleteReplicatorInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DeleteReplicatorInput"}
 	if v.ReplicatorArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ReplicatorArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteTopicInput(v *DeleteTopicInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteTopicInput"}
+	if v.ClusterArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterArn"))
+	}
+	if v.TopicName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TopicName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2015,6 +2225,42 @@ func validateOpDescribeReplicatorInput(v *DescribeReplicatorInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DescribeReplicatorInput"}
 	if v.ReplicatorArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ReplicatorArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDescribeTopicInput(v *DescribeTopicInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DescribeTopicInput"}
+	if v.ClusterArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterArn"))
+	}
+	if v.TopicName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TopicName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDescribeTopicPartitionsInput(v *DescribeTopicPartitionsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DescribeTopicPartitionsInput"}
+	if v.ClusterArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterArn"))
+	}
+	if v.TopicName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TopicName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2165,6 +2411,21 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ListTagsForResourceInput"}
 	if v.ResourceArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpListTopicsInput(v *ListTopicsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListTopicsInput"}
+	if v.ClusterArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2448,6 +2709,27 @@ func validateOpUpdateMonitoringInput(v *UpdateMonitoringInput) error {
 	}
 }
 
+func validateOpUpdateRebalancingInput(v *UpdateRebalancingInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateRebalancingInput"}
+	if v.ClusterArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterArn"))
+	}
+	if v.CurrentVersion == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("CurrentVersion"))
+	}
+	if v.Rebalancing == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Rebalancing"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpUpdateReplicationInfoInput(v *UpdateReplicationInfoInput) error {
 	if v == nil {
 		return nil
@@ -2515,6 +2797,24 @@ func validateOpUpdateStorageInput(v *UpdateStorageInput) error {
 	}
 	if v.CurrentVersion == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("CurrentVersion"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateTopicInput(v *UpdateTopicInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateTopicInput"}
+	if v.ClusterArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ClusterArn"))
+	}
+	if v.TopicName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TopicName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

@@ -47,6 +47,11 @@ type CreateAIPromptInput struct {
 
 	// The identifier of the model used for this AI Prompt.
 	//
+	// For information about which models are supported in each Amazon Web Services
+	// Region, see [Supported models for system/custom prompts].
+	//
+	// [Supported models for system/custom prompts]: https://docs.aws.amazon.com/connect/latest/adminguide/create-ai-prompts.html#cli-create-aiprompt
+	//
 	// This member is required.
 	ModelId *string
 
@@ -84,6 +89,9 @@ type CreateAIPromptInput struct {
 
 	// The description of the AI Prompt.
 	Description *string
+
+	// The inference configuration for the AI Prompt being created.
+	InferenceConfiguration *types.AIPromptInferenceConfiguration
 
 	// The tags used to organize, track, or control access for this resource.
 	Tags map[string]string
@@ -193,16 +201,13 @@ func (c *Client) addOperationCreateAIPromptMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

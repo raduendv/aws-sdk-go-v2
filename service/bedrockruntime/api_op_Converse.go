@@ -143,6 +143,9 @@ type ConverseInput struct {
 	// The messages that you want to send to the model.
 	Messages []types.Message
 
+	// Output configuration for a model response.
+	OutputConfig *types.OutputConfig
+
 	// Model performance settings for the request.
 	PerformanceConfig *types.PerformanceConfiguration
 
@@ -153,6 +156,9 @@ type ConverseInput struct {
 
 	// Key-value pairs that you can use to filter invocation logs.
 	RequestMetadata map[string]string
+
+	// Specifies the processing tier configuration used for serving the request.
+	ServiceTier *types.ServiceTier
 
 	// A prompt that provides instructions or context to the model about the task it
 	// should perform, or the persona it should adopt during the conversation.
@@ -197,6 +203,9 @@ type ConverseOutput struct {
 
 	// Model performance settings for the request.
 	PerformanceConfig *types.PerformanceConfiguration
+
+	// Specifies the processing tier configuration used for serving the request.
+	ServiceTier *types.ServiceTier
 
 	// A trace object that contains information about the Guardrail behavior.
 	Trace *types.ConverseTrace
@@ -295,16 +304,13 @@ func (c *Client) addOperationConverseMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

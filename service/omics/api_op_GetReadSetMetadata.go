@@ -12,7 +12,9 @@ import (
 	"time"
 )
 
-// Gets details about a read set.
+// Retrieves the metadata for a read set from a sequence store in JSON format.
+// This operation does not return tags. To retrieve the list of tags for a read
+// set, use the ListTagsForResource API operation.
 func (c *Client) GetReadSetMetadata(ctx context.Context, params *GetReadSetMetadataInput, optFns ...func(*Options)) (*GetReadSetMetadataOutput, error) {
 	if params == nil {
 		params = &GetReadSetMetadataInput{}
@@ -207,16 +209,13 @@ func (c *Client) addOperationGetReadSetMetadataMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

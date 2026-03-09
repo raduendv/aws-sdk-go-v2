@@ -13,8 +13,8 @@ import (
 
 // This API action isn't intended for you to use.
 //
-// Amazon Web Services PCS uses this API action to register the compute nodes it
-// launches in your account.
+// PCS uses this API action to register the compute nodes it launches in your
+// account.
 func (c *Client) RegisterComputeNodeGroupInstance(ctx context.Context, params *RegisterComputeNodeGroupInstanceInput, optFns ...func(*Options)) (*RegisterComputeNodeGroupInstanceOutput, error) {
 	if params == nil {
 		params = &RegisterComputeNodeGroupInstanceInput{}
@@ -157,16 +157,13 @@ func (c *Client) addOperationRegisterComputeNodeGroupInstanceMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

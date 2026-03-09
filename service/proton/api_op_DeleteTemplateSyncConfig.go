@@ -12,6 +12,8 @@ import (
 )
 
 // Delete a template sync configuration.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) DeleteTemplateSyncConfig(ctx context.Context, params *DeleteTemplateSyncConfigInput, optFns ...func(*Options)) (*DeleteTemplateSyncConfigOutput, error) {
 	if params == nil {
 		params = &DeleteTemplateSyncConfigInput{}
@@ -141,16 +143,13 @@ func (c *Client) addOperationDeleteTemplateSyncConfigMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

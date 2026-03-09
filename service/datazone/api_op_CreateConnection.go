@@ -36,11 +36,6 @@ type CreateConnectionInput struct {
 	// This member is required.
 	DomainIdentifier *string
 
-	// The ID of the environment where the connection is created.
-	//
-	// This member is required.
-	EnvironmentIdentifier *string
-
 	// The connection name.
 	//
 	// This member is required.
@@ -56,8 +51,17 @@ type CreateConnectionInput struct {
 	// A connection description.
 	Description *string
 
+	// Specifies whether the trusted identity propagation is enabled.
+	EnableTrustedIdentityPropagation *bool
+
+	// The ID of the environment where the connection is created.
+	EnvironmentIdentifier *string
+
 	// The connection props.
 	Props types.ConnectionPropertiesInput
+
+	// The scope of the connection.
+	Scope types.ConnectionScope
 
 	noSmithyDocumentSerde
 }
@@ -105,6 +109,9 @@ type CreateConnectionOutput struct {
 
 	// The connection props.
 	Props types.ConnectionPropertiesOutput
+
+	// The scope of the connection.
+	Scope types.ConnectionScope
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -203,16 +210,13 @@ func (c *Client) addOperationCreateConnectionMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

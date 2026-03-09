@@ -65,12 +65,10 @@ type DescribeProjectOutput struct {
 	// This member is required.
 	ProjectStatus types.ProjectStatus
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	CreatedBy *types.UserContext
 
-	// Information about the user who created or modified an experiment, trial, trial
-	// component, lineage group, project, or model card.
+	// Information about the user who created or modified a SageMaker resource.
 	LastModifiedBy *types.UserContext
 
 	// The timestamp when project was last modified.
@@ -86,6 +84,9 @@ type DescribeProjectOutput struct {
 	//
 	// [What is Amazon Web Services Service Catalog]: https://docs.aws.amazon.com/servicecatalog/latest/adminguide/introduction.html
 	ServiceCatalogProvisioningDetails *types.ServiceCatalogProvisioningDetails
+
+	//  An array of template providers associated with the project.
+	TemplateProviderDetails []types.TemplateProviderDetail
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -181,16 +182,13 @@ func (c *Client) addOperationDescribeProjectMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -14,9 +14,8 @@ import (
 // Updates the enrollment (opt in and opt out) status of an account to the Cost
 // Optimization Hub service.
 //
-// If the account is a management account or delegated administrator of an
-// organization, this action can also be used to enroll member accounts of the
-// organization.
+// If the account is a management account of an organization, this action can also
+// be used to enroll member accounts of the organization.
 //
 // You must have the appropriate permissions to opt in to Cost Optimization Hub
 // and to view its recommendations. When you opt in, Cost Optimization Hub
@@ -149,16 +148,13 @@ func (c *Client) addOperationUpdateEnrollmentStatusMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

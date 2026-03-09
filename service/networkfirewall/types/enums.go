@@ -155,8 +155,10 @@ type GeneratedRulesType string
 
 // Enum values for GeneratedRulesType
 const (
-	GeneratedRulesTypeAllowlist GeneratedRulesType = "ALLOWLIST"
-	GeneratedRulesTypeDenylist  GeneratedRulesType = "DENYLIST"
+	GeneratedRulesTypeAllowlist  GeneratedRulesType = "ALLOWLIST"
+	GeneratedRulesTypeDenylist   GeneratedRulesType = "DENYLIST"
+	GeneratedRulesTypeRejectlist GeneratedRulesType = "REJECTLIST"
+	GeneratedRulesTypeAlertlist  GeneratedRulesType = "ALERTLIST"
 )
 
 // Values returns all known values for GeneratedRulesType. Note that this can be
@@ -167,6 +169,8 @@ func (GeneratedRulesType) Values() []GeneratedRulesType {
 	return []GeneratedRulesType{
 		"ALLOWLIST",
 		"DENYLIST",
+		"REJECTLIST",
+		"ALERTLIST",
 	}
 }
 
@@ -207,6 +211,25 @@ func (IPAddressType) Values() []IPAddressType {
 		"DUALSTACK",
 		"IPV4",
 		"IPV6",
+	}
+}
+
+type ListenerPropertyType string
+
+// Enum values for ListenerPropertyType
+const (
+	ListenerPropertyTypeHttp  ListenerPropertyType = "HTTP"
+	ListenerPropertyTypeHttps ListenerPropertyType = "HTTPS"
+)
+
+// Values returns all known values for ListenerPropertyType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ListenerPropertyType) Values() []ListenerPropertyType {
+	return []ListenerPropertyType{
+		"HTTP",
+		"HTTPS",
 	}
 }
 
@@ -276,6 +299,8 @@ const (
 	PerObjectSyncStatusPending             PerObjectSyncStatus = "PENDING"
 	PerObjectSyncStatusInSync              PerObjectSyncStatus = "IN_SYNC"
 	PerObjectSyncStatusCapacityConstrained PerObjectSyncStatus = "CAPACITY_CONSTRAINED"
+	PerObjectSyncStatusNotSubscribed       PerObjectSyncStatus = "NOT_SUBSCRIBED"
+	PerObjectSyncStatusDeprecated          PerObjectSyncStatus = "DEPRECATED"
 )
 
 // Values returns all known values for PerObjectSyncStatus. Note that this can be
@@ -287,6 +312,77 @@ func (PerObjectSyncStatus) Values() []PerObjectSyncStatus {
 		"PENDING",
 		"IN_SYNC",
 		"CAPACITY_CONSTRAINED",
+		"NOT_SUBSCRIBED",
+		"DEPRECATED",
+	}
+}
+
+type ProxyModifyState string
+
+// Enum values for ProxyModifyState
+const (
+	ProxyModifyStateModifying ProxyModifyState = "MODIFYING"
+	ProxyModifyStateCompleted ProxyModifyState = "COMPLETED"
+	ProxyModifyStateFailed    ProxyModifyState = "FAILED"
+)
+
+// Values returns all known values for ProxyModifyState. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProxyModifyState) Values() []ProxyModifyState {
+	return []ProxyModifyState{
+		"MODIFYING",
+		"COMPLETED",
+		"FAILED",
+	}
+}
+
+type ProxyRulePhaseAction string
+
+// Enum values for ProxyRulePhaseAction
+const (
+	ProxyRulePhaseActionAllow ProxyRulePhaseAction = "ALLOW"
+	ProxyRulePhaseActionDeny  ProxyRulePhaseAction = "DENY"
+	ProxyRulePhaseActionAlert ProxyRulePhaseAction = "ALERT"
+)
+
+// Values returns all known values for ProxyRulePhaseAction. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProxyRulePhaseAction) Values() []ProxyRulePhaseAction {
+	return []ProxyRulePhaseAction{
+		"ALLOW",
+		"DENY",
+		"ALERT",
+	}
+}
+
+type ProxyState string
+
+// Enum values for ProxyState
+const (
+	ProxyStateAttaching    ProxyState = "ATTACHING"
+	ProxyStateAttached     ProxyState = "ATTACHED"
+	ProxyStateDetaching    ProxyState = "DETACHING"
+	ProxyStateDetached     ProxyState = "DETACHED"
+	ProxyStateAttachFailed ProxyState = "ATTACH_FAILED"
+	ProxyStateDetachFailed ProxyState = "DETACH_FAILED"
+)
+
+// Values returns all known values for ProxyState. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProxyState) Values() []ProxyState {
+	return []ProxyState{
+		"ATTACHING",
+		"ATTACHED",
+		"DETACHING",
+		"DETACHED",
+		"ATTACH_FAILED",
+		"DETACH_FAILED",
 	}
 }
 
@@ -315,6 +411,8 @@ type ResourceManagedType string
 const (
 	ResourceManagedTypeAwsManagedThreatSignatures ResourceManagedType = "AWS_MANAGED_THREAT_SIGNATURES"
 	ResourceManagedTypeAwsManagedDomainLists      ResourceManagedType = "AWS_MANAGED_DOMAIN_LISTS"
+	ResourceManagedTypeActiveThreatDefense        ResourceManagedType = "ACTIVE_THREAT_DEFENSE"
+	ResourceManagedTypePartnerManaged             ResourceManagedType = "PARTNER_MANAGED"
 )
 
 // Values returns all known values for ResourceManagedType. Note that this can be
@@ -325,6 +423,8 @@ func (ResourceManagedType) Values() []ResourceManagedType {
 	return []ResourceManagedType{
 		"AWS_MANAGED_THREAT_SIGNATURES",
 		"AWS_MANAGED_DOMAIN_LISTS",
+		"ACTIVE_THREAT_DEFENSE",
+		"PARTNER_MANAGED",
 	}
 }
 
@@ -367,6 +467,27 @@ func (RevocationCheckAction) Values() []RevocationCheckAction {
 		"PASS",
 		"DROP",
 		"REJECT",
+	}
+}
+
+type RuleGroupRequestPhase string
+
+// Enum values for RuleGroupRequestPhase
+const (
+	RuleGroupRequestPhasePreDns  RuleGroupRequestPhase = "PRE_DNS"
+	RuleGroupRequestPhasePreReq  RuleGroupRequestPhase = "PRE_REQ"
+	RuleGroupRequestPhasePostRes RuleGroupRequestPhase = "POST_RES"
+)
+
+// Values returns all known values for RuleGroupRequestPhase. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (RuleGroupRequestPhase) Values() []RuleGroupRequestPhase {
+	return []RuleGroupRequestPhase{
+		"PRE_DNS",
+		"PRE_REQ",
+		"POST_RES",
 	}
 }
 
@@ -473,6 +594,8 @@ const (
 	StatefulRuleProtocolTftp   StatefulRuleProtocol = "TFTP"
 	StatefulRuleProtocolNtp    StatefulRuleProtocol = "NTP"
 	StatefulRuleProtocolDhcp   StatefulRuleProtocol = "DHCP"
+	StatefulRuleProtocolHttp2  StatefulRuleProtocol = "HTTP2"
+	StatefulRuleProtocolQuic   StatefulRuleProtocol = "QUIC"
 )
 
 // Values returns all known values for StatefulRuleProtocol. Note that this can be
@@ -500,6 +623,8 @@ func (StatefulRuleProtocol) Values() []StatefulRuleProtocol {
 		"TFTP",
 		"NTP",
 		"DHCP",
+		"HTTP2",
+		"QUIC",
 	}
 }
 
@@ -521,6 +646,46 @@ func (StreamExceptionPolicy) Values() []StreamExceptionPolicy {
 		"DROP",
 		"CONTINUE",
 		"REJECT",
+	}
+}
+
+type SubscriptionStatus string
+
+// Enum values for SubscriptionStatus
+const (
+	SubscriptionStatusNotSubscribed SubscriptionStatus = "NOT_SUBSCRIBED"
+	SubscriptionStatusSubscribed    SubscriptionStatus = "SUBSCRIBED"
+)
+
+// Values returns all known values for SubscriptionStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SubscriptionStatus) Values() []SubscriptionStatus {
+	return []SubscriptionStatus{
+		"NOT_SUBSCRIBED",
+		"SUBSCRIBED",
+	}
+}
+
+type SummaryRuleOption string
+
+// Enum values for SummaryRuleOption
+const (
+	SummaryRuleOptionSid      SummaryRuleOption = "SID"
+	SummaryRuleOptionMsg      SummaryRuleOption = "MSG"
+	SummaryRuleOptionMetadata SummaryRuleOption = "METADATA"
+)
+
+// Values returns all known values for SummaryRuleOption. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SummaryRuleOption) Values() []SummaryRuleOption {
+	return []SummaryRuleOption{
+		"SID",
+		"MSG",
+		"METADATA",
 	}
 }
 
@@ -571,5 +736,58 @@ func (TCPFlag) Values() []TCPFlag {
 		"URG",
 		"ECE",
 		"CWR",
+	}
+}
+
+type TlsInterceptMode string
+
+// Enum values for TlsInterceptMode
+const (
+	TlsInterceptModeEnabled  TlsInterceptMode = "ENABLED"
+	TlsInterceptModeDisabled TlsInterceptMode = "DISABLED"
+)
+
+// Values returns all known values for TlsInterceptMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TlsInterceptMode) Values() []TlsInterceptMode {
+	return []TlsInterceptMode{
+		"ENABLED",
+		"DISABLED",
+	}
+}
+
+type TransitGatewayAttachmentStatus string
+
+// Enum values for TransitGatewayAttachmentStatus
+const (
+	TransitGatewayAttachmentStatusCreating          TransitGatewayAttachmentStatus = "CREATING"
+	TransitGatewayAttachmentStatusDeleting          TransitGatewayAttachmentStatus = "DELETING"
+	TransitGatewayAttachmentStatusDeleted           TransitGatewayAttachmentStatus = "DELETED"
+	TransitGatewayAttachmentStatusFailed            TransitGatewayAttachmentStatus = "FAILED"
+	TransitGatewayAttachmentStatusError             TransitGatewayAttachmentStatus = "ERROR"
+	TransitGatewayAttachmentStatusReady             TransitGatewayAttachmentStatus = "READY"
+	TransitGatewayAttachmentStatusPendingAcceptance TransitGatewayAttachmentStatus = "PENDING_ACCEPTANCE"
+	TransitGatewayAttachmentStatusRejecting         TransitGatewayAttachmentStatus = "REJECTING"
+	TransitGatewayAttachmentStatusRejected          TransitGatewayAttachmentStatus = "REJECTED"
+)
+
+// Values returns all known values for TransitGatewayAttachmentStatus. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TransitGatewayAttachmentStatus) Values() []TransitGatewayAttachmentStatus {
+	return []TransitGatewayAttachmentStatus{
+		"CREATING",
+		"DELETING",
+		"DELETED",
+		"FAILED",
+		"ERROR",
+		"READY",
+		"PENDING_ACCEPTANCE",
+		"REJECTING",
+		"REJECTED",
 	}
 }

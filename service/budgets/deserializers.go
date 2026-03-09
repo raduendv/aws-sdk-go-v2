@@ -19,16 +19,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpCreateBudget struct {
 }
@@ -131,6 +122,9 @@ func awsAwsjson11_deserializeOpErrorCreateBudget(response *smithyhttp.Response, 
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson11_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
 	case strings.EqualFold("CreationLimitExceededException", errorCode):
 		return awsAwsjson11_deserializeErrorCreationLimitExceededException(response, errorBody)
 
@@ -142,6 +136,9 @@ func awsAwsjson11_deserializeOpErrorCreateBudget(response *smithyhttp.Response, 
 
 	case strings.EqualFold("InvalidParameterException", errorCode):
 		return awsAwsjson11_deserializeErrorInvalidParameterException(response, errorBody)
+
+	case strings.EqualFold("NotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorNotFoundException(response, errorBody)
 
 	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
 		return awsAwsjson11_deserializeErrorServiceQuotaExceededException(response, errorBody)
@@ -1895,6 +1892,9 @@ func awsAwsjson11_deserializeOpErrorDescribeBudgetPerformanceHistory(response *s
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson11_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
 	case strings.EqualFold("ExpiredNextTokenException", errorCode):
 		return awsAwsjson11_deserializeErrorExpiredNextTokenException(response, errorBody)
 
@@ -2909,6 +2909,9 @@ func awsAwsjson11_deserializeOpErrorUpdateBudget(response *smithyhttp.Response, 
 	case strings.EqualFold("AccessDeniedException", errorCode):
 		return awsAwsjson11_deserializeErrorAccessDeniedException(response, errorBody)
 
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
 	case strings.EqualFold("InternalErrorException", errorCode):
 		return awsAwsjson11_deserializeErrorInternalErrorException(response, errorBody)
 
@@ -2917,6 +2920,9 @@ func awsAwsjson11_deserializeOpErrorUpdateBudget(response *smithyhttp.Response, 
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsAwsjson11_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsAwsjson11_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("ThrottlingException", errorCode):
 		return awsAwsjson11_deserializeErrorThrottlingException(response, errorBody)
@@ -3329,6 +3335,41 @@ func awsAwsjson11_deserializeErrorAccessDeniedException(response *smithyhttp.Res
 
 	output := &types.AccessDeniedException{}
 	err := awsAwsjson11_deserializeDocumentAccessDeniedException(&output, shape)
+
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	return output
+}
+
+func awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response *smithyhttp.Response, errorBody *bytes.Reader) error {
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	output := &types.BillingViewHealthStatusException{}
+	err := awsAwsjson11_deserializeDocumentBillingViewHealthStatusException(&output, shape)
 
 	if err != nil {
 		var snapshot bytes.Buffer
@@ -4161,6 +4202,46 @@ func awsAwsjson11_deserializeDocumentAutoAdjustData(v **types.AutoAdjustData, va
 	return nil
 }
 
+func awsAwsjson11_deserializeDocumentBillingViewHealthStatusException(v **types.BillingViewHealthStatusException, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.BillingViewHealthStatusException
+	if *v == nil {
+		sv = &types.BillingViewHealthStatusException{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "message", "Message":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected errorMessage to be of type string, got %T instead", value)
+				}
+				sv.Message = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson11_deserializeDocumentBudget(v **types.Budget, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -4186,6 +4267,15 @@ func awsAwsjson11_deserializeDocumentBudget(v **types.Budget, value interface{})
 		case "AutoAdjustData":
 			if err := awsAwsjson11_deserializeDocumentAutoAdjustData(&sv.AutoAdjustData, value); err != nil {
 				return err
+			}
+
+		case "BillingViewArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected BillingViewArn to be of type string, got %T instead", value)
+				}
+				sv.BillingViewArn = ptr.String(jtv)
 			}
 
 		case "BudgetLimit":
@@ -4228,6 +4318,11 @@ func awsAwsjson11_deserializeDocumentBudget(v **types.Budget, value interface{})
 
 		case "FilterExpression":
 			if err := awsAwsjson11_deserializeDocumentExpression(&sv.FilterExpression, value); err != nil {
+				return err
+			}
+
+		case "HealthStatus":
+			if err := awsAwsjson11_deserializeDocumentHealthStatus(&sv.HealthStatus, value); err != nil {
 				return err
 			}
 
@@ -4461,6 +4556,15 @@ func awsAwsjson11_deserializeDocumentBudgetPerformanceHistory(v **types.BudgetPe
 
 	for key, value := range shape {
 		switch key {
+		case "BillingViewArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected BillingViewArn to be of type string, got %T instead", value)
+				}
+				sv.BillingViewArn = ptr.String(jtv)
+			}
+
 		case "BudgetedAndActualAmountsList":
 			if err := awsAwsjson11_deserializeDocumentBudgetedAndActualAmountsList(&sv.BudgetedAndActualAmountsList, value); err != nil {
 				return err
@@ -4491,6 +4595,16 @@ func awsAwsjson11_deserializeDocumentBudgetPerformanceHistory(v **types.BudgetPe
 
 		case "CostTypes":
 			if err := awsAwsjson11_deserializeDocumentCostTypes(&sv.CostTypes, value); err != nil {
+				return err
+			}
+
+		case "FilterExpression":
+			if err := awsAwsjson11_deserializeDocumentExpression(&sv.FilterExpression, value); err != nil {
+				return err
+			}
+
+		case "Metrics":
+			if err := awsAwsjson11_deserializeDocumentMetrics(&sv.Metrics, value); err != nil {
 				return err
 			}
 
@@ -5181,6 +5295,71 @@ func awsAwsjson11_deserializeDocumentGroups(v *[]string, value interface{}) erro
 
 	}
 	*v = cv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentHealthStatus(v **types.HealthStatus, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.HealthStatus
+	if *v == nil {
+		sv = &types.HealthStatus{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "LastUpdatedTime":
+			if value != nil {
+				switch jtv := value.(type) {
+				case json.Number:
+					f64, err := jtv.Float64()
+					if err != nil {
+						return err
+					}
+					sv.LastUpdatedTime = ptr.Time(smithytime.ParseEpochSeconds(f64))
+
+				default:
+					return fmt.Errorf("expected GenericTimestamp to be a JSON Number, got %T instead", value)
+
+				}
+			}
+
+		case "Status":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected HealthStatusValue to be of type string, got %T instead", value)
+				}
+				sv.Status = types.HealthStatusValue(jtv)
+			}
+
+		case "StatusReason":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected HealthStatusReason to be of type string, got %T instead", value)
+				}
+				sv.StatusReason = types.HealthStatusReason(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
 	return nil
 }
 

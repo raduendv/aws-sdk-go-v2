@@ -729,8 +729,8 @@ type ResolverConfig struct {
 	// The owner account ID of the Amazon Virtual Private Cloud VPC.
 	OwnerId *string
 
-	// The ID of the Amazon Virtual Private Cloud VPC that you're configuring Resolver
-	// for.
+	// The ID of the Amazon Virtual Private Cloud VPC or a Route 53 Profile that
+	// you're configuring Resolver for.
 	ResourceId *string
 
 	noSmithyDocumentSerde
@@ -793,6 +793,9 @@ type ResolverEndpoint struct {
 	//   - INBOUND : allows DNS queries to your VPC from your network
 	//
 	//   - OUTBOUND : allows DNS queries from your VPC to your network
+	//
+	//   - INBOUND_DELEGATION : Resolver delegates queries to Route 53 private hosted
+	//   zones from your network.
 	Direction ResolverEndpointDirection
 
 	// The ID of the VPC that you want to create the Resolver endpoint in.
@@ -820,8 +823,8 @@ type ResolverEndpoint struct {
 	//  The Amazon EC2 instance type.
 	PreferredInstanceType *string
 
-	//  Protocols used for the endpoint. DoH-FIPS is applicable for inbound endpoints
-	// only.
+	//  Protocols used for the endpoint. DoH-FIPS is applicable for a default inbound
+	// endpoints only.
 	//
 	// For an inbound endpoint you can apply the protocols as follows:
 	//
@@ -837,6 +840,8 @@ type ResolverEndpoint struct {
 	//
 	//   - None, which is treated as Do53.
 	//
+	// For a delegation inbound endpoint you can use Do53 only.
+	//
 	// For an outbound endpoint you can apply the protocols as follows:
 	//
 	//   - Do53 and DoH in combination.
@@ -850,6 +855,12 @@ type ResolverEndpoint struct {
 
 	//  The Resolver endpoint IP address type.
 	ResolverEndpointType ResolverEndpointType
+
+	// Indicates whether RNI enhanced metrics are enabled for the Resolver endpoint.
+	// When enabled, one-minute granular metrics are published in CloudWatch for each
+	// RNI associated with this endpoint. When disabled, these metrics are not
+	// published.
+	RniEnhancedMetricsEnabled *bool
 
 	// The ID of one or more security groups that control access to this VPC. The
 	// security group must include one or more inbound rules (for inbound endpoints) or
@@ -898,6 +909,13 @@ type ResolverEndpoint struct {
 
 	// A detailed description of the status of the Resolver endpoint.
 	StatusMessage *string
+
+	// Indicates whether target name server metrics are enabled for the outbound
+	// Resolver endpoint. When enabled, one-minute granular metrics are published in
+	// CloudWatch for each target name server associated with this endpoint. When
+	// disabled, these metrics are not published. This feature is not supported for
+	// inbound Resolver endpoint.
+	TargetNameServerMetricsEnabled *bool
 
 	noSmithyDocumentSerde
 }
@@ -1047,6 +1065,10 @@ type ResolverRule struct {
 	// without the risk of running the operation twice.
 	CreatorRequestId *string
 
+	//  DNS queries with delegation records that point to this domain name are
+	// forwarded to resolvers on your network.
+	DelegationRecord *string
+
 	// DNS queries for this domain name are forwarded to the IP addresses that are
 	// specified in TargetIps . If a query matches multiple Resolver rules (example.com
 	// and www.example.com), the query is routed using the Resolver rule that contains
@@ -1062,6 +1084,10 @@ type ResolverRule struct {
 
 	// The name for the Resolver rule, which you specified when you created the
 	// Resolver rule.
+	//
+	// The name can be up to 64 characters long and can contain letters (a-z, A-Z),
+	// numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist
+	// of only numbers.
 	Name *string
 
 	// When a rule is shared with another Amazon Web Services account, the account ID
@@ -1072,7 +1098,9 @@ type ResolverRule struct {
 	ResolverEndpointId *string
 
 	// When you want to forward DNS queries for specified domain name to resolvers on
-	// your network, specify FORWARD .
+	// your network, specify FORWARD or DELEGATE . If a query matches multiple Resolver
+	// rules (example.com and www.example.com), outbound DNS queries are routed using
+	// the Resolver rule that contains the most specific domain name (www.example.com).
 	//
 	// When you have a forwarding rule to forward DNS queries for a domain to your
 	// network and you want Resolver to process queries for a subdomain of that domain,
@@ -1122,6 +1150,10 @@ type ResolverRuleAssociation struct {
 	Id *string
 
 	// The name of an association between a Resolver rule and a VPC.
+	//
+	// The name can be up to 64 characters long and can contain letters (a-z, A-Z),
+	// numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist
+	// of only numbers.
 	Name *string
 
 	// The ID of the Resolver rule that you associated with the VPC that is specified
@@ -1149,6 +1181,10 @@ type ResolverRuleConfig struct {
 
 	// The new name for the Resolver rule. The name that you specify appears in the
 	// Resolver dashboard in the Route 53 console.
+	//
+	// The name can be up to 64 characters long and can contain letters (a-z, A-Z),
+	// numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist
+	// of only numbers.
 	Name *string
 
 	// The ID of the new outbound Resolver endpoint that you want to use to route DNS

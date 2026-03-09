@@ -50,6 +50,11 @@ type UpdateSecurityConfigInput struct {
 	// A description of the security configuration.
 	Description *string
 
+	// Describes IAM federation options in the form of a key-value map for updating an
+	// existing security configuration. Use this field to modify IAM federation
+	// settings for the security configuration.
+	IamFederationOptions *types.IamFederationConfigOptions
+
 	// Describes IAM Identity Center options in the form of a key-value map.
 	IamIdentityCenterOptionsUpdates *types.UpdateIamIdentityCenterConfigOptions
 
@@ -161,16 +166,13 @@ func (c *Client) addOperationUpdateSecurityConfigMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

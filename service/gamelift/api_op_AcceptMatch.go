@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Registers a player's acceptance or rejection of a proposed FlexMatch match. A
 // matchmaking configuration may require player acceptance; if so, then matches
 // built with that configuration cannot be completed unless all players accept the
@@ -23,9 +25,9 @@ import (
 // in this status result in an error.
 //
 // To register acceptance, specify the ticket ID, one or more players, and an
-// acceptance response. When all players have accepted, Amazon GameLift advances
-// the matchmaking tickets to status PLACING , and attempts to create a new game
-// session for the match.
+// acceptance response. When all players have accepted, Amazon GameLift Servers
+// advances the matchmaking tickets to status PLACING , and attempts to create a
+// new game session for the match.
 //
 // If any player rejects the match, or if acceptances are not received before a
 // specified timeout, the proposed match is dropped. Each matchmaking ticket in the
@@ -177,16 +179,13 @@ func (c *Client) addOperationAcceptMatchMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

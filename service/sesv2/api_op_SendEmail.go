@@ -119,6 +119,12 @@ type SendEmailInput struct {
 	// the message, each Reply-to address receives the reply.
 	ReplyToAddresses []string
 
+	// The name of the tenant through which this email will be sent.
+	//
+	// The email sending operation will only succeed if all referenced resources
+	// (identities, configuration sets, and templates) are associated with this tenant.
+	TenantName *string
+
 	noSmithyDocumentSerde
 }
 
@@ -234,16 +240,13 @@ func (c *Client) addOperationSendEmailMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

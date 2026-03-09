@@ -71,6 +71,10 @@ type RollbackStackInput struct {
 
 type RollbackStackOutput struct {
 
+	// A unique identifier for this rollback operation that can be used to track the
+	// operation's progress and events.
+	OperationId *string
+
 	// Unique identifier of the stack.
 	StackId *string
 
@@ -168,16 +172,13 @@ func (c *Client) addOperationRollbackStackMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

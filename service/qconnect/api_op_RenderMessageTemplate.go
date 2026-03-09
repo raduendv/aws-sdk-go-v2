@@ -58,16 +58,17 @@ type RenderMessageTemplateInput struct {
 
 type RenderMessageTemplateOutput struct {
 
-	// The content of the message template.
-	//
-	// This member is required.
-	Content types.MessageTemplateContentProvider
-
 	// The message template attachments.
 	Attachments []types.MessageTemplateAttachment
 
 	// The attribute keys that are not resolved.
 	AttributesNotInterpolated []string
+
+	// The content of the message template.
+	Content types.MessageTemplateContentProvider
+
+	// The source configuration of the message template.
+	SourceConfigurationSummary types.MessageTemplateSourceConfigurationSummary
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -163,16 +164,13 @@ func (c *Client) addOperationRenderMessageTemplateMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

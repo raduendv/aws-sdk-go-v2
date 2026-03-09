@@ -162,6 +162,12 @@
                     "target": "com.amazonaws.databasemigrationservice#BatchStartRecommendations"
                 },
                 {
+                    "target": "com.amazonaws.databasemigrationservice#CancelMetadataModelConversion"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#CancelMetadataModelCreation"
+                },
+                {
                     "target": "com.amazonaws.databasemigrationservice#CancelReplicationTaskAssessmentRun"
                 },
                 {
@@ -306,10 +312,19 @@
                     "target": "com.amazonaws.databasemigrationservice#DescribeInstanceProfiles"
                 },
                 {
+                    "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModel"
+                },
+                {
                     "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelAssessments"
                 },
                 {
+                    "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelChildren"
+                },
+                {
                     "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelConversions"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelCreations"
                 },
                 {
                     "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelExportsAsScript"
@@ -376,6 +391,9 @@
                 },
                 {
                     "target": "com.amazonaws.databasemigrationservice#ExportMetadataModelAssessment"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#GetTargetSelectionRules"
                 },
                 {
                     "target": "com.amazonaws.databasemigrationservice#ImportCertificate"
@@ -450,6 +468,9 @@
                     "target": "com.amazonaws.databasemigrationservice#StartMetadataModelConversion"
                 },
                 {
+                    "target": "com.amazonaws.databasemigrationservice#StartMetadataModelCreation"
+                },
+                {
                     "target": "com.amazonaws.databasemigrationservice#StartMetadataModelExportAsScript"
                 },
                 {
@@ -514,27 +535,27 @@
                             "builtIn": "AWS::Region",
                             "required": false,
                             "documentation": "The AWS region used to dispatch the request.",
-                            "type": "String"
+                            "type": "string"
                         },
                         "UseDualStack": {
                             "builtIn": "AWS::UseDualStack",
                             "required": true,
                             "default": false,
                             "documentation": "When true, use the dual-stack endpoint. If the configured endpoint does not support dual-stack, dispatching the request MAY return an error.",
-                            "type": "Boolean"
+                            "type": "boolean"
                         },
                         "UseFIPS": {
                             "builtIn": "AWS::UseFIPS",
                             "required": true,
                             "default": false,
                             "documentation": "When true, send this request to the FIPS-compliant regional endpoint. If the configured endpoint does not have a FIPS compliant endpoint, dispatching the request will return an error.",
-                            "type": "Boolean"
+                            "type": "boolean"
                         },
                         "Endpoint": {
                             "builtIn": "SDK::Endpoint",
                             "required": false,
                             "documentation": "Override the endpoint used to send this request",
-                            "type": "String"
+                            "type": "string"
                         }
                     },
                     "rules": [
@@ -1458,28 +1479,6 @@
                             }
                         },
                         {
-                            "documentation": "For region us-iso-east-1 with FIPS enabled and DualStack enabled",
-                            "expect": {
-                                "error": "FIPS and DualStack are enabled, but this partition does not support one or both"
-                            },
-                            "params": {
-                                "Region": "us-iso-east-1",
-                                "UseFIPS": true,
-                                "UseDualStack": true
-                            }
-                        },
-                        {
-                            "documentation": "For region us-iso-east-1 with FIPS disabled and DualStack enabled",
-                            "expect": {
-                                "error": "DualStack is enabled but this partition does not support DualStack"
-                            },
-                            "params": {
-                                "Region": "us-iso-east-1",
-                                "UseFIPS": false,
-                                "UseDualStack": true
-                            }
-                        },
-                        {
                             "documentation": "For region us-isob-east-1 with FIPS disabled and DualStack disabled",
                             "expect": {
                                 "endpoint": {
@@ -1503,28 +1502,6 @@
                                 "Region": "us-isob-east-1",
                                 "UseFIPS": true,
                                 "UseDualStack": false
-                            }
-                        },
-                        {
-                            "documentation": "For region us-isob-east-1 with FIPS enabled and DualStack enabled",
-                            "expect": {
-                                "error": "FIPS and DualStack are enabled, but this partition does not support one or both"
-                            },
-                            "params": {
-                                "Region": "us-isob-east-1",
-                                "UseFIPS": true,
-                                "UseDualStack": true
-                            }
-                        },
-                        {
-                            "documentation": "For region us-isob-east-1 with FIPS disabled and DualStack enabled",
-                            "expect": {
-                                "error": "DualStack is enabled but this partition does not support DualStack"
-                            },
-                            "params": {
-                                "Region": "us-isob-east-1",
-                                "UseFIPS": false,
-                                "UseDualStack": true
                             }
                         },
                         {
@@ -1771,7 +1748,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Starts the analysis of up to 20 source databases to recommend target engines for each\n            source database. This is a batch version of <a href=\"https://docs.aws.amazon.com/dms/latest/APIReference/API_StartRecommendations.html\">StartRecommendations</a>.</p>\n         <p>The result of analysis of each source database is reported individually in the\n            response. Because the batch request can result in a combination of successful and\n            unsuccessful actions, you should check for batch errors even when the call returns an\n            HTTP status code of <code>200</code>.</p>"
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Starts the analysis of up to 20 source databases to recommend target engines for each\n            source database. This is a batch version of <a href=\"https://docs.aws.amazon.com/dms/latest/APIReference/API_StartRecommendations.html\">StartRecommendations</a>.</p>\n         <p>The result of analysis of each source database is reported individually in the\n            response. Because the batch request can result in a combination of successful and\n            unsuccessful actions, you should check for batch errors even when the call returns an\n            HTTP status code of <code>200</code>.</p>"
             }
         },
         "com.amazonaws.databasemigrationservice#BatchStartRecommendationsErrorEntry": {
@@ -1842,6 +1819,118 @@
         },
         "com.amazonaws.databasemigrationservice#BooleanOptional": {
             "type": "boolean"
+        },
+        "com.amazonaws.databasemigrationservice#CancelMetadataModelConversion": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.databasemigrationservice#CancelMetadataModelConversionMessage"
+            },
+            "output": {
+                "target": "com.amazonaws.databasemigrationservice#CancelMetadataModelConversionResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.databasemigrationservice#AccessDeniedFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#InvalidResourceStateFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceNotFoundFault"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Cancels a single metadata model conversion operation that was started with <code>StartMetadataModelConversion</code>.</p>"
+            }
+        },
+        "com.amazonaws.databasemigrationservice#CancelMetadataModelConversionMessage": {
+            "type": "structure",
+            "members": {
+                "MigrationProjectIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "RequestIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The identifier for the metadata model conversion operation to cancel. This operation was initiated by StartMetadataModelConversion.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#CancelMetadataModelConversionResponse": {
+            "type": "structure",
+            "members": {
+                "Request": {
+                    "target": "com.amazonaws.databasemigrationservice#SchemaConversionRequest"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#CancelMetadataModelCreation": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.databasemigrationservice#CancelMetadataModelCreationMessage"
+            },
+            "output": {
+                "target": "com.amazonaws.databasemigrationservice#CancelMetadataModelCreationResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.databasemigrationservice#AccessDeniedFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#InvalidResourceStateFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceNotFoundFault"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Cancels a single metadata model creation operation that was started with <code>StartMetadataModelCreation</code>.</p>"
+            }
+        },
+        "com.amazonaws.databasemigrationservice#CancelMetadataModelCreationMessage": {
+            "type": "structure",
+            "members": {
+                "MigrationProjectIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "RequestIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The identifier for the metadata model creation operation to cancel. This operation was initiated by <code>StartMetadataModelCreation</code>.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#CancelMetadataModelCreationResponse": {
+            "type": "structure",
+            "members": {
+                "Request": {
+                    "target": "com.amazonaws.databasemigrationservice#SchemaConversionRequest"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
         },
         "com.amazonaws.databasemigrationservice#CancelReplicationTaskAssessmentRun": {
             "type": "operation",
@@ -2011,6 +2100,12 @@
                     "target": "com.amazonaws.databasemigrationservice#IntegerOptional",
                     "traits": {
                         "smithy.api#documentation": "<p>The key length of the cryptographic algorithm being used.</p>"
+                    }
+                },
+                "KmsKeyId": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>An KMS key identifier that is used to encrypt the certificate.</p>\n         <p>If you don't specify a value for the <code>KmsKeyId</code> parameter, then DMS uses\n         your default encryption key.</p>\n         <p>KMS creates the default encryption key for your Amazon Web Services account. Your Amazon Web Services account has\n         a different default encryption key for each Amazon Web Services Region.</p>"
                     }
                 }
             },
@@ -2558,8 +2653,14 @@
                 "Engine": {
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
-                        "smithy.api#documentation": "<p>The type of database engine for the data provider. Valid values include <code>\"aurora\"</code>, \n         <code>\"aurora-postgresql\"</code>, <code>\"mysql\"</code>, <code>\"oracle\"</code>, <code>\"postgres\"</code>, \n         <code>\"sqlserver\"</code>, <code>redshift</code>, <code>mariadb</code>, <code>mongodb</code>, <code>db2</code>, <code>db2-zos</code> and <code>docdb</code>. A value of <code>\"aurora\"</code> represents Amazon Aurora MySQL-Compatible Edition.</p>",
+                        "smithy.api#documentation": "<p>The type of database engine for the data provider. Valid values include <code>\"aurora\"</code>, \n         <code>\"aurora-postgresql\"</code>, <code>\"mysql\"</code>, <code>\"oracle\"</code>, <code>\"postgres\"</code>, \n         <code>\"sqlserver\"</code>, <code>redshift</code>, <code>mariadb</code>, <code>mongodb</code>, <code>db2</code>, <code>db2-zos</code>, <code>docdb</code>, and <code>sybase</code>. A value of <code>\"aurora\"</code> represents Amazon Aurora MySQL-Compatible Edition.</p>",
                         "smithy.api#required": {}
+                    }
+                },
+                "Virtual": {
+                    "target": "com.amazonaws.databasemigrationservice#BooleanOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether the data provider is virtual.</p>"
                     }
                 },
                 "Settings": {
@@ -3037,7 +3138,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Creates a Fleet Advisor collector using the specified parameters.</p>"
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Creates a Fleet Advisor collector using the specified parameters.</p>"
             }
         },
         "com.amazonaws.databasemigrationservice#CreateFleetAdvisorCollectorRequest": {
@@ -3173,7 +3274,6 @@
                         "output": {
                             "InstanceProfile": {
                                 "SubnetGroupIdentifier": "public-subnets",
-                                "VpcIdentifier": "vpc-0a1b2c3d4e5f6g7h8",
                                 "VpcSecurityGroups": [
                                     "sg-0123456"
                                 ],
@@ -3200,7 +3300,7 @@
                 "KmsKeyArn": {
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
-                        "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the KMS key that is used to encrypt \n         the connection parameters for the instance profile.</p>\n         <p>If you don't specify a value for the <code>KmsKeyArn</code> parameter, then\n         DMS uses your default encryption key.</p>\n         <p>KMS creates the default encryption key for your Amazon Web Services account. Your Amazon Web Services account has a\n         different default encryption key for each Amazon Web Services Region.</p>"
+                        "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the KMS key that is used to encrypt \n         the connection parameters for the instance profile.</p>\n         <p>If you don't specify a value for the <code>KmsKeyArn</code> parameter, then\n         DMS uses an Amazon Web Services owned encryption key to encrypt your resources.</p>"
                     }
                 },
                 "PubliclyAccessible": {
@@ -3882,7 +3982,7 @@
                 "ReplicationSubnetGroupDescription": {
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
-                        "smithy.api#documentation": "<p>The description for the subnet group.</p>",
+                        "smithy.api#documentation": "<p>The description for the subnet group.\n      </p>\n         <p>Constraints: This parameter Must not contain non-printable control characters.</p>",
                         "smithy.api#required": {}
                     }
                 },
@@ -4360,7 +4460,13 @@
                 "Engine": {
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
-                        "smithy.api#documentation": "<p>The type of database engine for the data provider. Valid values include <code>\"aurora\"</code>, \n         <code>\"aurora-postgresql\"</code>, <code>\"mysql\"</code>, <code>\"oracle\"</code>, <code>\"postgres\"</code>, \n         <code>\"sqlserver\"</code>, <code>redshift</code>, <code>mariadb</code>, <code>mongodb</code>, <code>db2</code>, <code>db2-zos</code> and <code>docdb</code>. A value of <code>\"aurora\"</code> represents Amazon Aurora MySQL-Compatible Edition.</p>"
+                        "smithy.api#documentation": "<p>The type of database engine for the data provider. Valid values include <code>\"aurora\"</code>, \n         <code>\"aurora-postgresql\"</code>, <code>\"mysql\"</code>, <code>\"oracle\"</code>, <code>\"postgres\"</code>, \n         <code>\"sqlserver\"</code>, <code>redshift</code>, <code>mariadb</code>, <code>mongodb</code>, <code>db2</code>, <code>db2-zos</code>, <code>docdb</code>, and <code>sybase</code>. A value of <code>\"aurora\"</code> represents Amazon Aurora MySQL-Compatible Edition.</p>"
+                    }
+                },
+                "Virtual": {
+                    "target": "com.amazonaws.databasemigrationservice#BooleanOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether the data provider is virtual.</p>"
                     }
                 },
                 "Settings": {
@@ -4468,6 +4574,9 @@
                 },
                 "OracleSettings": {
                     "target": "com.amazonaws.databasemigrationservice#OracleDataProviderSettings"
+                },
+                "SybaseAseSettings": {
+                    "target": "com.amazonaws.databasemigrationservice#SybaseAseDataProviderSettings"
                 },
                 "MicrosoftSqlServerSettings": {
                     "target": "com.amazonaws.databasemigrationservice#MicrosoftSqlServerDataProviderSettings"
@@ -5166,7 +5275,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Deletes the specified Fleet Advisor collector.</p>"
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Deletes the specified Fleet Advisor collector.</p>"
             }
         },
         "com.amazonaws.databasemigrationservice#DeleteFleetAdvisorDatabases": {
@@ -5189,7 +5298,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Deletes the specified Fleet Advisor collector databases.</p>"
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Deletes the specified Fleet Advisor collector databases.</p>"
             }
         },
         "com.amazonaws.databasemigrationservice#DeleteFleetAdvisorDatabasesRequest": {
@@ -5255,7 +5364,6 @@
                         "output": {
                             "InstanceProfile": {
                                 "SubnetGroupIdentifier": "public-subnets",
-                                "VpcIdentifier": "vpc-0a1b2c3d4e5f6g7h8",
                                 "VpcSecurityGroups": [
                                     "sg-0123456"
                                 ],
@@ -6168,7 +6276,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The name or Amazon Resource Name (ARN) for the schema conversion project to describe.</p>",
                         "smithy.api#required": {}
@@ -6828,7 +6936,7 @@
                 "Filters": {
                     "target": "com.amazonaws.databasemigrationservice#FilterList",
                     "traits": {
-                        "smithy.api#documentation": "<p>Filters applied to event subscriptions.</p>\n         <p>Valid filter names: event-subscription-arn | event-subscription-id </p>"
+                        "smithy.api#documentation": "<p>Filters applied to event subscriptions.</p>\n         <p>Valid filter names: <code>event-subscription-arn</code> | <code>event-subscription-id</code>\n         </p>"
                     }
                 },
                 "MaxRecords": {
@@ -7021,7 +7129,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The name or Amazon Resource Name (ARN) for the migration project.</p>",
                         "smithy.api#required": {}
@@ -7084,7 +7192,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Returns a list of the Fleet Advisor collectors in your account.</p>",
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Returns a list of the Fleet Advisor collectors in your account.</p>",
                 "smithy.api#paginated": {
                     "inputToken": "NextToken",
                     "outputToken": "NextToken",
@@ -7152,7 +7260,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Returns a list of Fleet Advisor databases in your account.</p>",
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Returns a list of Fleet Advisor databases in your account.</p>",
                 "smithy.api#paginated": {
                     "inputToken": "NextToken",
                     "outputToken": "NextToken",
@@ -7220,7 +7328,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Provides descriptions of large-scale assessment (LSA) analyses produced by your Fleet\n            Advisor collectors. </p>",
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Provides descriptions of large-scale assessment (LSA) analyses produced by your Fleet\n            Advisor collectors. </p>",
                 "smithy.api#paginated": {
                     "inputToken": "NextToken",
                     "outputToken": "NextToken",
@@ -7282,7 +7390,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Provides descriptions of the schemas discovered by your Fleet Advisor\n            collectors.</p>",
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Provides descriptions of the schemas discovered by your Fleet Advisor\n            collectors.</p>",
                 "smithy.api#paginated": {
                     "inputToken": "NextToken",
                     "outputToken": "NextToken",
@@ -7302,7 +7410,7 @@
                 "MaxRecords": {
                     "target": "com.amazonaws.databasemigrationservice#IntegerOptional",
                     "traits": {
-                        "smithy.api#documentation": "<p>Sets the maximum number of records returned in the response.</p>"
+                        "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Sets the maximum number of records returned in the response.</p>"
                     }
                 },
                 "NextToken": {
@@ -7350,7 +7458,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Returns a list of schemas detected by Fleet Advisor Collectors in your account.</p>",
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Returns a list of schemas detected by Fleet Advisor Collectors in your account.</p>",
                 "smithy.api#paginated": {
                     "inputToken": "NextToken",
                     "outputToken": "NextToken",
@@ -7446,7 +7554,6 @@
                             "InstanceProfiles": [
                                 {
                                     "SubnetGroupIdentifier": "public-subnets",
-                                    "VpcIdentifier": "vpc-0a1b2c3d4e5f6g7h8",
                                     "PubliclyAccessible": true,
                                     "KmsKeyArn": "arn:aws:kms:us-east-1:012345678901:key/01234567-89ab-cdef-0123-456789abcdef",
                                     "InstanceProfileCreationTime": "2022-12-16T09:44:43.543246Z",
@@ -7510,6 +7617,26 @@
                 "smithy.api#output": {}
             }
         },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModel": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelMessage"
+            },
+            "output": {
+                "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.databasemigrationservice#AccessDeniedFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceNotFoundFault"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Gets detailed information about the specified metadata model, including its definition and corresponding converted objects in the target database if applicable.</p>"
+            }
+        },
         "com.amazonaws.databasemigrationservice#DescribeMetadataModelAssessments": {
             "type": "operation",
             "input": {
@@ -7565,7 +7692,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The name or Amazon Resource Name (ARN) of the migration project.</p>",
                         "smithy.api#required": {}
@@ -7607,6 +7734,93 @@
                     "target": "com.amazonaws.databasemigrationservice#SchemaConversionRequestList",
                     "traits": {
                         "smithy.api#documentation": "<p>A paginated list of metadata model assessments for the specified migration project.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModelChildren": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelChildrenMessage"
+            },
+            "output": {
+                "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelChildrenResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.databasemigrationservice#AccessDeniedFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceNotFoundFault"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Gets a list of child metadata models for the specified metadata model in the database hierarchy.</p>",
+                "smithy.api#paginated": {
+                    "inputToken": "Marker",
+                    "outputToken": "Marker",
+                    "items": "MetadataModelChildren",
+                    "pageSize": "MaxRecords"
+                }
+            }
+        },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModelChildrenMessage": {
+            "type": "structure",
+            "members": {
+                "SelectionRules": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The JSON string that specifies which metadata model's children to retrieve. Only one selection rule with \"rule-action\": \"explicit\" can be provided. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.CustomizingTasks.TableMapping.SelectionTransformation.Selections.html\">Selection Rules</a> in the DMS User Guide.</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "MigrationProjectIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "Origin": {
+                    "target": "com.amazonaws.databasemigrationservice#OriginTypeValue",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies whether to retrieve metadata from the source or target tree. Valid values: SOURCE | TARGET</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "Marker": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies the unique pagination token that indicates where the next page should start. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by MaxRecords.</p>"
+                    }
+                },
+                "MaxRecords": {
+                    "target": "com.amazonaws.databasemigrationservice#IntegerOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The maximum number of metadata model children to include in the response. If more items exist than the specified MaxRecords value, a marker is included in the response so that the remaining results can be retrieved.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModelChildrenResponse": {
+            "type": "structure",
+            "members": {
+                "Marker": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies the unique pagination token that makes it possible to display the next page of metadata model children. If a marker is returned, there are more metadata model children available.</p>"
+                    }
+                },
+                "MetadataModelChildren": {
+                    "target": "com.amazonaws.databasemigrationservice#MetadataModelReferenceList",
+                    "traits": {
+                        "smithy.api#documentation": "<p>A list of child metadata models.</p>"
                     }
                 }
             },
@@ -7669,7 +7883,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -7711,6 +7925,85 @@
                     "target": "com.amazonaws.databasemigrationservice#SchemaConversionRequestList",
                     "traits": {
                         "smithy.api#documentation": "<p>A paginated list of metadata model conversions.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModelCreations": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelCreationsMessage"
+            },
+            "output": {
+                "target": "com.amazonaws.databasemigrationservice#DescribeMetadataModelCreationsResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.databasemigrationservice#AccessDeniedFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceNotFoundFault"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Returns a paginated list of metadata model creation requests for a migration project.</p>",
+                "smithy.api#paginated": {
+                    "inputToken": "Marker",
+                    "outputToken": "Marker",
+                    "items": "Requests",
+                    "pageSize": "MaxRecords"
+                }
+            }
+        },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModelCreationsMessage": {
+            "type": "structure",
+            "members": {
+                "Filters": {
+                    "target": "com.amazonaws.databasemigrationservice#FilterList",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Filters applied to the metadata model creation requests described in the form of key-value pairs. The supported filters are request-id and status.</p>"
+                    }
+                },
+                "Marker": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies the unique pagination token that makes it possible to display the next page of metadata model creation requests. If Marker is returned by a previous response, there are more metadata model creation requests available.</p>"
+                    }
+                },
+                "MaxRecords": {
+                    "target": "com.amazonaws.databasemigrationservice#IntegerOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The maximum number of metadata model creation requests to include in the response. If more requests exist than the specified MaxRecords value, a pagination token is provided in the response so that you can retrieve the remaining results.</p>"
+                    }
+                },
+                "MigrationProjectIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModelCreationsResponse": {
+            "type": "structure",
+            "members": {
+                "Marker": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies the unique pagination token that makes it possible to display the next page of metadata model creation requests. If Marker is returned, there are more metadata model creation requests available.</p>"
+                    }
+                },
+                "Requests": {
+                    "target": "com.amazonaws.databasemigrationservice#SchemaConversionRequestList",
+                    "traits": {
+                        "smithy.api#documentation": "<p>A list of metadata model creation requests. The ExportSqlDetails field will never be populated for the DescribeMetadataModelCreations operation.</p>"
                     }
                 }
             },
@@ -7773,7 +8066,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -7877,7 +8170,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -7981,7 +8274,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -8023,6 +8316,67 @@
                     "target": "com.amazonaws.databasemigrationservice#SchemaConversionRequestList",
                     "traits": {
                         "smithy.api#documentation": "<p>A paginated list of metadata model imports.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModelMessage": {
+            "type": "structure",
+            "members": {
+                "SelectionRules": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The JSON string that specifies which metadata model to retrieve. Only one selection rule with \"rule-action\": \"explicit\" can be provided. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.CustomizingTasks.TableMapping.SelectionTransformation.Selections.html\">Selection Rules</a> in the DMS User Guide.</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "MigrationProjectIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "Origin": {
+                    "target": "com.amazonaws.databasemigrationservice#OriginTypeValue",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies whether to retrieve metadata from the source or target tree. Valid values: SOURCE | TARGET</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#DescribeMetadataModelResponse": {
+            "type": "structure",
+            "members": {
+                "MetadataModelName": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The name of the metadata model.</p>"
+                    }
+                },
+                "MetadataModelType": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The type of the metadata model.</p>"
+                    }
+                },
+                "TargetMetadataModels": {
+                    "target": "com.amazonaws.databasemigrationservice#MetadataModelReferenceList",
+                    "traits": {
+                        "smithy.api#documentation": "<p>A list of counterpart metadata models in the target. This field is populated only when Origin is SOURCE and after the object has been converted by DMS Schema Conversion.</p>"
+                    }
+                },
+                "Definition": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The SQL text of the metadata model. This field might not be populated for some metadata models.</p>"
                     }
                 }
             },
@@ -8320,7 +8674,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Returns a paginated list of limitations for recommendations of target Amazon Web Services\n            engines.</p>",
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Returns a paginated list of limitations for recommendations of target Amazon Web Services\n            engines.</p>",
                 "smithy.api#paginated": {
                     "inputToken": "NextToken",
                     "outputToken": "NextToken",
@@ -8334,7 +8688,7 @@
                 "Filters": {
                     "target": "com.amazonaws.databasemigrationservice#FilterList",
                     "traits": {
-                        "smithy.api#documentation": "<p>Filters applied to the limitations described in the form of key-value pairs.</p>"
+                        "smithy.api#documentation": "<p>Filters applied to the limitations described in the form of key-value pairs.</p>\n         <p>Valid filter names: <code>database-id</code> | <code>engine-name</code>\n         </p>"
                     }
                 },
                 "MaxRecords": {
@@ -8391,7 +8745,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Returns a paginated list of target engine recommendations for your source\n            databases.</p>",
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Returns a paginated list of target engine recommendations for your source\n            databases.</p>",
                 "smithy.api#paginated": {
                     "inputToken": "NextToken",
                     "outputToken": "NextToken",
@@ -8405,7 +8759,7 @@
                 "Filters": {
                     "target": "com.amazonaws.databasemigrationservice#FilterList",
                     "traits": {
-                        "smithy.api#documentation": "<p>Filters applied to the target engine recommendations described in the form of\n            key-value pairs.</p>"
+                        "smithy.api#documentation": "<p>Filters applied to the target engine recommendations described in the form of\n            key-value pairs.</p>\n         <p>Valid filter names: <code>database-id</code> | <code>engine-name</code>\n         </p>"
                     }
                 },
                 "MaxRecords": {
@@ -9693,7 +10047,7 @@
                 "Filters": {
                     "target": "com.amazonaws.databasemigrationservice#FilterList",
                     "traits": {
-                        "smithy.api#documentation": "<p>Filters applied to the replications.</p>"
+                        "smithy.api#documentation": "<p>Filters applied to the replications.</p>\n         <p> Valid filter names: <code>replication-config-arn</code> | <code>replication-config-id</code>\n         </p>"
                     }
                 },
                 "MaxRecords": {
@@ -10305,6 +10659,12 @@
                         "smithy.api#documentation": "<p> Value returned by a call to CreateEndpoint that can be used for cross-account\n         validation. Use it on a subsequent call to CreateEndpoint to create the endpoint with a\n         cross-account. </p>"
                     }
                 },
+                "IsReadOnly": {
+                    "target": "com.amazonaws.databasemigrationservice#BooleanOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether the endpoint is read-only. When set to <code>true</code>, this endpoint\n         is managed by DMS as part of a zero-ETL integration and cannot be modified or deleted directly.\n         You can only modify or delete read-only endpoints through their associated zero-ETL integration.</p>"
+                    }
+                },
                 "DynamoDbSettings": {
                     "target": "com.amazonaws.databasemigrationservice#DynamoDbSettings",
                     "traits": {
@@ -10414,6 +10774,12 @@
                     "target": "com.amazonaws.databasemigrationservice#TimestreamSettings",
                     "traits": {
                         "smithy.api#documentation": "<p>The settings for the Amazon Timestream target endpoint. For more information, see the\n            <code>TimestreamSettings</code> structure.</p>"
+                    }
+                },
+                "LakehouseSettings": {
+                    "target": "com.amazonaws.databasemigrationservice#LakehouseSettings",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Settings in JSON format for the target Lakehouse endpoint. This parameter applies to endpoints\n          that are automatically created by DMS for a Lakehouse data warehouse as part of a zero-ETL integration.</p>"
                     }
                 }
             },
@@ -10823,7 +11189,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -11133,6 +11499,65 @@
                 "smithy.api#documentation": "<p>Settings in JSON format for the source GCP MySQL endpoint.</p>"
             }
         },
+        "com.amazonaws.databasemigrationservice#GetTargetSelectionRules": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.databasemigrationservice#GetTargetSelectionRulesMessage"
+            },
+            "output": {
+                "target": "com.amazonaws.databasemigrationservice#GetTargetSelectionRulesResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.databasemigrationservice#AccessDeniedFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#InvalidResourceStateFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceNotFoundFault"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Converts source selection rules into their target counterparts for schema conversion operations.</p>"
+            }
+        },
+        "com.amazonaws.databasemigrationservice#GetTargetSelectionRulesMessage": {
+            "type": "structure",
+            "members": {
+                "MigrationProjectIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "SelectionRules": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The JSON string representing the source selection rules for conversion. Selection rules must contain only supported metadata model types. For more information, see Selection Rules in the DMS User Guide.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#GetTargetSelectionRulesResponse": {
+            "type": "structure",
+            "members": {
+                "TargetSelectionRules": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The JSON string representing the counterpart selection rules in the target.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
         "com.amazonaws.databasemigrationservice#IBMDb2Settings": {
             "type": "structure",
             "members": {
@@ -11257,6 +11682,18 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the certificate used for SSL connection.</p>"
                     }
+                },
+                "S3Path": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The path for the Amazon S3 bucket that the application uses for accessing the user-defined schema.</p>"
+                    }
+                },
+                "S3AccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN for the role the application uses to access its Amazon S3 bucket.</p>"
+                    }
                 }
             },
             "traits": {
@@ -11295,6 +11732,18 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the certificate used for SSL connection.</p>"
                     }
+                },
+                "S3Path": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The path for the Amazon S3 bucket that the application uses for accessing the user-defined schema.</p>"
+                    }
+                },
+                "S3AccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN for the role the application uses to access its Amazon S3 bucket.</p>"
+                    }
                 }
             },
             "traits": {
@@ -11312,6 +11761,9 @@
             "errors": [
                 {
                     "target": "com.amazonaws.databasemigrationservice#InvalidCertificateFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#KMSKeyNotAccessibleFault"
                 },
                 {
                     "target": "com.amazonaws.databasemigrationservice#ResourceAlreadyExistsFault"
@@ -11364,6 +11816,12 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The tags associated with the certificate.</p>"
                     }
+                },
+                "KmsKeyId": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>An KMS key identifier that is used to encrypt the certificate.</p>\n         <p>If you don't specify a value for the <code>KmsKeyId</code> parameter, then DMS uses\n         your default encryption key.</p>\n         <p>KMS creates the default encryption key for your Amazon Web Services account. Your Amazon Web Services account has\n         a different default encryption key for each Amazon Web Services Region.</p>"
+                    }
                 }
             },
             "traits": {
@@ -11414,7 +11872,7 @@
                 "KmsKeyArn": {
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
-                        "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the KMS key that is used to encrypt \n         the connection parameters for the instance profile.</p>\n         <p>If you don't specify a value for the <code>KmsKeyArn</code> parameter, then\n         DMS uses your default encryption key.</p>\n         <p>KMS creates the default encryption key for your Amazon Web Services account. Your Amazon Web Services account \n         has a different default encryption key for each Amazon Web Services Region.</p>"
+                        "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the KMS key that is used to encrypt \n         the connection parameters for the instance profile.</p>\n         <p>If you don't specify a value for the <code>KmsKeyArn</code> parameter, then\n         DMS uses an Amazon Web Services owned encryption key to encrypt your resources.</p>"
                     }
                 },
                 "PubliclyAccessible": {
@@ -11973,6 +12431,21 @@
                 "smithy.api#documentation": "<p>Provides information that describes an Amazon Kinesis Data Stream endpoint. This\n         information includes the output format of records applied to the endpoint and details of\n         transaction and control table data information.</p>"
             }
         },
+        "com.amazonaws.databasemigrationservice#LakehouseSettings": {
+            "type": "structure",
+            "members": {
+                "Arn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the Lakehouse resource that serves as the target for\n         this endpoint.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>Provides information that defines a Lakehouse endpoint. This endpoint type is used for\n         zero-ETL integrations with Lakehouse data warehouses.</p>"
+            }
+        },
         "com.amazonaws.databasemigrationservice#Limitation": {
             "type": "structure",
             "members": {
@@ -12149,6 +12622,18 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the certificate used for SSL connection.</p>"
                     }
+                },
+                "S3Path": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The path for the Amazon S3 bucket that the application uses for accessing the user-defined schema.</p>"
+                    }
+                },
+                "S3AccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN for the role the application uses to access its Amazon S3 bucket.</p>"
+                    }
                 }
             },
             "traits": {
@@ -12179,6 +12664,46 @@
                         "smithy.api#enumValue": "json-unformatted"
                     }
                 }
+            }
+        },
+        "com.amazonaws.databasemigrationservice#MetadataModelProperties": {
+            "type": "union",
+            "members": {
+                "StatementProperties": {
+                    "target": "com.amazonaws.databasemigrationservice#StatementProperties",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The properties of the statement.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>The properties of metadata model in JSON format. This object is a Union. Only one member of this object can be specified or returned.</p>"
+            }
+        },
+        "com.amazonaws.databasemigrationservice#MetadataModelReference": {
+            "type": "structure",
+            "members": {
+                "MetadataModelName": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The name of the metadata model.</p>"
+                    }
+                },
+                "SelectionRules": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The JSON string representing metadata model location.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>A reference to a metadata model, including its name and selection rules for location identification.</p>"
+            }
+        },
+        "com.amazonaws.databasemigrationservice#MetadataModelReferenceList": {
+            "type": "list",
+            "member": {
+                "target": "com.amazonaws.databasemigrationservice#MetadataModelReference"
             }
         },
         "com.amazonaws.databasemigrationservice#MicrosoftSQLServerSettings": {
@@ -12329,6 +12854,18 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the certificate used for SSL connection.</p>"
                     }
+                },
+                "S3Path": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The path for the Amazon S3 bucket that the application uses for accessing the user-defined schema.</p>"
+                    }
+                },
+                "S3AccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN for the role the application uses to access its Amazon S3 bucket.</p>"
+                    }
                 }
             },
             "traits": {
@@ -12403,6 +12940,15 @@
                 "smithy.api#documentation": "<p>Provides information that defines a migration project.</p>"
             }
         },
+        "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier": {
+            "type": "string",
+            "traits": {
+                "smithy.api#length": {
+                    "min": 0,
+                    "max": 255
+                }
+            }
+        },
         "com.amazonaws.databasemigrationservice#MigrationProjectList": {
             "type": "list",
             "member": {
@@ -12472,7 +13018,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -12691,7 +13237,13 @@
                 "Engine": {
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
-                        "smithy.api#documentation": "<p>The type of database engine for the data provider. Valid values include <code>\"aurora\"</code>, \n         <code>\"aurora-postgresql\"</code>, <code>\"mysql\"</code>, <code>\"oracle\"</code>, <code>\"postgres\"</code>, \n         <code>\"sqlserver\"</code>, <code>redshift</code>, <code>mariadb</code>, <code>mongodb</code>, <code>db2</code>, <code>db2-zos</code> and <code>docdb</code>. A value of <code>\"aurora\"</code> represents Amazon Aurora MySQL-Compatible Edition.</p>"
+                        "smithy.api#documentation": "<p>The type of database engine for the data provider. Valid values include <code>\"aurora\"</code>, \n         <code>\"aurora-postgresql\"</code>, <code>\"mysql\"</code>, <code>\"oracle\"</code>, <code>\"postgres\"</code>, \n         <code>\"sqlserver\"</code>, <code>redshift</code>, <code>mariadb</code>, <code>mongodb</code>, <code>db2</code>, <code>db2-zos</code>, <code>docdb</code>, and <code>sybase</code>. A value of <code>\"aurora\"</code> represents Amazon Aurora MySQL-Compatible Edition.</p>"
+                    }
+                },
+                "Virtual": {
+                    "target": "com.amazonaws.databasemigrationservice#BooleanOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether the data provider is virtual.</p>"
                     }
                 },
                 "ExactSettings": {
@@ -13153,7 +13705,6 @@
                         "output": {
                             "InstanceProfile": {
                                 "SubnetGroupIdentifier": "public-subnets",
-                                "VpcIdentifier": "vpc-0a1b2c3d4e5f6g7h8",
                                 "VpcSecurityGroups": [
                                     "sg-0123456"
                                 ],
@@ -13187,7 +13738,7 @@
                 "KmsKeyArn": {
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
-                        "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the KMS key that is used to encrypt \n         the connection parameters for the instance profile.</p>\n         <p>If you don't specify a value for the <code>KmsKeyArn</code> parameter, then\n         DMS uses your default encryption key.</p>\n         <p>KMS creates the default encryption key for your Amazon Web Services account. Your Amazon Web Services account has a\n         different default encryption key for each Amazon Web Services Region.</p>"
+                        "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the KMS key that is used to encrypt \n         the connection parameters for the instance profile.</p>\n         <p>If you don't specify a value for the <code>KmsKeyArn</code> parameter, then\n         DMS uses an Amazon Web Services owned encryption key to encrypt your resources.</p>"
                     }
                 },
                 "PubliclyAccessible": {
@@ -14149,6 +14700,23 @@
                 "smithy.api#output": {}
             }
         },
+        "com.amazonaws.databasemigrationservice#MySQLAuthenticationMethod": {
+            "type": "enum",
+            "members": {
+                "Password": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "password"
+                    }
+                },
+                "IAM": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "iam"
+                    }
+                }
+            }
+        },
         "com.amazonaws.databasemigrationservice#MySQLSettings": {
             "type": "structure",
             "members": {
@@ -14241,6 +14809,18 @@
                     "traits": {
                         "smithy.api#documentation": "<p>Sets the client statement timeout (in seconds) for a MySQL source endpoint.</p>"
                     }
+                },
+                "ServiceAccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The IAM role you can use to authenticate when connecting to your endpoint. Ensure to include <code>iam:PassRole</code> and <code>rds-db:connect</code> actions in permission policy.</p>"
+                    }
+                },
+                "AuthenticationMethod": {
+                    "target": "com.amazonaws.databasemigrationservice#MySQLAuthenticationMethod",
+                    "traits": {
+                        "smithy.api#documentation": "<p>This attribute allows you to specify the authentication method as \"iam auth\".</p>"
+                    }
                 }
             },
             "traits": {
@@ -14272,6 +14852,18 @@
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
                         "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the certificate used for SSL connection.</p>"
+                    }
+                },
+                "S3Path": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The path for the Amazon S3 bucket that the application uses for accessing the user-defined schema.</p>"
+                    }
+                },
+                "S3AccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN for the role the application uses to access its Amazon S3 bucket.</p>"
                     }
                 }
             },
@@ -14426,6 +15018,18 @@
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
                         "smithy.api#documentation": "<p>The ARN of the IAM role that provides access to the secret in Secrets Manager \n         that contains the TDE password.</p>"
+                    }
+                },
+                "S3Path": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The path for the Amazon S3 bucket that the application uses for accessing the user-defined schema.</p>"
+                    }
+                },
+                "S3AccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN for the role the application uses to access its Amazon S3 bucket.</p>"
                     }
                 }
             },
@@ -14899,6 +15503,23 @@
                 }
             }
         },
+        "com.amazonaws.databasemigrationservice#PostgreSQLAuthenticationMethod": {
+            "type": "enum",
+            "members": {
+                "Password": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "password"
+                    }
+                },
+                "IAM": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "iam"
+                    }
+                }
+            }
+        },
         "com.amazonaws.databasemigrationservice#PostgreSQLSettings": {
             "type": "structure",
             "members": {
@@ -15051,6 +15672,18 @@
                     "traits": {
                         "smithy.api#documentation": "<p>Disables the Unicode source filter with PostgreSQL, for values passed into the Selection\n         rule filter on Source Endpoint column values. By default DMS performs source filter\n         comparisons using a Unicode string which can cause look ups to ignore the indexes in the\n         text columns and slow down migrations.</p>\n         <p>Unicode support should only be disabled when using a selection rule filter is on a text\n         column in the Source database that is indexed.</p>"
                     }
+                },
+                "ServiceAccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The IAM role arn you can use to authenticate the connection to your endpoint. Ensure to include <code>iam:PassRole</code> and <code>rds-db:connect</code> actions in permission policy.</p>"
+                    }
+                },
+                "AuthenticationMethod": {
+                    "target": "com.amazonaws.databasemigrationservice#PostgreSQLAuthenticationMethod",
+                    "traits": {
+                        "smithy.api#documentation": "<p>This attribute allows you to specify the authentication method as \"iam auth\".</p>"
+                    }
                 }
             },
             "traits": {
@@ -15088,6 +15721,18 @@
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
                         "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the certificate used for SSL connection.</p>"
+                    }
+                },
+                "S3Path": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The path for the Amazon S3 bucket that the application uses for accessing the user-defined schema.</p>"
+                    }
+                },
+                "S3AccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN for the role the application uses to access its Amazon S3 bucket.</p>"
                     }
                 }
             },
@@ -15168,6 +15813,65 @@
             "type": "list",
             "member": {
                 "target": "com.amazonaws.databasemigrationservice#PremigrationAssessmentStatus"
+            }
+        },
+        "com.amazonaws.databasemigrationservice#ProcessedObject": {
+            "type": "structure",
+            "members": {
+                "Name": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The name of the database object.</p>"
+                    }
+                },
+                "Type": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The type of the database object. For example, a table, view, procedure, and so on.</p>"
+                    }
+                },
+                "EndpointType": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The type of the data provider. This parameter can store one of the following values: \n         <code>\"SOURCE\"</code> or <code>\"TARGET\"</code>.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>The database object that the schema conversion operation currently uses.</p>"
+            }
+        },
+        "com.amazonaws.databasemigrationservice#Progress": {
+            "type": "structure",
+            "members": {
+                "ProgressPercent": {
+                    "target": "com.amazonaws.databasemigrationservice#DoubleOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The percent complete for the current step of the schema conversion operation.</p>"
+                    }
+                },
+                "TotalObjects": {
+                    "target": "com.amazonaws.databasemigrationservice#Long",
+                    "traits": {
+                        "smithy.api#default": 0,
+                        "smithy.api#documentation": "<p>The number of objects in this schema conversion operation.</p>"
+                    }
+                },
+                "ProgressStep": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The step of the schema conversion operation. This parameter can store one of the following values:</p>\n         <ul>\n            <li>\n               <p>\n                  <code>IN_PROGRESS</code> – The operation is running.</p>\n            </li>\n            <li>\n               <p>\n                  <code>LOADING_METADATA</code> – Loads metadata from the source database.</p>\n            </li>\n            <li>\n               <p>\n                  <code>COUNTING_OBJECTS</code> – Determines the number of objects involved \n            in the operation.</p>\n            </li>\n            <li>\n               <p>\n                  <code>ANALYZING</code> – Analyzes the source database objects.</p>\n            </li>\n            <li>\n               <p>\n                  <code>CONVERTING</code> – Converts the source database objects to a format compatible \n            with the target database.</p>\n            </li>\n            <li>\n               <p>\n                  <code>APPLYING</code> – Applies the converted code to the target database.</p>\n            </li>\n            <li>\n               <p>\n                  <code>FINISHED</code> – The operation completed successfully.</p>\n            </li>\n         </ul>"
+                    }
+                },
+                "ProcessedObject": {
+                    "target": "com.amazonaws.databasemigrationservice#ProcessedObject",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The name of the database object that the schema conversion operation currently uses.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>Provides information about the progress of the schema conversion operation.</p>"
             }
         },
         "com.amazonaws.databasemigrationservice#ProvisionData": {
@@ -15605,6 +16309,18 @@
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
                         "smithy.api#documentation": "<p>The database name on the Amazon Redshift data provider.</p>"
+                    }
+                },
+                "S3Path": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The path for the Amazon S3 bucket that the application uses for accessing the user-defined schema.</p>"
+                    }
+                },
+                "S3AccessRoleArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The ARN for the role the application uses to access its Amazon S3 bucket.</p>"
                     }
                 }
             },
@@ -16288,6 +17004,12 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The timestamp when DMS will deprovision the replication.</p>"
                     }
+                },
+                "IsReadOnly": {
+                    "target": "com.amazonaws.databasemigrationservice#BooleanOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether the serverless replication is read-only. When set to <code>true</code>,\n         this replication is managed by DMS as part of a zero-ETL integration and cannot be modified\n         or deleted directly. You can only modify or delete read-only replications through their\n         associated zero-ETL integration.</p>"
+                    }
                 }
             },
             "traits": {
@@ -16361,6 +17083,12 @@
                     "target": "com.amazonaws.databasemigrationservice#TStamp",
                     "traits": {
                         "smithy.api#documentation": "<p>The time the serverless replication config was updated.</p>"
+                    }
+                },
+                "IsReadOnly": {
+                    "target": "com.amazonaws.databasemigrationservice#BooleanOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether the replication configuration is read-only. When set to <code>true</code>,\n         this replication configuration is managed by DMS as part of a zero-ETL integration and cannot\n         be modified or deleted directly. You can only modify or delete read-only replication configurations\n         through their associated zero-ETL integration.</p>"
                     }
                 }
             },
@@ -16797,6 +17525,12 @@
                     "target": "com.amazonaws.databasemigrationservice#StringList",
                     "traits": {
                         "smithy.api#documentation": "<p>The IP addressing protocol supported by the subnet group. This is used by a replication\n         instance with values such as IPv4 only or Dual-stack that supports both IPv4 and IPv6\n         addressing. IPv6 only is not yet supported.</p>"
+                    }
+                },
+                "IsReadOnly": {
+                    "target": "com.amazonaws.databasemigrationservice#BooleanOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether the replication subnet group is read-only. When set to <code>true</code>,\n         this subnet group is managed by DMS as part of a zero-ETL integration and cannot be modified\n         or deleted directly. You can only modify or delete read-only subnet groups through their\n         associated zero-ETL integration.</p>"
                     }
                 }
             },
@@ -17410,7 +18144,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Runs large-scale assessment (LSA) analysis on every Fleet Advisor collector in your account.</p>"
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Runs large-scale assessment (LSA) analysis on every Fleet Advisor collector in your account.</p>"
             }
         },
         "com.amazonaws.databasemigrationservice#RunFleetAdvisorLsaAnalysisResponse": {
@@ -17685,7 +18419,7 @@
                 "DatePartitionTimezone": {
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
-                        "smithy.api#documentation": "<p>When creating an S3 target endpoint, set <code>DatePartitionTimezone</code> to convert\n         the current UTC time into a specified time zone. The conversion occurs when a date\n         partition folder is created and a CDC filename is generated. The time zone format is\n         Area/Location. Use this parameter when <code>DatePartitionedEnabled</code> is set to\n            <code>true</code>, as shown in the following example.</p>\n         <p>\n            <code>s3-settings='{\"DatePartitionEnabled\": true, \"DatePartitionSequence\": \"YYYYMMDDHH\",\n            \"DatePartitionDelimiter\": \"SLASH\",\n               \"DatePartitionTimezone\":\"<i>Asia/Seoul</i>\", \"BucketName\":\n            \"dms-nattarat-test\"}'</code>\n         </p>"
+                        "smithy.api#documentation": "<p>When creating an S3 target endpoint, set <code>DatePartitionTimezone</code> to convert the current UTC time into a specified time zone. The conversion occurs when a date partition folder is created and a CDC filename is generated. The time zone format is Area/Location. Use this parameter when <code>DatePartitionedEnabled</code> is set to true, as shown in the following example:</p>\n         <p>\n            <code>s3-settings='{\"DatePartitionEnabled\": true, \"DatePartitionSequence\": \"YYYYMMDDHH\", \"DatePartitionDelimiter\": \"SLASH\", \"DatePartitionTimezone\":\"Asia/Seoul\", \"BucketName\": \"dms-nattarat-test\"}'</code>\n         </p>"
                     }
                 },
                 "AddTrailingPaddingCharacter": {
@@ -17810,6 +18544,9 @@
                 },
                 "ExportSqlDetails": {
                     "target": "com.amazonaws.databasemigrationservice#ExportSqlDetails"
+                },
+                "Progress": {
+                    "target": "com.amazonaws.databasemigrationservice#Progress"
                 }
             },
             "traits": {
@@ -18168,7 +18905,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -18248,7 +18985,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -18335,7 +19072,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -18360,6 +19097,82 @@
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
                         "smithy.api#documentation": "<p>The identifier for the conversion operation.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#StartMetadataModelCreation": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazonaws.databasemigrationservice#StartMetadataModelCreationMessage"
+            },
+            "output": {
+                "target": "com.amazonaws.databasemigrationservice#StartMetadataModelCreationResponse"
+            },
+            "errors": [
+                {
+                    "target": "com.amazonaws.databasemigrationservice#AccessDeniedFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceAlreadyExistsFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceNotFoundFault"
+                },
+                {
+                    "target": "com.amazonaws.databasemigrationservice#ResourceQuotaExceededFault"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "<p>Creates source metadata model of the given type with the specified properties for schema conversion operations.</p>\n         <note>\n            <p>This action supports only these directions: from SQL Server to Aurora PostgreSQL, or from SQL Server to RDS for PostgreSQL.</p>\n         </note>"
+            }
+        },
+        "com.amazonaws.databasemigrationservice#StartMetadataModelCreationMessage": {
+            "type": "structure",
+            "members": {
+                "MigrationProjectIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "SelectionRules": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The JSON string that specifies the location where the metadata model will be created. Selection rules must specify a single schema. For more information, see Selection Rules in the DMS User Guide.</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "MetadataModelName": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The name of the metadata model.</p>",
+                        "smithy.api#required": {}
+                    }
+                },
+                "Properties": {
+                    "target": "com.amazonaws.databasemigrationservice#MetadataModelProperties",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The properties of metadata model in JSON format. This object is a Union. Only one member of this object can be specified or returned.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazonaws.databasemigrationservice#StartMetadataModelCreationResponse": {
+            "type": "structure",
+            "members": {
+                "RequestIdentifier": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The identifier for the metadata model creation operation.</p>"
                     }
                 }
             },
@@ -18424,7 +19237,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -18525,7 +19338,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -18620,7 +19433,7 @@
             "type": "structure",
             "members": {
                 "MigrationProjectIdentifier": {
-                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "target": "com.amazonaws.databasemigrationservice#MigrationProjectIdentifier",
                     "traits": {
                         "smithy.api#documentation": "<p>The migration project name or Amazon Resource Name (ARN).</p>",
                         "smithy.api#required": {}
@@ -18686,7 +19499,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#documentation": "<p>Starts the analysis of your source database to provide recommendations of target\n            engines.</p>\n         <p>You can create recommendations for multiple source databases using <a href=\"https://docs.aws.amazon.com/dms/latest/APIReference/API_BatchStartRecommendations.html\">BatchStartRecommendations</a>.</p>"
+                "smithy.api#documentation": "<important>\n            <p>\nEnd of support notice: On May 20, 2026, Amazon Web Services will end support for Amazon Web Services DMS Fleet Advisor;. After May 20, 2026, you will no longer be able to access the Amazon Web Services DMS Fleet Advisor; console or Amazon Web Services DMS Fleet Advisor; resources. For more information, see <a href=\"https://docs.aws.amazon.com/dms/latest/userguide/dms_fleet.advisor-end-of-support.html\">Amazon Web Services DMS Fleet Advisor end of support</a>.\n</p>\n         </important>\n         <p>Starts the analysis of your source database to provide recommendations of target\n            engines.</p>\n         <p>You can create recommendations for multiple source databases using <a href=\"https://docs.aws.amazon.com/dms/latest/APIReference/API_BatchStartRecommendations.html\">BatchStartRecommendations</a>.</p>"
             }
         },
         "com.amazonaws.databasemigrationservice#StartRecommendationsRequest": {
@@ -19097,7 +19910,7 @@
                 "StartReplicationTaskType": {
                     "target": "com.amazonaws.databasemigrationservice#StartReplicationTaskTypeValue",
                     "traits": {
-                        "smithy.api#documentation": "<p>The type of replication task to start.</p>\n         <p>When the migration type is <code>full-load</code> or <code>full-load-and-cdc</code>, the\n         only valid value for the first run of the task is <code>start-replication</code>. This\n         option will start the migration.</p>\n         <p>You can also use <a>ReloadTables</a> to reload specific tables that failed\n         during migration instead of restarting the task.</p>\n         <p>The <code>resume-processing</code> option isn't applicable for a full-load task, because\n         you can't resume partially loaded tables during the full load phase.</p>\n         <p>For a <code>full-load-and-cdc</code> task, DMS migrates table data, and then applies\n         data changes that occur on the source. To load all the tables again, and start capturing\n         source changes, use <code>reload-target</code>. Otherwise use\n            <code>resume-processing</code>, to replicate the changes from the last stop\n         position.</p>",
+                        "smithy.api#documentation": "<p>The type of replication task to start.</p>\n         <p>\n            <code>start-replication</code> is the only valid action that can be used for the first time a task with the migration type of <code>full-load</code>full-load, <code>full-load-and-cdc</code> or <code>cdc</code> is run. Any other action used for the first time on a given task, such as <code>resume-processing</code> and reload-target will result in data errors.</p>\n         <p>You can also use <a>ReloadTables</a> to reload specific tables that failed during migration instead of restarting the task.</p>\n         <p>For a <code>full-load</code> task, the resume-processing option will reload any tables that were partially loaded or not yet loaded during the full load phase.</p>\n         <p>For a <code>full-load-and-cdc</code> task, DMS migrates table data, and then applies data changes that occur on the source. To load all the tables again, and start capturing source changes, use <code>reload-target</code>. Otherwise use <code>resume-processing</code>, to replicate the changes from the last stop position.</p>\n         <p>For a <code>cdc</code> only task, to start from a specific position, you must use start-replication and also specify the start position. Check the source endpoint DMS documentation for any limitations. For example, not all sources support starting from a time.</p>\n         <note>\n            <p>\n               <code>resume-processing</code> is only available for previously executed tasks.</p>\n         </note>",
                         "smithy.api#required": {}
                     }
                 },
@@ -19161,6 +19974,21 @@
                         "smithy.api#enumValue": "reload-target"
                     }
                 }
+            }
+        },
+        "com.amazonaws.databasemigrationservice#StatementProperties": {
+            "type": "structure",
+            "members": {
+                "Definition": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The SQL text of the statement.</p>",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>The properties of the statement for metadata model creation.</p>"
             }
         },
         "com.amazonaws.databasemigrationservice#StopDataMigration": {
@@ -19473,6 +20301,50 @@
                 }
             }
         },
+        "com.amazonaws.databasemigrationservice#SybaseAseDataProviderSettings": {
+            "type": "structure",
+            "members": {
+                "ServerName": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The name of the SAP ASE server.</p>"
+                    }
+                },
+                "Port": {
+                    "target": "com.amazonaws.databasemigrationservice#IntegerOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The port value for the SAP ASE data provider.</p>"
+                    }
+                },
+                "DatabaseName": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The database name on the SAP ASE data provider.</p>"
+                    }
+                },
+                "SslMode": {
+                    "target": "com.amazonaws.databasemigrationservice#DmsSslModeValue",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The SSL mode used to connect to the SAP ASE data provider. \n         The default value is <code>none</code>.</p>"
+                    }
+                },
+                "EncryptPassword": {
+                    "target": "com.amazonaws.databasemigrationservice#BooleanOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies whether to encrypt the password when connecting to the Sybase ASE database. When set to true, the connection password is encrypted during transmission. Default is true.</p>"
+                    }
+                },
+                "CertificateArn": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>The Amazon Resource Name (ARN) of the certificate used for SSL connection.</p>"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>Provides information that defines an SAP ASE data provider.</p>"
+            }
+        },
         "com.amazonaws.databasemigrationservice#SybaseSettings": {
             "type": "structure",
             "members": {
@@ -19704,6 +20576,36 @@
                     "target": "com.amazonaws.databasemigrationservice#String",
                     "traits": {
                         "smithy.api#documentation": "<p>Additional details about the state of validation.</p>"
+                    }
+                },
+                "ResyncState": {
+                    "target": "com.amazonaws.databasemigrationservice#String",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Records the current state of table resynchronization in the migration task.</p>\n         <p>This parameter can have the following values:</p>\n         <ul>\n            <li>\n               <p>Not enabled – Resync is not enabled for the table in the migration task.</p>\n            </li>\n            <li>\n               <p>Pending – The tables are waiting for resync.</p>\n            </li>\n            <li>\n               <p>In progress – Resync in progress for some records in the table.</p>\n            </li>\n            <li>\n               <p>No primary key – The table could not be resynced because it has no primary key.</p>\n            </li>\n            <li>\n               <p>Last resync at: <code>date/time</code> – Resync session is finished at time. Time provided in UTC format.</p>\n            </li>\n         </ul>"
+                    }
+                },
+                "ResyncRowsAttempted": {
+                    "target": "com.amazonaws.databasemigrationservice#LongOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Records the total number of mismatched data rows where the system attempted to apply\n         fixes in the target database.</p>"
+                    }
+                },
+                "ResyncRowsSucceeded": {
+                    "target": "com.amazonaws.databasemigrationservice#LongOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Records the total number of mismatched data rows where fixes were successfully applied in the target database.</p>"
+                    }
+                },
+                "ResyncRowsFailed": {
+                    "target": "com.amazonaws.databasemigrationservice#LongOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Records the total number of mismatched data rows where fix attempts failed in the target\n         database.</p>"
+                    }
+                },
+                "ResyncProgress": {
+                    "target": "com.amazonaws.databasemigrationservice#DoubleOptional",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Calculates the percentage of failed validations that were successfully resynced to the system.</p>"
                     }
                 }
             },

@@ -48,6 +48,9 @@ type ListTagsForStreamInput struct {
 	// The ARN of the stream.
 	StreamARN *string
 
+	// Not Implemented. Reserved for future use.
+	StreamId *string
+
 	// The name of the stream.
 	StreamName *string
 
@@ -57,6 +60,7 @@ type ListTagsForStreamInput struct {
 func (in *ListTagsForStreamInput) bindEndpointParams(p *EndpointParameters) {
 
 	p.StreamARN = in.StreamARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("control")
 }
 
@@ -166,16 +170,13 @@ func (c *Client) addOperationListTagsForStreamMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

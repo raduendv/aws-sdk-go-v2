@@ -34,6 +34,7 @@
         "api_op_ListResourceSharePermissions.go",
         "api_op_ListResourceTypes.go",
         "api_op_ListResources.go",
+        "api_op_ListSourceAssociations.go",
         "api_op_PromotePermissionCreatedFromPolicy.go",
         "api_op_PromoteResourceShareCreatedFromPolicy.go",
         "api_op_RejectResourceShareInvitation.go",
@@ -61,7 +62,7 @@
         "types/types.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/ram",
     "unstable": false
 }

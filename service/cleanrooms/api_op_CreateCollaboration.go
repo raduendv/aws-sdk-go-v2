@@ -64,8 +64,20 @@ type CreateCollaborationInput struct {
 	// This member is required.
 	QueryLogStatus types.CollaborationQueryLogStatus
 
+	// The Amazon Web Services Regions where collaboration query results can be
+	// stored. When specified, results can only be written to these Regions. This
+	// parameter enables you to meet your compliance and data governance requirements,
+	// and implement regional data governance policies.
+	AllowedResultRegions []types.SupportedS3Region
+
 	//  The analytics engine.
+	//
+	// After July 16, 2025, the CLEAN_ROOMS_SQL parameter will no longer be available.
 	AnalyticsEngine types.AnalyticsEngine
+
+	// The types of change requests that are automatically approved for this
+	// collaboration.
+	AutoApprovedChangeRequestTypes []types.AutoApprovedChangeType
 
 	// The ML abilities granted to the collaboration creator.
 	CreatorMLMemberAbilities *types.MLMemberAbilities
@@ -80,6 +92,13 @@ type CreateCollaborationInput struct {
 	// The settings for client-side encryption with Cryptographic Computing for Clean
 	// Rooms.
 	DataEncryptionMetadata *types.DataEncryptionMetadata
+
+	// An indicator as to whether metrics have been enabled or disabled for the
+	// collaboration.
+	//
+	// When true , collaboration members can opt in to Amazon CloudWatch metrics for
+	// their membership queries. The default value is false .
+	IsMetricsEnabled *bool
 
 	// Specifies whether job logs are enabled for this collaboration.
 	//
@@ -198,16 +217,13 @@ func (c *Client) addOperationCreateCollaborationMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

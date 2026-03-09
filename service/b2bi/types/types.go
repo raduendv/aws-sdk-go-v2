@@ -7,6 +7,17 @@ import (
 	"time"
 )
 
+// A structure that contains advanced options for EDI processing. Currently, only
+// X12 advanced options are supported.
+type AdvancedOptions struct {
+
+	// A structure that contains X12-specific advanced options, such as split options
+	// for processing X12 EDI files.
+	X12 *X12AdvancedOptions
+
+	noSmithyDocumentSerde
+}
+
 // A capability object. Currently, only EDI (electronic data interchange)
 // capabilities are supported. A trading capability contains the information
 // required to transform incoming EDI documents into JSON or XML outputs.
@@ -29,6 +40,9 @@ func (*CapabilityConfigurationMemberEdi) isCapabilityConfiguration() {}
 
 // Contains the details for an Outbound EDI capability.
 type CapabilityOptions struct {
+
+	// A structure that contains the inbound EDI options for the capability.
+	InboundEdi *InboundEdiOptions
 
 	// A structure that contains the outbound EDI options.
 	OutboundEdi OutboundEdiOptions
@@ -91,6 +105,10 @@ type ConversionTarget struct {
 	//
 	// This member is required.
 	FileFormat ConversionTargetFormat
+
+	// A structure that contains advanced options for EDI processing. Currently, only
+	// X12 advanced options are supported.
+	AdvancedOptions *AdvancedOptions
 
 	// A structure that contains the formatting details for the conversion target.
 	FormatDetails ConversionTargetFormatDetails
@@ -203,6 +221,17 @@ type FormatOptionsMemberX12 struct {
 
 func (*FormatOptionsMemberX12) isFormatOptions() {}
 
+// Contains options for processing inbound EDI files. These options allow for
+// customizing how incoming EDI documents are processed.
+type InboundEdiOptions struct {
+
+	// A structure that contains X12-specific options for processing inbound X12 EDI
+	// files.
+	X12 *X12InboundEdiOptions
+
+	noSmithyDocumentSerde
+}
+
 // Contains the input formatting options for an inbound transformer (takes an
 // X12-formatted EDI document as input and converts it to JSON or XML.
 type InputConversion struct {
@@ -211,6 +240,11 @@ type InputConversion struct {
 	//
 	// This member is required.
 	FromFormat FromFormat
+
+	// Specifies advanced options for the input conversion process. These options
+	// provide additional control over how EDI files are processed during
+	// transformation.
+	AdvancedOptions *AdvancedOptions
 
 	// A structure that contains the formatting options for an inbound transformer.
 	FormatOptions FormatOptions
@@ -281,6 +315,10 @@ type OutputConversion struct {
 	//
 	// This member is required.
 	ToFormat ToFormat
+
+	// A structure that contains advanced options for EDI processing. Currently, only
+	// X12 advanced options are supported.
+	AdvancedOptions *AdvancedOptions
 
 	// A structure that contains the X12 transaction set and version for the
 	// transformer output.
@@ -557,6 +595,136 @@ type TransformerSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Contains options for wrapping (line folding) in X12 EDI files. Wrapping
+// controls how long lines are handled in the EDI output.
+type WrapOptions struct {
+
+	// Specifies the method used for wrapping lines in the EDI output. Valid values:
+	//
+	//   - SEGMENT : Wraps by segment.
+	//
+	//   - ONE_LINE : Indicates that the entire content is on a single line.
+	//
+	// When you specify ONE_LINE , do not provide either the line length nor the line
+	//   terminator value.
+	//
+	//   - LINE_LENGTH : Wraps by character count, as specified by lineLength value.
+	//
+	// This member is required.
+	WrapBy WrapFormat
+
+	// Specifies the maximum length of a line before wrapping occurs. This value is
+	// used when wrapBy is set to LINE_LENGTH .
+	LineLength *int32
+
+	// Specifies the character sequence used to terminate lines when wrapping. Valid
+	// values:
+	//
+	//   - CRLF : carriage return and line feed
+	//
+	//   - LF : line feed)
+	//
+	//   - CR : carriage return
+	LineTerminator LineTerminator
+
+	noSmithyDocumentSerde
+}
+
+// Contains options for configuring X12 acknowledgments. These options control how
+// functional and technical acknowledgments are handled.
+type X12AcknowledgmentOptions struct {
+
+	// Specifies whether functional acknowledgments (997/999) should be generated for
+	// incoming X12 transactions. Valid values are DO_NOT_GENERATE ,
+	// GENERATE_ALL_SEGMENTS and GENERATE_WITHOUT_TRANSACTION_SET_RESPONSE_LOOP .
+	//
+	// If you choose GENERATE_WITHOUT_TRANSACTION_SET_RESPONSE_LOOP , Amazon Web
+	// Services B2B Data Interchange skips the AK2_Loop when generating an
+	// acknowledgment document.
+	//
+	// This member is required.
+	FunctionalAcknowledgment X12FunctionalAcknowledgment
+
+	// Specifies whether technical acknowledgments (TA1) should be generated for
+	// incoming X12 interchanges. Valid values are DO_NOT_GENERATE and
+	// GENERATE_ALL_SEGMENTS and.
+	//
+	// This member is required.
+	TechnicalAcknowledgment X12TechnicalAcknowledgment
+
+	noSmithyDocumentSerde
+}
+
+// Contains advanced options specific to X12 EDI processing, such as splitting
+// large X12 files into smaller units.
+type X12AdvancedOptions struct {
+
+	// Specifies options for splitting X12 EDI files. These options control how large
+	// X12 files are divided into smaller, more manageable units.
+	SplitOptions *X12SplitOptions
+
+	// Specifies validation options for X12 EDI processing. These options control how
+	// validation rules are applied during EDI document processing, including custom
+	// validation rules for element length constraints, code list validations, and
+	// element requirement checks.
+	ValidationOptions *X12ValidationOptions
+
+	noSmithyDocumentSerde
+}
+
+// Defines a validation rule that modifies the allowed code values for a specific
+// X12 element. This rule allows you to add or remove valid codes from an element's
+// standard code list, providing flexibility to accommodate trading
+// partner-specific requirements or industry variations. You can specify codes to
+// add to expand the allowed values beyond the X12 standard, or codes to remove to
+// restrict the allowed values for stricter validation.
+type X12CodeListValidationRule struct {
+
+	// Specifies the four-digit element ID to which the code list modifications apply.
+	// This identifies which X12 element will have its allowed code values modified.
+	//
+	// This member is required.
+	ElementId *string
+
+	// Specifies a list of code values to add to the element's allowed values. These
+	// codes will be considered valid for the specified element in addition to the
+	// standard codes defined by the X12 specification.
+	CodesToAdd []string
+
+	// Specifies a list of code values to remove from the element's allowed values.
+	// These codes will be considered invalid for the specified element, even if they
+	// are part of the standard codes defined by the X12 specification.
+	CodesToRemove []string
+
+	noSmithyDocumentSerde
+}
+
+// Contains configuration for X12 control numbers used in X12 EDI generation.
+// Control numbers are used to uniquely identify interchanges, functional groups,
+// and transaction sets.
+type X12ControlNumbers struct {
+
+	// Specifies the starting functional group control number (GS06) to use for X12
+	// EDI generation. This number is incremented for each new functional group. For
+	// the GS (functional group) envelope, Amazon Web Services B2B Data Interchange
+	// generates a functional group control number that is unique to the sender ID,
+	// receiver ID, and functional identifier code combination.
+	StartingFunctionalGroupControlNumber *int32
+
+	// Specifies the starting interchange control number (ISA13) to use for X12 EDI
+	// generation. This number is incremented for each new interchange. For the ISA
+	// (interchange) envelope, Amazon Web Services B2B Data Interchange generates an
+	// interchange control number that is unique for the ISA05 and ISA06 (sender) &
+	// ISA07 and ISA08 (receiver) combination.
+	StartingInterchangeControlNumber *int32
+
+	// Specifies the starting transaction set control number (ST02) to use for X12 EDI
+	// generation. This number is incremented for each new transaction set.
+	StartingTransactionSetControlNumber *int32
+
+	noSmithyDocumentSerde
+}
+
 // In X12 EDI messages, delimiters are used to mark the end of segments or
 // elements, and are defined in the interchange control header. The delimiters are
 // part of the message's syntax and divide up its different elements.
@@ -593,6 +761,64 @@ type X12Details struct {
 	noSmithyDocumentSerde
 }
 
+// Defines a validation rule that specifies custom length constraints for a
+// specific X12 element. This rule allows you to override the standard minimum and
+// maximum length requirements for an element, enabling validation of trading
+// partner-specific length requirements that may differ from the X12 specification.
+// Both minimum and maximum length values must be specified and must be between 1
+// and 200 characters.
+type X12ElementLengthValidationRule struct {
+
+	// Specifies the four-digit element ID to which the length constraints will be
+	// applied. This identifies which X12 element will have its length requirements
+	// modified.
+	//
+	// This member is required.
+	ElementId *string
+
+	// Specifies the maximum allowed length for the identified element. This value
+	// must be between 1 and 200 characters and defines the upper limit for the
+	// element's content length.
+	//
+	// This member is required.
+	MaxLength *int32
+
+	// Specifies the minimum required length for the identified element. This value
+	// must be between 1 and 200 characters and defines the lower limit for the
+	// element's content length.
+	//
+	// This member is required.
+	MinLength *int32
+
+	noSmithyDocumentSerde
+}
+
+// Defines a validation rule that modifies the requirement status of a specific
+// X12 element within a segment. This rule allows you to make optional elements
+// mandatory or mandatory elements optional, providing flexibility to accommodate
+// different trading partner requirements and business rules. The rule targets a
+// specific element position within a segment and sets its requirement status to
+// either OPTIONAL or MANDATORY.
+type X12ElementRequirementValidationRule struct {
+
+	// Specifies the position of the element within an X12 segment for which the
+	// requirement status will be modified. The format follows the pattern of segment
+	// identifier followed by element position (e.g., "ST-01" for the first element of
+	// the ST segment).
+	//
+	// This member is required.
+	ElementPosition *string
+
+	// Specifies the requirement status for the element at the specified position.
+	// Valid values are OPTIONAL (the element may be omitted) or MANDATORY (the element
+	// must be present).
+	//
+	// This member is required.
+	Requirement ElementRequirement
+
+	noSmithyDocumentSerde
+}
+
 // A wrapper structure for an X12 definition object.
 //
 // the X12 envelope ensures the integrity of the data and the efficiency of the
@@ -608,6 +834,10 @@ type X12Envelope struct {
 
 	// A container for the X12 outbound EDI headers.
 	Common *X12OutboundEdiHeaders
+
+	// Contains options for wrapping (line folding) in X12 EDI files. Wrapping
+	// controls how long lines are handled in the EDI output.
+	WrapOptions *WrapOptions
 
 	noSmithyDocumentSerde
 }
@@ -626,6 +856,16 @@ type X12FunctionalGroupHeaders struct {
 
 	// A code that identifies the issuer of the standard, at position GS-07.
 	ResponsibleAgencyCode *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains options specific to processing inbound X12 EDI files.
+type X12InboundEdiOptions struct {
+
+	// Specifies acknowledgment options for inbound X12 EDI files. These options
+	// control how functional and technical acknowledgments are handled.
+	AcknowledgmentOptions *X12AcknowledgmentOptions
 
 	noSmithyDocumentSerde
 }
@@ -687,6 +927,11 @@ type X12InterchangeControlHeaders struct {
 // A structure containing the details for an outbound EDI object.
 type X12OutboundEdiHeaders struct {
 
+	// Specifies control number configuration for outbound X12 EDI headers. These
+	// settings determine the starting values for interchange, functional group, and
+	// transaction set control numbers.
+	ControlNumbers *X12ControlNumbers
+
 	// The delimiters, for example semicolon ( ; ), that separates sections of the
 	// headers for the X12 object.
 	Delimiters *X12Delimiters
@@ -694,15 +939,122 @@ type X12OutboundEdiHeaders struct {
 	// The functional group headers for the X12 object.
 	FunctionalGroupHeaders *X12FunctionalGroupHeaders
 
+	// Specifies the time format in the GS05 element (time) of the functional group
+	// header. The following formats use 24-hour clock time:
+	//
+	//   - HHMM - Hours and minutes
+	//
+	//   - HHMMSS - Hours, minutes, and seconds
+	//
+	//   - HHMMSSDD - Hours, minutes, seconds, and decimal seconds
+	//
+	// Where:
+	//
+	//   - HH - Hours (00-23)
+	//
+	//   - MM - Minutes (00-59)
+	//
+	//   - SS - Seconds (00-59)
+	//
+	//   - DD - Hundredths of seconds (00-99)
+	Gs05TimeFormat X12GS05TimeFormat
+
 	// In X12 EDI messages, delimiters are used to mark the end of segments or
 	// elements, and are defined in the interchange control header.
 	InterchangeControlHeaders *X12InterchangeControlHeaders
 
-	// Specifies whether or not to validate the EDI for this X12 object: TRUE or FALSE .
+	// Specifies whether or not to validate the EDI for this X12 object: TRUE or FALSE
+	// . When enabled, this performs both standard EDI validation and applies any
+	// configured custom validation rules including element length constraints, code
+	// list validations, and element requirement checks. Validation results are
+	// returned in the response validation messages.
 	ValidateEdi *bool
 
 	noSmithyDocumentSerde
 }
+
+// Contains options for splitting X12 EDI files into smaller units. This is useful
+// for processing large EDI files more efficiently.
+type X12SplitOptions struct {
+
+	// Specifies the method used to split X12 EDI files. Valid values include
+	// TRANSACTION (split by individual transaction sets), or NONE (no splitting).
+	//
+	// This member is required.
+	SplitBy X12SplitBy
+
+	noSmithyDocumentSerde
+}
+
+// Contains configuration options for X12 EDI validation. This structure allows
+// you to specify custom validation rules that will be applied during EDI document
+// processing, including element length constraints, code list modifications, and
+// element requirement changes. These validation options provide flexibility to
+// accommodate trading partner-specific requirements while maintaining EDI
+// compliance. The validation rules are applied in addition to standard X12
+// validation to ensure documents meet both standard and custom requirements.
+type X12ValidationOptions struct {
+
+	// Specifies a list of validation rules to apply during EDI document processing.
+	// These rules can include code list modifications, element length constraints, and
+	// element requirement changes.
+	ValidationRules []X12ValidationRule
+
+	noSmithyDocumentSerde
+}
+
+// Represents a single validation rule that can be applied during X12 EDI
+// processing. This is a union type that can contain one of several specific
+// validation rule types: code list validation rules for modifying allowed element
+// codes, element length validation rules for enforcing custom length constraints,
+// or element requirement validation rules for changing mandatory/optional status.
+// Each validation rule targets specific aspects of EDI document validation to
+// ensure compliance with trading partner requirements and business rules.
+//
+// The following types satisfy this interface:
+//
+//	X12ValidationRuleMemberCodeListValidationRule
+//	X12ValidationRuleMemberElementLengthValidationRule
+//	X12ValidationRuleMemberElementRequirementValidationRule
+type X12ValidationRule interface {
+	isX12ValidationRule()
+}
+
+// Specifies a code list validation rule that modifies the allowed code values for
+// a specific X12 element. This rule enables you to customize which codes are
+// considered valid for an element, allowing for trading partner-specific code
+// requirements.
+type X12ValidationRuleMemberCodeListValidationRule struct {
+	Value X12CodeListValidationRule
+
+	noSmithyDocumentSerde
+}
+
+func (*X12ValidationRuleMemberCodeListValidationRule) isX12ValidationRule() {}
+
+// Specifies an element length validation rule that defines custom length
+// constraints for a specific X12 element. This rule allows you to enforce minimum
+// and maximum length requirements that may differ from the standard X12
+// specification.
+type X12ValidationRuleMemberElementLengthValidationRule struct {
+	Value X12ElementLengthValidationRule
+
+	noSmithyDocumentSerde
+}
+
+func (*X12ValidationRuleMemberElementLengthValidationRule) isX12ValidationRule() {}
+
+// Specifies an element requirement validation rule that modifies whether a
+// specific X12 element is required or optional within a segment. This rule
+// provides flexibility to accommodate different trading partner requirements for
+// element presence.
+type X12ValidationRuleMemberElementRequirementValidationRule struct {
+	Value X12ElementRequirementValidationRule
+
+	noSmithyDocumentSerde
+}
+
+func (*X12ValidationRuleMemberElementRequirementValidationRule) isX12ValidationRule() {}
 
 type noSmithyDocumentSerde = smithydocument.NoSerde
 
@@ -723,3 +1075,4 @@ func (*UnknownUnionMember) isInputFileSource()               {}
 func (*UnknownUnionMember) isOutboundEdiOptions()            {}
 func (*UnknownUnionMember) isOutputSampleFileSource()        {}
 func (*UnknownUnionMember) isTemplateDetails()               {}
+func (*UnknownUnionMember) isX12ValidationRule()             {}

@@ -11,7 +11,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Lists the permissions an account has to configure Amazon Inspector.
+//	Lists the permissions an account has to configure Amazon Inspector. If the
+//
+// account is a member account or standalone account with resources managed by an
+// Organizations policy, the operation returns fewer permissions.
 func (c *Client) ListAccountPermissions(ctx context.Context, params *ListAccountPermissionsInput, optFns ...func(*Options)) (*ListAccountPermissionsOutput, error) {
 	if params == nil {
 		params = &ListAccountPermissionsInput{}
@@ -153,16 +156,13 @@ func (c *Client) addOperationListAccountPermissionsMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

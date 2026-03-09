@@ -15,9 +15,9 @@ import (
 // Creates an API key resource in your Amazon Web Services account, which lets you
 // grant actions for Amazon Location resources to the API key bearer.
 //
-// For more information, see [Using API keys].
+// For more information, see [Use API keys to authenticate] in the Amazon Location Service Developer Guide.
 //
-// [Using API keys]: https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html
+// [Use API keys to authenticate]: https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html
 func (c *Client) CreateKey(ctx context.Context, params *CreateKeyInput, optFns ...func(*Options)) (*CreateKeyOutput, error) {
 	if params == nil {
 		params = &CreateKeyInput{}
@@ -104,7 +104,7 @@ type CreateKeyOutput struct {
 	// The key value/string of an API key. This value is used when making API calls to
 	// authorize the call. For example, see [GetMapGlyphs].
 	//
-	// [GetMapGlyphs]: https://docs.aws.amazon.com/location/latest/APIReference/API_GetMapGlyphs.html
+	// [GetMapGlyphs]: https://docs.aws.amazon.com/location/previous/APIReference/API_GetMapGlyphs.html
 	//
 	// This member is required.
 	Key *string
@@ -219,16 +219,13 @@ func (c *Client) addOperationCreateKeyMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

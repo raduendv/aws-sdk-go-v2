@@ -164,6 +164,21 @@ type CallAnalyticsItem struct {
 	noSmithyDocumentSerde
 }
 
+// The language code that represents the language identified in your audio,
+// including the associated confidence score.
+type CallAnalyticsLanguageWithScore struct {
+
+	// The language code of the identified language.
+	LanguageCode CallAnalyticsLanguageCode
+
+	// The confidence score associated with the identified language code. Confidence
+	// scores are values between zero and one; larger values indicate a higher
+	// confidence in the identified language.
+	Score float64
+
+	noSmithyDocumentSerde
+}
+
 // Contains detailed information about your real-time Call Analytics session.
 // These details are provided in the UtteranceEvent and CategoryEvent objects.
 //
@@ -311,11 +326,26 @@ type ClinicalNoteGenerationSettings struct {
 	// The default is HISTORY_AND_PHYSICAL .
 	//
 	//   - HISTORY_AND_PHYSICAL: Provides summaries for key sections of the clinical
-	//   documentation. Sections include Chief Complaint, History of Present Illness,
-	//   Review of Systems, Past Medical History, Assessment, and Plan.
+	//   documentation. Examples of sections include Chief Complaint, History of Present
+	//   Illness, Review of Systems, Past Medical History, Assessment, and Plan.
 	//
 	//   - GIRPP: Provides summaries based on the patients progress toward goals.
-	//   Sections include Goal, Intervention, Response, Progress, and Plan.
+	//   Examples of sections include Goal, Intervention, Response, Progress, and Plan.
+	//
+	//   - BIRP: Focuses on the patient's behavioral patterns and responses. Examples
+	//   of sections include Behavior, Intervention, Response, and Plan.
+	//
+	//   - SIRP: Emphasizes the situational context of therapy. Examples of sections
+	//   include Situation, Intervention, Response, and Plan.
+	//
+	//   - DAP: Provides a simplified format for clinical documentation. Examples of
+	//   sections include Data, Assessment, and Plan.
+	//
+	//   - BEHAVIORAL_SOAP: Behavioral health focused documentation format. Examples
+	//   of sections include Subjective, Objective, Assessment, and Plan.
+	//
+	//   - PHYSICAL_SOAP: Physical health focused documentation format. Examples of
+	//   sections include Subjective, Objective, Assessment, and Plan.
 	NoteTemplate MedicalScribeNoteTemplate
 
 	noSmithyDocumentSerde
@@ -359,10 +389,12 @@ type Entity struct {
 	// The word or words identified as PII.
 	Content *string
 
-	// The end time, in milliseconds, of the utterance that was identified as PII.
+	// The end time of the utterance that was identified as PII in seconds, with
+	// millisecond precision (e.g., 1.056)
 	EndTime float64
 
-	// The start time, in milliseconds, of the utterance that was identified as PII.
+	// The start time of the utterance that was identified as PII in seconds, with
+	// millisecond precision (e.g., 1.056)
 	StartTime float64
 
 	// The type of PII identified. For example, NAME or CREDIT_DEBIT_NUMBER .
@@ -396,7 +428,8 @@ type Item struct {
 	// The word or punctuation that was transcribed.
 	Content *string
 
-	// The end time, in milliseconds, of the transcribed item.
+	// The end time of the transcribed item in seconds, with millisecond precision
+	// (e.g., 1.056)
 	EndTime float64
 
 	// If speaker partitioning is enabled, Speaker labels the speaker of the specified
@@ -408,7 +441,8 @@ type Item struct {
 	// complete ( false ).
 	Stable *bool
 
-	// The start time, in milliseconds, of the transcribed item.
+	// The start time of the transcribed item in seconds, with millisecond precision
+	// (e.g., 1.056)
 	StartTime float64
 
 	// The type of item identified. Options are: PRONUNCIATION (spoken words) and
@@ -474,10 +508,10 @@ type MedicalEntity struct {
 	// The word or words identified as PHI.
 	Content *string
 
-	// The end time, in milliseconds, of the utterance that was identified as PHI.
+	// The end time, in seconds, of the utterance that was identified as PHI.
 	EndTime float64
 
-	// The start time, in milliseconds, of the utterance that was identified as PHI.
+	// The start time, in seconds, of the utterance that was identified as PHI.
 	StartTime float64
 
 	noSmithyDocumentSerde
@@ -498,14 +532,14 @@ type MedicalItem struct {
 	// The word or punctuation that was transcribed.
 	Content *string
 
-	// The end time, in milliseconds, of the transcribed item.
+	// The end time, in seconds, of the transcribed item.
 	EndTime float64
 
 	// If speaker partitioning is enabled, Speaker labels the speaker of the specified
 	// item.
 	Speaker *string
 
-	// The start time, in milliseconds, of the transcribed item.
+	// The start time, in seconds, of the transcribed item.
 	StartTime float64
 
 	// The type of item identified. Options are: PRONUNCIATION (spoken words) and
@@ -531,7 +565,7 @@ type MedicalResult struct {
 	// Indicates the channel identified for the Result .
 	ChannelId *string
 
-	// The end time, in milliseconds, of the Result .
+	// The end time, in seconds, of the Result .
 	EndTime float64
 
 	// Indicates if the segment is complete.
@@ -543,7 +577,7 @@ type MedicalResult struct {
 	// Provides a unique identifier for the Result .
 	ResultId *string
 
-	// The start time, in milliseconds, of the Result .
+	// The start time, in seconds, of the Result .
 	StartTime float64
 
 	noSmithyDocumentSerde
@@ -642,6 +676,10 @@ type MedicalScribeConfigurationEvent struct {
 	// Specify the encryption settings for your streaming session.
 	EncryptionSettings *MedicalScribeEncryptionSettings
 
+	// The MedicalScribeContext object that contains contextual information used to
+	// generate customized clinical notes.
+	MedicalScribeContext *MedicalScribeContext
+
 	// Specify how you want your custom vocabulary filter applied to the streaming
 	// session.
 	//
@@ -662,6 +700,17 @@ type MedicalScribeConfigurationEvent struct {
 	// Specify the name of the custom vocabulary you want to use for your streaming
 	// session. Custom vocabulary names are case-sensitive.
 	VocabularyName *string
+
+	noSmithyDocumentSerde
+}
+
+// The MedicalScribeContext object that contains contextual information which is
+// used during clinical note generation to add relevant context to the note.
+type MedicalScribeContext struct {
+
+	// Contains patient-specific information used to customize the clinical note
+	// generation.
+	PatientContext *MedicalScribePatientContext
 
 	noSmithyDocumentSerde
 }
@@ -773,6 +822,16 @@ type MedicalScribeInputStreamMemberSessionControlEvent struct {
 
 func (*MedicalScribeInputStreamMemberSessionControlEvent) isMedicalScribeInputStream() {}
 
+// Contains patient-specific information.
+type MedicalScribePatientContext struct {
+
+	// The patient's preferred pronouns that the user wants to provide as a context
+	// for clinical note generation .
+	Pronouns Pronouns
+
+	noSmithyDocumentSerde
+}
+
 // Contains details for the result of post-stream analytics.
 type MedicalScribePostStreamAnalyticsResult struct {
 
@@ -853,6 +912,10 @@ type MedicalScribeStreamDetails struct {
 
 	// The sample rate (in hertz) of the HealthScribe streaming session.
 	MediaSampleRateHertz *int32
+
+	// Indicates whether the MedicalScribeContext object was provided when the stream
+	// was started.
+	MedicalScribeContextProvided *bool
 
 	// The result of post-stream analytics for the HealthScribe streaming session.
 	PostStreamAnalyticsResult *MedicalScribePostStreamAnalyticsResult
@@ -1148,7 +1211,7 @@ type Result struct {
 	// Indicates which audio channel is associated with the Result .
 	ChannelId *string
 
-	// The end time, in milliseconds, of the Result .
+	// The end time of the Result in seconds, with millisecond precision (e.g., 1.056).
 	EndTime float64
 
 	// Indicates if the segment is complete.
@@ -1169,7 +1232,8 @@ type Result struct {
 	// Provides a unique identifier for the Result .
 	ResultId *string
 
-	// The start time, in milliseconds, of the Result .
+	// The start time of the Result in seconds, with millisecond precision (e.g.,
+	// 1.056).
 	StartTime float64
 
 	noSmithyDocumentSerde
@@ -1271,6 +1335,12 @@ type UtteranceEvent struct {
 	// Contains words, phrases, or punctuation marks that are associated with the
 	// specified UtteranceEvent .
 	Items []CallAnalyticsItem
+
+	// The language code that represents the language spoken in your audio stream.
+	LanguageCode CallAnalyticsLanguageCode
+
+	// The language code of the dominant language identified in your stream.
+	LanguageIdentification []CallAnalyticsLanguageWithScore
 
 	// Provides the role of the speaker for each audio channel, either CUSTOMER or
 	// AGENT .

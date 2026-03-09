@@ -45,8 +45,8 @@ type UpdateWorkspaceConfigurationInput struct {
 	ClientToken *string
 
 	// This is an array of structures, where each structure defines a label set for
-	// the workspace, and defines the ingestion limit for active time series for each
-	// of those label sets. Each label name in a label set must be unique.
+	// the workspace, and defines the active time series limit for each of those label
+	// sets. Each label name in a label set must be unique.
 	LimitsPerLabelSet []types.LimitsPerLabelSet
 
 	// Specifies how many days that metrics will be retained in the workspace.
@@ -159,16 +159,13 @@ func (c *Client) addOperationUpdateWorkspaceConfigurationMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

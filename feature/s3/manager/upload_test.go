@@ -113,6 +113,160 @@ func TestUploadOrderMulti(t *testing.T) {
 	}
 }
 
+func TestUploadOrderMultiTriggerredBySinglePartSize(t *testing.T) {
+	c, invocations, args := s3testing.NewUploadLoggingClient(nil)
+	u := manager.NewUploader(c)
+
+	resp, err := u.Upload(context.Background(), &s3.PutObjectInput{
+		Bucket:               aws.String("Bucket"),
+		Key:                  aws.String("Key - value"),
+		Body:                 bytes.NewBuffer(make([]byte, 5*1024*1024)),
+		ServerSideEncryption: "aws:kms",
+		SSEKMSKeyId:          aws.String("KmsId"),
+		ContentType:          aws.String("content/type"),
+	})
+
+	if err != nil {
+		t.Errorf("Expected no error but received %v", err)
+	}
+
+	if diff := cmpDiff([]string{"CreateMultipartUpload", "UploadPart",
+		"CompleteMultipartUpload"}, *invocations); len(diff) > 0 {
+		t.Error(err)
+	}
+
+	if e, a := `https://mock.amazonaws.com/key`, resp.Location; e != a {
+		t.Errorf("expect %q, got %q", e, a)
+	}
+
+	if "UPLOAD-ID" != resp.UploadID {
+		t.Errorf("expect %q, got %q", "UPLOAD-ID", resp.UploadID)
+	}
+
+	if "VERSION-ID" != *resp.VersionID {
+		t.Errorf("expect %q, got %q", "VERSION-ID", *resp.VersionID)
+	}
+
+	// Validate input values
+	v := aws.ToString((*args)[1].(*s3.UploadPartInput).UploadId)
+	if "UPLOAD-ID" != v {
+		t.Errorf("Expected %q, but received %q", "UPLOAD-ID", v)
+	}
+	v = aws.ToString((*args)[2].(*s3.CompleteMultipartUploadInput).UploadId)
+	if "UPLOAD-ID" != v {
+		t.Errorf("Expected %q, but received %q", "UPLOAD-ID", v)
+	}
+
+	parts := (*args)[2].(*s3.CompleteMultipartUploadInput).MultipartUpload.Parts
+
+	num := parts[0].PartNumber
+	etag := aws.ToString(parts[0].ETag)
+
+	if aws.ToInt32(num) != 1 {
+		t.Errorf("expect 1, got %d", num)
+	}
+
+	if matched, err := regexp.MatchString(`^ETAG\d+$`, etag); !matched || err != nil {
+		t.Errorf("Failed regexp expression `^ETAG\\d+$` , got %s", etag)
+	}
+
+	// Custom headers
+	cmu := (*args)[0].(*s3.CreateMultipartUploadInput)
+
+	if e, a := types.ServerSideEncryption("aws:kms"), cmu.ServerSideEncryption; e != a {
+		t.Errorf("expect %q, got %q", e, a)
+	}
+
+	if e, a := "KmsId", aws.ToString(cmu.SSEKMSKeyId); e != a {
+		t.Errorf("expect %q, got %q", e, a)
+	}
+
+	if e, a := "content/type", aws.ToString(cmu.ContentType); e != a {
+		t.Errorf("expect %q, got %q", e, a)
+	}
+}
+
+func TestUploadOrderMultiJustExceedSinglePart(t *testing.T) {
+	c, invocations, args := s3testing.NewUploadLoggingClient(nil)
+	u := manager.NewUploader(c)
+
+	resp, err := u.Upload(context.Background(), &s3.PutObjectInput{
+		Bucket:               aws.String("Bucket"),
+		Key:                  aws.String("Key - value"),
+		Body:                 bytes.NewBuffer(make([]byte, 5*1024*1024+1)),
+		ServerSideEncryption: "aws:kms",
+		SSEKMSKeyId:          aws.String("KmsId"),
+		ContentType:          aws.String("content/type"),
+	})
+
+	if err != nil {
+		t.Errorf("Expected no error but received %v", err)
+	}
+
+	if diff := cmpDiff([]string{"CreateMultipartUpload", "UploadPart", "UploadPart",
+		"CompleteMultipartUpload"}, *invocations); len(diff) > 0 {
+		t.Error(err)
+	}
+
+	if e, a := `https://mock.amazonaws.com/key`, resp.Location; e != a {
+		t.Errorf("expect %q, got %q", e, a)
+	}
+
+	if "UPLOAD-ID" != resp.UploadID {
+		t.Errorf("expect %q, got %q", "UPLOAD-ID", resp.UploadID)
+	}
+
+	if "VERSION-ID" != *resp.VersionID {
+		t.Errorf("expect %q, got %q", "VERSION-ID", *resp.VersionID)
+	}
+
+	// Validate input values
+
+	// UploadPart
+	for i := 1; i < 3; i++ {
+		v := aws.ToString((*args)[i].(*s3.UploadPartInput).UploadId)
+		if "UPLOAD-ID" != v {
+			t.Errorf("Expected %q, but received %q", "UPLOAD-ID", v)
+		}
+	}
+
+	// CompleteMultipartUpload
+	v := aws.ToString((*args)[3].(*s3.CompleteMultipartUploadInput).UploadId)
+	if "UPLOAD-ID" != v {
+		t.Errorf("Expected %q, but received %q", "UPLOAD-ID", v)
+	}
+
+	parts := (*args)[3].(*s3.CompleteMultipartUploadInput).MultipartUpload.Parts
+
+	for i := 0; i < 2; i++ {
+		num := parts[i].PartNumber
+		etag := aws.ToString(parts[i].ETag)
+
+		if int32(i+1) != aws.ToInt32(num) {
+			t.Errorf("expect %d, got %d", i+1, num)
+		}
+
+		if matched, err := regexp.MatchString(`^ETAG\d+$`, etag); !matched || err != nil {
+			t.Errorf("Failed regexp expression `^ETAG\\d+$`")
+		}
+	}
+
+	// Custom headers
+	cmu := (*args)[0].(*s3.CreateMultipartUploadInput)
+
+	if e, a := types.ServerSideEncryption("aws:kms"), cmu.ServerSideEncryption; e != a {
+		t.Errorf("expect %q, got %q", e, a)
+	}
+
+	if e, a := "KmsId", aws.ToString(cmu.SSEKMSKeyId); e != a {
+		t.Errorf("expect %q, got %q", e, a)
+	}
+
+	if e, a := "content/type", aws.ToString(cmu.ContentType); e != a {
+		t.Errorf("expect %q, got %q", e, a)
+	}
+}
+
 func TestUploadOrderMultiDifferentPartSize(t *testing.T) {
 	s, ops, args := s3testing.NewUploadLoggingClient(nil)
 	mgr := manager.NewUploader(s, func(u *manager.Uploader) {
@@ -411,13 +565,13 @@ func TestUploadOrderMultiFailureLeaveParts(t *testing.T) {
 }
 
 type failreader struct {
-	times     int
-	failCount int
+	failBytes int64
+	readBytes int64
 }
 
 func (f *failreader) Read(b []byte) (int, error) {
-	f.failCount++
-	if f.failCount >= f.times {
+	f.readBytes += int64(len(b))
+	if f.readBytes > f.failBytes {
 		return 0, fmt.Errorf("random failure")
 	}
 	return len(b), nil
@@ -429,7 +583,7 @@ func TestUploadOrderReadFail1(t *testing.T) {
 	_, err := mgr.Upload(context.Background(), &s3.PutObjectInput{
 		Bucket: aws.String("Bucket"),
 		Key:    aws.String("Key"),
-		Body:   &failreader{times: 1},
+		Body:   &failreader{failBytes: 1},
 	})
 	if err == nil {
 		t.Fatalf("expect error to not be nil")
@@ -452,7 +606,7 @@ func TestUploadOrderReadFail2(t *testing.T) {
 	_, err := mgr.Upload(context.Background(), &s3.PutObjectInput{
 		Bucket: aws.String("Bucket"),
 		Key:    aws.String("Key"),
-		Body:   &failreader{times: 2},
+		Body:   &failreader{failBytes: 5 * 1024 * 1024},
 	})
 	if err == nil {
 		t.Fatalf("expect error to not be nil")
@@ -1008,6 +1162,94 @@ func TestUploaderValidARN(t *testing.T) {
 			_, err := uploader.Upload(context.Background(), &tt.input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("err: %v, wantErr: %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+// TestUploadRequestChecksumCalculation tests that checksum behavior respects
+// the RequestChecksumCalculation setting for backwards compatibility.
+func TestUploadRequestChecksumCalculation(t *testing.T) {
+	testCases := []struct {
+		name                       string
+		requestChecksumCalculation aws.RequestChecksumCalculation
+		inputChecksumAlgorithm     types.ChecksumAlgorithm
+		expectedChecksumAlgorithm  types.ChecksumAlgorithm
+		description                string
+	}{
+		{
+			name:                       "WhenRequired_NoDefault",
+			requestChecksumCalculation: aws.RequestChecksumCalculationWhenRequired,
+			inputChecksumAlgorithm:     "",
+			expectedChecksumAlgorithm:  "",
+			description:                "When RequestChecksumCalculationWhenRequired is set, no default checksum should be applied (backwards compatibility)",
+		},
+		{
+			name:                       "WhenSupported_HasDefault",
+			requestChecksumCalculation: aws.RequestChecksumCalculationWhenSupported,
+			inputChecksumAlgorithm:     "",
+			expectedChecksumAlgorithm:  types.ChecksumAlgorithmCrc32,
+			description:                "When RequestChecksumCalculationWhenSupported is set, default CRC32 checksum should be applied",
+		},
+		{
+			name:                       "WhenRequired_ExplicitPreserved",
+			requestChecksumCalculation: aws.RequestChecksumCalculationWhenRequired,
+			inputChecksumAlgorithm:     types.ChecksumAlgorithmSha256,
+			expectedChecksumAlgorithm:  types.ChecksumAlgorithmSha256,
+			description:                "Explicit checksums should always be preserved regardless of RequestChecksumCalculation setting",
+		},
+		{
+			name:                       "WhenSupported_ExplicitPreserved",
+			requestChecksumCalculation: aws.RequestChecksumCalculationWhenSupported,
+			inputChecksumAlgorithm:     types.ChecksumAlgorithmSha1,
+			expectedChecksumAlgorithm:  types.ChecksumAlgorithmSha1,
+			description:                "Explicit checksums should override defaults even with WhenSupported",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			c, invocations, args := s3testing.NewUploadLoggingClient(nil)
+
+			mgr := manager.NewUploader(c, func(u *manager.Uploader) {
+				u.RequestChecksumCalculation = tc.requestChecksumCalculation
+			})
+
+			input := &s3.PutObjectInput{
+				Bucket: aws.String("Bucket"),
+				Key:    aws.String("Key"),
+				Body:   bytes.NewReader(buf12MB),
+			}
+			if tc.inputChecksumAlgorithm != "" {
+				input.ChecksumAlgorithm = tc.inputChecksumAlgorithm
+			}
+
+			resp, err := mgr.Upload(context.Background(), input)
+			if err != nil {
+				t.Errorf("Expected no error but received %v", err)
+			}
+
+			expectedOps := []string{"CreateMultipartUpload", "UploadPart", "UploadPart", "UploadPart", "CompleteMultipartUpload"}
+			if diff := cmpDiff(expectedOps, *invocations); len(diff) > 0 {
+				t.Error(diff)
+			}
+
+			if resp.UploadID != "UPLOAD-ID" {
+				t.Errorf("expect %q, got %q", "UPLOAD-ID", resp.UploadID)
+			}
+
+			cmu := (*args)[0].(*s3.CreateMultipartUploadInput)
+			if cmu.ChecksumAlgorithm != tc.expectedChecksumAlgorithm {
+				t.Errorf("%s: Expected checksum algorithm %v in CreateMultipartUpload, but got %v",
+					tc.description, tc.expectedChecksumAlgorithm, cmu.ChecksumAlgorithm)
+			}
+
+			for i := 1; i <= 3; i++ {
+				uploadPart := (*args)[i].(*s3.UploadPartInput)
+				if uploadPart.ChecksumAlgorithm != tc.expectedChecksumAlgorithm {
+					t.Errorf("%s: Expected checksum algorithm %v in UploadPart %d, but got %v",
+						tc.description, tc.expectedChecksumAlgorithm, i, uploadPart.ChecksumAlgorithm)
+				}
 			}
 		})
 	}

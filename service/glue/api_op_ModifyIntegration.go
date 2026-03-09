@@ -41,6 +41,10 @@ type ModifyIntegrationInput struct {
 	// A description of the integration.
 	Description *string
 
+	// The configuration settings for the integration. Currently, only the
+	// RefreshInterval can be modified.
+	IntegrationConfig *types.IntegrationConfig
+
 	// A unique name for an integration in Glue.
 	IntegrationName *string
 
@@ -107,6 +111,9 @@ type ModifyIntegrationOutput struct {
 
 	// A list of errors associated with the integration modification.
 	Errors []types.IntegrationError
+
+	// The updated configuration settings for the integration.
+	IntegrationConfig *types.IntegrationConfig
 
 	// The ARN of a KMS key used for encrypting the channel.
 	KmsKeyId *string
@@ -208,16 +215,13 @@ func (c *Client) addOperationModifyIntegrationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

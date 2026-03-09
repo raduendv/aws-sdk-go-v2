@@ -72,8 +72,8 @@ type UpdateFileSystemProtectionOutput struct {
 	//   by EFS replication.
 	//
 	//   - REPLICATING – The file system is being used as the destination file system
-	//   in a replication configuration. The file system is read-only and is only
-	//   modified only by EFS replication.
+	//   in a replication configuration. The file system is read-only and is modified
+	//   only by EFS replication.
 	//
 	// If the replication configuration is deleted, the file system's replication
 	// overwrite protection is re-enabled, the file system becomes writeable.
@@ -173,16 +173,13 @@ func (c *Client) addOperationUpdateFileSystemProtectionMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

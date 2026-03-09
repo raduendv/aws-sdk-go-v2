@@ -214,6 +214,9 @@ type AddMediaStreamRequest struct {
 	// used for.
 	Description *string
 
+	//  The key-value pairs that can be used to tag and organize the media stream.
+	MediaStreamTags map[string]string
+
 	//  The resolution of the video.
 	VideoFormat *string
 
@@ -222,14 +225,6 @@ type AddMediaStreamRequest struct {
 
 // A request to add an output to a flow.
 type AddOutputRequest struct {
-
-	//  The protocol to use for the output.
-	//
-	// Elemental MediaConnect no longer supports the Fujitsu QoS protocol. This
-	// reference is maintained for legacy purposes only.
-	//
-	// This member is required.
-	Protocol Protocol
 
 	//  The range of IP addresses that should be allowed to initiate output requests
 	// to this flow. These IP addresses should be in the form of a Classless
@@ -266,7 +261,7 @@ type AddOutputRequest struct {
 	//  The name of the output. This value must be unique within the current flow.
 	Name *string
 
-	//  A suffix for the names of the NDI sources that the flow creates. If a custom
+	//  A suffix for the name of the NDI® sender that the flow creates. If a custom
 	// name isn't specified, MediaConnect uses the output name.
 	NdiProgramName *string
 
@@ -278,11 +273,28 @@ type AddOutputRequest struct {
 	// MediaConnect sets it to ENABLED.
 	OutputStatus OutputStatus
 
+	//  The key-value pairs that can be used to tag and organize the output.
+	OutputTags map[string]string
+
 	//  The port to use when content is distributed to this output.
 	Port *int32
 
+	//  The protocol to use for the output.
+	//
+	// Elemental MediaConnect no longer supports the Fujitsu QoS protocol. This
+	// reference is maintained for legacy purposes only.
+	Protocol Protocol
+
 	//  The remote ID for the Zixi-pull output stream.
 	RemoteId *string
+
+	// Indicates whether to enable or disable router integration when creating a new
+	// flow output.
+	RouterIntegrationState State
+
+	// The configuration that defines how content is encrypted during transit between
+	// the MediaConnect router and a MediaConnect flow.
+	RouterIntegrationTransitEncryption *FlowTransitEncryption
 
 	//  The port that the flow uses to send outbound requests to initiate connection
 	// with the sender.
@@ -306,6 +318,82 @@ type AudioMonitoringSetting struct {
 
 	//  Detects periods of silence.
 	SilentAudio *SilentAudio
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for automatic encryption key management, where
+// MediaConnect handles key creation and rotation.
+type AutomaticEncryptionKeyConfiguration struct {
+	noSmithyDocumentSerde
+}
+
+// An error that occurred when retrieving multiple router inputs in the
+// BatchGetRouterInput operation, including the ARN, error code, and error message.
+type BatchGetRouterInputError struct {
+
+	// The Amazon Resource Name (ARN) of the router input for which the error occurred.
+	//
+	// This member is required.
+	Arn *string
+
+	// The error code associated with the error.
+	//
+	// This member is required.
+	Code *string
+
+	// A message describing the error.
+	//
+	// This member is required.
+	Message *string
+
+	noSmithyDocumentSerde
+}
+
+// An error that occurred when retrieving multiple router network interfaces in
+// the BatchGetRouterNetworkInterface operation, including the ARN, error code, and
+// error message.
+type BatchGetRouterNetworkInterfaceError struct {
+
+	// The Amazon Resource Name (ARN) of the router network interface for which the
+	// error occurred.
+	//
+	// This member is required.
+	Arn *string
+
+	// The error code associated with the error.
+	//
+	// This member is required.
+	Code *string
+
+	// A message describing the error.
+	//
+	// This member is required.
+	Message *string
+
+	noSmithyDocumentSerde
+}
+
+// An error that occurred when retrieving multiple router outputs in the
+// BatchGetRouterOutput operation, including the ARN, error code, and error
+// message.
+type BatchGetRouterOutputError struct {
+
+	// The Amazon Resource Name (ARN) of the router output for which the error
+	// occurred.
+	//
+	// This member is required.
+	Arn *string
+
+	// The error code associated with the error.
+	//
+	// This member is required.
+	Code *string
+
+	// A message describing the error.
+	//
+	// This member is required.
+	Message *string
 
 	noSmithyDocumentSerde
 }
@@ -520,6 +608,11 @@ type BridgeSource struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration settings for default maintenance scheduling.
+type DefaultMaintenanceConfiguration struct {
+	noSmithyDocumentSerde
+}
+
 //	The transport parameters that you want to associate with an outbound media
 //
 // stream.
@@ -593,6 +686,27 @@ type EgressGatewayBridge struct {
 	noSmithyDocumentSerde
 }
 
+//	The encoding configuration to apply to the NDI® source when transcoding it to
+//
+// a transport stream for downstream distribution. You can choose between several
+// predefined encoding profiles based on common use cases.
+type EncodingConfig struct {
+
+	//  The encoding profile to use when transcoding the NDI source content to a
+	// transport stream. You can change this value while the flow is running.
+	EncodingProfile EncodingProfile
+
+	//  The maximum video bitrate to use when transcoding the NDI source to a
+	// transport stream. This parameter enables you to override the default video
+	// bitrate within the encoding profile's supported range.
+	//
+	// The supported range is 10,000,000 - 50,000,000 bits per second (bps). If you
+	// don't specify a value, MediaConnect uses the default value of 20,000,000 bps.
+	VideoMaxBitrate *int32
+
+	noSmithyDocumentSerde
+}
+
 //	A collection of parameters that determine how MediaConnect will convert the
 //
 // content. These fields only apply to outputs on flows that have a CDI source.
@@ -641,7 +755,7 @@ type EncodingParametersRequest struct {
 	noSmithyDocumentSerde
 }
 
-// Information about the encryption of the flow.
+// Encryption information.
 type Encryption struct {
 
 	//  The ARN of the role that you created during setup (when you set up
@@ -751,6 +865,125 @@ type FailoverConfig struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration settings for a failover router input that allows switching
+// between two input sources.
+type FailoverRouterInputConfiguration struct {
+
+	// The ARN of the network interface to use for this failover router input.
+	//
+	// This member is required.
+	NetworkInterfaceArn *string
+
+	// A list of exactly two protocol configurations for the failover input sources.
+	// Both must use the same protocol type.
+	//
+	// This member is required.
+	ProtocolConfigurations []FailoverRouterInputProtocolConfiguration
+
+	// The mode for determining source priority in failover configurations.
+	//
+	// This member is required.
+	SourcePriorityMode FailoverInputSourcePriorityMode
+
+	// The index (0 or 1) that specifies which source in the protocol configurations
+	// list is currently active. Used to control which of the two failover sources is
+	// currently selected. This field is ignored when sourcePriorityMode is set to
+	// NO_PRIORITY
+	PrimarySourceIndex *int32
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for an indexed stream in a failover router input setup.
+type FailoverRouterInputIndexedStreamDetails struct {
+
+	// The index number (0 or 1) assigned to this source in the failover configuration.
+	//
+	// This member is required.
+	SourceIndex *int32
+
+	// The IP address of the source for this indexed stream.
+	SourceIpAddress *string
+
+	noSmithyDocumentSerde
+}
+
+// Protocol configuration settings for failover router inputs.
+//
+// The following types satisfy this interface:
+//
+//	FailoverRouterInputProtocolConfigurationMemberRist
+//	FailoverRouterInputProtocolConfigurationMemberRtp
+//	FailoverRouterInputProtocolConfigurationMemberSrtCaller
+//	FailoverRouterInputProtocolConfigurationMemberSrtListener
+type FailoverRouterInputProtocolConfiguration interface {
+	isFailoverRouterInputProtocolConfiguration()
+}
+
+// The configuration settings for a router input using the RIST (Reliable Internet
+// Stream Transport) protocol, including the port and recovery latency.
+type FailoverRouterInputProtocolConfigurationMemberRist struct {
+	Value RistRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*FailoverRouterInputProtocolConfigurationMemberRist) isFailoverRouterInputProtocolConfiguration() {
+}
+
+// The configuration settings for a Router Input using the RTP (Real-Time
+// Transport Protocol) protocol, including the port and forward error correction
+// state.
+type FailoverRouterInputProtocolConfigurationMemberRtp struct {
+	Value RtpRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*FailoverRouterInputProtocolConfigurationMemberRtp) isFailoverRouterInputProtocolConfiguration() {
+}
+
+// The configuration settings for a router input using the SRT (Secure Reliable
+// Transport) protocol in caller mode, including the source address and port,
+// minimum latency, stream ID, and decryption key configuration.
+type FailoverRouterInputProtocolConfigurationMemberSrtCaller struct {
+	Value SrtCallerRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*FailoverRouterInputProtocolConfigurationMemberSrtCaller) isFailoverRouterInputProtocolConfiguration() {
+}
+
+// The configuration settings for a router input using the SRT (Secure Reliable
+// Transport) protocol in listener mode, including the port, minimum latency, and
+// decryption key configuration.
+type FailoverRouterInputProtocolConfigurationMemberSrtListener struct {
+	Value SrtListenerRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*FailoverRouterInputProtocolConfigurationMemberSrtListener) isFailoverRouterInputProtocolConfiguration() {
+}
+
+// Configuration details for a failover router input that can automatically switch
+// between two sources.
+type FailoverRouterInputStreamDetails struct {
+
+	// Configuration details for the secondary source (index 1) in the failover setup.
+	//
+	// This member is required.
+	SourceIndexOneStreamDetails *FailoverRouterInputIndexedStreamDetails
+
+	// Configuration details for the primary source (index 0) in the failover setup.
+	//
+	// This member is required.
+	SourceIndexZeroStreamDetails *FailoverRouterInputIndexedStreamDetails
+
+	noSmithyDocumentSerde
+}
+
 // The settings for a flow, including its source, outputs, and entitlements.
 type Flow struct {
 
@@ -797,8 +1030,11 @@ type Flow struct {
 	//  The IP address from which video will be sent to output destinations.
 	EgressIp *string
 
-	//  Determines the processing capacity and feature set of the flow. Set this
-	// optional parameter to LARGE if you want to enable NDI outputs on the flow.
+	//  The encoding configuration to apply to the NDI® source when transcoding it to
+	// a transport stream for downstream distribution.
+	EncodingConfig *EncodingConfig
+
+	//  Determines the processing capacity and feature set of the flow.
 	FlowSize FlowSize
 
 	//  The maintenance settings for the flow.
@@ -808,8 +1044,8 @@ type Flow struct {
 	// media stream with a source, you can also associate it with outputs on the flow.
 	MediaStreams []MediaStream
 
-	// Specifies the configuration settings for NDI outputs. Required when the flow
-	// includes NDI outputs.
+	// Specifies the configuration settings for a flow's NDI source or output.
+	// Required when the flow includes an NDI source or output.
 	NdiConfig *NdiConfig
 
 	//  The settings for the source failover.
@@ -827,10 +1063,57 @@ type Flow struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration that defines how content is encrypted during transit between
+// the MediaConnect router and a MediaConnect flow.
+type FlowTransitEncryption struct {
+
+	// The configuration details for the encryption key.
+	//
+	// This member is required.
+	EncryptionKeyConfiguration FlowTransitEncryptionKeyConfiguration
+
+	// The type of encryption key to use for flow transit encryption.
+	EncryptionKeyType FlowTransitEncryptionKeyType
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for flow transit encryption keys.
+//
+// The following types satisfy this interface:
+//
+//	FlowTransitEncryptionKeyConfigurationMemberAutomatic
+//	FlowTransitEncryptionKeyConfigurationMemberSecretsManager
+type FlowTransitEncryptionKeyConfiguration interface {
+	isFlowTransitEncryptionKeyConfiguration()
+}
+
+// Configuration settings for automatic encryption key management, where
+// MediaConnect handles key creation and rotation.
+type FlowTransitEncryptionKeyConfigurationMemberAutomatic struct {
+	Value AutomaticEncryptionKeyConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*FlowTransitEncryptionKeyConfigurationMemberAutomatic) isFlowTransitEncryptionKeyConfiguration() {
+}
+
+// The configuration settings for transit encryption using Secrets Manager,
+// including the secret ARN and role ARN.
+type FlowTransitEncryptionKeyConfigurationMemberSecretsManager struct {
+	Value SecretsManagerEncryptionKeyConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*FlowTransitEncryptionKeyConfigurationMemberSecretsManager) isFlowTransitEncryptionKeyConfiguration() {
+}
+
 // A set of parameters that define the media stream.
 type Fmtp struct {
 
-	// The format of the audio channel.
+	//  The format of the audio channel.
 	ChannelOrder *string
 
 	// The format used for the representation of color.
@@ -1052,6 +1335,9 @@ type GrantEntitlementRequest struct {
 	// soon as it is created. If you don’t specify the entitlementStatus field in your
 	// request, MediaConnect sets it to ENABLED.
 	EntitlementStatus EntitlementStatus
+
+	//  The key-value pairs that can be used to tag and organize the entitlement.
+	EntitlementTags map[string]string
 
 	//  The name of the entitlement. This value must be unique within the current flow.
 	Name *string
@@ -1286,6 +1572,234 @@ type ListedGatewayInstance struct {
 	noSmithyDocumentSerde
 }
 
+// A summary of a router input, including its name, type, ARN, ID, state, and
+// other key details. This structure is used in the response of the
+// ListRouterInputs operation.
+type ListedRouterInput struct {
+
+	// The Amazon Resource Name (ARN) of the router input.
+	//
+	// This member is required.
+	Arn *string
+
+	// The Availability Zone of the router input.
+	//
+	// This member is required.
+	AvailabilityZone *string
+
+	// The timestamp when the router input was created.
+	//
+	// This member is required.
+	CreatedAt *time.Time
+
+	// The unique identifier of the router input.
+	//
+	// This member is required.
+	Id *string
+
+	// The type of the router input.
+	//
+	// This member is required.
+	InputType RouterInputType
+
+	// The maximum bitrate of the router input.
+	//
+	// This member is required.
+	MaximumBitrate *int64
+
+	// The number of messages associated with the router input.
+	//
+	// This member is required.
+	MessageCount *int32
+
+	// The name of the router input.
+	//
+	// This member is required.
+	Name *string
+
+	// The Amazon Web Services Region where the router input is located.
+	//
+	// This member is required.
+	RegionName *string
+
+	// The number of router outputs that are associated with this router input.
+	//
+	// This member is required.
+	RoutedOutputs *int32
+
+	// Indicates whether the router input is configured for Regional or global routing.
+	//
+	// This member is required.
+	RoutingScope RoutingScope
+
+	// The overall state of the router input.
+	//
+	// This member is required.
+	State RouterInputState
+
+	// The timestamp when the router input was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The details of the maintenance schedule for the listed router input.
+	MaintenanceSchedule MaintenanceSchedule
+
+	// The type of maintenance schedule currently associated with the listed router
+	// input.
+	MaintenanceScheduleType MaintenanceScheduleType
+
+	// The ARN of the network interface associated with the router input.
+	NetworkInterfaceArn *string
+
+	noSmithyDocumentSerde
+}
+
+// A summary of a router network interface, including its name, type, ARN, ID,
+// associated input/output counts, state, and other key details. This structure is
+// used in the response of the ListRouterNetworkInterfaces operation.
+type ListedRouterNetworkInterface struct {
+
+	// The Amazon Resource Name (ARN) of the router network interface.
+	//
+	// This member is required.
+	Arn *string
+
+	// The number of router inputs associated with the network interface.
+	//
+	// This member is required.
+	AssociatedInputCount *int32
+
+	// The number of router outputs associated with the network interface.
+	//
+	// This member is required.
+	AssociatedOutputCount *int32
+
+	// The timestamp when the network interface was created.
+	//
+	// This member is required.
+	CreatedAt *time.Time
+
+	// The unique identifier of the router network interface.
+	//
+	// This member is required.
+	Id *string
+
+	// The name of the router network interface.
+	//
+	// This member is required.
+	Name *string
+
+	// The type of the router network interface.
+	//
+	// This member is required.
+	NetworkInterfaceType RouterNetworkInterfaceType
+
+	// The Amazon Web Services Region where the router network interface is located.
+	//
+	// This member is required.
+	RegionName *string
+
+	// The current state of the router network interface.
+	//
+	// This member is required.
+	State RouterNetworkInterfaceState
+
+	// The timestamp when the router network interface was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// A summary of a router output, including its name, type, ARN, ID, state, routed
+// state, and other key details. This structure is used in the response of the
+// ListRouterOutputs operation.
+type ListedRouterOutput struct {
+
+	// The Amazon Resource Name (ARN) of the router output.
+	//
+	// This member is required.
+	Arn *string
+
+	// The Availability Zone of the router output.
+	//
+	// This member is required.
+	AvailabilityZone *string
+
+	// The timestamp when the router output was created.
+	//
+	// This member is required.
+	CreatedAt *time.Time
+
+	// The unique identifier of the router output.
+	//
+	// This member is required.
+	Id *string
+
+	// The maximum bitrate of the router output.
+	//
+	// This member is required.
+	MaximumBitrate *int64
+
+	// The number of messages associated with the router output.
+	//
+	// This member is required.
+	MessageCount *int32
+
+	// The name of the router output.
+	//
+	// This member is required.
+	Name *string
+
+	// The type of the router output.
+	//
+	// This member is required.
+	OutputType RouterOutputType
+
+	// The AAmazon Web Services Region where the router output is located.
+	//
+	// This member is required.
+	RegionName *string
+
+	// The current state of the association between the router output and its input.
+	//
+	// This member is required.
+	RoutedState RouterOutputRoutedState
+
+	// Indicates whether the router output is configured for Regional or global
+	// routing.
+	//
+	// This member is required.
+	RoutingScope RoutingScope
+
+	// The overall state of the router output.
+	//
+	// This member is required.
+	State RouterOutputState
+
+	// The timestamp when the router output was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The details of the maintenance schedule for the listed router output.
+	MaintenanceSchedule MaintenanceSchedule
+
+	// The type of maintenance schedule currently associated with the listed router
+	// output.
+	MaintenanceScheduleType MaintenanceScheduleType
+
+	// The ARN of the network interface associated with the router output.
+	NetworkInterfaceArn *string
+
+	// The ARN of the router input associated with the output.
+	RoutedInputArn *string
+
+	noSmithyDocumentSerde
+}
+
 // The maintenance setting of a flow.
 type Maintenance struct {
 
@@ -1306,6 +1820,175 @@ type Maintenance struct {
 	MaintenanceStartHour *string
 
 	noSmithyDocumentSerde
+}
+
+// The configuration settings for maintenance operations, including preferred
+// maintenance windows and schedules.
+//
+// The following types satisfy this interface:
+//
+//	MaintenanceConfigurationMemberDefault
+//	MaintenanceConfigurationMemberPreferredDayTime
+type MaintenanceConfiguration interface {
+	isMaintenanceConfiguration()
+}
+
+// Default maintenance configuration settings.
+type MaintenanceConfigurationMemberDefault struct {
+	Value DefaultMaintenanceConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*MaintenanceConfigurationMemberDefault) isMaintenanceConfiguration() {}
+
+// Preferred day and time maintenance configuration settings.
+type MaintenanceConfigurationMemberPreferredDayTime struct {
+	Value PreferredDayTimeMaintenanceConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*MaintenanceConfigurationMemberPreferredDayTime) isMaintenanceConfiguration() {}
+
+// The details of the maintenance schedule.
+//
+// The following types satisfy this interface:
+//
+//	MaintenanceScheduleMemberWindow
+type MaintenanceSchedule interface {
+	isMaintenanceSchedule()
+}
+
+// Defines a specific time window for maintenance operations.
+type MaintenanceScheduleMemberWindow struct {
+	Value WindowMaintenanceSchedule
+
+	noSmithyDocumentSerde
+}
+
+func (*MaintenanceScheduleMemberWindow) isMaintenanceSchedule() {}
+
+// Configuration settings for connecting a router input to a flow output.
+type MediaConnectFlowRouterInputConfiguration struct {
+
+	// The decryption configuration for the flow source when connected to this router
+	// input.
+	//
+	// This member is required.
+	SourceTransitDecryption *FlowTransitEncryption
+
+	// The ARN of the flow to connect to.
+	FlowArn *string
+
+	// The ARN of the flow output to connect to this router input.
+	FlowOutputArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for a MediaConnect flow when used as a router input
+// source.
+type MediaConnectFlowRouterInputStreamDetails struct {
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for connecting a router output to a MediaConnect flow
+// source.
+type MediaConnectFlowRouterOutputConfiguration struct {
+
+	// The encryption configuration for the flow destination when connected to this
+	// router output.
+	//
+	// This member is required.
+	DestinationTransitEncryption *FlowTransitEncryption
+
+	// The ARN of the flow to connect to this router output.
+	FlowArn *string
+
+	// The ARN of the flow source to connect to this router output.
+	FlowSourceArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for a MediaConnect flow when used as a router output
+// destination.
+type MediaConnectFlowRouterOutputStreamDetails struct {
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for connecting a router output to a MediaLive input.
+type MediaLiveInputRouterOutputConfiguration struct {
+
+	// The encryption configuration for the MediaLive input when connected to this
+	// router output.
+	//
+	// This member is required.
+	DestinationTransitEncryption *MediaLiveTransitEncryption
+
+	// The ARN of the MediaLive input to connect to this router output.
+	MediaLiveInputArn *string
+
+	// The index of the MediaLive pipeline to connect to this router output.
+	MediaLivePipelineId MediaLiveInputPipelineId
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for a MediaLive input when used as a router output
+// destination.
+type MediaLiveInputRouterOutputStreamDetails struct {
+	noSmithyDocumentSerde
+}
+
+// The encryption configuration that defines how content is encrypted during
+// transit between MediaConnect Router and MediaLive. This configuration determines
+// whether encryption keys are automatically managed by the service or manually
+// managed through Secrets Manager.
+type MediaLiveTransitEncryption struct {
+
+	// The configuration details for the MediaLive encryption key.
+	//
+	// This member is required.
+	EncryptionKeyConfiguration MediaLiveTransitEncryptionKeyConfiguration
+
+	// The type of encryption key to use for MediaLive transit encryption.
+	EncryptionKeyType MediaLiveTransitEncryptionKeyType
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings for the MediaLive transit encryption key.
+//
+// The following types satisfy this interface:
+//
+//	MediaLiveTransitEncryptionKeyConfigurationMemberAutomatic
+//	MediaLiveTransitEncryptionKeyConfigurationMemberSecretsManager
+type MediaLiveTransitEncryptionKeyConfiguration interface {
+	isMediaLiveTransitEncryptionKeyConfiguration()
+}
+
+// Configuration settings for automatic encryption key management, where
+// MediaConnect handles key creation and rotation.
+type MediaLiveTransitEncryptionKeyConfigurationMemberAutomatic struct {
+	Value AutomaticEncryptionKeyConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*MediaLiveTransitEncryptionKeyConfigurationMemberAutomatic) isMediaLiveTransitEncryptionKeyConfiguration() {
+}
+
+// The configuration settings for transit encryption using Secrets Manager,
+// including the secret ARN and role ARN.
+type MediaLiveTransitEncryptionKeyConfigurationMemberSecretsManager struct {
+	Value SecretsManagerEncryptionKeyConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*MediaLiveTransitEncryptionKeyConfigurationMemberSecretsManager) isMediaLiveTransitEncryptionKeyConfiguration() {
 }
 
 //	A media stream represents one component of your content, such as video, audio,
@@ -1480,6 +2163,89 @@ type MediaStreamSourceConfigurationRequest struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration settings for a merge router input that combines two input sources.
+type MergeRouterInputConfiguration struct {
+
+	// The time window in milliseconds for merging the two input sources.
+	//
+	// This member is required.
+	MergeRecoveryWindowMilliseconds *int64
+
+	// The ARN of the network interface to use for this merge router input.
+	//
+	// This member is required.
+	NetworkInterfaceArn *string
+
+	// A list of exactly two protocol configurations for the merge input sources. Both
+	// must use the same protocol type.
+	//
+	// This member is required.
+	ProtocolConfigurations []MergeRouterInputProtocolConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for an indexed stream in a merge router input setup.
+type MergeRouterInputIndexedStreamDetails struct {
+
+	// The index number (0 or 1) assigned to this source in the merge configuration.
+	//
+	// This member is required.
+	SourceIndex *int32
+
+	// The IP address of the source for this indexed stream in the merge setup.
+	SourceIpAddress *string
+
+	noSmithyDocumentSerde
+}
+
+// Protocol configuration settings for merge router inputs.
+//
+// The following types satisfy this interface:
+//
+//	MergeRouterInputProtocolConfigurationMemberRist
+//	MergeRouterInputProtocolConfigurationMemberRtp
+type MergeRouterInputProtocolConfiguration interface {
+	isMergeRouterInputProtocolConfiguration()
+}
+
+// The configuration settings for a router input using the RIST (Reliable Internet
+// Stream Transport) protocol, including the port and recovery latency.
+type MergeRouterInputProtocolConfigurationMemberRist struct {
+	Value RistRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*MergeRouterInputProtocolConfigurationMemberRist) isMergeRouterInputProtocolConfiguration() {}
+
+// The configuration settings for a Router Input using the RTP (Real-Time
+// Transport Protocol) protocol, including the port and forward error correction
+// state.
+type MergeRouterInputProtocolConfigurationMemberRtp struct {
+	Value RtpRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*MergeRouterInputProtocolConfigurationMemberRtp) isMergeRouterInputProtocolConfiguration() {}
+
+// Configuration details for a merge router input that combines two input sources.
+type MergeRouterInputStreamDetails struct {
+
+	// Configuration details for the second source (index 1) in the merge setup.
+	//
+	// This member is required.
+	SourceIndexOneStreamDetails *MergeRouterInputIndexedStreamDetails
+
+	// Configuration details for the first source (index 0) in the merge setup.
+	//
+	// This member is required.
+	SourceIndexZeroStreamDetails *MergeRouterInputIndexedStreamDetails
+
+	noSmithyDocumentSerde
+}
+
 // The details of an error message.
 type MessageDetail struct {
 
@@ -1538,8 +2304,7 @@ type MulticastSourceSettings struct {
 	noSmithyDocumentSerde
 }
 
-// Specifies the configuration settings for NDI outputs. Required when the flow
-// includes NDI outputs.
+// Specifies the configuration settings for NDI sources and outputs.
 type NdiConfig struct {
 
 	// A prefix for the names of the NDI sources that the flow creates. If a custom
@@ -1552,14 +2317,17 @@ type NdiConfig struct {
 	// properly.
 	NdiDiscoveryServers []NdiDiscoveryServerConfig
 
-	// A setting that controls whether NDI outputs can be used in the flow. Must be
-	// ENABLED to add NDI outputs. Default is DISABLED.
+	// A setting that controls whether NDI® sources or outputs can be used in the
+	// flow.
+	//
+	// The default value is DISABLED . This value must be set as ENABLED for your flow
+	// to support NDI sources or outputs.
 	NdiState NdiState
 
 	noSmithyDocumentSerde
 }
 
-// Specifies the configuration settings for individual NDI discovery servers. A
+// Specifies the configuration settings for individual NDI® discovery servers. A
 // maximum of 3 servers is allowed.
 type NdiDiscoveryServerConfig struct {
 
@@ -1577,6 +2345,116 @@ type NdiDiscoveryServerConfig struct {
 	// The port for the NDI discovery server. Defaults to 5959 if a custom port isn't
 	// specified.
 	DiscoveryServerPort *int32
+
+	noSmithyDocumentSerde
+}
+
+//	Metadata about the audio and video media that is part of the NDI® source
+//
+// content. This includes details about the individual media streams.
+type NdiMediaInfo struct {
+
+	//  A list of the individual media streams that make up the NDI source. This
+	// includes details about each stream's codec, resolution, frame rate, audio
+	// channels, and other parameters.
+	//
+	// This member is required.
+	Streams []NdiMediaStreamInfo
+
+	noSmithyDocumentSerde
+}
+
+//	Detailed information about a single media stream that is part of an NDI®
+//
+// source. This includes details about the stream type, codec, resolution, frame
+// rate, audio channels, and sample rate.
+type NdiMediaStreamInfo struct {
+
+	//  The codec used for the media stream. For NDI sources, use speed-hq .
+	//
+	// This member is required.
+	Codec *string
+
+	//  A unique identifier for the media stream.
+	//
+	// This member is required.
+	StreamId *int32
+
+	//  The type of media stream (for example, Video or Audio ).
+	//
+	// This member is required.
+	StreamType *string
+
+	//  The number of audio channels in the stream. Used when the streamType is Audio .
+	Channels *int32
+
+	//  The number of video frames displayed per second. Used when the streamType is
+	// Video .
+	FrameRate *string
+
+	//  The width and height dimensions of the video frame in pixels. Used when the
+	// streamType is Video .
+	FrameResolution *FrameResolution
+
+	//  The number of audio samples captured per second, measured in kilohertz (kHz).
+	// Used when the streamType is Audio .
+	SampleRate *int32
+
+	//  The method used to display video frames. Used when the streamType is Video .
+	ScanMode ScanMode
+
+	noSmithyDocumentSerde
+}
+
+// Information about a single NDI® sender, including its name.
+type NdiSourceInfo struct {
+
+	//  The name of the upstream NDI sender.
+	//
+	// This member is required.
+	SourceName *string
+
+	noSmithyDocumentSerde
+}
+
+//	Comprehensive information about the NDI® source that's associated with a flow.
+//
+// This includes the currently active NDI source, a list of all discovered NDI
+// senders, metadata about the media streams, and any relevant status messages.
+type NdiSourceMetadataInfo struct {
+
+	//  A list of the available upstream NDI senders aggregated from all of your
+	// configured discovery servers.
+	//
+	// This member is required.
+	DiscoveredSources []NdiSourceInfo
+
+	//  Detailed information about the media streams (video, audio, and so on) that
+	// are part of the active NDI source.
+	//
+	// This member is required.
+	MediaInfo *NdiMediaInfo
+
+	//  Any status messages or error codes related to the NDI source and its metadata.
+	//
+	// This member is required.
+	Messages []MessageDetail
+
+	//  The connected NDI sender that's currently sending source content to the flow's
+	// NDI source.
+	ActiveSource *NdiSourceInfo
+
+	noSmithyDocumentSerde
+}
+
+//	The settings for the NDI® source. This includes the exact name of the upstream
+//
+// NDI sender that you want to connect to your source.
+type NdiSourceSettings struct {
+
+	//  The exact name of an existing NDI sender that's registered with your discovery
+	// server. If included, the format of this name must be MACHINENAME (ProgramName) .
+	SourceName *string
 
 	noSmithyDocumentSerde
 }
@@ -1652,6 +2530,9 @@ type Output struct {
 	//  The bridge output ports currently in use.
 	BridgePorts []int32
 
+	// The ARN of the router input that's connected to this flow output.
+	ConnectedRouterInputArn *string
+
 	//  Percentage from 0-100 of the data transfer cost to be billed to the subscriber.
 	DataTransferSubscriberFeePercent *int32
 
@@ -1686,14 +2567,77 @@ type Output struct {
 	//  An indication of whether the output is transmitting data or not.
 	OutputStatus OutputStatus
 
+	// The IP address of the device that is currently receiving content from this
+	// output.
+	//
+	//   - For outputs that use protocols where you specify the destination (such as
+	//   SRT Caller or Zixi Push), this value matches the configured destination address.
+	//
+	//   - For outputs that use listener protocols (such as SRT Listener), this value
+	//   shows the address of the connected receiver.
+	//
+	//   - Peer IP addresses aren't available for entitlements, managed MediaLive
+	//   outputs, NDI® sources and outputs, and CDI/ST2110 outputs.
+	//
+	//   - The peer IP address might not be visible for flows that haven't been
+	//   started yet, or flows that were started before May 2025. In these cases, restart
+	//   your flow to see the peer IP address.
+	PeerIpAddress *string
+
 	//  The port to use when content is distributed to this output.
 	Port *int32
+
+	// Indicates if router integration is enabled or disabled on the flow output.
+	RouterIntegrationState State
+
+	// The encryption configuration for the output when router integration is enabled.
+	RouterIntegrationTransitEncryption *FlowTransitEncryption
 
 	//  Attributes related to the transport stream that are used in the output.
 	Transport *Transport
 
 	//  The name of the VPC interface attachment to use for this output.
 	VpcInterfaceAttachment *VpcInterfaceAttachment
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for preferred day and time maintenance settings.
+type PreferredDayTimeMaintenanceConfiguration struct {
+
+	// The preferred day for maintenance operations.
+	//
+	// This member is required.
+	Day Day
+
+	// The preferred time for maintenance operations.
+	//
+	// This member is required.
+	Time *string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a public router network interface, including the
+// list of allowed CIDR blocks.
+type PublicRouterNetworkInterfaceConfiguration struct {
+
+	// The list of allowed CIDR blocks for the public router network interface.
+	//
+	// This member is required.
+	AllowRules []PublicRouterNetworkInterfaceRule
+
+	noSmithyDocumentSerde
+}
+
+// A rule that allows a specific CIDR block to access the public router network
+// interface.
+type PublicRouterNetworkInterfaceRule struct {
+
+	// The CIDR block that is allowed to access the public router network interface.
+	//
+	// This member is required.
+	Cidr *string
 
 	noSmithyDocumentSerde
 }
@@ -1800,6 +2744,1038 @@ type ResourceSpecification struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration settings for a router input using the RIST (Reliable Internet
+// Stream Transport) protocol, including the port and recovery latency.
+type RistRouterInputConfiguration struct {
+
+	// The port number used for the RIST protocol in the router input configuration.
+	//
+	// This member is required.
+	Port *int32
+
+	// The recovery latency in milliseconds for the RIST protocol in the router input
+	// configuration.
+	//
+	// This member is required.
+	RecoveryLatencyMilliseconds *int64
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router output using the RIST (Reliable
+// Internet Stream Transport) protocol, including the destination address and port.
+type RistRouterOutputConfiguration struct {
+
+	// The destination IP address for the RIST protocol in the router output
+	// configuration.
+	//
+	// This member is required.
+	DestinationAddress *string
+
+	// The destination port number for the RIST protocol in the router output
+	// configuration.
+	//
+	// This member is required.
+	DestinationPort *int32
+
+	noSmithyDocumentSerde
+}
+
+// A router input in AWS Elemental MediaConnect. A router input is a source of
+// media content that can be routed to one or more router outputs.
+type RouterInput struct {
+
+	// The Amazon Resource Name (ARN) of the router input.
+	//
+	// This member is required.
+	Arn *string
+
+	// The Availability Zone of the router input.
+	//
+	// This member is required.
+	AvailabilityZone *string
+
+	// The configuration settings for a router input.
+	//
+	// This member is required.
+	Configuration RouterInputConfiguration
+
+	// The timestamp when the router input was created.
+	//
+	// This member is required.
+	CreatedAt *time.Time
+
+	// The unique identifier of the router input.
+	//
+	// This member is required.
+	Id *string
+
+	// The type of the router input.
+	//
+	// This member is required.
+	InputType RouterInputType
+
+	// The maintenance configuration settings applied to this router input.
+	//
+	// This member is required.
+	MaintenanceConfiguration MaintenanceConfiguration
+
+	// The type of maintenance configuration applied to this router input.
+	//
+	// This member is required.
+	MaintenanceType MaintenanceType
+
+	// The maximum bitrate for the router input.
+	//
+	// This member is required.
+	MaximumBitrate *int64
+
+	// The messages associated with the router input.
+	//
+	// This member is required.
+	Messages []RouterInputMessage
+
+	// The name of the router input.
+	//
+	// This member is required.
+	Name *string
+
+	// The Amazon Web Services Region where the router input is located.
+	//
+	// This member is required.
+	RegionName *string
+
+	// The number of router outputs associated with the router input.
+	//
+	// This member is required.
+	RoutedOutputs *int32
+
+	// Indicates whether the router input is configured for Regional or global routing.
+	//
+	// This member is required.
+	RoutingScope RoutingScope
+
+	// The current state of the router input.
+	//
+	// This member is required.
+	State RouterInputState
+
+	// Configuration details for the router input stream.
+	//
+	// This member is required.
+	StreamDetails RouterInputStreamDetails
+
+	// Key-value pairs that can be used to tag and organize this router input.
+	//
+	// This member is required.
+	Tags map[string]string
+
+	// The tier level of the router input.
+	//
+	// This member is required.
+	Tier RouterInputTier
+
+	// The transit encryption settings for a router input.
+	//
+	// This member is required.
+	TransitEncryption *RouterInputTransitEncryption
+
+	// The timestamp when the router input was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The IP address of the router input.
+	IpAddress *string
+
+	// The current maintenance schedule details for this router input.
+	MaintenanceSchedule MaintenanceSchedule
+
+	// The type of maintenance schedule currently in effect for this router input.
+	MaintenanceScheduleType MaintenanceScheduleType
+
+	// The maximum number of outputs that can be simultaneously routed to this input.
+	MaximumRoutedOutputs *int32
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router input.
+//
+// The following types satisfy this interface:
+//
+//	RouterInputConfigurationMemberFailover
+//	RouterInputConfigurationMemberMediaConnectFlow
+//	RouterInputConfigurationMemberMerge
+//	RouterInputConfigurationMemberStandard
+type RouterInputConfiguration interface {
+	isRouterInputConfiguration()
+}
+
+// Configuration settings for a failover router input that allows switching
+// between two input sources.
+type RouterInputConfigurationMemberFailover struct {
+	Value FailoverRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputConfigurationMemberFailover) isRouterInputConfiguration() {}
+
+// Configuration settings for connecting a router input to a flow output.
+type RouterInputConfigurationMemberMediaConnectFlow struct {
+	Value MediaConnectFlowRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputConfigurationMemberMediaConnectFlow) isRouterInputConfiguration() {}
+
+// Configuration settings for a merge router input that combines two input sources.
+type RouterInputConfigurationMemberMerge struct {
+	Value MergeRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputConfigurationMemberMerge) isRouterInputConfiguration() {}
+
+// The configuration settings for a standard router input, including the protocol,
+// protocol-specific configuration, network interface, and availability zone.
+type RouterInputConfigurationMemberStandard struct {
+	Value StandardRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputConfigurationMemberStandard) isRouterInputConfiguration() {}
+
+// A filter that can be used to retrieve a list of router inputs.
+//
+// The following types satisfy this interface:
+//
+//	RouterInputFilterMemberInputTypes
+//	RouterInputFilterMemberNameContains
+//	RouterInputFilterMemberNetworkInterfaceArns
+//	RouterInputFilterMemberRegionNames
+//	RouterInputFilterMemberRoutingScopes
+type RouterInputFilter interface {
+	isRouterInputFilter()
+}
+
+// The types of router inputs to include in the filter.
+type RouterInputFilterMemberInputTypes struct {
+	Value []RouterInputType
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputFilterMemberInputTypes) isRouterInputFilter() {}
+
+// The names of the router inputs to include in the filter.
+type RouterInputFilterMemberNameContains struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputFilterMemberNameContains) isRouterInputFilter() {}
+
+// The Amazon Resource Names (ARNs) of the network interfaces associated with the
+// router inputs to include in the filter.
+type RouterInputFilterMemberNetworkInterfaceArns struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputFilterMemberNetworkInterfaceArns) isRouterInputFilter() {}
+
+// The AWS Regions of the router inputs to include in the filter.
+type RouterInputFilterMemberRegionNames struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputFilterMemberRegionNames) isRouterInputFilter() {}
+
+// Filter criteria to list router inputs based on their routing scope (REGIONAL or
+// GLOBAL).
+type RouterInputFilterMemberRoutingScopes struct {
+	Value []RoutingScope
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputFilterMemberRoutingScopes) isRouterInputFilter() {}
+
+// A message associated with a router input, including a code and a message.
+type RouterInputMessage struct {
+
+	// The code associated with the router input message.
+	//
+	// This member is required.
+	Code *string
+
+	// The message text associated with the router input message.
+	//
+	// This member is required.
+	Message *string
+
+	noSmithyDocumentSerde
+}
+
+// Metadata information associated with the router input, including stream details
+// and connection state.
+//
+// The following types satisfy this interface:
+//
+//	RouterInputMetadataMemberTransportStreamMediaInfo
+type RouterInputMetadata interface {
+	isRouterInputMetadata()
+}
+
+// The metadata of the transport stream in the current flow's source.
+type RouterInputMetadataMemberTransportStreamMediaInfo struct {
+	Value TransportMediaInfo
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputMetadataMemberTransportStreamMediaInfo) isRouterInputMetadata() {}
+
+// The protocol configuration settings for a router input.
+//
+// The following types satisfy this interface:
+//
+//	RouterInputProtocolConfigurationMemberRist
+//	RouterInputProtocolConfigurationMemberRtp
+//	RouterInputProtocolConfigurationMemberSrtCaller
+//	RouterInputProtocolConfigurationMemberSrtListener
+type RouterInputProtocolConfiguration interface {
+	isRouterInputProtocolConfiguration()
+}
+
+// The configuration settings for a router input using the RIST (Reliable Internet
+// Stream Transport) protocol, including the port and recovery latency.
+type RouterInputProtocolConfigurationMemberRist struct {
+	Value RistRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputProtocolConfigurationMemberRist) isRouterInputProtocolConfiguration() {}
+
+// The configuration settings for a Router Input using the RTP (Real-Time
+// Transport Protocol) protocol, including the port and forward error correction
+// state.
+type RouterInputProtocolConfigurationMemberRtp struct {
+	Value RtpRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputProtocolConfigurationMemberRtp) isRouterInputProtocolConfiguration() {}
+
+// The configuration settings for a router input using the SRT (Secure Reliable
+// Transport) protocol in caller mode, including the source address and port,
+// minimum latency, stream ID, and decryption key configuration.
+type RouterInputProtocolConfigurationMemberSrtCaller struct {
+	Value SrtCallerRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputProtocolConfigurationMemberSrtCaller) isRouterInputProtocolConfiguration() {}
+
+// The configuration settings for a router input using the SRT (Secure Reliable
+// Transport) protocol in listener mode, including the port, minimum latency, and
+// decryption key configuration.
+type RouterInputProtocolConfigurationMemberSrtListener struct {
+	Value SrtListenerRouterInputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputProtocolConfigurationMemberSrtListener) isRouterInputProtocolConfiguration() {}
+
+// Detailed metadata information about a router input source.
+type RouterInputSourceMetadataDetails struct {
+
+	// Collection of metadata messages associated with the router input source.
+	//
+	// This member is required.
+	SourceMetadataMessages []RouterInputMessage
+
+	// The timestamp when the metadata was last updated.
+	//
+	// This member is required.
+	Timestamp *time.Time
+
+	// Metadata information specific to the router input configuration and state.
+	RouterInputMetadata RouterInputMetadata
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for the router input stream.
+//
+// The following types satisfy this interface:
+//
+//	RouterInputStreamDetailsMemberFailover
+//	RouterInputStreamDetailsMemberMediaConnectFlow
+//	RouterInputStreamDetailsMemberMerge
+//	RouterInputStreamDetailsMemberStandard
+type RouterInputStreamDetails interface {
+	isRouterInputStreamDetails()
+}
+
+// Configuration details for a failover router input that can automatically switch
+// between two sources.
+type RouterInputStreamDetailsMemberFailover struct {
+	Value FailoverRouterInputStreamDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputStreamDetailsMemberFailover) isRouterInputStreamDetails() {}
+
+// Configuration details for a MediaConnect flow when used as a router input
+// source.
+type RouterInputStreamDetailsMemberMediaConnectFlow struct {
+	Value MediaConnectFlowRouterInputStreamDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputStreamDetailsMemberMediaConnectFlow) isRouterInputStreamDetails() {}
+
+// Configuration details for a merge router input that combines two input sources.
+type RouterInputStreamDetailsMemberMerge struct {
+	Value MergeRouterInputStreamDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputStreamDetailsMemberMerge) isRouterInputStreamDetails() {}
+
+// Configuration details for a standard router input stream type.
+type RouterInputStreamDetailsMemberStandard struct {
+	Value StandardRouterInputStreamDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputStreamDetailsMemberStandard) isRouterInputStreamDetails() {}
+
+// The details of a thumbnail associated with a router input, including the
+// thumbnail messages, the thumbnail image, the timecode, and the timestamp.
+type RouterInputThumbnailDetails struct {
+
+	// The messages associated with the router input thumbnail.
+	//
+	// This member is required.
+	ThumbnailMessages []RouterInputMessage
+
+	// The thumbnail image, encoded as a Base64-encoded binary data object.
+	Thumbnail []byte
+
+	// The timecode associated with the thumbnail.
+	Timecode *string
+
+	// The timestamp associated with the thumbnail.
+	Timestamp *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// The transit encryption settings for a router input.
+type RouterInputTransitEncryption struct {
+
+	// Contains the configuration details for the encryption key used in transit
+	// encryption, including the key source and associated parameters.
+	//
+	// This member is required.
+	EncryptionKeyConfiguration RouterInputTransitEncryptionKeyConfiguration
+
+	// Specifies the type of encryption key to use for transit encryption.
+	EncryptionKeyType RouterInputTransitEncryptionKeyType
+
+	noSmithyDocumentSerde
+}
+
+// Defines the configuration settings for transit encryption keys.
+//
+// The following types satisfy this interface:
+//
+//	RouterInputTransitEncryptionKeyConfigurationMemberAutomatic
+//	RouterInputTransitEncryptionKeyConfigurationMemberSecretsManager
+type RouterInputTransitEncryptionKeyConfiguration interface {
+	isRouterInputTransitEncryptionKeyConfiguration()
+}
+
+// Configuration settings for automatic encryption key management, where
+// MediaConnect handles key creation and rotation.
+type RouterInputTransitEncryptionKeyConfigurationMemberAutomatic struct {
+	Value AutomaticEncryptionKeyConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputTransitEncryptionKeyConfigurationMemberAutomatic) isRouterInputTransitEncryptionKeyConfiguration() {
+}
+
+// The configuration settings for transit encryption using Secrets Manager,
+// including the secret ARN and role ARN.
+type RouterInputTransitEncryptionKeyConfigurationMemberSecretsManager struct {
+	Value SecretsManagerEncryptionKeyConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterInputTransitEncryptionKeyConfigurationMemberSecretsManager) isRouterInputTransitEncryptionKeyConfiguration() {
+}
+
+// A router network interface in AWS Elemental MediaConnect. A router network
+// interface is a network interface that can be associated with one or more router
+// inputs and outputs.
+type RouterNetworkInterface struct {
+
+	// The Amazon Resource Name (ARN) of the router network interface.
+	//
+	// This member is required.
+	Arn *string
+
+	// The number of router inputs associated with the network interface.
+	//
+	// This member is required.
+	AssociatedInputCount *int32
+
+	// The number of router outputs associated with the network interface.
+	//
+	// This member is required.
+	AssociatedOutputCount *int32
+
+	// The configuration settings for a router network interface.
+	//
+	// This member is required.
+	Configuration RouterNetworkInterfaceConfiguration
+
+	// The timestamp when the router network interface was created.
+	//
+	// This member is required.
+	CreatedAt *time.Time
+
+	// The unique identifier of the router network interface.
+	//
+	// This member is required.
+	Id *string
+
+	// The name of the router network interface.
+	//
+	// This member is required.
+	Name *string
+
+	// The type of the router network interface.
+	//
+	// This member is required.
+	NetworkInterfaceType RouterNetworkInterfaceType
+
+	// The Amazon Web Services Region where the router network interface is located.
+	//
+	// This member is required.
+	RegionName *string
+
+	// The current state of the router network interface.
+	//
+	// This member is required.
+	State RouterNetworkInterfaceState
+
+	// Key-value pairs that can be used to tag and organize this router network
+	// interface.
+	//
+	// This member is required.
+	Tags map[string]string
+
+	// The timestamp when the router network interface was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router network interface.
+//
+// The following types satisfy this interface:
+//
+//	RouterNetworkInterfaceConfigurationMemberPublic
+//	RouterNetworkInterfaceConfigurationMemberVpc
+type RouterNetworkInterfaceConfiguration interface {
+	isRouterNetworkInterfaceConfiguration()
+}
+
+// The configuration settings for a public router network interface, including the
+// list of allowed CIDR blocks.
+type RouterNetworkInterfaceConfigurationMemberPublic struct {
+	Value PublicRouterNetworkInterfaceConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterNetworkInterfaceConfigurationMemberPublic) isRouterNetworkInterfaceConfiguration() {}
+
+// The configuration settings for a router network interface within a VPC,
+// including the security group IDs and subnet ID.
+type RouterNetworkInterfaceConfigurationMemberVpc struct {
+	Value VpcRouterNetworkInterfaceConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterNetworkInterfaceConfigurationMemberVpc) isRouterNetworkInterfaceConfiguration() {}
+
+// A filter that can be used to retrieve a list of router network interfaces.
+//
+// The following types satisfy this interface:
+//
+//	RouterNetworkInterfaceFilterMemberNameContains
+//	RouterNetworkInterfaceFilterMemberNetworkInterfaceTypes
+//	RouterNetworkInterfaceFilterMemberRegionNames
+type RouterNetworkInterfaceFilter interface {
+	isRouterNetworkInterfaceFilter()
+}
+
+// The names of the router network interfaces to include in the filter.
+type RouterNetworkInterfaceFilterMemberNameContains struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterNetworkInterfaceFilterMemberNameContains) isRouterNetworkInterfaceFilter() {}
+
+// The types of router network interfaces to include in the filter.
+type RouterNetworkInterfaceFilterMemberNetworkInterfaceTypes struct {
+	Value []RouterNetworkInterfaceType
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterNetworkInterfaceFilterMemberNetworkInterfaceTypes) isRouterNetworkInterfaceFilter() {}
+
+// The AWS Regions of the router network interfaces to include in the filter.
+type RouterNetworkInterfaceFilterMemberRegionNames struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterNetworkInterfaceFilterMemberRegionNames) isRouterNetworkInterfaceFilter() {}
+
+// A router output in AWS Elemental MediaConnect. A router output is a destination
+// for media content that can receive input from one or more router inputs.
+type RouterOutput struct {
+
+	// The Amazon Resource Name (ARN) of the router output.
+	//
+	// This member is required.
+	Arn *string
+
+	// The Availability Zone of the router output.
+	//
+	// This member is required.
+	AvailabilityZone *string
+
+	// The configuration settings for a router output.
+	//
+	// This member is required.
+	Configuration RouterOutputConfiguration
+
+	// The timestamp when the router output was created.
+	//
+	// This member is required.
+	CreatedAt *time.Time
+
+	// The unique identifier of the router output.
+	//
+	// This member is required.
+	Id *string
+
+	// The maintenance configuration settings applied to this router output.
+	//
+	// This member is required.
+	MaintenanceConfiguration MaintenanceConfiguration
+
+	// The type of maintenance configuration applied to this router output.
+	//
+	// This member is required.
+	MaintenanceType MaintenanceType
+
+	// The maximum bitrate for the router output.
+	//
+	// This member is required.
+	MaximumBitrate *int64
+
+	// The messages associated with the router output.
+	//
+	// This member is required.
+	Messages []RouterOutputMessage
+
+	// The name of the router output.
+	//
+	// This member is required.
+	Name *string
+
+	// The type of the router output.
+	//
+	// This member is required.
+	OutputType RouterOutputType
+
+	// The Amazon Web Services Region where the router output is located.
+	//
+	// This member is required.
+	RegionName *string
+
+	// The current state of the association between the router output and its input.
+	//
+	// This member is required.
+	RoutedState RouterOutputRoutedState
+
+	// Indicates whether the router output is configured for Regional or global
+	// routing.
+	//
+	// This member is required.
+	RoutingScope RoutingScope
+
+	// The overall state of the router output.
+	//
+	// This member is required.
+	State RouterOutputState
+
+	// Information about the router output's stream, including connection state and
+	// destination details. The specific details provided vary based on the router
+	// output type.
+	//
+	// This member is required.
+	StreamDetails RouterOutputStreamDetails
+
+	// Key-value pairs that can be used to tag and organize this router output.
+	//
+	// This member is required.
+	Tags map[string]string
+
+	// The tier level of the router output.
+	//
+	// This member is required.
+	Tier RouterOutputTier
+
+	// The timestamp when the router output was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The IP address of the router output.
+	IpAddress *string
+
+	// The current maintenance schedule details for this router output.
+	MaintenanceSchedule MaintenanceSchedule
+
+	// The type of maintenance schedule currently in effect for this router output.
+	MaintenanceScheduleType MaintenanceScheduleType
+
+	// The Amazon Resource Name (ARN) of the router input associated with the output.
+	RoutedInputArn *string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router output.
+//
+// The following types satisfy this interface:
+//
+//	RouterOutputConfigurationMemberMediaConnectFlow
+//	RouterOutputConfigurationMemberMediaLiveInput
+//	RouterOutputConfigurationMemberStandard
+type RouterOutputConfiguration interface {
+	isRouterOutputConfiguration()
+}
+
+// Configuration settings for connecting a router output to a MediaConnect flow
+// source.
+type RouterOutputConfigurationMemberMediaConnectFlow struct {
+	Value MediaConnectFlowRouterOutputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputConfigurationMemberMediaConnectFlow) isRouterOutputConfiguration() {}
+
+// Configuration settings for connecting a router output to a MediaLive input.
+type RouterOutputConfigurationMemberMediaLiveInput struct {
+	Value MediaLiveInputRouterOutputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputConfigurationMemberMediaLiveInput) isRouterOutputConfiguration() {}
+
+// The configuration settings for a standard router output, including the
+// protocol, protocol-specific configuration, network interface, and availability
+// zone.
+type RouterOutputConfigurationMemberStandard struct {
+	Value StandardRouterOutputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputConfigurationMemberStandard) isRouterOutputConfiguration() {}
+
+// A filter that can be used to retrieve a list of router outputs.
+//
+// The following types satisfy this interface:
+//
+//	RouterOutputFilterMemberNameContains
+//	RouterOutputFilterMemberNetworkInterfaceArns
+//	RouterOutputFilterMemberOutputTypes
+//	RouterOutputFilterMemberRegionNames
+//	RouterOutputFilterMemberRoutedInputArns
+//	RouterOutputFilterMemberRoutingScopes
+type RouterOutputFilter interface {
+	isRouterOutputFilter()
+}
+
+// The names of the router outputs to include in the filter.
+type RouterOutputFilterMemberNameContains struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputFilterMemberNameContains) isRouterOutputFilter() {}
+
+// The Amazon Resource Names (ARNs) of the network interfaces associated with the
+// router outputs to include in the filter.
+type RouterOutputFilterMemberNetworkInterfaceArns struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputFilterMemberNetworkInterfaceArns) isRouterOutputFilter() {}
+
+// The types of router outputs to include in the filter.
+type RouterOutputFilterMemberOutputTypes struct {
+	Value []RouterOutputType
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputFilterMemberOutputTypes) isRouterOutputFilter() {}
+
+// The AWS Regions of the router outputs to include in the filter.
+type RouterOutputFilterMemberRegionNames struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputFilterMemberRegionNames) isRouterOutputFilter() {}
+
+// The ARNs of the router inputs associated with the router outputs to include in
+// the filter.
+type RouterOutputFilterMemberRoutedInputArns struct {
+	Value []string
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputFilterMemberRoutedInputArns) isRouterOutputFilter() {}
+
+// Filter criteria to list router outputs based on their routing scope.
+type RouterOutputFilterMemberRoutingScopes struct {
+	Value []RoutingScope
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputFilterMemberRoutingScopes) isRouterOutputFilter() {}
+
+// A message associated with a router output.
+type RouterOutputMessage struct {
+
+	// The code associated with the router output message.
+	//
+	// This member is required.
+	Code *string
+
+	// The message text associated with the router output message.
+	//
+	// This member is required.
+	Message *string
+
+	noSmithyDocumentSerde
+}
+
+// The protocol configuration settings for a router output.
+//
+// The following types satisfy this interface:
+//
+//	RouterOutputProtocolConfigurationMemberRist
+//	RouterOutputProtocolConfigurationMemberRtp
+//	RouterOutputProtocolConfigurationMemberSrtCaller
+//	RouterOutputProtocolConfigurationMemberSrtListener
+type RouterOutputProtocolConfiguration interface {
+	isRouterOutputProtocolConfiguration()
+}
+
+// The configuration settings for a router output using the RIST (Reliable
+// Internet Stream Transport) protocol, including the destination address and port.
+type RouterOutputProtocolConfigurationMemberRist struct {
+	Value RistRouterOutputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputProtocolConfigurationMemberRist) isRouterOutputProtocolConfiguration() {}
+
+// The configuration settings for a router output using the RTP (Real-Time
+// Transport Protocol) protocol, including the destination address and port, and
+// forward error correction state.
+type RouterOutputProtocolConfigurationMemberRtp struct {
+	Value RtpRouterOutputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputProtocolConfigurationMemberRtp) isRouterOutputProtocolConfiguration() {}
+
+// The configuration settings for a router output using the SRT (Secure Reliable
+// Transport) protocol in caller mode, including the destination address and port,
+// minimum latency, stream ID, and encryption key configuration.
+type RouterOutputProtocolConfigurationMemberSrtCaller struct {
+	Value SrtCallerRouterOutputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputProtocolConfigurationMemberSrtCaller) isRouterOutputProtocolConfiguration() {}
+
+// The configuration settings for a router output using the SRT (Secure Reliable
+// Transport) protocol in listener mode, including the port, minimum latency, and
+// encryption key configuration.
+type RouterOutputProtocolConfigurationMemberSrtListener struct {
+	Value SrtListenerRouterOutputConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputProtocolConfigurationMemberSrtListener) isRouterOutputProtocolConfiguration() {}
+
+// Information about the router output's stream, including connection state and
+// destination details. The specific details provided vary based on the router
+// output type.
+//
+// The following types satisfy this interface:
+//
+//	RouterOutputStreamDetailsMemberMediaConnectFlow
+//	RouterOutputStreamDetailsMemberMediaLiveInput
+//	RouterOutputStreamDetailsMemberStandard
+type RouterOutputStreamDetails interface {
+	isRouterOutputStreamDetails()
+}
+
+// Configuration details for a MediaConnect flow when used as a router output
+// destination.
+type RouterOutputStreamDetailsMemberMediaConnectFlow struct {
+	Value MediaConnectFlowRouterOutputStreamDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputStreamDetailsMemberMediaConnectFlow) isRouterOutputStreamDetails() {}
+
+// Configuration details for a MediaLive input when used as a router output
+// destination.
+type RouterOutputStreamDetailsMemberMediaLiveInput struct {
+	Value MediaLiveInputRouterOutputStreamDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputStreamDetailsMemberMediaLiveInput) isRouterOutputStreamDetails() {}
+
+// Configuration details for a standard router output stream type. Contains
+// information about the destination IP address and connection state for basic
+// output routing.
+type RouterOutputStreamDetailsMemberStandard struct {
+	Value StandardRouterOutputStreamDetails
+
+	noSmithyDocumentSerde
+}
+
+func (*RouterOutputStreamDetailsMemberStandard) isRouterOutputStreamDetails() {}
+
+// The configuration settings for a Router Input using the RTP (Real-Time
+// Transport Protocol) protocol, including the port and forward error correction
+// state.
+type RtpRouterInputConfiguration struct {
+
+	// The port number used for the RTP protocol in the router input configuration.
+	//
+	// This member is required.
+	Port *int32
+
+	// The state of forward error correction for the RTP protocol in the router input
+	// configuration.
+	ForwardErrorCorrection ForwardErrorCorrectionState
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router output using the RTP (Real-Time
+// Transport Protocol) protocol, including the destination address and port, and
+// forward error correction state.
+type RtpRouterOutputConfiguration struct {
+
+	// The destination IP address for the RTP protocol in the router output
+	// configuration.
+	//
+	// This member is required.
+	DestinationAddress *string
+
+	// The destination port number for the RTP protocol in the router output
+	// configuration.
+	//
+	// This member is required.
+	DestinationPort *int32
+
+	// The state of forward error correction for the RTP protocol in the router output
+	// configuration.
+	ForwardErrorCorrection ForwardErrorCorrectionState
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for transit encryption using Secrets Manager,
+// including the secret ARN and role ARN.
+type SecretsManagerEncryptionKeyConfiguration struct {
+
+	// The ARN of the IAM role assumed by MediaConnect to access the Secrets Manager
+	// secret.
+	//
+	// This member is required.
+	RoleArn *string
+
+	// The ARN of the Secrets Manager secret used for transit encryption.
+	//
+	// This member is required.
+	SecretArn *string
+
+	noSmithyDocumentSerde
+}
+
 // The source configuration for cloud flows receiving a stream from a bridge.
 type SetGatewayBridgeSourceRequest struct {
 
@@ -1860,11 +3836,24 @@ type SetSourceRequest struct {
 	//  The name of the source.
 	Name *string
 
+	//  The settings for the NDI® source. This includes the exact name of the upstream
+	// NDI sender that you want to connect to your source.
+	NdiSourceSettings *NdiSourceSettings
+
 	//  The protocol that is used by the source.
 	//
 	// Elemental MediaConnect no longer supports the Fujitsu QoS protocol. This
 	// reference is maintained for legacy purposes only.
 	Protocol Protocol
+
+	// Indicates whether to enable or disable router integration when setting a flow
+	// source.
+	RouterIntegrationState State
+
+	// The decryption configuration for the flow source when router integration is
+	// enabled. Specifies how the source content should be decrypted when router
+	// integration is used.
+	RouterIntegrationTransitDecryption *FlowTransitEncryption
 
 	//  The port that the flow uses to send outbound requests to initiate connection
 	// with the sender.
@@ -1879,6 +3868,9 @@ type SetSourceRequest struct {
 
 	//  Source port for SRT-caller protocol.
 	SourceListenerPort *int32
+
+	//  The key-value pairs that can be used to tag and organize the source.
+	SourceTags map[string]string
 
 	//  The stream ID that you want to use for this transport. This parameter applies
 	// only to Zixi and SRT caller-based streams.
@@ -1921,6 +3913,9 @@ type Source struct {
 	// This member is required.
 	SourceArn *string
 
+	// The ARN of the router output that's currently connected to this source.
+	ConnectedRouterOutputArn *string
+
 	//  Percentage from 0-100 of the data transfer cost to be billed to the subscriber.
 	DataTransferSubscriberFeePercent *int32
 
@@ -1948,6 +3943,28 @@ type Source struct {
 	//  The media streams that are associated with the source, and the parameters for
 	// those associations.
 	MediaStreamSourceConfigurations []MediaStreamSourceConfiguration
+
+	// The IP address of the device that is currently sending content to this source.
+	//
+	//   - For sources that use protocols where you specify the origin (such as SRT
+	//   Caller), this value matches the configured origin address.
+	//
+	//   - For sources that use listener protocols (such as SRT Listener or RTP), this
+	//   value shows the address of the connected sender.
+	//
+	//   - Peer IP addresses aren't available for entitlements and CDI/ST2110 sources.
+	//
+	//   - The peer IP address might not be visible for flows that haven't been
+	//   started yet, or flows that were started before May 2025. In these cases, restart
+	//   your flow to see the peer IP address.
+	PeerIpAddress *string
+
+	// Indicates if router integration is enabled or disabled on the flow source.
+	RouterIntegrationState State
+
+	// The decryption configuration for the flow source when router integration is
+	// enabled.
+	RouterIntegrationTransitDecryption *FlowTransitEncryption
 
 	//  The IP address that the flow communicates with to initiate connection with the
 	// sender.
@@ -1978,6 +3995,200 @@ type SourcePriority struct {
 
 	//  The name of the source you choose as the primary source for this flow.
 	PrimarySource *string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router input using the SRT (Secure Reliable
+// Transport) protocol in caller mode, including the source address and port,
+// minimum latency, stream ID, and decryption key configuration.
+type SrtCallerRouterInputConfiguration struct {
+
+	// The minimum latency in milliseconds for the SRT protocol in caller mode.
+	//
+	// This member is required.
+	MinimumLatencyMilliseconds *int64
+
+	// The source IP address for the SRT protocol in caller mode.
+	//
+	// This member is required.
+	SourceAddress *string
+
+	// The source port number for the SRT protocol in caller mode.
+	//
+	// This member is required.
+	SourcePort *int32
+
+	// Specifies the decryption settings for an SRT caller input, including the
+	// encryption key configuration and associated parameters.
+	DecryptionConfiguration *SrtDecryptionConfiguration
+
+	// The stream ID for the SRT protocol in caller mode.
+	StreamId *string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router output using the SRT (Secure Reliable
+// Transport) protocol in caller mode, including the destination address and port,
+// minimum latency, stream ID, and encryption key configuration.
+type SrtCallerRouterOutputConfiguration struct {
+
+	// The destination IP address for the SRT protocol in caller mode.
+	//
+	// This member is required.
+	DestinationAddress *string
+
+	// The destination port number for the SRT protocol in caller mode.
+	//
+	// This member is required.
+	DestinationPort *int32
+
+	// The minimum latency in milliseconds for the SRT protocol in caller mode.
+	//
+	// This member is required.
+	MinimumLatencyMilliseconds *int64
+
+	// Defines the encryption settings for an SRT caller output, including the
+	// encryption key configuration and associated parameters.
+	EncryptionConfiguration *SrtEncryptionConfiguration
+
+	// The stream ID for the SRT protocol in caller mode.
+	StreamId *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains the configuration settings for decrypting SRT streams, including the
+// encryption key details and decryption parameters.
+type SrtDecryptionConfiguration struct {
+
+	// Specifies the encryption key configuration used for decrypting SRT streams,
+	// including the key source and associated credentials.
+	//
+	// This member is required.
+	EncryptionKey *SecretsManagerEncryptionKeyConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// Contains the configuration settings for encrypting SRT streams, including the
+// encryption key details and encryption parameters.
+type SrtEncryptionConfiguration struct {
+
+	// Specifies the encryption key configuration used for encrypting SRT streams,
+	// including the key source and associated credentials.
+	//
+	// This member is required.
+	EncryptionKey *SecretsManagerEncryptionKeyConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router input using the SRT (Secure Reliable
+// Transport) protocol in listener mode, including the port, minimum latency, and
+// decryption key configuration.
+type SrtListenerRouterInputConfiguration struct {
+
+	// The minimum latency in milliseconds for the SRT protocol in listener mode.
+	//
+	// This member is required.
+	MinimumLatencyMilliseconds *int64
+
+	// The port number for the SRT protocol in listener mode.
+	//
+	// This member is required.
+	Port *int32
+
+	// Specifies the decryption settings for an SRT listener input, including the
+	// encryption key configuration and associated parameters.
+	DecryptionConfiguration *SrtDecryptionConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router output using the SRT (Secure Reliable
+// Transport) protocol in listener mode, including the port, minimum latency, and
+// encryption key configuration.
+type SrtListenerRouterOutputConfiguration struct {
+
+	// The minimum latency in milliseconds for the SRT protocol in listener mode.
+	//
+	// This member is required.
+	MinimumLatencyMilliseconds *int64
+
+	// The port number for the SRT protocol in listener mode.
+	//
+	// This member is required.
+	Port *int32
+
+	// Defines the encryption settings for an SRT listener output, including the
+	// encryption key configuration and associated parameters.
+	EncryptionConfiguration *SrtEncryptionConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a standard router input, including the protocol,
+// protocol-specific configuration, network interface, and availability zone.
+type StandardRouterInputConfiguration struct {
+
+	// The Amazon Resource Name (ARN) of the network interface associated with the
+	// standard router input.
+	//
+	// This member is required.
+	NetworkInterfaceArn *string
+
+	// The configuration settings for the protocol used by the standard router input.
+	//
+	// This member is required.
+	ProtocolConfiguration RouterInputProtocolConfiguration
+
+	// The protocol used by the standard router input.
+	Protocol RouterInputProtocol
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for a standard router input stream type.
+type StandardRouterInputStreamDetails struct {
+
+	// The source IP address for the standard router input stream.
+	SourceIpAddress *string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a standard router output, including the
+// protocol, protocol-specific configuration, network interface, and availability
+// zone.
+type StandardRouterOutputConfiguration struct {
+
+	// The Amazon Resource Name (ARN) of the network interface associated with the
+	// standard router output.
+	//
+	// This member is required.
+	NetworkInterfaceArn *string
+
+	// The configuration settings for the protocol used by the standard router output.
+	//
+	// This member is required.
+	ProtocolConfiguration RouterOutputProtocolConfiguration
+
+	// The protocol used by the standard router output.
+	Protocol RouterOutputProtocol
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for a standard router output stream type. Contains
+// information about the destination IP address and connection state for basic
+// output routing.
+type StandardRouterOutputStreamDetails struct {
+
+	// The IP address where the output stream will be sent. This is the destination
+	// address that will receive the routed media content.
+	DestinationIpAddress *string
 
 	noSmithyDocumentSerde
 }
@@ -2042,9 +4253,13 @@ type Transport struct {
 	// receiver’s minimum latency.
 	MinLatency *int32
 
-	// A suffix for the names of the NDI sources that the flow creates. If a custom
+	// A suffix for the name of the NDI® sender that the flow creates. If a custom
 	// name isn't specified, MediaConnect uses the output name.
 	NdiProgramName *string
+
+	//  The settings for the NDI source. This includes the exact name of the upstream
+	// NDI sender that you want to connect to your source.
+	NdiSourceSettings *NdiSourceSettings
 
 	// A quality setting for the NDI Speed HQ encoder.
 	NdiSpeedHqQuality *int32
@@ -2426,7 +4641,79 @@ type VpcInterfaceRequest struct {
 	// The type of network interface.
 	NetworkInterfaceType NetworkInterfaceType
 
+	//  The key-value pairs that can be used to tag and organize the VPC network
+	// interface.
+	VpcInterfaceTags map[string]string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration settings for a router network interface within a VPC,
+// including the security group IDs and subnet ID.
+type VpcRouterNetworkInterfaceConfiguration struct {
+
+	// The IDs of the security groups to associate with the router network interface
+	// within the VPC.
+	//
+	// This member is required.
+	SecurityGroupIds []string
+
+	// The ID of the subnet within the VPC to associate the router network interface
+	// with.
+	//
+	// This member is required.
+	SubnetId *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines a specific time window for maintenance operations.
+type WindowMaintenanceSchedule struct {
+
+	// The end time of the maintenance window.
+	//
+	// This member is required.
+	End *time.Time
+
+	// The date and time when the maintenance window is scheduled to occur.
+	//
+	// This member is required.
+	ScheduledTime *time.Time
+
+	// The start time of the maintenance window.
+	//
+	// This member is required.
+	Start *time.Time
+
 	noSmithyDocumentSerde
 }
 
 type noSmithyDocumentSerde = smithydocument.NoSerde
+
+// UnknownUnionMember is returned when a union member is returned over the wire,
+// but has an unknown tag.
+type UnknownUnionMember struct {
+	Tag   string
+	Value []byte
+
+	noSmithyDocumentSerde
+}
+
+func (*UnknownUnionMember) isFailoverRouterInputProtocolConfiguration()     {}
+func (*UnknownUnionMember) isFlowTransitEncryptionKeyConfiguration()        {}
+func (*UnknownUnionMember) isMaintenanceConfiguration()                     {}
+func (*UnknownUnionMember) isMaintenanceSchedule()                          {}
+func (*UnknownUnionMember) isMediaLiveTransitEncryptionKeyConfiguration()   {}
+func (*UnknownUnionMember) isMergeRouterInputProtocolConfiguration()        {}
+func (*UnknownUnionMember) isRouterInputConfiguration()                     {}
+func (*UnknownUnionMember) isRouterInputFilter()                            {}
+func (*UnknownUnionMember) isRouterInputMetadata()                          {}
+func (*UnknownUnionMember) isRouterInputProtocolConfiguration()             {}
+func (*UnknownUnionMember) isRouterInputStreamDetails()                     {}
+func (*UnknownUnionMember) isRouterInputTransitEncryptionKeyConfiguration() {}
+func (*UnknownUnionMember) isRouterNetworkInterfaceConfiguration()          {}
+func (*UnknownUnionMember) isRouterNetworkInterfaceFilter()                 {}
+func (*UnknownUnionMember) isRouterOutputConfiguration()                    {}
+func (*UnknownUnionMember) isRouterOutputFilter()                           {}
+func (*UnknownUnionMember) isRouterOutputProtocolConfiguration()            {}
+func (*UnknownUnionMember) isRouterOutputStreamDetails()                    {}

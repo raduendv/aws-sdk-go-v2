@@ -52,6 +52,10 @@ type ListRuleGroupsInput struct {
 	// all available managed rule groups.
 	Scope types.ResourceManagedStatus
 
+	// Filters the results to show only rule groups with the specified subscription
+	// status. Use this to find subscribed or unsubscribed rule groups.
+	SubscriptionStatus types.SubscriptionStatus
+
 	// Indicates whether the rule group is stateless or stateful. If the rule group is
 	// stateless, it contains stateless rules. If it is stateful, it contains stateful
 	// rules.
@@ -164,16 +168,13 @@ func (c *Client) addOperationListRuleGroupsMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -57,7 +57,11 @@ type StopContactInput struct {
 	InstanceId *string
 
 	// The reason a contact can be disconnected. Only Amazon Connect outbound
-	// campaigns can provide this field.
+	// campaigns can provide this field. For a list and description of all the possible
+	// disconnect reasons by channel (including outbound campaign voice contacts) see
+	// DisconnectReason under [ContactTraceRecord]in the Amazon Connect Administrator Guide.
+	//
+	// [ContactTraceRecord]: https://docs.aws.amazon.com/connect/latest/adminguide/ctr-data-model.html#ctr-ContactTraceRecord
 	DisconnectReason *types.DisconnectReason
 
 	noSmithyDocumentSerde
@@ -158,16 +162,13 @@ func (c *Client) addOperationStopContactMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

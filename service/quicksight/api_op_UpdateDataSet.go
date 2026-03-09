@@ -56,7 +56,7 @@ type UpdateDataSetInput struct {
 	// This member is required.
 	PhysicalTableMap map[string]types.PhysicalTable
 
-	// Groupings of columns that work together in certain Amazon QuickSight features.
+	// Groupings of columns that work together in certain Amazon Quick Sight features.
 	// Currently, only geospatial hierarchy is supported.
 	ColumnGroups []types.ColumnGroup
 
@@ -64,6 +64,11 @@ type UpdateDataSetInput struct {
 	//
 	// [ColumnLevelPermissionRule]: https://docs.aws.amazon.com/quicksight/latest/APIReference/API_ColumnLevelPermissionRule.html
 	ColumnLevelPermissionRules []types.ColumnLevelPermissionRule
+
+	// The data preparation configuration for the dataset. This configuration defines
+	// the source tables, transformation steps, and destination tables used to prepare
+	// the data. Required when using the new data preparation experience.
+	DataPrepConfiguration *types.DataPrepConfiguration
 
 	// The usage configuration to apply to child datasets that reference this dataset
 	// as a source.
@@ -76,19 +81,33 @@ type UpdateDataSetInput struct {
 	FieldFolders map[string]types.FieldFolder
 
 	// Configures the combination and transformation of the data from the physical
-	// tables.
+	// tables. This parameter is used with the legacy data preparation experience.
+	//
+	// Deprecated: Only used in the legacy data preparation experience.
 	LogicalTableMap map[string]types.LogicalTable
 
 	// The configuration for the performance optimization of the dataset that contains
 	// a UniqueKey configuration.
 	PerformanceConfiguration *types.PerformanceConfiguration
 
-	// The row-level security configuration for the data you want to create.
+	// The row-level security configuration for the data you want to create. This
+	// parameter is used with the legacy data preparation experience.
+	//
+	// Deprecated: Only used in the legacy data preparation experience.
 	RowLevelPermissionDataSet *types.RowLevelPermissionDataSet
 
 	// The configuration of tags on a dataset to set row-level security. Row-level
-	// security tags are currently supported for anonymous embedding only.
+	// security tags are currently supported for anonymous embedding only. This
+	// parameter is used with the legacy data preparation experience.
+	//
+	// Deprecated: Only used in the legacy data preparation experience.
 	RowLevelPermissionTagConfiguration *types.RowLevelPermissionTagConfiguration
+
+	// The semantic model configuration for the dataset. This configuration defines
+	// how the prepared data is structured for an analysis, including table mappings
+	// and row-level security configurations. Required when using the new data
+	// preparation experience.
+	SemanticModelConfiguration *types.SemanticModelConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -98,7 +117,7 @@ type UpdateDataSetOutput struct {
 	// The Amazon Resource Name (ARN) of the dataset.
 	Arn *string
 
-	// The ID for the dataset that you want to create. This ID is unique per Amazon
+	// The ID for the dataset that you want to update. This ID is unique per Amazon
 	// Web Services Region for each Amazon Web Services account.
 	DataSetId *string
 
@@ -210,16 +229,13 @@ func (c *Client) addOperationUpdateDataSetMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

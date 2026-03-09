@@ -162,6 +162,10 @@ type Application struct {
 	// The date and time when the application was originally created.
 	CreatedDate *time.Time
 
+	// The Amazon Web Services Region where the application was created in IAM
+	// Identity Center.
+	CreatedFrom *string
+
 	// The description of the application.
 	Description *string
 
@@ -241,7 +245,8 @@ type ApplicationProvider struct {
 	noSmithyDocumentSerde
 }
 
-// A structure that stores the details of the Amazon Web Services managed policy.
+// A structure that stores a list of managed policy ARNs that describe the
+// associated Amazon Web Services managed policy.
 type AttachedManagedPolicy struct {
 
 	// The ARN of the Amazon Web Services managed policy. For more information about
@@ -292,6 +297,8 @@ type AuthorizationCodeGrant struct {
 
 	// A list of URIs that are valid locations to redirect a user's browser after the
 	// user is authorized.
+	//
+	// RedirectUris is required when the grant type is authorization_code .
 	RedirectUris []string
 
 	noSmithyDocumentSerde
@@ -343,6 +350,47 @@ type DisplayData struct {
 
 	// A URL that points to an icon that represents the application provider.
 	IconUrl *string
+
+	noSmithyDocumentSerde
+}
+
+//	A structure that specifies the KMS key type and KMS key ARN used to encrypt
+//
+// data in your IAM Identity Center instance.
+type EncryptionConfiguration struct {
+
+	// The type of KMS key used for encryption.
+	//
+	// This member is required.
+	KeyType KmsKeyType
+
+	// The ARN of the KMS key used to encrypt data. Required when KeyType is
+	// CUSTOMER_MANAGED_KEY. Cannot be specified when KeyType is AWS_OWNED_KMS_KEY.
+	KmsKeyArn *string
+
+	noSmithyDocumentSerde
+}
+
+// The encryption configuration of your IAM Identity Center instance, including
+// the key type, KMS key ARN, and current encryption status.
+type EncryptionConfigurationDetails struct {
+
+	// The current status of encryption configuration.
+	EncryptionStatus KmsKeyStatus
+
+	// Provides additional context about the current encryption status. This field is
+	// particularly useful when the encryption status is UPDATE_FAILED. When encryption
+	// configuration update fails, this field contains information about the cause,
+	// which may include KMS key access issues, key not found errors, invalid key
+	// configuration, key in an invalid state, or a disabled key.
+	EncryptionStatusReason *string
+
+	// The type of KMS key used for encryption.
+	KeyType KmsKeyType
+
+	// The ARN of the KMS key currently used to encrypt data in your IAM Identity
+	// Center instance.
+	KmsKeyArn *string
 
 	noSmithyDocumentSerde
 }
@@ -464,15 +512,27 @@ type InstanceMetadata struct {
 	// The current status of this Identity Center instance.
 	Status InstanceStatus
 
+	// Provides additional context about the current status of the IAM Identity Center
+	// instance. This field is particularly useful when an instance is in a non-ACTIVE
+	// state, such as CREATE_FAILED. When an instance creation fails, this field
+	// contains information about the cause, which may include issues with KMS key
+	// configuration or insufficient permissions.
+	StatusReason *string
+
 	noSmithyDocumentSerde
 }
 
 // A structure that defines configuration settings for an application that
-// supports the JWT Bearer Token Authorization Grant.
+// supports the JWT Bearer Token Authorization Grant. The AuthorizedAudience field
+// is the aud claim. For more information, see [RFC 7523].
+//
+// [RFC 7523]: https://datatracker.ietf.org/doc/html/rfc7523
 type JwtBearerGrant struct {
 
 	// A list of allowed token issuers trusted by the Identity Center instances for
 	// this application.
+	//
+	// AuthorizedTokenIssuers is required when the grant type is JwtBearerGrant .
 	AuthorizedTokenIssuers []AuthorizedTokenIssuer
 
 	noSmithyDocumentSerde
@@ -690,8 +750,34 @@ type PortalOptions struct {
 }
 
 // A structure that defines configuration settings for an application that
-// supports the OAuth 2.0 Refresh Token Grant.
+// supports the OAuth 2.0 Refresh Token Grant. For more, see [RFC 6749].
+//
+// [RFC 6749]: https://datatracker.ietf.org/doc/html/rfc6749#section-1.5
 type RefreshTokenGrant struct {
+	noSmithyDocumentSerde
+}
+
+// Contains information about an enabled Region of an IAM Identity Center
+// instance, including the Region name, status, date added, and whether it is the
+// primary Region.
+type RegionMetadata struct {
+
+	// The timestamp when the Region was added to the IAM Identity Center instance.
+	// For the primary Region, this is the instance creation time.
+	AddedDate *time.Time
+
+	// Indicates whether this is the primary Region where the IAM Identity Center
+	// instance was originally enabled. The primary Region cannot be removed.
+	IsPrimaryRegion bool
+
+	// The Amazon Web Services Region name.
+	RegionName *string
+
+	// The current status of the Region. Valid values are ACTIVE (Region is
+	// operational), ADDING (Region extension workflow is in progress), or REMOVING
+	// (Region removal workflow is in progress).
+	Status RegionStatus
+
 	noSmithyDocumentSerde
 }
 
@@ -774,7 +860,9 @@ type Tag struct {
 }
 
 // A structure that defines configuration settings for an application that
-// supports the OAuth 2.0 Token Exchange Grant.
+// supports the OAuth 2.0 Token Exchange Grant. For more information, see [RFC 8693].
+//
+// [RFC 8693]: https://datatracker.ietf.org/doc/html/rfc8693
 type TokenExchangeGrant struct {
 	noSmithyDocumentSerde
 }

@@ -39,7 +39,8 @@ type AacSettings struct {
 	// audio performance at lower bitrates: Choose HEV1 or HEV2. HEV1 (AAC-HE v1) adds
 	// spectral band replication to improve speech audio at low bitrates. HEV2 (AAC-HE
 	// v2) adds parametric stereo, which optimizes for encoding stereo audio at very
-	// low bitrates.
+	// low bitrates. For improved audio quality at lower bitrates, adaptive audio
+	// bitrate switching, and loudness control: Choose XHE.
 	CodecProfile AacCodecProfile
 
 	// The Coding mode that you specify determines the number of audio channels and
@@ -49,8 +50,26 @@ type AacSettings struct {
 	// Audio Description (Receiver Mix): One channel, C. Includes audio description
 	// data from your stereo input. For more information see ETSI TS 101 154 Annex E. *
 	// 1.0 Mono: One channel, C. * 2.0 Stereo: Two channels, L, R. * 5.1 Surround: Six
-	// channels, C, L, R, Ls, Rs, LFE.
+	// channels, C, L, R, Ls, Rs, LFE. To follow the number of channels from your input
+	// audio, choose CODING_MODE_AUTO, and the service will automatically choose from
+	// one of the coding modes above.
 	CodingMode AacCodingMode
+
+	// Choose the loudness measurement mode for your audio content. For music or
+	// advertisements: We recommend that you keep the default value, Program. For
+	// speech or other content: We recommend that you choose Anchor. When you do,
+	// MediaConvert optimizes the loudness of your output for clarify by applying
+	// speech gates.
+	LoudnessMeasurementMode AacLoudnessMeasurementMode
+
+	// Specify the RAP (Random Access Point) interval for your xHE-AAC audio output. A
+	// RAP allows a decoder to decode audio data mid-stream, without the need to
+	// reference previous audio frames, and perform adaptive audio bitrate switching.
+	// To specify the RAP interval: Enter an integer from 2000 to 30000, in
+	// milliseconds. Smaller values allow for better seeking and more frequent stream
+	// switching, while large values improve compression efficiency. To have
+	// MediaConvert automatically determine the RAP interval: Leave blank.
+	RapInterval *int32
 
 	// Specify the AAC rate control mode. For a constant bitrate: Choose CBR. Your AAC
 	// output bitrate will be equal to the value that you choose for Bitrate. For a
@@ -71,6 +90,11 @@ type AacSettings struct {
 	// Use MPEG-2 AAC instead of MPEG-4 AAC audio for raw or MPEG-2 Transport Stream
 	// containers.
 	Specification AacSpecification
+
+	// Specify the xHE-AAC loudness target. Enter an integer from 6 to 16,
+	// representing "loudness units". For more information, see the following
+	// specification: Supplementary information for R 128 EBU Tech 3342-2023.
+	TargetLoudnessRange *int32
 
 	// Specify the quality of your variable bitrate (VBR) AAC audio. For a list of
 	// approximate VBR bitrates, see:
@@ -189,8 +213,10 @@ type AiffSettings struct {
 	// audio track.
 	BitDepth *int32
 
-	// Specify the number of channels in this output audio track. Valid values are 1
-	// and even numbers up to 64. For example, 1, 2, 4, 6, and so on, up to 64.
+	// Specify the number of channels in this output audio track. Valid values are 0,
+	// 1, and even numbers up to 64. Choose 0 to follow the number of channels from
+	// your input audio. Otherwise, manually choose from 1, 2, 4, 6, and so on, up to
+	// 64.
 	Channels *int32
 
 	// Sample rate in Hz.
@@ -344,6 +370,9 @@ type AudioDescription struct {
 	// comply with a loudness standard.
 	AudioNormalizationSettings *AudioNormalizationSettings
 
+	// Settings for audio pitch correction during framerate conversion.
+	AudioPitchCorrectionSettings *AudioPitchCorrectionSettings
+
 	// Specifies which audio data to use from each input. In the simplest case,
 	// specify an "Audio Selector":#inputs-audio_selector by name based on its order
 	// within each input. For example if you specify "Audio Selector 3", then the third
@@ -385,10 +414,15 @@ type AudioDescription struct {
 	// Streaming.
 	CustomLanguageCode *string
 
-	// Indicates the language of the audio output track. The ISO 639 language
-	// specified in the 'Language Code' drop down will be used when 'Follow Input
-	// Language Code' is not selected or when 'Follow Input Language Code' is selected
-	// but there is no ISO 639 language code specified by the input.
+	// Specify the language for your output audio track. To follow the input language:
+	// Leave blank. When you do, also set Language code control to Follow input. If no
+	// input language is detected MediaConvert will not write an output language code.
+	// To follow the input langauge, but fall back to a specified language code if
+	// there is no input language to follow: Enter an ISO 639-2 three-letter language
+	// code in all capital letters. When you do, also set Language code control to
+	// Follow input. To specify the language code: Enter an ISO 639 three-letter
+	// language code in all capital letters. When you do, also set Language code
+	// control to Use configured.
 	LanguageCode LanguageCode
 
 	// Specify which source for language code takes precedence for this audio track.
@@ -457,6 +491,20 @@ type AudioNormalizationSettings struct {
 	noSmithyDocumentSerde
 }
 
+// Settings for audio pitch correction during framerate conversion.
+type AudioPitchCorrectionSettings struct {
+
+	// Use Slow PAL pitch correction to compensate for audio pitch changes during slow
+	// PAL frame rate conversion. This setting only applies when Slow PAL is enabled in
+	// your output video codec settings. To automatically apply audio pitch correction:
+	// Choose Enabled. MediaConvert automatically applies a pitch correction to your
+	// output to match the original content's audio pitch. To not apply audio pitch
+	// correction: Keep the default value, Disabled.
+	SlowPalPitchCorrection SlowPalPitchCorrection
+
+	noSmithyDocumentSerde
+}
+
 // Details about the media file's audio track.
 type AudioProperties struct {
 
@@ -464,12 +512,13 @@ type AudioProperties struct {
 	BitDepth *int32
 
 	// The bit rate of the audio track, in bits per second.
-	BitRate *int32
+	BitRate *int64
 
 	// The number of audio channels in the audio track.
 	Channels *int32
 
-	// The frame rate of the video or audio track.
+	// The frame rate of the video or audio track, expressed as a fraction with
+	// numerator and denominator values.
 	FrameRate *FrameRate
 
 	// The language code of the audio track, in three character ISO 639-3 format.
@@ -508,9 +557,14 @@ type AudioSelector struct {
 	// 639-2 or ISO 639-3 three-letter language code
 	CustomLanguageCode *string
 
-	// Enable this setting on one audio selector to set it as the default for the job.
-	// The service uses this default for outputs where it can't find the specified
-	// input audio. If you don't set a default, those outputs have no audio.
+	// Specify a fallback audio selector for this input. Use to ensure outputs have
+	// audio even when the audio selector you specify in your output is missing from
+	// the source. DEFAULT (Checked in the MediaConvert console): If your output
+	// settings specify an audio selector that does not exist in this input,
+	// MediaConvert uses this audio selector instead. This is useful when you have
+	// multiple inputs with a different number of audio tracks. NOT_DEFAULT (Unchecked
+	// in the MediaConvert console): MediaConvert will not fallback from any missing
+	// audio selector. Any output specifying a missing audio selector will be silent.
 	DefaultSelection AudioDefaultSelection
 
 	// Specify the S3, HTTP, or HTTPS URL for your external audio file input.
@@ -526,9 +580,8 @@ type AudioSelector struct {
 	// alternative audio with DEFAULT=YES is chosen instead.
 	HlsRenditionGroupSettings *HlsRenditionGroupSettings
 
-	// Specify the language to select from your audio input. In the MediaConvert
-	// console choose from a list of languages. In your JSON job settings choose from
-	// an ISO 639-2 three-letter code listed at
+	// Specify the language, using an ISO 639-2 three-letter code in all capital
+	// letters. You can find a list of codes at:
 	// https://www.loc.gov/standards/iso639-2/php/code_list.php
 	LanguageCode LanguageCode
 
@@ -554,11 +607,43 @@ type AudioSelector struct {
 	// one after the other.
 	RemixSettings *RemixSettings
 
-	// Specifies the type of the audio selector.
+	// Specify how MediaConvert selects audio content within your input. The default
+	// is Track. PID: Select audio by specifying the Packet Identifier (PID) values for
+	// MPEG Transport Stream inputs. Use this when you know the exact PID values of
+	// your audio streams. Track: Default. Select audio by track number. This is the
+	// most common option and works with most input container formats. If more types of
+	// audio data get recognized in the future, these numberings may shift, but the
+	// numberings used for Stream mode will not. Language code: Select audio by
+	// language using an ISO 639-2 or ISO 639-3 three-letter code in all capital
+	// letters. Use this when your source has embedded language metadata and you want
+	// to select tracks based on their language. HLS rendition group: Select audio from
+	// an HLS rendition group. Use this when your input is an HLS package with multiple
+	// audio renditions and you want to select specific rendition groups. All PCM:
+	// Select all uncompressed PCM audio tracks from your input automatically. This is
+	// useful when you want to include all PCM audio tracks without specifying
+	// individual track numbers. Stream: Select audio by stream number. Stream numbers
+	// include all tracks in the source file, regardless of type, and correspond to
+	// either the order of tracks in the file, or if applicable, the stream number
+	// metadata of the track. Although all tracks count toward these stream numbers, in
+	// this audio selector context, only the stream number of a track containing audio
+	// data may be used. If your source file contains a track which is not recognized
+	// by the service, then the corresponding stream number will still be reserved for
+	// future use. If more types of audio data get recognized in the future, these
+	// numberings will not shift.
 	SelectorType AudioSelectorType
 
 	// Identify a track from the input audio to include in this selector by entering
-	// the track index number. To include several tracks in a single audio selector,
+	// the stream index number. These numberings count all tracks in the input file,
+	// but only a track containing audio data may be used here. To include several
+	// tracks in a single audio selector, specify multiple tracks as follows. Using the
+	// console, enter a comma-separated list. For example, type "1,2,3" to include
+	// tracks 1 through 3.
+	Streams []int32
+
+	// Identify a track from the input audio to include in this selector by entering
+	// the track index number. These numberings include only tracks recognized as
+	// audio. If the service recognizes more types of audio tracks in the future, these
+	// numberings may shift. To include several tracks in a single audio selector,
 	// specify multiple tracks as follows. Using the console, enter a comma-separated
 	// list. For example, type "1,2,3" to include tracks 1 through 3.
 	Tracks []int32
@@ -664,8 +749,8 @@ type AutomatedAbrSettings struct {
 
 	// Optional. Specify the QVBR quality level to use for all renditions in your
 	// automated ABR stack. To have MediaConvert automatically determine the quality
-	// level: Leave blank. To manually specify a quality level: Enter an integer from 1
-	// to 10. MediaConvert will use a quality level up to the value that you specify,
+	// level: Leave blank. To manually specify a quality level: Enter a value from 1 to
+	// 10. MediaConvert will use a quality level up to the value that you specify,
 	// depending on your source. For more information about QVBR quality levels, see:
 	// https://docs.aws.amazon.com/mediaconvert/latest/ug/qvbr-guidelines.html
 	MaxQualityLevel *float64
@@ -810,6 +895,25 @@ type Av1Settings struct {
 	// file size; choose a smaller number for better video quality.
 	NumberBFramesBetweenReferenceFrames *int32
 
+	// Optionally choose one or more per frame metric reports to generate along with
+	// your output. You can use these metrics to analyze your video output according to
+	// one or more commonly used image quality metrics. You can specify per frame
+	// metrics for output groups or for individual outputs. When you do, MediaConvert
+	// writes a CSV (Comma-Separated Values) file to your S3 output destination, named
+	// after the output name and metric type. For example: videofile_PSNR.csv Jobs that
+	// generate per frame metrics will take longer to complete, depending on the
+	// resolution and complexity of your output. For example, some 4K jobs might take
+	// up to twice as long to complete. Note that when analyzing the video quality of
+	// your output, or when comparing the video quality of multiple different outputs,
+	// we generally also recommend a detailed visual review in a controlled
+	// environment. You can choose from the following per frame metrics: * PSNR: Peak
+	// Signal-to-Noise Ratio * SSIM: Structural Similarity Index Measure * MS_SSIM:
+	// Multi-Scale Similarity Index Measure * PSNR_HVS: Peak Signal-to-Noise Ratio,
+	// Human Visual System * VMAF: Video Multi-Method Assessment Fusion * QVBR:
+	// Quality-Defined Variable Bitrate. This option is only available when your output
+	// uses the QVBR rate control mode. * SHOT_CHANGE: Shot Changes
+	PerFrameMetrics []FrameMetricType
+
 	// Settings for quality-defined variable bitrate encoding with the H.265 codec.
 	// Use these settings only when you set QVBR for Rate control mode.
 	QvbrSettings *Av1QvbrSettings
@@ -928,6 +1032,25 @@ type AvcIntraSettings struct {
 	// the source. If the source is progressive, the output will be interlaced with top
 	// field bottom field first, depending on which of the Follow options you choose.
 	InterlaceMode AvcIntraInterlaceMode
+
+	// Optionally choose one or more per frame metric reports to generate along with
+	// your output. You can use these metrics to analyze your video output according to
+	// one or more commonly used image quality metrics. You can specify per frame
+	// metrics for output groups or for individual outputs. When you do, MediaConvert
+	// writes a CSV (Comma-Separated Values) file to your S3 output destination, named
+	// after the output name and metric type. For example: videofile_PSNR.csv Jobs that
+	// generate per frame metrics will take longer to complete, depending on the
+	// resolution and complexity of your output. For example, some 4K jobs might take
+	// up to twice as long to complete. Note that when analyzing the video quality of
+	// your output, or when comparing the video quality of multiple different outputs,
+	// we generally also recommend a detailed visual review in a controlled
+	// environment. You can choose from the following per frame metrics: * PSNR: Peak
+	// Signal-to-Noise Ratio * SSIM: Structural Similarity Index Measure * MS_SSIM:
+	// Multi-Scale Similarity Index Measure * PSNR_HVS: Peak Signal-to-Noise Ratio,
+	// Human Visual System * VMAF: Video Multi-Method Assessment Fusion * QVBR:
+	// Quality-Defined Variable Bitrate. This option is only available when your output
+	// uses the QVBR rate control mode. * SHOT_CHANGE: Shot Changes
+	PerFrameMetrics []FrameMetricType
 
 	// Use this setting for interlaced outputs, when your output frame rate is half of
 	// your input frame rate. In this situation, choose Optimized interlacing to create
@@ -1577,12 +1700,14 @@ type CmafGroupSettings struct {
 	DashIFrameTrickPlayNameModifier *string
 
 	// Specify how MediaConvert writes SegmentTimeline in your output DASH manifest.
-	// To write a SegmentTimeline in each video Representation: Keep the default value,
-	// Basic. To write a common SegmentTimeline in the video AdaptationSet: Choose
-	// Compact. Note that MediaConvert will still write a SegmentTimeline in any
-	// Representation that does not share a common timeline. To write a video
-	// AdaptationSet for each different output framerate, and a common SegmentTimeline
-	// in each AdaptationSet: Choose Distinct.
+	// To write a SegmentTimeline for outputs that you also specify a Name modifier
+	// for: Keep the default value, Basic. Note that if you do not specify a name
+	// modifier for an output, MediaConvert will not write a SegmentTimeline for it. To
+	// write a common SegmentTimeline in the video AdaptationSet: Choose Compact. Note
+	// that MediaConvert will still write a SegmentTimeline in any Representation that
+	// does not share a common timeline. To write a video AdaptationSet for each
+	// different output framerate, and a common SegmentTimeline in each AdaptationSet:
+	// Choose Distinct. To write a SegmentTimeline in each AdaptationSet: Choose Full.
 	DashManifestStyle DashManifestStyle
 
 	// Use Destination to specify the S3 output location and the output filename base.
@@ -1844,6 +1969,20 @@ type CmfcSettings struct {
 	// setting.
 	AudioTrackType CmfcAudioTrackType
 
+	// When enabled, a C2PA compliant manifest will be generated, signed and embeded
+	// in the output. For more information on C2PA, see
+	// https://c2pa.org/specifications/specifications/2.1/index.html
+	C2paManifest CmfcC2paManifest
+
+	// Specify the name or ARN of the AWS Secrets Manager secret that contains your
+	// C2PA public certificate chain in PEM format. Provide a valid secret name or ARN.
+	// Note that your MediaConvert service role must allow access to this secret. The
+	// public certificate chain is added to the COSE header (x5chain) for signature
+	// validation. Include the signer's certificate and all intermediate certificates.
+	// Do not include the root certificate. For details on COSE, see:
+	// https://opensource.contentauthenticity.org/docs/manifest/signing-manifests
+	CertificateSecret *string
+
 	// Specify whether to flag this audio track as descriptive video service (DVS) in
 	// your HLS parent manifest. When you choose Flag, MediaConvert includes the
 	// parameter CHARACTERISTICS="public.accessibility.describes-video" in the
@@ -1889,6 +2028,11 @@ type CmfcSettings struct {
 	// this output.
 	Scte35Source CmfcScte35Source
 
+	// Specify the ID or ARN of the AWS KMS key used to sign the C2PA manifest in your
+	// MP4 output. Provide a valid KMS key ARN. Note that your MediaConvert service
+	// role must allow access to this key.
+	SigningKmsKey *string
+
 	// To include ID3 metadata in this output: Set ID3 metadata to Passthrough.
 	// Specify this ID3 metadata in Custom ID3 metadata inserter. MediaConvert writes
 	// each instance of ID3 metadata in a separate Event Message (eMSG) box. To exclude
@@ -1913,6 +2057,70 @@ type CmfcSettings struct {
 	// Semantics. When you specify a value for ID3 Metadata Value, you must also set
 	// ID3 metadata to Passthrough.
 	TimedMetadataValue *string
+
+	noSmithyDocumentSerde
+}
+
+// Codec-specific parameters parsed from the video essence headers. This
+// information provides detailed technical specifications about how the video was
+// encoded, including profile settings, resolution details, and color space
+// information that can help you understand the source video characteristics and
+// make informed encoding decisions.
+type CodecMetadata struct {
+
+	// The number of bits used per color component in the video essence such as 8, 10,
+	// or 12 bits. Standard range (SDR) video typically uses 8-bit, while 10-bit is
+	// common for high dynamic range (HDR).
+	BitDepth *int32
+
+	// The chroma subsampling format used in the video encoding, such as "4:2:0" or
+	// "4:4:4". This describes how color information is sampled relative to brightness
+	// information. Different subsampling ratios affect video quality and file size,
+	// with "4:4:4" providing the highest color fidelity and "4:2:0" being most common
+	// for standard video.
+	ChromaSubsampling *string
+
+	// The frame rate of the video or audio track, expressed as a fraction with
+	// numerator and denominator values.
+	CodedFrameRate *FrameRate
+
+	// The color space primaries of the video track, defining the red, green, and blue
+	// color coordinates used for the video. This information helps ensure accurate
+	// color reproduction during playback and transcoding.
+	ColorPrimaries ColorPrimaries
+
+	// The height in pixels as coded by the codec. This represents the actual encoded
+	// video height as specified in the video stream headers.
+	Height *int32
+
+	// The codec level or tier that specifies the maximum processing requirements and
+	// capabilities. Levels define constraints such as maximum bit rate, frame rate,
+	// and resolution.
+	Level *string
+
+	// The color space matrix coefficients of the video track, defining how RGB color
+	// values are converted to and from YUV color space. This affects color accuracy
+	// during encoding and decoding processes.
+	MatrixCoefficients MatrixCoefficients
+
+	// The codec profile used to encode the video. Profiles define specific feature
+	// sets and capabilities within a codec standard. For example, H.264 profiles
+	// include Baseline, Main, and High, each supporting different encoding features
+	// and complexity levels.
+	Profile *string
+
+	// The scanning method specified in the video essence, indicating whether the
+	// video uses progressive or interlaced scanning.
+	ScanType *string
+
+	// The color space transfer characteristics of the video track, defining the
+	// relationship between linear light values and the encoded signal values. This
+	// affects brightness and contrast reproduction.
+	TransferCharacteristics TransferCharacteristics
+
+	// The width in pixels as coded by the codec. This represents the actual encoded
+	// video width as specified in the video stream headers.
+	Width *int32
 
 	noSmithyDocumentSerde
 }
@@ -2049,8 +2257,8 @@ type Container struct {
 	Duration *float64
 
 	// The format of your media file. For example: MP4, QuickTime (MOV), Matroska
-	// (MKV), or WebM. Note that this will be blank if your media file has a format
-	// that the MediaConvert Probe operation does not recognize.
+	// (MKV), WebM, MXF or Wave. Note that this will be blank if your media file has a
+	// format that the MediaConvert Probe operation does not recognize.
 	Format Format
 
 	// Details about each track (video, audio, or data) in the media file.
@@ -2183,12 +2391,14 @@ type DashIsoGroupSettings struct {
 	DashIFrameTrickPlayNameModifier *string
 
 	// Specify how MediaConvert writes SegmentTimeline in your output DASH manifest.
-	// To write a SegmentTimeline in each video Representation: Keep the default value,
-	// Basic. To write a common SegmentTimeline in the video AdaptationSet: Choose
-	// Compact. Note that MediaConvert will still write a SegmentTimeline in any
-	// Representation that does not share a common timeline. To write a video
-	// AdaptationSet for each different output framerate, and a common SegmentTimeline
-	// in each AdaptationSet: Choose Distinct.
+	// To write a SegmentTimeline for outputs that you also specify a Name modifier
+	// for: Keep the default value, Basic. Note that if you do not specify a name
+	// modifier for an output, MediaConvert will not write a SegmentTimeline for it. To
+	// write a common SegmentTimeline in the video AdaptationSet: Choose Compact. Note
+	// that MediaConvert will still write a SegmentTimeline in any Representation that
+	// does not share a common timeline. To write a video AdaptationSet for each
+	// different output framerate, and a common SegmentTimeline in each AdaptationSet:
+	// Choose Distinct. To write a SegmentTimeline in each AdaptationSet: Choose Full.
 	DashManifestStyle DashManifestStyle
 
 	// Use Destination to specify the S3 output location and the output filename base.
@@ -2413,6 +2623,14 @@ type DestinationSettings struct {
 // Create Dolby Vision Profile 5 or Profile 8.1 compatible video output.
 type DolbyVision struct {
 
+	// When you set Compatibility mapping to Duplicate Stream, DolbyVision streams
+	// that have a backward compatible base layer (e.g., DolbyVision 8.1) will cause a
+	// duplicate stream to be signaled in the manifest as a duplicate stream. When you
+	// set Compatibility mapping to Supplemntal Codecs, DolbyVision streams that have a
+	// backward compatible base layer (e.g., DolbyVision 8.1) will cause the associate
+	// stream in the manifest to include a SUPPLEMENTAL_CODECS property.
+	Compatibility DolbyVisionCompatibility
+
 	// Use these settings when you set DolbyVisionLevel6Mode to SPECIFY to override
 	// the MaxCLL and MaxFALL values in your input with new values.
 	L6Metadata *DolbyVisionLevel6Metadata
@@ -2549,6 +2767,12 @@ type DvbSubDestinationSettings struct {
 	// x-coordinate and DDS y-coordinate. For video resolutions with a height of 576
 	// pixels or less, MediaConvert doesn't include the DDS, regardless of the value
 	// you choose for DDS handling. All burn-in and DVB-Sub font settings must match.
+	// To include the DDS, with optimized subtitle placement and reduced data overhead:
+	// We recommend that you choose Specified (optimal). This option provides the same
+	// visual positioning as Specified while using less bandwidth. This also supports
+	// resolutions higher than 1080p while maintaining full DVB-Sub compatibility. When
+	// you do, also specify the offset coordinates of the display window with DDS
+	// x-coordinate and DDS y-coordinate.
 	DdsHandling DvbddsHandling
 
 	// Use this setting, along with DDS y-coordinate, to specify the upper left corner
@@ -2750,10 +2974,10 @@ type DvbTdtSettings struct {
 // Use Dynamic audio selectors when you do not know the track layout of your
 // source when you submit your job, but want to select multiple audio tracks. When
 // you include an audio track in your output and specify this Dynamic audio
-// selector as the Audio source, MediaConvert creates an output audio track for
-// each dynamically selected track. Note that when you include a Dynamic audio
-// selector for two or more inputs, each input must have the same number of audio
-// tracks and audio channels.
+// selector as the Audio source, MediaConvert creates an audio track within that
+// output for each dynamically selected track. Note that when you include a Dynamic
+// audio selector for two or more inputs, each input must have the same number of
+// audio tracks and audio channels.
 type DynamicAudioSelector struct {
 
 	// Apply audio timing corrections to help synchronize audio and video in your
@@ -2778,9 +3002,8 @@ type DynamicAudioSelector struct {
 	// Specify the S3, HTTP, or HTTPS URL for your external audio file input.
 	ExternalAudioFileInput *string
 
-	// Specify the language to select from your audio input. In the MediaConvert
-	// console choose from a list of languages. In your JSON job settings choose from
-	// an ISO 639-2 three-letter code listed at
+	// Specify the language, using an ISO 639-2 three-letter code in all capital
+	// letters. You can find a list of codes at:
 	// https://www.loc.gov/standards/iso639-2/php/code_list.php
 	LanguageCode LanguageCode
 
@@ -3297,6 +3520,13 @@ type FileSourceSettings struct {
 	// MediaConvert uses seconds by default.
 	TimeDeltaUnits FileSourceTimeDeltaUnits
 
+	// Specify whether this set of input captions appears in your outputs in both STL
+	// and Teletext format. If you choose Upconvert, MediaConvert includes the captions
+	// data in two ways: it passes the STL data through using the Teletext
+	// compatibility bytes fields of the Teletext wrapper, and it also translates the
+	// STL data into Teletext.
+	UpconvertSTLToTeletext CaptionSourceUpconvertSTLToTeletext
+
 	noSmithyDocumentSerde
 }
 
@@ -3308,9 +3538,9 @@ type FlacSettings struct {
 	// quality for this audio track.
 	BitDepth *int32
 
-	// Specify the number of channels in this output audio track. Choosing Mono on the
-	// console gives you 1 output channel; choosing Stereo gives you 2. In the API,
-	// valid values are between 1 and 8.
+	// Specify the number of channels in this output audio track. Valid values are 0,
+	// 1, and even numbers up to 8. Choose 0 to follow the number of channels from your
+	// input audio. Otherwise, manually choose from 1, 2, 4, 6, and 8.
 	Channels *int32
 
 	// Sample rate in Hz.
@@ -3368,7 +3598,8 @@ type FrameCaptureSettings struct {
 	noSmithyDocumentSerde
 }
 
-// The frame rate of the video or audio track.
+// The frame rate of the video or audio track, expressed as a fraction with
+// numerator and denominator values.
 type FrameRate struct {
 
 	// The denominator, or bottom number, in the fractional frame rate. For example,
@@ -3696,6 +3927,25 @@ type H264Settings struct {
 	// your output PAR as a ratio. For example, for D1/DV NTSC widescreen, you would
 	// specify the ratio 40:33. In this example, the value for parNumerator is 40.
 	ParNumerator *int32
+
+	// Optionally choose one or more per frame metric reports to generate along with
+	// your output. You can use these metrics to analyze your video output according to
+	// one or more commonly used image quality metrics. You can specify per frame
+	// metrics for output groups or for individual outputs. When you do, MediaConvert
+	// writes a CSV (Comma-Separated Values) file to your S3 output destination, named
+	// after the output name and metric type. For example: videofile_PSNR.csv Jobs that
+	// generate per frame metrics will take longer to complete, depending on the
+	// resolution and complexity of your output. For example, some 4K jobs might take
+	// up to twice as long to complete. Note that when analyzing the video quality of
+	// your output, or when comparing the video quality of multiple different outputs,
+	// we generally also recommend a detailed visual review in a controlled
+	// environment. You can choose from the following per frame metrics: * PSNR: Peak
+	// Signal-to-Noise Ratio * SSIM: Structural Similarity Index Measure * MS_SSIM:
+	// Multi-Scale Similarity Index Measure * PSNR_HVS: Peak Signal-to-Noise Ratio,
+	// Human Visual System * VMAF: Video Multi-Method Assessment Fusion * QVBR:
+	// Quality-Defined Variable Bitrate. This option is only available when your output
+	// uses the QVBR rate control mode. * SHOT_CHANGE: Shot Changes
+	PerFrameMetrics []FrameMetricType
 
 	// The Quality tuning level you choose represents a trade-off between the encoding
 	// speed of your job and the output video quality. For the fastest encoding speed
@@ -4081,6 +4331,14 @@ type H265Settings struct {
 	// GOP size.
 	MinIInterval *int32
 
+	// If you are setting up the picture as a tile, you must set this to "disabled".
+	// In all other configurations, you typically enter "enabled".
+	MvOverPictureBoundaries H265MvOverPictureBoundaries
+
+	// If you are setting up the picture as a tile, you must set this to "disabled".
+	// In other configurations, you typically enter "enabled".
+	MvTemporalPredictor H265MvTemporalPredictor
+
 	// Specify the number of B-frames between reference frames in this output. For the
 	// best video quality: Leave blank. MediaConvert automatically determines the
 	// number of B-frames to use based on the characteristics of your input video. To
@@ -4112,6 +4370,25 @@ type H265Settings struct {
 	// your output PAR as a ratio. For example, for D1/DV NTSC widescreen, you would
 	// specify the ratio 40:33. In this example, the value for parNumerator is 40.
 	ParNumerator *int32
+
+	// Optionally choose one or more per frame metric reports to generate along with
+	// your output. You can use these metrics to analyze your video output according to
+	// one or more commonly used image quality metrics. You can specify per frame
+	// metrics for output groups or for individual outputs. When you do, MediaConvert
+	// writes a CSV (Comma-Separated Values) file to your S3 output destination, named
+	// after the output name and metric type. For example: videofile_PSNR.csv Jobs that
+	// generate per frame metrics will take longer to complete, depending on the
+	// resolution and complexity of your output. For example, some 4K jobs might take
+	// up to twice as long to complete. Note that when analyzing the video quality of
+	// your output, or when comparing the video quality of multiple different outputs,
+	// we generally also recommend a detailed visual review in a controlled
+	// environment. You can choose from the following per frame metrics: * PSNR: Peak
+	// Signal-to-Noise Ratio * SSIM: Structural Similarity Index Measure * MS_SSIM:
+	// Multi-Scale Similarity Index Measure * PSNR_HVS: Peak Signal-to-Noise Ratio,
+	// Human Visual System * VMAF: Video Multi-Method Assessment Fusion * QVBR:
+	// Quality-Defined Variable Bitrate. This option is only available when your output
+	// uses the QVBR rate control mode. * SHOT_CHANGE: Shot Changes
+	PerFrameMetrics []FrameMetricType
 
 	// Optional. Use Quality tuning level to choose how you want to trade off encoding
 	// speed for output video quality. The default behavior is faster, lower quality,
@@ -4212,9 +4489,32 @@ type H265Settings struct {
 	// layer) for a half frame rate output.
 	TemporalIds H265TemporalIds
 
+	// Set this field to set up the picture as a tile. You must also set TileWidth.
+	// The tile height must result in 22 or fewer rows in the frame. The tile width
+	// must result in 20 or fewer columns in the frame. And finally, the product of the
+	// column count and row count must be 64 or less. If the tile width and height are
+	// specified, MediaConvert will override the video codec slices field with a value
+	// that MediaConvert calculates.
+	TileHeight *int32
+
+	// Set to "padded" to force MediaConvert to add padding to the frame, to obtain a
+	// frame that is a whole multiple of the tile size. If you are setting up the
+	// picture as a tile, you must enter "padded". In all other configurations, you
+	// typically enter "none".
+	TilePadding H265TilePadding
+
+	// Set this field to set up the picture as a tile. See TileHeight for more
+	// information.
+	TileWidth *int32
+
 	// Enable use of tiles, allowing horizontal as well as vertical subdivision of the
 	// encoded pictures.
 	Tiles H265Tiles
+
+	// Select the tree block size used for encoding. If you enter "auto", the encoder
+	// will pick the best size. If you are setting up the picture as a tile, you must
+	// set this to 32x32. In all other configurations, you typically enter "auto".
+	TreeBlockSize H265TreeBlockSize
 
 	// Inserts timecode for each frame as 4 bytes of an unregistered SEI message.
 	UnregisteredSeiTimecode H265UnregisteredSeiTimecode
@@ -4344,12 +4644,14 @@ type HlsCaptionLanguageMapping struct {
 	// Caption channel.
 	CaptionChannel *int32
 
-	// Specify the language for this captions channel, using the ISO 639-2 or ISO
-	// 639-3 three-letter language code
+	// Specify the language, using an ISO 639-2 three-letter code in all capital
+	// letters. You can find a list of codes at:
+	// https://www.loc.gov/standards/iso639-2/php/code_list.php
 	CustomLanguageCode *string
 
-	// Specify the language, using the ISO 639-2 three-letter code listed at
-	// https://www.loc.gov/standards/iso639-2/php/code_list.php.
+	// Specify the language, using an ISO 639-2 three-letter code in all capital
+	// letters. You can find a list of codes at:
+	// https://www.loc.gov/standards/iso639-2/php/code_list.php
 	LanguageCode LanguageCode
 
 	// Caption language description.
@@ -4646,7 +4948,9 @@ type HlsRenditionGroupSettings struct {
 	// Optional. Specify alternative group ID
 	RenditionGroupId *string
 
-	// Optional. Specify ISO 639-2 or ISO 639-3 code in the language property
+	// Optionally specify the language, using an ISO 639-2 or ISO 639-3 three-letter
+	// code in all capital letters. You can find a list of codes at:
+	// https://www.loc.gov/standards/iso639-2/php/code_list.php
 	RenditionLanguageCode LanguageCode
 
 	// Optional. Specify media name
@@ -4693,12 +4997,15 @@ type HlsSettings struct {
 	// on Apple devices. For more information, see the Apple documentation.
 	DescriptiveVideoServiceFlag HlsDescriptiveVideoServiceFlag
 
-	// Choose Include to have MediaConvert generate a child manifest that lists only
-	// the I-frames for this rendition, in addition to your regular manifest for this
-	// rendition. You might use this manifest as part of a workflow that creates
-	// preview functions for your video. MediaConvert adds both the I-frame only child
-	// manifest and the regular child manifest to the parent manifest. When you don't
-	// need the I-frame only child manifest, keep the default value Exclude.
+	// Generate a variant manifest that lists only the I-frames for this rendition.
+	// You might use this manifest as part of a workflow that creates preview functions
+	// for your video. MediaConvert adds both the I-frame only variant manifest and the
+	// regular variant manifest to the multivariant manifest. To have MediaConvert
+	// write a variant manifest that references I-frames from your output content using
+	// EXT-X-BYTERANGE tags: Choose Include. To have MediaConvert output I-frames as
+	// single frame TS files and a corresponding variant manifest that references them:
+	// Choose Include as TS. When you don't need the I-frame only variant manifest:
+	// Keep the default value, Exclude.
 	IFrameOnlyManifest HlsIFrameOnlyManifest
 
 	// Use this setting to add an identifying string to the filename of each segment.
@@ -4782,7 +5089,7 @@ type ImscDestinationSettings struct {
 	// do, MediaConvert adds accessibility attributes to your output HLS or DASH
 	// manifest. For HLS manifests, MediaConvert adds the following accessibility
 	// attributes under EXT-X-MEDIA for this track:
-	// CHARACTERISTICS="public.accessibility.describes-spoken-dialog,public.accessibility.describes-music-and-sound"
+	// CHARACTERISTICS="public.accessibility.transcribes-spoken-dialog,public.accessibility.describes-music-and-sound"
 	// and AUTOSELECT="YES". For DASH manifests, MediaConvert adds the following in the
 	// adaptation set for this track: . If the captions track is not intended to
 	// provide such accessibility: Keep the default value, Disabled. When you do, for
@@ -4879,11 +5186,17 @@ type Input struct {
 
 	// Specify the source file for your transcoding job. You can use multiple inputs
 	// in a single job. The service concatenates these inputs, in the order that you
-	// specify them in the job, to create the outputs. If your input format is IMF,
-	// specify your input by providing the path to your CPL. For example,
-	// "s3://bucket/vf/cpl.xml". If the CPL is in an incomplete IMP, make sure to use
-	// Supplemental IMPs to specify any supplemental IMPs that contain assets
-	// referenced by the CPL.
+	// specify them in the job, to create the outputs. For standard inputs, provide the
+	// path to your S3, HTTP, or HTTPS source file. For example,
+	// s3://amzn-s3-demo-bucket/input.mp4 for an Amazon S3 input or
+	// https://example.com/input.mp4 for an HTTPS input. For TAMS inputs, specify the
+	// HTTPS endpoint of your TAMS server. For example, https://tams-server.example.com
+	// . When you do, also specify Source ID, Timerange, GAP handling, and the
+	// Authorization connection ARN under TAMS settings. (Don't include these
+	// parameters in the Input file URL.) For IMF inputs, specify your input by
+	// providing the path to your CPL. For example, s3://amzn-s3-demo-bucket/vf/cpl.xml
+	// . If the CPL is in an incomplete IMP, make sure to use Supplemental IMPsto
+	// specify any supplemental IMPs that contain assets referenced by the CPL.
 	FileInput *string
 
 	// Specify whether to apply input filtering to improve the video quality of your
@@ -4952,6 +5265,18 @@ type Input struct {
 	// "s3://bucket/vf2/ASSETMAP.xml"]. You don't need to specify the IMP that contains
 	// your input CPL, because the service automatically detects it.
 	SupplementalImps []string
+
+	// Specify a Time Addressable Media Store (TAMS) server as an input source. TAMS
+	// is an open-source API specification that provides access to time-segmented media
+	// content. Use TAMS to retrieve specific time ranges from live or archived media
+	// streams. When you specify TAMS settings, MediaConvert connects to your TAMS
+	// server, retrieves the media segments for your specified time range, and
+	// processes them as a single input. This enables workflows like extracting clips
+	// from live streams or processing specific portions of archived content. To use
+	// TAMS, you must: 1. Have access to a TAMS-compliant server 2. Specify the server
+	// URL in the Input file URL field 3. Provide the required SourceId and Timerange
+	// parameters 4. Configure authentication, if your TAMS server requires it
+	TamsSettings *InputTamsSettings
 
 	// Use this Timecode source setting, located under the input settings, to specify
 	// how the service counts input video frames. This input frame count affects only
@@ -5044,6 +5369,60 @@ type InputDecryptionSettings struct {
 	// encrypt your data key, if that Region is different from the one you are using
 	// for AWS Elemental MediaConvert.
 	KmsKeyRegion *string
+
+	noSmithyDocumentSerde
+}
+
+// Specify a Time Addressable Media Store (TAMS) server as an input source. TAMS
+// is an open-source API specification that provides access to time-segmented media
+// content. Use TAMS to retrieve specific time ranges from live or archived media
+// streams. When you specify TAMS settings, MediaConvert connects to your TAMS
+// server, retrieves the media segments for your specified time range, and
+// processes them as a single input. This enables workflows like extracting clips
+// from live streams or processing specific portions of archived content. To use
+// TAMS, you must: 1. Have access to a TAMS-compliant server 2. Specify the server
+// URL in the Input file URL field 3. Provide the required SourceId and Timerange
+// parameters 4. Configure authentication, if your TAMS server requires it
+type InputTamsSettings struct {
+
+	// Specify the ARN (Amazon Resource Name) of an EventBridge Connection to
+	// authenticate with your TAMS server. The EventBridge Connection stores your
+	// authentication credentials securely. MediaConvert assumes your job's IAM role to
+	// access this connection, so ensure the role has the
+	// events:RetrieveConnectionCredentials, secretsmanager:DescribeSecret, and
+	// secretsmanager:GetSecretValue permissions. Format:
+	// arn:aws:events:region:account-id:connection/connection-name/unique-id This
+	// setting is required when you include TAMS settings in your job.
+	AuthConnectionArn *string
+
+	// Specify how MediaConvert handles gaps between media segments in your TAMS
+	// source. Gaps can occur in live streams due to network issues or other
+	// interruptions. Choose from the following options: * Skip gaps - Default. Skip
+	// over gaps and join segments together. This creates a continuous output with no
+	// blank frames, but may cause timeline discontinuities. * Fill with black - Insert
+	// black frames to fill gaps between segments. This maintains timeline continuity
+	// but adds black frames where content is missing. * Hold last frame - Repeat the
+	// last frame before a gap until the next segment begins. This maintains visual
+	// continuity during gaps.
+	GapHandling TamsGapHandling
+
+	// Specify the unique identifier for the media source in your TAMS server.
+	// MediaConvert uses this source ID to locate the appropriate flows containing the
+	// media segments you want to process. The source ID corresponds to a specific
+	// media source registered in your TAMS server. This source must be of type
+	// urn:x-nmos:format:multi, and can can reference multiple flows for audio, video,
+	// or combined audio/video content. MediaConvert automatically selects the highest
+	// quality flows available for your job. This setting is required when you include
+	// TAMS settings in your job.
+	SourceId *string
+
+	// Specify the time range of media segments to retrieve from your TAMS server.
+	// MediaConvert fetches only the segments that fall within this range. Use the
+	// format specified by your TAMS server implementation. This must be two timestamp
+	// values with the format {sign?}{seconds}:{nanoseconds}, separated by an
+	// underscore, surrounded by either parentheses or square brackets. Example:
+	// [15:0_35:0) This setting is required when you include TAMS settings in your job.
+	Timerange *string
 
 	noSmithyDocumentSerde
 }
@@ -5215,7 +5594,7 @@ type InputVideoGenerator struct {
 	Channels *int32
 
 	// Specify the duration, in milliseconds, for your video generator input. Enter an
-	// integer from 50 to 86400000.
+	// integer from 1 to 86400000.
 	Duration *int32
 
 	// Specify the denominator of the fraction that represents the frame rate for your
@@ -5230,9 +5609,27 @@ type InputVideoGenerator struct {
 	// Frame rate numerator and Frame rate denominator blank.
 	FramerateNumerator *int32
 
+	// Specify the height, in pixels, for your video generator input. This is useful
+	// for positioning when you include one or more video overlays for this input. To
+	// use the default resolution 540x360: Leave both width and height blank. To
+	// specify a height: Enter an even integer from 32 to 8192. When you do, you must
+	// also specify a value for width.
+	Height *int32
+
+	// Specify the HTTP, HTTPS, or Amazon S3 location of the image that you want to
+	// overlay on the video. Use a PNG or TGA file.
+	ImageInput *string
+
 	// Specify the audio sample rate, in Hz, for the silent audio in your video
 	// generator input. Enter an integer from 32000 to 48000.
 	SampleRate *int32
+
+	// Specify the width, in pixels, for your video generator input. This is useful
+	// for positioning when you include one or more video overlays for this input. To
+	// use the default resolution 540x360: Leave both width and height blank. To
+	// specify a width: Enter an even integer from 32 to 8192. When you do, you must
+	// also specify a value for height.
+	Width *int32
 
 	noSmithyDocumentSerde
 }
@@ -5393,6 +5790,11 @@ type Job struct {
 	// template.
 	JobTemplate *string
 
+	// Contains information about the most recent share attempt for the job. For more
+	// information, see
+	// https://docs.aws.amazon.com/mediaconvert/latest/ug/creating-resource-share.html
+	LastShareDetails *string
+
 	// Provides messages from the service about jobs that you have already
 	// successfully submitted.
 	Messages *JobMessages
@@ -5415,6 +5817,9 @@ type Job struct {
 	// The number of times that the service automatically attempted to process your
 	// job after encountering an error.
 	RetryCount *int32
+
+	// A job's share status can be NOT_SHARED, INITIATED, or SHARED
+	ShareStatus ShareStatus
 
 	// Enable this setting when you run a test job to estimate how many reserved
 	// transcoding slots (RTS) you need. When this is enabled, MediaConvert runs your
@@ -5458,8 +5863,11 @@ type JobEngineVersion struct {
 	ExpirationDate *time.Time
 
 	// Use Job engine versions to run jobs for your production workflow on one
-	// version, while you test and validate the latest version. Job engine versions are
-	// in a YYYY-MM-DD format.
+	// version, while you test and validate the latest version. Job engine versions
+	// represent periodically grouped MediaConvert releases with new features, updates,
+	// improvements, and fixes. Job engine versions are in a YYYY-MM-DD format. Note
+	// that the Job engine version feature is not publicly available at this time. To
+	// request access, contact AWS support.
 	Version *string
 
 	noSmithyDocumentSerde
@@ -5569,6 +5977,31 @@ type JobSettings struct {
 	// output that you want to include this metadata, you must set ID3 metadata to
 	// Passthrough.
 	TimedMetadataInsertion *TimedMetadataInsertion
+
+	noSmithyDocumentSerde
+}
+
+// Provide one or more JobsQueryFilter objects, each containing a Key with an
+// associated Values array. Note that MediaConvert queries jobs using OR logic.
+type JobsQueryFilter struct {
+
+	// Specify job details to filter for while performing a jobs query. You specify
+	// these filters as part of a key-value pair within the JobsQueryFilter array. The
+	// following list describes which keys are available and their possible values: *
+	// queue - Your Queue's name or ARN. * status - Your job's status. (SUBMITTED |
+	// PROGRESSING | COMPLETE | CANCELED | ERROR) * fileInput - Your input file URL, or
+	// partial input file name. * jobEngineVersionRequested - The Job engine version
+	// that you requested for your job. Valid versions are in a YYYY-MM-DD format. *
+	// jobEngineVersionUsed - The Job engine version that your job used. This may
+	// differ from the version that you requested. Valid versions are in a YYYY-MM-DD
+	// format. * audioCodec - Your output's audio codec. (AAC | MP2 | MP3 | WAV | AIFF
+	// | AC3| EAC3 | EAC3_ATMOS | VORBIS | OPUS | PASSTHROUGH | FLAC) * videoCodec -
+	// Your output's video codec. (AV1 | AVC_INTRA | FRAME_CAPTURE | H_264 | H_265 |
+	// MPEG2 | PASSTHROUGH | PRORES | UNCOMPRESSED | VC3 | VP8 | VP9 | XAVC)
+	Key JobsQueryFilterKey
+
+	// A list of values associated with a JobsQueryFilterKey.
+	Values []string
 
 	noSmithyDocumentSerde
 }
@@ -6354,12 +6787,24 @@ type MovSettings struct {
 // Required when you set Codec to the value MP2.
 type Mp2Settings struct {
 
+	// Choose BROADCASTER_MIXED_AD when the input contains pre-mixed main audio +
+	// audio description (AD) as a stereo pair. The value for AudioType will be set to
+	// 3, which signals to downstream systems that this stream contains "broadcaster
+	// mixed AD". Note that the input received by the encoder must contain pre-mixed
+	// audio; the encoder does not perform the mixing. When you choose
+	// BROADCASTER_MIXED_AD, the encoder ignores any values you provide in AudioType
+	// and FollowInputAudioType. Choose NONE when the input does not contain pre-mixed
+	// audio + audio description (AD). In this case, the encoder will use any values
+	// you provide for AudioType and FollowInputAudioType.
+	AudioDescriptionMix Mp2AudioDescriptionMix
+
 	// Specify the average bitrate in bits per second.
 	Bitrate *int32
 
 	// Set Channels to specify the number of channels in this output audio track.
-	// Choosing Mono in will give you 1 output channel; choosing Stereo will give you
-	// 2. In the API, valid values are 1 and 2.
+	// Choosing Follow input will use the number of channels found in the audio source;
+	// choosing Mono will give you 1 output channel; choosing Stereo will give you 2.
+	// In the API, valid values are 0, 1, and 2.
 	Channels *int32
 
 	// Sample rate in Hz.
@@ -6375,9 +6820,10 @@ type Mp3Settings struct {
 	// Specify the average bitrate in bits per second.
 	Bitrate *int32
 
-	// Specify the number of channels in this output audio track. Choosing Mono gives
-	// you 1 output channel; choosing Stereo gives you 2. In the API, valid values are
-	// 1 and 2.
+	// Specify the number of channels in this output audio track. Choosing Follow
+	// input will use the number of channels found in the audio source; choosing Mono
+	// gives you 1 output channel; choosing Stereo gives you 2. In the API, valid
+	// values are 0, 1, and 2.
 	Channels *int32
 
 	// Specify whether the service encodes this MP3 audio output with a constant
@@ -6413,6 +6859,20 @@ type Mp4Settings struct {
 	// between audio and video duration will depend on your output audio codec.
 	AudioDuration CmfcAudioDuration
 
+	// When enabled, a C2PA compliant manifest will be generated, signed and embeded
+	// in the output. For more information on C2PA, see
+	// https://c2pa.org/specifications/specifications/2.1/index.html
+	C2paManifest Mp4C2paManifest
+
+	// Specify the name or ARN of the AWS Secrets Manager secret that contains your
+	// C2PA public certificate chain in PEM format. Provide a valid secret name or ARN.
+	// Note that your MediaConvert service role must allow access to this secret. The
+	// public certificate chain is added to the COSE header (x5chain) for signature
+	// validation. Include the signer's certificate and all intermediate certificates.
+	// Do not include the root certificate. For details on COSE, see:
+	// https://opensource.contentauthenticity.org/docs/manifest/signing-manifests
+	CertificateSecret *string
+
 	// When enabled, file composition times will start at zero, composition times in
 	// the 'ctts' (composition time to sample) box for B-frames will be negative, and a
 	// 'cslg' (composition shift least greatest) box will be included per 14496-1
@@ -6438,6 +6898,11 @@ type Mp4Settings struct {
 	// Overrides the "Major Brand" field in the output file. Usually not necessary to
 	// specify.
 	Mp4MajorBrand *string
+
+	// Specify the ID or ARN of the AWS KMS key used to sign the C2PA manifest in your
+	// MP4 output. Provide a valid KMS key ARN. Note that your MediaConvert service
+	// role must allow access to this key.
+	SigningKmsKey *string
 
 	noSmithyDocumentSerde
 }
@@ -6467,13 +6932,27 @@ type MpdSettings struct {
 	// between audio and video duration will depend on your output audio codec.
 	AudioDuration MpdAudioDuration
 
-	// Use this setting only in DASH output groups that include sidecar TTML or IMSC
-	// captions. You specify sidecar captions in a separate output from your audio and
-	// video. Choose Raw for captions in a single XML file in a raw container. Choose
-	// Fragmented MPEG-4 for captions in XML format contained within fragmented MP4
-	// files. This set of fragmented MP4 files is separate from your video and audio
-	// fragmented MP4 files.
+	// When enabled, a C2PA compliant manifest will be generated, signed and embeded
+	// in the output. For more information on C2PA, see
+	// https://c2pa.org/specifications/specifications/2.1/index.html
+	C2paManifest MpdC2paManifest
+
+	// Use this setting only in DASH output groups that include sidecar TTML, IMSC or
+	// WEBVTT captions. You specify sidecar captions in a separate output from your
+	// audio and video. Choose Raw for captions in a single XML file in a raw
+	// container. Choose Fragmented MPEG-4 for captions in XML format contained within
+	// fragmented MP4 files. This set of fragmented MP4 files is separate from your
+	// video and audio fragmented MP4 files.
 	CaptionContainerType MpdCaptionContainerType
+
+	// Specify the name or ARN of the AWS Secrets Manager secret that contains your
+	// C2PA public certificate chain in PEM format. Provide a valid secret name or ARN.
+	// Note that your MediaConvert service role must allow access to this secret. The
+	// public certificate chain is added to the COSE header (x5chain) for signature
+	// validation. Include the signer's certificate and all intermediate certificates.
+	// Do not include the root certificate. For details on COSE, see:
+	// https://opensource.contentauthenticity.org/docs/manifest/signing-manifests
+	CertificateSecret *string
 
 	// To include key-length-value metadata in this output: Set KLV metadata insertion
 	// to Passthrough. MediaConvert reads KLV metadata present in your input and writes
@@ -6503,6 +6982,11 @@ type MpdSettings struct {
 	// appear in this output. Choose None if you don't want those SCTE-35 markers in
 	// this output.
 	Scte35Source MpdScte35Source
+
+	// Specify the ID or ARN of the AWS KMS key used to sign the C2PA manifest in your
+	// MP4 output. Provide a valid KMS key ARN. Note that your MediaConvert service
+	// role must allow access to this key.
+	SigningKmsKey *string
 
 	// To include ID3 metadata in this output: Set ID3 metadata to Passthrough.
 	// Specify this ID3 metadata in Custom ID3 metadata inserter. MediaConvert writes
@@ -6692,6 +7176,25 @@ type Mpeg2Settings struct {
 	// your output PAR as a ratio. For example, for D1/DV NTSC widescreen, you would
 	// specify the ratio 40:33. In this example, the value for parNumerator is 40.
 	ParNumerator *int32
+
+	// Optionally choose one or more per frame metric reports to generate along with
+	// your output. You can use these metrics to analyze your video output according to
+	// one or more commonly used image quality metrics. You can specify per frame
+	// metrics for output groups or for individual outputs. When you do, MediaConvert
+	// writes a CSV (Comma-Separated Values) file to your S3 output destination, named
+	// after the output name and metric type. For example: videofile_PSNR.csv Jobs that
+	// generate per frame metrics will take longer to complete, depending on the
+	// resolution and complexity of your output. For example, some 4K jobs might take
+	// up to twice as long to complete. Note that when analyzing the video quality of
+	// your output, or when comparing the video quality of multiple different outputs,
+	// we generally also recommend a detailed visual review in a controlled
+	// environment. You can choose from the following per frame metrics: * PSNR: Peak
+	// Signal-to-Noise Ratio * SSIM: Structural Similarity Index Measure * MS_SSIM:
+	// Multi-Scale Similarity Index Measure * PSNR_HVS: Peak Signal-to-Noise Ratio,
+	// Human Visual System * VMAF: Video Multi-Method Assessment Fusion * QVBR:
+	// Quality-Defined Variable Bitrate. This option is only available when your output
+	// uses the QVBR rate control mode. * SHOT_CHANGE: Shot Changes
+	PerFrameMetrics []FrameMetricType
 
 	// Optional. Use Quality tuning level to choose how you want to trade off encoding
 	// speed for output video quality. The default behavior is faster, lower quality,
@@ -6885,6 +7388,12 @@ type MxfSettings struct {
 	// For more information about the automatic selection behavior, see
 	// https://docs.aws.amazon.com/mediaconvert/latest/ug/default-automatic-selection-of-mxf-profiles.html.
 	Profile MxfProfile
+
+	// Choose the audio frame wrapping mode for PCM tracks in MXF outputs. AUTO
+	// (default): Uses codec-appropriate defaults - BWF for H.264/AVC, AES3 for
+	// MPEG2/XDCAM. AES3: Use AES3 frame wrapping with SMPTE-compliant descriptors.
+	// This setting only takes effect when the MXF profile is OP1a.
+	UncompressedAudioWrapping MxfUncompressedAudioWrapping
 
 	// Specify the XAVC profile settings for MXF outputs when you set your MXF profile
 	// to XAVC.
@@ -7146,9 +7655,10 @@ type OpusSettings struct {
 	// we recommend for quality and bandwidth.
 	Bitrate *int32
 
-	// Specify the number of channels in this output audio track. Choosing Mono on
+	// Specify the number of channels in this output audio track. Choosing Follow
+	// input will use the number of channels found in the audio source; choosing Mono
 	// gives you 1 output channel; choosing Stereo gives you 2. In the API, valid
-	// values are 1 and 2.
+	// values are 0, 1, and 2.
 	Channels *int32
 
 	// Optional. Sample rate in Hz. Valid values are 16000, 24000, and 48000. The
@@ -7292,6 +7802,25 @@ type OutputGroupSettings struct {
 	// https://docs.aws.amazon.com/mediaconvert/latest/ug/outputs-file-ABR.html.
 	MsSmoothGroupSettings *MsSmoothGroupSettings
 
+	// Optionally choose one or more per frame metric reports to generate along with
+	// your output. You can use these metrics to analyze your video output according to
+	// one or more commonly used image quality metrics. You can specify per frame
+	// metrics for output groups or for individual outputs. When you do, MediaConvert
+	// writes a CSV (Comma-Separated Values) file to your S3 output destination, named
+	// after the output name and metric type. For example: videofile_PSNR.csv Jobs that
+	// generate per frame metrics will take longer to complete, depending on the
+	// resolution and complexity of your output. For example, some 4K jobs might take
+	// up to twice as long to complete. Note that when analyzing the video quality of
+	// your output, or when comparing the video quality of multiple different outputs,
+	// we generally also recommend a detailed visual review in a controlled
+	// environment. You can choose from the following per frame metrics: * PSNR: Peak
+	// Signal-to-Noise Ratio * SSIM: Structural Similarity Index Measure * MS_SSIM:
+	// Multi-Scale Similarity Index Measure * PSNR_HVS: Peak Signal-to-Noise Ratio,
+	// Human Visual System * VMAF: Video Multi-Method Assessment Fusion * QVBR:
+	// Quality-Defined Variable Bitrate. This option is only available when your output
+	// uses the QVBR rate control mode. * SHOT_CHANGE: Shot Changes
+	PerFrameMetrics []FrameMetricType
+
 	// Type of output group (File group, Apple HLS, DASH ISO, Microsoft Smooth
 	// Streaming, CMAF)
 	Type OutputGroupType
@@ -7317,6 +7846,31 @@ type PartnerWatermarking struct {
 	// Marker watermarking. MediaConvert supports both PreRelease Content (NGPR/G2) and
 	// OTT Streaming workflows.
 	NexguardFileMarkerSettings *NexGuardFileMarkerSettings
+
+	noSmithyDocumentSerde
+}
+
+// Optional settings when you set Codec to the value Passthrough.
+type PassthroughSettings struct {
+
+	// Choose how MediaConvert handles start and end times for input clipping with
+	// video passthrough. Your input video codec must be H.264 or H.265 to use IFRAME.
+	// To clip at the nearest IDR-frame: Choose Nearest IDR. If an IDR-frame is not
+	// found at the frame that you specify, MediaConvert uses the next compatible
+	// IDR-frame. Note that your output may be shorter than your input clip duration.
+	// To clip at the nearest I-frame: Choose Nearest I-frame. If an I-frame is not
+	// found at the frame that you specify, MediaConvert uses the next compatible
+	// I-frame. Note that your output may be shorter than your input clip duration. We
+	// only recommend this setting for special workflows, and when you choose this
+	// setting your output may not be compatible with most players.
+	FrameControl FrameControl
+
+	// AUTO will select the highest bitrate input in the video selector source.
+	// REMUX_ALL will passthrough all the selected streams in the video selector
+	// source. When selecting streams from multiple renditions (i.e. using Stream video
+	// selector type): REMUX_ALL will only remux all streams selected, and AUTO will
+	// use the highest bitrate video stream among the selected streams as source.
+	VideoSelectorMode VideoSelectorMode
 
 	noSmithyDocumentSerde
 }
@@ -7513,6 +8067,25 @@ type ProresSettings struct {
 	// your output PAR as a ratio. For example, for D1/DV NTSC widescreen, you would
 	// specify the ratio 40:33. In this example, the value for parNumerator is 40.
 	ParNumerator *int32
+
+	// Optionally choose one or more per frame metric reports to generate along with
+	// your output. You can use these metrics to analyze your video output according to
+	// one or more commonly used image quality metrics. You can specify per frame
+	// metrics for output groups or for individual outputs. When you do, MediaConvert
+	// writes a CSV (Comma-Separated Values) file to your S3 output destination, named
+	// after the output name and metric type. For example: videofile_PSNR.csv Jobs that
+	// generate per frame metrics will take longer to complete, depending on the
+	// resolution and complexity of your output. For example, some 4K jobs might take
+	// up to twice as long to complete. Note that when analyzing the video quality of
+	// your output, or when comparing the video quality of multiple different outputs,
+	// we generally also recommend a detailed visual review in a controlled
+	// environment. You can choose from the following per frame metrics: * PSNR: Peak
+	// Signal-to-Noise Ratio * SSIM: Structural Similarity Index Measure * MS_SSIM:
+	// Multi-Scale Similarity Index Measure * PSNR_HVS: Peak Signal-to-Noise Ratio,
+	// Human Visual System * VMAF: Video Multi-Method Assessment Fusion * QVBR:
+	// Quality-Defined Variable Bitrate. This option is only available when your output
+	// uses the QVBR rate control mode. * SHOT_CHANGE: Shot Changes
+	PerFrameMetrics []FrameMetricType
 
 	// Use this setting for interlaced outputs, when your output frame rate is half of
 	// your input frame rate. In this situation, choose Optimized interlacing to create
@@ -8163,12 +8736,27 @@ type TrackMapping struct {
 // TrackSourceSettings.
 type TrackSourceSettings struct {
 
+	// Use this setting to select a single captions track from a source. Stream
+	// numbers include all tracks in the source file, regardless of type, and
+	// correspond to either the order of tracks in the file, or if applicable, the
+	// stream number metadata of the track. Although all tracks count toward these
+	// stream numbers, in this caption selector context, only the stream number of a
+	// track containing caption data may be used. To include more than one captions
+	// track in your job outputs, create multiple input captions selectors. Specify one
+	// stream per selector. If your source file contains a track which is not
+	// recognized by the service, then the corresponding stream number will still be
+	// reserved for future use. If more types of caption data get recognized in the
+	// future, these numberings will not shift.
+	StreamNumber *int32
+
 	// Use this setting to select a single captions track from a source. Track numbers
 	// correspond to the order in the captions source file. For IMF sources, track
 	// numbering is based on the order that the captions appear in the CPL. For
 	// example, use 1 to select the captions asset that is listed first in the CPL. To
 	// include more than one captions track in your job outputs, create multiple input
-	// captions selectors. Specify one track per selector.
+	// captions selectors. Specify one track per selector. If more types of caption
+	// data get recognized in the future, these numberings may shift, but the
+	// numberings used for streamNumber will not.
 	TrackNumber *int32
 
 	noSmithyDocumentSerde
@@ -8384,11 +8972,10 @@ type VideoCodecSettings struct {
 	AvcIntraSettings *AvcIntraSettings
 
 	// Specifies the video codec. This must be equal to one of the enum values defined
-	// by the object VideoCodec. To passthrough the video stream of your input
-	// JPEG2000, VC-3, AVC-INTRA or Apple ProRes video without any video encoding:
-	// Choose Passthrough. If you have multiple input videos, note that they must have
-	// identical encoding attributes. When you choose Passthrough, your output
-	// container must be MXF or QuickTime MOV.
+	// by the object VideoCodec. To passthrough the video stream of your input without
+	// any video encoding: Choose Passthrough. More information about passthrough codec
+	// support and job settings requirements, see:
+	// https://docs.aws.amazon.com/mediaconvert/latest/ug/video-passthrough-feature-restrictions.html
 	Codec VideoCodec
 
 	// Required when you set Codec to the value FRAME_CAPTURE.
@@ -8406,6 +8993,9 @@ type VideoCodecSettings struct {
 
 	// Required when you set Codec to the value MPEG2.
 	Mpeg2Settings *Mpeg2Settings
+
+	// Optional settings when you set Codec to the value Passthrough.
+	PassthroughSettings *PassthroughSettings
 
 	// Required when you set Codec to the value PRORES.
 	ProresSettings *ProresSettings
@@ -8562,6 +9152,11 @@ type VideoDetail struct {
 // see https://docs.aws.amazon.com/mediaconvert/latest/ug/video-overlays.html
 type VideoOverlay struct {
 
+	// Specify a rectangle of content to crop and use from your video overlay's input
+	// video. When you do, MediaConvert uses the cropped dimensions that you specify
+	// under X offset, Y offset, Width, and Height.
+	Crop *VideoOverlayCrop
+
 	// Enter the end timecode in the base input video for this overlay. Your overlay
 	// will be active through this frame. To display your video overlay for the
 	// duration of the base input video: Leave blank. Use the format HH:MM:SS:FF or
@@ -8609,9 +9204,74 @@ type VideoOverlay struct {
 	noSmithyDocumentSerde
 }
 
+// Specify a rectangle of content to crop and use from your video overlay's input
+// video. When you do, MediaConvert uses the cropped dimensions that you specify
+// under X offset, Y offset, Width, and Height.
+type VideoOverlayCrop struct {
+
+	// Specify the height of the video overlay cropping rectangle. To use the same
+	// height as your overlay input video: Keep blank, or enter 0. To specify a
+	// different height for the cropping rectangle: Enter an integer representing the
+	// Unit type that you choose, either Pixels or Percentage. For example, when you
+	// enter 100 and choose Pixels, the cropping rectangle will be 100 pixels high.
+	// When you enter 10, choose Percentage, and your overlay input video is 1920x1080,
+	// the cropping rectangle will be 108 pixels high.
+	Height *int32
+
+	// Specify the Unit type to use when you enter a value for X position, Y position,
+	// Width, or Height. You can choose Pixels or Percentage. Leave blank to use the
+	// default value, Pixels.
+	Unit VideoOverlayUnit
+
+	// Specify the width of the video overlay cropping rectangle. To use the same
+	// width as your overlay input video: Keep blank, or enter 0. To specify a
+	// different width for the cropping rectangle: Enter an integer representing the
+	// Unit type that you choose, either Pixels or Percentage. For example, when you
+	// enter 100 and choose Pixels, the cropping rectangle will be 100 pixels wide.
+	// When you enter 10, choose Percentage, and your overlay input video is 1920x1080,
+	// the cropping rectangle will be 192 pixels wide.
+	Width *int32
+
+	// Specify the distance between the cropping rectangle and the left edge of your
+	// overlay video's frame. To position the cropping rectangle along the left edge:
+	// Keep blank, or enter 0. To position the cropping rectangle to the right,
+	// relative to the left edge of your overlay video's frame: Enter an integer
+	// representing the Unit type that you choose, either Pixels or Percentage. For
+	// example, when you enter 10 and choose Pixels, the cropping rectangle will be
+	// positioned 10 pixels from the left edge of the overlay video's frame. When you
+	// enter 10, choose Percentage, and your overlay input video is 1920x1080, the
+	// cropping rectangle will be positioned 192 pixels from the left edge of the
+	// overlay video's frame.
+	X *int32
+
+	// Specify the distance between the cropping rectangle and the top edge of your
+	// overlay video's frame. To position the cropping rectangle along the top edge:
+	// Keep blank, or enter 0. To position the cropping rectangle down, relative to the
+	// top edge of your overlay video's frame: Enter an integer representing the Unit
+	// type that you choose, either Pixels or Percentage. For example, when you enter
+	// 10 and choose Pixels, the cropping rectangle will be positioned 10 pixels from
+	// the top edge of the overlay video's frame. When you enter 10, choose Percentage,
+	// and your overlay input video is 1920x1080, the cropping rectangle will be
+	// positioned 108 pixels from the top edge of the overlay video's frame.
+	Y *int32
+
+	noSmithyDocumentSerde
+}
+
 // Input settings for Video overlay. You can include one or more video overlays in
 // sequence at different times that you specify.
 type VideoOverlayInput struct {
+
+	// Use Audio selectors to specify audio to use during your Video overlay. You can
+	// use multiple Audio selectors per Video overlay. When you include an Audio
+	// selector within a Video overlay, MediaConvert mutes any Audio selectors with the
+	// same name from the underlying input. For example, if your underlying input has
+	// Audio selector 1 and Audio selector 2, and your Video overlay only has Audio
+	// selector 1, then MediaConvert replaces all audio for Audio selector 1 during the
+	// Video overlay. To replace all audio for all Audio selectors from the underlying
+	// input by using a single Audio selector in your overlay, set DefaultSelection to
+	// DEFAULT (Check "Use as default" in the MediaConvert console).
+	AudioSelectors map[string]AudioSelector
 
 	// Specify the input file S3, HTTP, or HTTPS URL for your video overlay. To
 	// specify one or more Transitions for your base input video instead: Leave blank.
@@ -8669,6 +9329,10 @@ type VideoOverlayPosition struct {
 	// blank.
 	Height *int32
 
+	// Use Opacity to specify how much of the underlying video shows through the
+	// overlay video. 0 is transparent and 100 is fully opaque. Default is 100.
+	Opacity *int32
+
 	// Specify the Unit type to use when you enter a value for X position, Y position,
 	// Width, or Height. You can choose Pixels or Percentage. Leave blank to use the
 	// default value, Pixels.
@@ -8714,7 +9378,7 @@ type VideoOverlayPosition struct {
 // reposition or resize your overlay over time. To use the same position and size
 // for the duration of your video overlay: Leave blank. To specify a Transition:
 // Enter a value for Start timecode, End Timecode, X Position, Y Position, Width,
-// or Height.
+// Height, or Opacity
 type VideoOverlayTransition struct {
 
 	// Specify the ending position for this transition, relative to the base input
@@ -8784,25 +9448,41 @@ type VideoPreprocessor struct {
 // Details about the media file's video track.
 type VideoProperties struct {
 
-	// The bit depth of the video track.
+	// The number of bits used per color component such as 8, 10, or 12 bits. Standard
+	// range (SDR) video typically uses 8-bit, while 10-bit is common for high dynamic
+	// range (HDR).
 	BitDepth *int32
 
 	// The bit rate of the video track, in bits per second.
-	BitRate *int32
+	BitRate *int64
 
-	// The color space color primaries of the video track.
+	// Codec-specific parameters parsed from the video essence headers. This
+	// information provides detailed technical specifications about how the video was
+	// encoded, including profile settings, resolution details, and color space
+	// information that can help you understand the source video characteristics and
+	// make informed encoding decisions.
+	CodecMetadata *CodecMetadata
+
+	// The color space primaries of the video track, defining the red, green, and blue
+	// color coordinates used for the video. This information helps ensure accurate
+	// color reproduction during playback and transcoding.
 	ColorPrimaries ColorPrimaries
 
-	// The frame rate of the video or audio track.
+	// The frame rate of the video or audio track, expressed as a fraction with
+	// numerator and denominator values.
 	FrameRate *FrameRate
 
 	// The height of the video track, in pixels.
 	Height *int32
 
-	// The color space matrix coefficients of the video track.
+	// The color space matrix coefficients of the video track, defining how RGB color
+	// values are converted to and from YUV color space. This affects color accuracy
+	// during encoding and decoding processes.
 	MatrixCoefficients MatrixCoefficients
 
-	// The color space transfer characteristics of the video track.
+	// The color space transfer characteristics of the video track, defining the
+	// relationship between linear light values and the encoded signal values. This
+	// affects brightness and contrast reproduction.
 	TransferCharacteristics TransferCharacteristics
 
 	// The width of the video track, in pixels.
@@ -8916,6 +9596,23 @@ type VideoSelector struct {
 	// sample range for transcoding and also writes it to the output metadata.
 	SampleRange InputSampleRange
 
+	// Choose the video selector type for your HLS input. Use to specify which video
+	// rendition MediaConvert uses from your HLS input. To have MediaConvert
+	// automatically use the highest bitrate rendition from your HLS input: Keep the
+	// default value, Auto. To manually specify a rendition: Choose Stream. Then enter
+	// the unique stream number in the Streams array, starting at 1, corresponding to
+	// the stream order in the manifest.
+	SelectorType VideoSelectorType
+
+	// Specify one or more video streams for MediaConvert to use from your HLS input.
+	// Enter an integer corresponding to the stream number, with the first stream in
+	// your HLS multivariant playlist starting at 1. For re-encoding workflows,
+	// MediaConvert uses the video stream that you select with the highest bitrate as
+	// the input. For video passthrough workflows, you specify whether to passthrough a
+	// single video stream or multiple video streams under Video selector source in the
+	// output video encoding settings.
+	Streams []int32
+
 	noSmithyDocumentSerde
 }
 
@@ -8924,8 +9621,9 @@ type VideoSelector struct {
 type VorbisSettings struct {
 
 	// Optional. Specify the number of channels in this output audio track. Choosing
+	// Follow input will use the number of channels found in the audio source; choosing
 	// Mono on the console gives you 1 output channel; choosing Stereo gives you 2. In
-	// the API, valid values are 1 and 2. The default value is 2.
+	// the API, valid values are 0, 1, and 2. The default value is 2.
 	Channels *int32
 
 	// Optional. Specify the audio sample rate in Hz. Valid values are 22050, 32000,
@@ -9154,8 +9852,10 @@ type WavSettings struct {
 	// audio track.
 	BitDepth *int32
 
-	// Specify the number of channels in this output audio track. Valid values are 1
-	// and even numbers up to 64. For example, 1, 2, 4, 6, and so on, up to 64.
+	// Specify the number of channels in this output audio track. Valid values are 0,
+	// 1, and even numbers up to 64. Choose 0 to follow the number of channels from
+	// your input audio. Otherwise, manually choose from 1, 2, 4, 6, and so on, up to
+	// 64.
 	Channels *int32
 
 	// Specify the file format for your wave audio output. To use a RIFF wave format:
@@ -9183,7 +9883,7 @@ type WebvttDestinationSettings struct {
 	// you do, MediaConvert adds accessibility attributes to your output HLS or DASH
 	// manifest. For HLS manifests, MediaConvert adds the following accessibility
 	// attributes under EXT-X-MEDIA for this track:
-	// CHARACTERISTICS="public.accessibility.describes-spoken-dialog,public.accessibility.describes-music-and-sound"
+	// CHARACTERISTICS="public.accessibility.transcribes-spoken-dialog,public.accessibility.describes-music-and-sound"
 	// and AUTOSELECT="YES". For DASH manifests, MediaConvert adds the following in the
 	// adaptation set for this track: . If the captions track is not intended to
 	// provide such accessibility: Keep the default value, Disabled. When you do, for
@@ -9222,7 +9922,9 @@ type WebvttHlsSourceSettings struct {
 	// Optional. Specify alternative group ID
 	RenditionGroupId *string
 
-	// Optional. Specify ISO 639-2 or ISO 639-3 code in the language property
+	// Optionally specify the language, using an ISO 639-2 or ISO 639-3 three-letter
+	// code in all capital letters. You can find a list of codes at:
+	// https://www.loc.gov/standards/iso639-2/php/code_list.php
 	RenditionLanguageCode LanguageCode
 
 	// Optional. Specify media name
@@ -9453,6 +10155,25 @@ type XavcSettings struct {
 	// transcode jobs that use frame rate conversion, provide the value as a decimal
 	// number for Framerate. In this example, specify 23.976.
 	FramerateNumerator *int32
+
+	// Optionally choose one or more per frame metric reports to generate along with
+	// your output. You can use these metrics to analyze your video output according to
+	// one or more commonly used image quality metrics. You can specify per frame
+	// metrics for output groups or for individual outputs. When you do, MediaConvert
+	// writes a CSV (Comma-Separated Values) file to your S3 output destination, named
+	// after the output name and metric type. For example: videofile_PSNR.csv Jobs that
+	// generate per frame metrics will take longer to complete, depending on the
+	// resolution and complexity of your output. For example, some 4K jobs might take
+	// up to twice as long to complete. Note that when analyzing the video quality of
+	// your output, or when comparing the video quality of multiple different outputs,
+	// we generally also recommend a detailed visual review in a controlled
+	// environment. You can choose from the following per frame metrics: * PSNR: Peak
+	// Signal-to-Noise Ratio * SSIM: Structural Similarity Index Measure * MS_SSIM:
+	// Multi-Scale Similarity Index Measure * PSNR_HVS: Peak Signal-to-Noise Ratio,
+	// Human Visual System * VMAF: Video Multi-Method Assessment Fusion * QVBR:
+	// Quality-Defined Variable Bitrate. This option is only available when your output
+	// uses the QVBR rate control mode. * SHOT_CHANGE: Shot Changes
+	PerFrameMetrics []FrameMetricType
 
 	// Specify the XAVC profile for this output. For more information, see the Sony
 	// documentation at https://www.xavc-info.org/. Note that MediaConvert doesn't

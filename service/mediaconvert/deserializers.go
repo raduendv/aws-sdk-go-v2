@@ -19,16 +19,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpAssociateCertificate struct {
 }
@@ -119,6 +110,9 @@ func awsRestjson1_deserializeOpErrorAssociateCertificate(response *smithyhttp.Re
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -222,6 +216,9 @@ func awsRestjson1_deserializeOpErrorCancelJob(response *smithyhttp.Response, met
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -353,6 +350,9 @@ func awsRestjson1_deserializeOpErrorCreateJob(response *smithyhttp.Response, met
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -521,6 +521,9 @@ func awsRestjson1_deserializeOpErrorCreateJobTemplate(response *smithyhttp.Respo
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -687,6 +690,9 @@ func awsRestjson1_deserializeOpErrorCreatePreset(response *smithyhttp.Response, 
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -855,6 +861,9 @@ func awsRestjson1_deserializeOpErrorCreateQueue(response *smithyhttp.Response, m
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -902,6 +911,112 @@ func awsRestjson1_deserializeOpDocumentCreateQueueOutput(v **CreateQueueOutput, 
 	}
 	*v = sv
 	return nil
+}
+
+type awsRestjson1_deserializeOpCreateResourceShare struct {
+}
+
+func (*awsRestjson1_deserializeOpCreateResourceShare) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsRestjson1_deserializeOpCreateResourceShare) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsRestjson1_deserializeOpErrorCreateResourceShare(response, &metadata)
+	}
+	output := &CreateResourceShareOutput{}
+	out.Result = output
+
+	span.End()
+	return out, metadata, err
+}
+
+func awsRestjson1_deserializeOpErrorCreateResourceShare(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+	if len(headerCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(headerCode)
+	}
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	jsonCode, message, err := restjson.GetErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if len(headerCode) == 0 && len(jsonCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(jsonCode)
+	}
+	if len(message) != 0 {
+		errorMessage = message
+	}
+
+	switch {
+	case strings.EqualFold("BadRequestException", errorCode):
+		return awsRestjson1_deserializeErrorBadRequestException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsRestjson1_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("ForbiddenException", errorCode):
+		return awsRestjson1_deserializeErrorForbiddenException(response, errorBody)
+
+	case strings.EqualFold("InternalServerErrorException", errorCode):
+		return awsRestjson1_deserializeErrorInternalServerErrorException(response, errorBody)
+
+	case strings.EqualFold("NotFoundException", errorCode):
+		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
+	case strings.EqualFold("TooManyRequestsException", errorCode):
+		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
 }
 
 type awsRestjson1_deserializeOpDeleteJobTemplate struct {
@@ -993,6 +1108,9 @@ func awsRestjson1_deserializeOpErrorDeleteJobTemplate(response *smithyhttp.Respo
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -1097,6 +1215,9 @@ func awsRestjson1_deserializeOpErrorDeletePolicy(response *smithyhttp.Response, 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -1200,6 +1321,9 @@ func awsRestjson1_deserializeOpErrorDeletePreset(response *smithyhttp.Response, 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -1302,6 +1426,9 @@ func awsRestjson1_deserializeOpErrorDeleteQueue(response *smithyhttp.Response, m
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -1433,6 +1560,9 @@ func awsRestjson1_deserializeOpErrorDescribeEndpoints(response *smithyhttp.Respo
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -1582,6 +1712,9 @@ func awsRestjson1_deserializeOpErrorDisassociateCertificate(response *smithyhttp
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -1713,6 +1846,9 @@ func awsRestjson1_deserializeOpErrorGetJob(response *smithyhttp.Response, metada
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -1751,6 +1887,194 @@ func awsRestjson1_deserializeOpDocumentGetJobOutput(v **GetJobOutput, value inte
 		case "job":
 			if err := awsRestjson1_deserializeDocumentJob(&sv.Job, value); err != nil {
 				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+type awsRestjson1_deserializeOpGetJobsQueryResults struct {
+}
+
+func (*awsRestjson1_deserializeOpGetJobsQueryResults) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsRestjson1_deserializeOpGetJobsQueryResults) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsRestjson1_deserializeOpErrorGetJobsQueryResults(response, &metadata)
+	}
+	output := &GetJobsQueryResultsOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsRestjson1_deserializeOpDocumentGetJobsQueryResultsOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		return out, metadata, &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body with invalid JSON, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+	}
+
+	span.End()
+	return out, metadata, err
+}
+
+func awsRestjson1_deserializeOpErrorGetJobsQueryResults(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+	if len(headerCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(headerCode)
+	}
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	jsonCode, message, err := restjson.GetErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if len(headerCode) == 0 && len(jsonCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(jsonCode)
+	}
+	if len(message) != 0 {
+		errorMessage = message
+	}
+
+	switch {
+	case strings.EqualFold("BadRequestException", errorCode):
+		return awsRestjson1_deserializeErrorBadRequestException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsRestjson1_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("ForbiddenException", errorCode):
+		return awsRestjson1_deserializeErrorForbiddenException(response, errorBody)
+
+	case strings.EqualFold("InternalServerErrorException", errorCode):
+		return awsRestjson1_deserializeErrorInternalServerErrorException(response, errorBody)
+
+	case strings.EqualFold("NotFoundException", errorCode):
+		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
+	case strings.EqualFold("TooManyRequestsException", errorCode):
+		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+func awsRestjson1_deserializeOpDocumentGetJobsQueryResultsOutput(v **GetJobsQueryResultsOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *GetJobsQueryResultsOutput
+	if *v == nil {
+		sv = &GetJobsQueryResultsOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "jobs":
+			if err := awsRestjson1_deserializeDocument__listOfJob(&sv.Jobs, value); err != nil {
+				return err
+			}
+
+		case "nextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
+			}
+
+		case "status":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected JobsQueryStatus to be of type string, got %T instead", value)
+				}
+				sv.Status = types.JobsQueryStatus(jtv)
 			}
 
 		default:
@@ -1879,6 +2203,9 @@ func awsRestjson1_deserializeOpErrorGetJobTemplate(response *smithyhttp.Response
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -2047,6 +2374,9 @@ func awsRestjson1_deserializeOpErrorGetPolicy(response *smithyhttp.Response, met
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -2213,6 +2543,9 @@ func awsRestjson1_deserializeOpErrorGetPreset(response *smithyhttp.Response, met
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -2381,6 +2714,9 @@ func awsRestjson1_deserializeOpErrorGetQueue(response *smithyhttp.Response, meta
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -2547,6 +2883,9 @@ func awsRestjson1_deserializeOpErrorListJobs(response *smithyhttp.Response, meta
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -2724,6 +3063,9 @@ func awsRestjson1_deserializeOpErrorListJobTemplates(response *smithyhttp.Respon
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -2900,6 +3242,9 @@ func awsRestjson1_deserializeOpErrorListPresets(response *smithyhttp.Response, m
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -3075,6 +3420,9 @@ func awsRestjson1_deserializeOpErrorListQueues(response *smithyhttp.Response, me
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -3278,6 +3626,9 @@ func awsRestjson1_deserializeOpErrorListTagsForResource(response *smithyhttp.Res
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -3444,6 +3795,9 @@ func awsRestjson1_deserializeOpErrorListVersions(response *smithyhttp.Response, 
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -3621,6 +3975,9 @@ func awsRestjson1_deserializeOpErrorProbe(response *smithyhttp.Response, metadat
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -3787,6 +4144,9 @@ func awsRestjson1_deserializeOpErrorPutPolicy(response *smithyhttp.Response, met
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -3955,6 +4315,9 @@ func awsRestjson1_deserializeOpErrorSearchJobs(response *smithyhttp.Response, me
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -4002,6 +4365,180 @@ func awsRestjson1_deserializeOpDocumentSearchJobsOutput(v **SearchJobsOutput, va
 					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
 				}
 				sv.NextToken = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+type awsRestjson1_deserializeOpStartJobsQuery struct {
+}
+
+func (*awsRestjson1_deserializeOpStartJobsQuery) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsRestjson1_deserializeOpStartJobsQuery) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsRestjson1_deserializeOpErrorStartJobsQuery(response, &metadata)
+	}
+	output := &StartJobsQueryOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsRestjson1_deserializeOpDocumentStartJobsQueryOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		return out, metadata, &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body with invalid JSON, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+	}
+
+	span.End()
+	return out, metadata, err
+}
+
+func awsRestjson1_deserializeOpErrorStartJobsQuery(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+	if len(headerCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(headerCode)
+	}
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	jsonCode, message, err := restjson.GetErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if len(headerCode) == 0 && len(jsonCode) != 0 {
+		errorCode = restjson.SanitizeErrorCode(jsonCode)
+	}
+	if len(message) != 0 {
+		errorMessage = message
+	}
+
+	switch {
+	case strings.EqualFold("BadRequestException", errorCode):
+		return awsRestjson1_deserializeErrorBadRequestException(response, errorBody)
+
+	case strings.EqualFold("ConflictException", errorCode):
+		return awsRestjson1_deserializeErrorConflictException(response, errorBody)
+
+	case strings.EqualFold("ForbiddenException", errorCode):
+		return awsRestjson1_deserializeErrorForbiddenException(response, errorBody)
+
+	case strings.EqualFold("InternalServerErrorException", errorCode):
+		return awsRestjson1_deserializeErrorInternalServerErrorException(response, errorBody)
+
+	case strings.EqualFold("NotFoundException", errorCode):
+		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
+	case strings.EqualFold("TooManyRequestsException", errorCode):
+		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+func awsRestjson1_deserializeOpDocumentStartJobsQueryOutput(v **StartJobsQueryOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *StartJobsQueryOutput
+	if *v == nil {
+		sv = &StartJobsQueryOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "id":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.Id = ptr.String(jtv)
 			}
 
 		default:
@@ -4102,6 +4639,9 @@ func awsRestjson1_deserializeOpErrorTagResource(response *smithyhttp.Response, m
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -4205,6 +4745,9 @@ func awsRestjson1_deserializeOpErrorUntagResource(response *smithyhttp.Response,
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -4336,6 +4879,9 @@ func awsRestjson1_deserializeOpErrorUpdateJobTemplate(response *smithyhttp.Respo
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -4504,6 +5050,9 @@ func awsRestjson1_deserializeOpErrorUpdatePreset(response *smithyhttp.Response, 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
 
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
+
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
 
@@ -4670,6 +5219,9 @@ func awsRestjson1_deserializeOpErrorUpdateQueue(response *smithyhttp.Response, m
 
 	case strings.EqualFold("NotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorNotFoundException(response, errorBody)
+
+	case strings.EqualFold("ServiceQuotaExceededException", errorCode):
+		return awsRestjson1_deserializeErrorServiceQuotaExceededException(response, errorBody)
 
 	case strings.EqualFold("TooManyRequestsException", errorCode):
 		return awsRestjson1_deserializeErrorTooManyRequestsException(response, errorBody)
@@ -4884,6 +5436,42 @@ func awsRestjson1_deserializeErrorNotFoundException(response *smithyhttp.Respons
 	}
 
 	err := awsRestjson1_deserializeDocumentNotFoundException(&output, shape)
+
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+
+	return output
+}
+
+func awsRestjson1_deserializeErrorServiceQuotaExceededException(response *smithyhttp.Response, errorBody *bytes.Reader) error {
+	output := &types.ServiceQuotaExceededException{}
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	err := awsRestjson1_deserializeDocumentServiceQuotaExceededException(&output, shape)
 
 	if err != nil {
 		var snapshot bytes.Buffer
@@ -5706,6 +6294,42 @@ func awsRestjson1_deserializeDocument__listOfForceIncludeRenditionSize(v *[]type
 			return err
 		}
 		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsRestjson1_deserializeDocument__listOfFrameMetricType(v *[]types.FrameMetricType, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.FrameMetricType
+	if *v == nil {
+		cv = []types.FrameMetricType{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.FrameMetricType
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected FrameMetricType to be of type string, got %T instead", value)
+			}
+			col = types.FrameMetricType(jtv)
+		}
 		cv = append(cv, col)
 
 	}
@@ -6975,6 +7599,28 @@ func awsRestjson1_deserializeDocumentAacSettings(v **types.AacSettings, value in
 				sv.CodingMode = types.AacCodingMode(jtv)
 			}
 
+		case "loudnessMeasurementMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected AacLoudnessMeasurementMode to be of type string, got %T instead", value)
+				}
+				sv.LoudnessMeasurementMode = types.AacLoudnessMeasurementMode(jtv)
+			}
+
+		case "rapInterval":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin2000Max30000 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.RapInterval = ptr.Int32(int32(i64))
+			}
+
 		case "rateControlMode":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -7013,6 +7659,19 @@ func awsRestjson1_deserializeDocumentAacSettings(v **types.AacSettings, value in
 					return fmt.Errorf("expected AacSpecification to be of type string, got %T instead", value)
 				}
 				sv.Specification = types.AacSpecification(jtv)
+			}
+
+		case "targetLoudnessRange":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin6Max16 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TargetLoudnessRange = ptr.Int32(int32(i64))
 			}
 
 		case "vbrQuality":
@@ -7294,7 +7953,7 @@ func awsRestjson1_deserializeDocumentAiffSettings(v **types.AiffSettings, value 
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin1Max64 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin0Max64 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -7625,6 +8284,11 @@ func awsRestjson1_deserializeDocumentAudioDescription(v **types.AudioDescription
 				return err
 			}
 
+		case "audioPitchCorrectionSettings":
+			if err := awsRestjson1_deserializeDocumentAudioPitchCorrectionSettings(&sv.AudioPitchCorrectionSettings, value); err != nil {
+				return err
+			}
+
 		case "audioSourceName":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -7859,6 +8523,46 @@ func awsRestjson1_deserializeDocumentAudioNormalizationSettings(v **types.AudioN
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentAudioPitchCorrectionSettings(v **types.AudioPitchCorrectionSettings, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.AudioPitchCorrectionSettings
+	if *v == nil {
+		sv = &types.AudioPitchCorrectionSettings{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "slowPalPitchCorrection":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected SlowPalPitchCorrection to be of type string, got %T instead", value)
+				}
+				sv.SlowPalPitchCorrection = types.SlowPalPitchCorrection(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentAudioProperties(v **types.AudioProperties, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -7898,13 +8602,13 @@ func awsRestjson1_deserializeDocumentAudioProperties(v **types.AudioProperties, 
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integer to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __long to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
 					return err
 				}
-				sv.BitRate = ptr.Int32(int32(i64))
+				sv.BitRate = ptr.Int64(i64)
 			}
 
 		case "channels":
@@ -8071,6 +8775,11 @@ func awsRestjson1_deserializeDocumentAudioSelector(v **types.AudioSelector, valu
 					return fmt.Errorf("expected AudioSelectorType to be of type string, got %T instead", value)
 				}
 				sv.SelectorType = types.AudioSelectorType(jtv)
+			}
+
+		case "streams":
+			if err := awsRestjson1_deserializeDocument__listOf__integerMin1Max2147483647(&sv.Streams, value); err != nil {
+				return err
 			}
 
 		case "tracks":
@@ -8559,6 +9268,11 @@ func awsRestjson1_deserializeDocumentAv1Settings(v **types.Av1Settings, value in
 				sv.NumberBFramesBetweenReferenceFrames = ptr.Int32(int32(i64))
 			}
 
+		case "perFrameMetrics":
+			if err := awsRestjson1_deserializeDocument__listOfFrameMetricType(&sv.PerFrameMetrics, value); err != nil {
+				return err
+			}
+
 		case "qvbrSettings":
 			if err := awsRestjson1_deserializeDocumentAv1QvbrSettings(&sv.QvbrSettings, value); err != nil {
 				return err
@@ -8731,6 +9445,11 @@ func awsRestjson1_deserializeDocumentAvcIntraSettings(v **types.AvcIntraSettings
 					return fmt.Errorf("expected AvcIntraInterlaceMode to be of type string, got %T instead", value)
 				}
 				sv.InterlaceMode = types.AvcIntraInterlaceMode(jtv)
+			}
+
+		case "perFrameMetrics":
+			if err := awsRestjson1_deserializeDocument__listOfFrameMetricType(&sv.PerFrameMetrics, value); err != nil {
+				return err
 			}
 
 		case "scanTypeConversionMode":
@@ -10338,6 +11057,24 @@ func awsRestjson1_deserializeDocumentCmfcSettings(v **types.CmfcSettings, value 
 				sv.AudioTrackType = types.CmfcAudioTrackType(jtv)
 			}
 
+		case "c2paManifest":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CmfcC2paManifest to be of type string, got %T instead", value)
+				}
+				sv.C2paManifest = types.CmfcC2paManifest(jtv)
+			}
+
+		case "certificateSecret":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringMin1Max2048PatternArnAZSecretsmanagerWD12SecretAZAZ09 to be of type string, got %T instead", value)
+				}
+				sv.CertificateSecret = ptr.String(jtv)
+			}
+
 		case "descriptiveVideoServiceFlag":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -10392,6 +11129,15 @@ func awsRestjson1_deserializeDocumentCmfcSettings(v **types.CmfcSettings, value 
 				sv.Scte35Source = types.CmfcScte35Source(jtv)
 			}
 
+		case "signingKmsKey":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringMin1PatternArnAwsUsGovCnKmsAZ26EastWestCentralNorthSouthEastWest1912D12KeyAFAF098AFAF094AFAF094AFAF094AFAF0912MrkAFAF0932 to be of type string, got %T instead", value)
+				}
+				sv.SigningKmsKey = ptr.String(jtv)
+			}
+
 		case "timedMetadata":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -10426,6 +11172,144 @@ func awsRestjson1_deserializeDocumentCmfcSettings(v **types.CmfcSettings, value 
 					return fmt.Errorf("expected __stringMax1000 to be of type string, got %T instead", value)
 				}
 				sv.TimedMetadataValue = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentCodecMetadata(v **types.CodecMetadata, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.CodecMetadata
+	if *v == nil {
+		sv = &types.CodecMetadata{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "bitDepth":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.BitDepth = ptr.Int32(int32(i64))
+			}
+
+		case "chromaSubsampling":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.ChromaSubsampling = ptr.String(jtv)
+			}
+
+		case "codedFrameRate":
+			if err := awsRestjson1_deserializeDocumentFrameRate(&sv.CodedFrameRate, value); err != nil {
+				return err
+			}
+
+		case "colorPrimaries":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ColorPrimaries to be of type string, got %T instead", value)
+				}
+				sv.ColorPrimaries = types.ColorPrimaries(jtv)
+			}
+
+		case "height":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Height = ptr.Int32(int32(i64))
+			}
+
+		case "level":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.Level = ptr.String(jtv)
+			}
+
+		case "matrixCoefficients":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MatrixCoefficients to be of type string, got %T instead", value)
+				}
+				sv.MatrixCoefficients = types.MatrixCoefficients(jtv)
+			}
+
+		case "profile":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.Profile = ptr.String(jtv)
+			}
+
+		case "scanType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.ScanType = ptr.String(jtv)
+			}
+
+		case "transferCharacteristics":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected TransferCharacteristics to be of type string, got %T instead", value)
+				}
+				sv.TransferCharacteristics = types.TransferCharacteristics(jtv)
+			}
+
+		case "width":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integer to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Width = ptr.Int32(int32(i64))
 			}
 
 		default:
@@ -11488,6 +12372,15 @@ func awsRestjson1_deserializeDocumentDolbyVision(v **types.DolbyVision, value in
 
 	for key, value := range shape {
 		switch key {
+		case "compatibility":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DolbyVisionCompatibility to be of type string, got %T instead", value)
+				}
+				sv.Compatibility = types.DolbyVisionCompatibility(jtv)
+			}
+
 		case "l6Metadata":
 			if err := awsRestjson1_deserializeDocumentDolbyVisionLevel6Metadata(&sv.L6Metadata, value); err != nil {
 				return err
@@ -13459,6 +14352,15 @@ func awsRestjson1_deserializeDocumentFileSourceSettings(v **types.FileSourceSett
 				sv.TimeDeltaUnits = types.FileSourceTimeDeltaUnits(jtv)
 			}
 
+		case "upconvertSTLToTeletext":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CaptionSourceUpconvertSTLToTeletext to be of type string, got %T instead", value)
+				}
+				sv.UpconvertSTLToTeletext = types.CaptionSourceUpconvertSTLToTeletext(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -13507,7 +14409,7 @@ func awsRestjson1_deserializeDocumentFlacSettings(v **types.FlacSettings, value 
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin1Max8 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin0Max8 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -13520,7 +14422,7 @@ func awsRestjson1_deserializeDocumentFlacSettings(v **types.FlacSettings, value 
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin22050Max48000 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin22050Max192000 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -14297,6 +15199,11 @@ func awsRestjson1_deserializeDocumentH264Settings(v **types.H264Settings, value 
 				sv.ParNumerator = ptr.Int32(int32(i64))
 			}
 
+		case "perFrameMetrics":
+			if err := awsRestjson1_deserializeDocument__listOfFrameMetricType(&sv.PerFrameMetrics, value); err != nil {
+				return err
+			}
+
 		case "qualityTuningLevel":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -14840,6 +15747,24 @@ func awsRestjson1_deserializeDocumentH265Settings(v **types.H265Settings, value 
 				sv.MinIInterval = ptr.Int32(int32(i64))
 			}
 
+		case "mvOverPictureBoundaries":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected H265MvOverPictureBoundaries to be of type string, got %T instead", value)
+				}
+				sv.MvOverPictureBoundaries = types.H265MvOverPictureBoundaries(jtv)
+			}
+
+		case "mvTemporalPredictor":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected H265MvTemporalPredictor to be of type string, got %T instead", value)
+				}
+				sv.MvTemporalPredictor = types.H265MvTemporalPredictor(jtv)
+			}
+
 		case "numberBFramesBetweenReferenceFrames":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -14899,6 +15824,11 @@ func awsRestjson1_deserializeDocumentH265Settings(v **types.H265Settings, value 
 					return err
 				}
 				sv.ParNumerator = ptr.Int32(int32(i64))
+			}
+
+		case "perFrameMetrics":
+			if err := awsRestjson1_deserializeDocument__listOfFrameMetricType(&sv.PerFrameMetrics, value); err != nil {
+				return err
 			}
 
 		case "qualityTuningLevel":
@@ -15009,6 +15939,28 @@ func awsRestjson1_deserializeDocumentH265Settings(v **types.H265Settings, value 
 				sv.TemporalIds = types.H265TemporalIds(jtv)
 			}
 
+		case "tileHeight":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin64Max2160 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TileHeight = ptr.Int32(int32(i64))
+			}
+
+		case "tilePadding":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected H265TilePadding to be of type string, got %T instead", value)
+				}
+				sv.TilePadding = types.H265TilePadding(jtv)
+			}
+
 		case "tiles":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -15016,6 +15968,28 @@ func awsRestjson1_deserializeDocumentH265Settings(v **types.H265Settings, value 
 					return fmt.Errorf("expected H265Tiles to be of type string, got %T instead", value)
 				}
 				sv.Tiles = types.H265Tiles(jtv)
+			}
+
+		case "tileWidth":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin256Max3840 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.TileWidth = ptr.Int32(int32(i64))
+			}
+
+		case "treeBlockSize":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected H265TreeBlockSize to be of type string, got %T instead", value)
+				}
+				sv.TreeBlockSize = types.H265TreeBlockSize(jtv)
 			}
 
 		case "unregisteredSeiTimecode":
@@ -16501,6 +17475,11 @@ func awsRestjson1_deserializeDocumentInput(v **types.Input, value interface{}) e
 				return err
 			}
 
+		case "tamsSettings":
+			if err := awsRestjson1_deserializeDocumentInputTamsSettings(&sv.TamsSettings, value); err != nil {
+				return err
+			}
+
 		case "timecodeSource":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -16648,6 +17627,73 @@ func awsRestjson1_deserializeDocumentInputDecryptionSettings(v **types.InputDecr
 					return fmt.Errorf("expected __stringMin9Max19PatternAZ26EastWestCentralNorthSouthEastWest1912 to be of type string, got %T instead", value)
 				}
 				sv.KmsKeyRegion = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentInputTamsSettings(v **types.InputTamsSettings, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.InputTamsSettings
+	if *v == nil {
+		sv = &types.InputTamsSettings{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "authConnectionArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringPatternArnAwsAZ09EventsAZ090912ConnectionAZAZ09AF0936 to be of type string, got %T instead", value)
+				}
+				sv.AuthConnectionArn = ptr.String(jtv)
+			}
+
+		case "gapHandling":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected TamsGapHandling to be of type string, got %T instead", value)
+				}
+				sv.GapHandling = types.TamsGapHandling(jtv)
+			}
+
+		case "sourceId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.SourceId = ptr.String(jtv)
+			}
+
+		case "timerange":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringPattern019090190908019090190908 to be of type string, got %T instead", value)
+				}
+				sv.Timerange = ptr.String(jtv)
 			}
 
 		default:
@@ -16891,7 +17937,7 @@ func awsRestjson1_deserializeDocumentInputVideoGenerator(v **types.InputVideoGen
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin50Max86400000 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin1Max86400000 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -16926,6 +17972,28 @@ func awsRestjson1_deserializeDocumentInputVideoGenerator(v **types.InputVideoGen
 				sv.FramerateNumerator = ptr.Int32(int32(i64))
 			}
 
+		case "height":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin32Max8192 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Height = ptr.Int32(int32(i64))
+			}
+
+		case "imageInput":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringMin14PatternS3BmpBMPPngPNGTgaTGAHttpsBmpBMPPngPNGTgaTGA to be of type string, got %T instead", value)
+				}
+				sv.ImageInput = ptr.String(jtv)
+			}
+
 		case "sampleRate":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -16937,6 +18005,19 @@ func awsRestjson1_deserializeDocumentInputVideoGenerator(v **types.InputVideoGen
 					return err
 				}
 				sv.SampleRate = ptr.Int32(int32(i64))
+			}
+
+		case "width":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin32Max8192 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Width = ptr.Int32(int32(i64))
 			}
 
 		default:
@@ -17318,6 +18399,15 @@ func awsRestjson1_deserializeDocumentJob(v **types.Job, value interface{}) error
 				sv.JobTemplate = ptr.String(jtv)
 			}
 
+		case "lastShareDetails":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.LastShareDetails = ptr.String(jtv)
+			}
+
 		case "messages":
 			if err := awsRestjson1_deserializeDocumentJobMessages(&sv.Messages, value); err != nil {
 				return err
@@ -17380,6 +18470,15 @@ func awsRestjson1_deserializeDocumentJob(v **types.Job, value interface{}) error
 		case "settings":
 			if err := awsRestjson1_deserializeDocumentJobSettings(&sv.Settings, value); err != nil {
 				return err
+			}
+
+		case "shareStatus":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ShareStatus to be of type string, got %T instead", value)
+				}
+				sv.ShareStatus = types.ShareStatus(jtv)
 			}
 
 		case "simulateReservedQueue":
@@ -19438,6 +20537,15 @@ func awsRestjson1_deserializeDocumentMp2Settings(v **types.Mp2Settings, value in
 
 	for key, value := range shape {
 		switch key {
+		case "audioDescriptionMix":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Mp2AudioDescriptionMix to be of type string, got %T instead", value)
+				}
+				sv.AudioDescriptionMix = types.Mp2AudioDescriptionMix(jtv)
+			}
+
 		case "bitrate":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -19455,7 +20563,7 @@ func awsRestjson1_deserializeDocumentMp2Settings(v **types.Mp2Settings, value in
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin1Max2 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin0Max2 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -19525,7 +20633,7 @@ func awsRestjson1_deserializeDocumentMp3Settings(v **types.Mp3Settings, value in
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin1Max2 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin0Max2 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -19609,6 +20717,24 @@ func awsRestjson1_deserializeDocumentMp4Settings(v **types.Mp4Settings, value in
 				sv.AudioDuration = types.CmfcAudioDuration(jtv)
 			}
 
+		case "c2paManifest":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Mp4C2paManifest to be of type string, got %T instead", value)
+				}
+				sv.C2paManifest = types.Mp4C2paManifest(jtv)
+			}
+
+		case "certificateSecret":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringMin1Max2048PatternArnAZSecretsmanagerWD12SecretAZAZ09 to be of type string, got %T instead", value)
+				}
+				sv.CertificateSecret = ptr.String(jtv)
+			}
+
 		case "cslgAtom":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -19656,6 +20782,15 @@ func awsRestjson1_deserializeDocumentMp4Settings(v **types.Mp4Settings, value in
 					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
 				}
 				sv.Mp4MajorBrand = ptr.String(jtv)
+			}
+
+		case "signingKmsKey":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringMin1PatternArnAwsUsGovCnKmsAZ26EastWestCentralNorthSouthEastWest1912D12KeyAFAF098AFAF094AFAF094AFAF094AFAF0912MrkAFAF0932 to be of type string, got %T instead", value)
+				}
+				sv.SigningKmsKey = ptr.String(jtv)
 			}
 
 		default:
@@ -19707,6 +20842,15 @@ func awsRestjson1_deserializeDocumentMpdSettings(v **types.MpdSettings, value in
 				sv.AudioDuration = types.MpdAudioDuration(jtv)
 			}
 
+		case "c2paManifest":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MpdC2paManifest to be of type string, got %T instead", value)
+				}
+				sv.C2paManifest = types.MpdC2paManifest(jtv)
+			}
+
 		case "captionContainerType":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -19714,6 +20858,15 @@ func awsRestjson1_deserializeDocumentMpdSettings(v **types.MpdSettings, value in
 					return fmt.Errorf("expected MpdCaptionContainerType to be of type string, got %T instead", value)
 				}
 				sv.CaptionContainerType = types.MpdCaptionContainerType(jtv)
+			}
+
+		case "certificateSecret":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringMin1Max2048PatternArnAZSecretsmanagerWD12SecretAZAZ09 to be of type string, got %T instead", value)
+				}
+				sv.CertificateSecret = ptr.String(jtv)
 			}
 
 		case "klvMetadata":
@@ -19750,6 +20903,15 @@ func awsRestjson1_deserializeDocumentMpdSettings(v **types.MpdSettings, value in
 					return fmt.Errorf("expected MpdScte35Source to be of type string, got %T instead", value)
 				}
 				sv.Scte35Source = types.MpdScte35Source(jtv)
+			}
+
+		case "signingKmsKey":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __stringMin1PatternArnAwsUsGovCnKmsAZ26EastWestCentralNorthSouthEastWest1912D12KeyAFAF098AFAF094AFAF094AFAF094AFAF0912MrkAFAF0932 to be of type string, got %T instead", value)
+				}
+				sv.SigningKmsKey = ptr.String(jtv)
 			}
 
 		case "timedMetadata":
@@ -20099,6 +21261,11 @@ func awsRestjson1_deserializeDocumentMpeg2Settings(v **types.Mpeg2Settings, valu
 				sv.ParNumerator = ptr.Int32(int32(i64))
 			}
 
+		case "perFrameMetrics":
+			if err := awsRestjson1_deserializeDocument__listOfFrameMetricType(&sv.PerFrameMetrics, value); err != nil {
+				return err
+			}
+
 		case "qualityTuningLevel":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -20416,6 +21583,15 @@ func awsRestjson1_deserializeDocumentMxfSettings(v **types.MxfSettings, value in
 					return fmt.Errorf("expected MxfProfile to be of type string, got %T instead", value)
 				}
 				sv.Profile = types.MxfProfile(jtv)
+			}
+
+		case "uncompressedAudioWrapping":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected MxfUncompressedAudioWrapping to be of type string, got %T instead", value)
+				}
+				sv.UncompressedAudioWrapping = types.MxfUncompressedAudioWrapping(jtv)
 			}
 
 		case "xavcProfileSettings":
@@ -21079,7 +22255,7 @@ func awsRestjson1_deserializeDocumentOpusSettings(v **types.OpusSettings, value 
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin1Max2 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin0Max2 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -21430,6 +22606,11 @@ func awsRestjson1_deserializeDocumentOutputGroupSettings(v **types.OutputGroupSe
 				return err
 			}
 
+		case "perFrameMetrics":
+			if err := awsRestjson1_deserializeDocument__listOfFrameMetricType(&sv.PerFrameMetrics, value); err != nil {
+				return err
+			}
+
 		case "type":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -21509,6 +22690,55 @@ func awsRestjson1_deserializeDocumentPartnerWatermarking(v **types.PartnerWaterm
 		case "nexguardFileMarkerSettings":
 			if err := awsRestjson1_deserializeDocumentNexGuardFileMarkerSettings(&sv.NexguardFileMarkerSettings, value); err != nil {
 				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentPassthroughSettings(v **types.PassthroughSettings, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.PassthroughSettings
+	if *v == nil {
+		sv = &types.PassthroughSettings{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "frameControl":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected FrameControl to be of type string, got %T instead", value)
+				}
+				sv.FrameControl = types.FrameControl(jtv)
+			}
+
+		case "videoSelectorMode":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected VideoSelectorMode to be of type string, got %T instead", value)
+				}
+				sv.VideoSelectorMode = types.VideoSelectorMode(jtv)
 			}
 
 		default:
@@ -21914,6 +23144,11 @@ func awsRestjson1_deserializeDocumentProresSettings(v **types.ProresSettings, va
 					return err
 				}
 				sv.ParNumerator = ptr.Int32(int32(i64))
+			}
+
+		case "perFrameMetrics":
+			if err := awsRestjson1_deserializeDocument__listOfFrameMetricType(&sv.PerFrameMetrics, value); err != nil {
+				return err
 			}
 
 		case "scanTypeConversionMode":
@@ -22757,6 +23992,46 @@ func awsRestjson1_deserializeDocumentServiceOverride(v **types.ServiceOverride, 
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentServiceQuotaExceededException(v **types.ServiceQuotaExceededException, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.ServiceQuotaExceededException
+	if *v == nil {
+		sv = &types.ServiceQuotaExceededException{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "message", "Message":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected __string to be of type string, got %T instead", value)
+				}
+				sv.Message = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentSpekeKeyProvider(v **types.SpekeKeyProvider, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -23553,6 +24828,19 @@ func awsRestjson1_deserializeDocumentTrackSourceSettings(v **types.TrackSourceSe
 
 	for key, value := range shape {
 		switch key {
+		case "streamNumber":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin1Max2147483647 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.StreamNumber = ptr.Int32(int32(i64))
+			}
+
 		case "trackNumber":
 			if value != nil {
 				jtv, ok := value.(json.Number)
@@ -23921,6 +25209,11 @@ func awsRestjson1_deserializeDocumentVideoCodecSettings(v **types.VideoCodecSett
 				return err
 			}
 
+		case "passthroughSettings":
+			if err := awsRestjson1_deserializeDocumentPassthroughSettings(&sv.PassthroughSettings, value); err != nil {
+				return err
+			}
+
 		case "proresSettings":
 			if err := awsRestjson1_deserializeDocumentProresSettings(&sv.ProresSettings, value); err != nil {
 				return err
@@ -24223,6 +25516,11 @@ func awsRestjson1_deserializeDocumentVideoOverlay(v **types.VideoOverlay, value 
 
 	for key, value := range shape {
 		switch key {
+		case "crop":
+			if err := awsRestjson1_deserializeDocumentVideoOverlayCrop(&sv.Crop, value); err != nil {
+				return err
+			}
+
 		case "endTimecode":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -24274,6 +25572,98 @@ func awsRestjson1_deserializeDocumentVideoOverlay(v **types.VideoOverlay, value 
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentVideoOverlayCrop(v **types.VideoOverlayCrop, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.VideoOverlayCrop
+	if *v == nil {
+		sv = &types.VideoOverlayCrop{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "height":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin0Max2147483647 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Height = ptr.Int32(int32(i64))
+			}
+
+		case "unit":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected VideoOverlayUnit to be of type string, got %T instead", value)
+				}
+				sv.Unit = types.VideoOverlayUnit(jtv)
+			}
+
+		case "width":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin0Max2147483647 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Width = ptr.Int32(int32(i64))
+			}
+
+		case "x":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin0Max2147483647 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.X = ptr.Int32(int32(i64))
+			}
+
+		case "y":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin0Max2147483647 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Y = ptr.Int32(int32(i64))
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentVideoOverlayInput(v **types.VideoOverlayInput, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -24296,6 +25686,11 @@ func awsRestjson1_deserializeDocumentVideoOverlayInput(v **types.VideoOverlayInp
 
 	for key, value := range shape {
 		switch key {
+		case "audioSelectors":
+			if err := awsRestjson1_deserializeDocument__mapOfAudioSelector(&sv.AudioSelectors, value); err != nil {
+				return err
+			}
+
 		case "fileInput":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -24419,6 +25814,19 @@ func awsRestjson1_deserializeDocumentVideoOverlayPosition(v **types.VideoOverlay
 					return err
 				}
 				sv.Height = ptr.Int32(int32(i64))
+			}
+
+		case "opacity":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected __integerMin0Max100 to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.Opacity = ptr.Int32(int32(i64))
 			}
 
 		case "unit":
@@ -24642,13 +26050,18 @@ func awsRestjson1_deserializeDocumentVideoProperties(v **types.VideoProperties, 
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integer to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __long to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
 					return err
 				}
-				sv.BitRate = ptr.Int32(int32(i64))
+				sv.BitRate = ptr.Int64(i64)
+			}
+
+		case "codecMetadata":
+			if err := awsRestjson1_deserializeDocumentCodecMetadata(&sv.CodecMetadata, value); err != nil {
+				return err
 			}
 
 		case "colorPrimaries":
@@ -24847,6 +26260,20 @@ func awsRestjson1_deserializeDocumentVideoSelector(v **types.VideoSelector, valu
 				sv.SampleRange = types.InputSampleRange(jtv)
 			}
 
+		case "selectorType":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected VideoSelectorType to be of type string, got %T instead", value)
+				}
+				sv.SelectorType = types.VideoSelectorType(jtv)
+			}
+
+		case "streams":
+			if err := awsRestjson1_deserializeDocument__listOf__integerMin1Max2147483647(&sv.Streams, value); err != nil {
+				return err
+			}
+
 		default:
 			_, _ = key, value
 
@@ -24882,7 +26309,7 @@ func awsRestjson1_deserializeDocumentVorbisSettings(v **types.VorbisSettings, va
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin1Max2 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin0Max2 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -25424,7 +26851,7 @@ func awsRestjson1_deserializeDocumentWavSettings(v **types.WavSettings, value in
 			if value != nil {
 				jtv, ok := value.(json.Number)
 				if !ok {
-					return fmt.Errorf("expected __integerMin1Max64 to be json.Number, got %T instead", value)
+					return fmt.Errorf("expected __integerMin0Max64 to be json.Number, got %T instead", value)
 				}
 				i64, err := jtv.Int64()
 				if err != nil {
@@ -26012,6 +27439,11 @@ func awsRestjson1_deserializeDocumentXavcSettings(v **types.XavcSettings, value 
 					return err
 				}
 				sv.FramerateNumerator = ptr.Int32(int32(i64))
+			}
+
+		case "perFrameMetrics":
+			if err := awsRestjson1_deserializeDocument__listOfFrameMetricType(&sv.PerFrameMetrics, value); err != nil {
+				return err
 			}
 
 		case "profile":

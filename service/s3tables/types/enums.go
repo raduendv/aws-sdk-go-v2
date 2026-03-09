@@ -2,6 +2,67 @@
 
 package types
 
+type IcebergCompactionStrategy string
+
+// Enum values for IcebergCompactionStrategy
+const (
+	IcebergCompactionStrategyAuto    IcebergCompactionStrategy = "auto"
+	IcebergCompactionStrategyBinpack IcebergCompactionStrategy = "binpack"
+	IcebergCompactionStrategySort    IcebergCompactionStrategy = "sort"
+	IcebergCompactionStrategyZorder  IcebergCompactionStrategy = "z-order"
+)
+
+// Values returns all known values for IcebergCompactionStrategy. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IcebergCompactionStrategy) Values() []IcebergCompactionStrategy {
+	return []IcebergCompactionStrategy{
+		"auto",
+		"binpack",
+		"sort",
+		"z-order",
+	}
+}
+
+type IcebergNullOrder string
+
+// Enum values for IcebergNullOrder
+const (
+	IcebergNullOrderNullsFirst IcebergNullOrder = "nulls-first"
+	IcebergNullOrderNullsLast  IcebergNullOrder = "nulls-last"
+)
+
+// Values returns all known values for IcebergNullOrder. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IcebergNullOrder) Values() []IcebergNullOrder {
+	return []IcebergNullOrder{
+		"nulls-first",
+		"nulls-last",
+	}
+}
+
+type IcebergSortDirection string
+
+// Enum values for IcebergSortDirection
+const (
+	IcebergSortDirectionAsc  IcebergSortDirection = "asc"
+	IcebergSortDirectionDesc IcebergSortDirection = "desc"
+)
+
+// Values returns all known values for IcebergSortDirection. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (IcebergSortDirection) Values() []IcebergSortDirection {
+	return []IcebergSortDirection{
+		"asc",
+		"desc",
+	}
+}
+
 type JobStatus string
 
 // Enum values for JobStatus
@@ -61,6 +122,27 @@ func (OpenTableFormat) Values() []OpenTableFormat {
 	}
 }
 
+type ReplicationStatus string
+
+// Enum values for ReplicationStatus
+const (
+	ReplicationStatusPending   ReplicationStatus = "pending"
+	ReplicationStatusCompleted ReplicationStatus = "completed"
+	ReplicationStatusFailed    ReplicationStatus = "failed"
+)
+
+// Values returns all known values for ReplicationStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ReplicationStatus) Values() []ReplicationStatus {
+	return []ReplicationStatus{
+		"pending",
+		"completed",
+		"failed",
+	}
+}
+
 type SSEAlgorithm string
 
 // Enum values for SSEAlgorithm
@@ -80,6 +162,25 @@ func (SSEAlgorithm) Values() []SSEAlgorithm {
 	}
 }
 
+type StorageClass string
+
+// Enum values for StorageClass
+const (
+	StorageClassStandard           StorageClass = "STANDARD"
+	StorageClassIntelligentTiering StorageClass = "INTELLIGENT_TIERING"
+)
+
+// Values returns all known values for StorageClass. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (StorageClass) Values() []StorageClass {
+	return []StorageClass{
+		"STANDARD",
+		"INTELLIGENT_TIERING",
+	}
+}
+
 type TableBucketMaintenanceType string
 
 // Enum values for TableBucketMaintenanceType
@@ -94,6 +195,25 @@ const (
 func (TableBucketMaintenanceType) Values() []TableBucketMaintenanceType {
 	return []TableBucketMaintenanceType{
 		"icebergUnreferencedFileRemoval",
+	}
+}
+
+type TableBucketType string
+
+// Enum values for TableBucketType
+const (
+	TableBucketTypeCustomer TableBucketType = "customer"
+	TableBucketTypeAws      TableBucketType = "aws"
+)
+
+// Values returns all known values for TableBucketType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TableBucketType) Values() []TableBucketType {
+	return []TableBucketType{
+		"customer",
+		"aws",
 	}
 }
 
@@ -134,6 +254,49 @@ func (TableMaintenanceType) Values() []TableMaintenanceType {
 	return []TableMaintenanceType{
 		"icebergCompaction",
 		"icebergSnapshotManagement",
+	}
+}
+
+type TableRecordExpirationJobStatus string
+
+// Enum values for TableRecordExpirationJobStatus
+const (
+	TableRecordExpirationJobStatusNotYetRun  TableRecordExpirationJobStatus = "NotYetRun"
+	TableRecordExpirationJobStatusSuccessful TableRecordExpirationJobStatus = "Successful"
+	TableRecordExpirationJobStatusFailed     TableRecordExpirationJobStatus = "Failed"
+	TableRecordExpirationJobStatusDisabled   TableRecordExpirationJobStatus = "Disabled"
+)
+
+// Values returns all known values for TableRecordExpirationJobStatus. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TableRecordExpirationJobStatus) Values() []TableRecordExpirationJobStatus {
+	return []TableRecordExpirationJobStatus{
+		"NotYetRun",
+		"Successful",
+		"Failed",
+		"Disabled",
+	}
+}
+
+type TableRecordExpirationStatus string
+
+// Enum values for TableRecordExpirationStatus
+const (
+	TableRecordExpirationStatusEnabled  TableRecordExpirationStatus = "enabled"
+	TableRecordExpirationStatusDisabled TableRecordExpirationStatus = "disabled"
+)
+
+// Values returns all known values for TableRecordExpirationStatus. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TableRecordExpirationStatus) Values() []TableRecordExpirationStatus {
+	return []TableRecordExpirationStatus{
+		"enabled",
+		"disabled",
 	}
 }
 

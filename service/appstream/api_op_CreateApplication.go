@@ -13,12 +13,12 @@ import (
 
 // Creates an application.
 //
-// Applications are an Amazon AppStream 2.0 resource that stores the details about
-// how to launch applications on Elastic fleet streaming instances. An application
-// consists of the launch details, icon, and display name. Applications are
-// associated with an app block that contains the application binaries and other
-// files. The applications assigned to an Elastic fleet are the applications users
-// can launch.
+// Applications are a WorkSpaces Applications resource that stores the details
+// about how to launch applications on Elastic fleet streaming instances. An
+// application consists of the launch details, icon, and display name. Applications
+// are associated with an app block that contains the application binaries and
+// other files. The applications assigned to an Elastic fleet are the applications
+// users can launch.
 //
 // This is only supported for Elastic fleets.
 func (c *Client) CreateApplication(ctx context.Context, params *CreateApplicationInput, optFns ...func(*Options)) (*CreateApplicationOutput, error) {
@@ -65,8 +65,8 @@ type CreateApplicationInput struct {
 	// This member is required.
 	Name *string
 
-	// The platforms the application supports. WINDOWS_SERVER_2019 and AMAZON_LINUX2
-	// are supported for Elastic fleets.
+	// The platforms the application supports. WINDOWS_SERVER_2019, AMAZON_LINUX2 and
+	// UBUNTU_PRO_2404 are supported for Elastic fleets.
 	//
 	// This member is required.
 	Platforms []types.PlatformType
@@ -189,16 +189,13 @@ func (c *Client) addOperationCreateApplicationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

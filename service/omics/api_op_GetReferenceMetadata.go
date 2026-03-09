@@ -12,7 +12,10 @@ import (
 	"time"
 )
 
-// Gets information about a genome reference's metadata.
+// Retrieves metadata for a reference genome. This operation returns the number of
+// parts, part size, and MD5 of an entire file. This operation does not return
+// tags. To retrieve the list of tags for a read set, use the ListTagsForResource
+// API operation.
 func (c *Client) GetReferenceMetadata(ctx context.Context, params *GetReferenceMetadataInput, optFns ...func(*Options)) (*GetReferenceMetadataOutput, error) {
 	if params == nil {
 		params = &GetReferenceMetadataInput{}
@@ -190,16 +193,13 @@ func (c *Client) addOperationGetReferenceMetadataMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

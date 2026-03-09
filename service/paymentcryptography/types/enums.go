@@ -2,6 +2,29 @@
 
 package types
 
+type As2805KeyVariant string
+
+// Enum values for As2805KeyVariant
+const (
+	As2805KeyVariantTerminalMajorKeyVariant00         As2805KeyVariant = "TERMINAL_MAJOR_KEY_VARIANT_00"
+	As2805KeyVariantPinEncryptionKeyVariant28         As2805KeyVariant = "PIN_ENCRYPTION_KEY_VARIANT_28"
+	As2805KeyVariantMessageAuthenticationKeyVariant24 As2805KeyVariant = "MESSAGE_AUTHENTICATION_KEY_VARIANT_24"
+	As2805KeyVariantDataEncryptionKeyVariant22        As2805KeyVariant = "DATA_ENCRYPTION_KEY_VARIANT_22"
+)
+
+// Values returns all known values for As2805KeyVariant. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (As2805KeyVariant) Values() []As2805KeyVariant {
+	return []As2805KeyVariant{
+		"TERMINAL_MAJOR_KEY_VARIANT_00",
+		"PIN_ENCRYPTION_KEY_VARIANT_28",
+		"MESSAGE_AUTHENTICATION_KEY_VARIANT_24",
+		"DATA_ENCRYPTION_KEY_VARIANT_22",
+	}
+}
+
 type DeriveKeyUsage string
 
 // Enum values for DeriveKeyUsage
@@ -64,6 +87,10 @@ const (
 	KeyAlgorithmAes128      KeyAlgorithm = "AES_128"
 	KeyAlgorithmAes192      KeyAlgorithm = "AES_192"
 	KeyAlgorithmAes256      KeyAlgorithm = "AES_256"
+	KeyAlgorithmHmacSha256  KeyAlgorithm = "HMAC_SHA256"
+	KeyAlgorithmHmacSha384  KeyAlgorithm = "HMAC_SHA384"
+	KeyAlgorithmHmacSha512  KeyAlgorithm = "HMAC_SHA512"
+	KeyAlgorithmHmacSha224  KeyAlgorithm = "HMAC_SHA224"
 	KeyAlgorithmRsa2048     KeyAlgorithm = "RSA_2048"
 	KeyAlgorithmRsa3072     KeyAlgorithm = "RSA_3072"
 	KeyAlgorithmRsa4096     KeyAlgorithm = "RSA_4096"
@@ -83,6 +110,10 @@ func (KeyAlgorithm) Values() []KeyAlgorithm {
 		"AES_128",
 		"AES_192",
 		"AES_256",
+		"HMAC_SHA256",
+		"HMAC_SHA384",
+		"HMAC_SHA512",
+		"HMAC_SHA224",
 		"RSA_2048",
 		"RSA_3072",
 		"RSA_4096",
@@ -98,6 +129,8 @@ type KeyCheckValueAlgorithm string
 const (
 	KeyCheckValueAlgorithmCmac     KeyCheckValueAlgorithm = "CMAC"
 	KeyCheckValueAlgorithmAnsiX924 KeyCheckValueAlgorithm = "ANSI_X9_24"
+	KeyCheckValueAlgorithmHmac     KeyCheckValueAlgorithm = "HMAC"
+	KeyCheckValueAlgorithmSha1     KeyCheckValueAlgorithm = "SHA_1"
 )
 
 // Values returns all known values for KeyCheckValueAlgorithm. Note that this can
@@ -108,6 +141,8 @@ func (KeyCheckValueAlgorithm) Values() []KeyCheckValueAlgorithm {
 	return []KeyCheckValueAlgorithm{
 		"CMAC",
 		"ANSI_X9_24",
+		"HMAC",
+		"SHA_1",
 	}
 }
 
@@ -239,6 +274,29 @@ func (KeyOrigin) Values() []KeyOrigin {
 	}
 }
 
+type KeyReplicationState string
+
+// Enum values for KeyReplicationState
+const (
+	KeyReplicationStateInProgress       KeyReplicationState = "IN_PROGRESS"
+	KeyReplicationStateDeleteInProgress KeyReplicationState = "DELETE_IN_PROGRESS"
+	KeyReplicationStateFailed           KeyReplicationState = "FAILED"
+	KeyReplicationStateSynchronized     KeyReplicationState = "SYNCHRONIZED"
+)
+
+// Values returns all known values for KeyReplicationState. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (KeyReplicationState) Values() []KeyReplicationState {
+	return []KeyReplicationState{
+		"IN_PROGRESS",
+		"DELETE_IN_PROGRESS",
+		"FAILED",
+		"SYNCHRONIZED",
+	}
+}
+
 type KeyState string
 
 // Enum values for KeyState
@@ -279,6 +337,7 @@ const (
 	KeyUsageTr31K0KeyEncryptionKey                 KeyUsage = "TR31_K0_KEY_ENCRYPTION_KEY"
 	KeyUsageTr31K1KeyBlockProtectionKey            KeyUsage = "TR31_K1_KEY_BLOCK_PROTECTION_KEY"
 	KeyUsageTr31K3AsymmetricKeyForKeyAgreement     KeyUsage = "TR31_K3_ASYMMETRIC_KEY_FOR_KEY_AGREEMENT"
+	KeyUsageTr31M0Iso16609MacKey                   KeyUsage = "TR31_M0_ISO_16609_MAC_KEY"
 	KeyUsageTr31M3Iso97973MacKey                   KeyUsage = "TR31_M3_ISO_9797_3_MAC_KEY"
 	KeyUsageTr31M1Iso97971MacKey                   KeyUsage = "TR31_M1_ISO_9797_1_MAC_KEY"
 	KeyUsageTr31M6Iso97975CmacKey                  KeyUsage = "TR31_M6_ISO_9797_5_CMAC_KEY"
@@ -310,6 +369,7 @@ func (KeyUsage) Values() []KeyUsage {
 		"TR31_K0_KEY_ENCRYPTION_KEY",
 		"TR31_K1_KEY_BLOCK_PROTECTION_KEY",
 		"TR31_K3_ASYMMETRIC_KEY_FOR_KEY_AGREEMENT",
+		"TR31_M0_ISO_16609_MAC_KEY",
 		"TR31_M3_ISO_9797_3_MAC_KEY",
 		"TR31_M1_ISO_9797_1_MAC_KEY",
 		"TR31_M6_ISO_9797_5_CMAC_KEY",
@@ -323,15 +383,61 @@ func (KeyUsage) Values() []KeyUsage {
 	}
 }
 
+type MultiRegionKeyType string
+
+// Enum values for MultiRegionKeyType
+const (
+	MultiRegionKeyTypePrimary MultiRegionKeyType = "PRIMARY"
+	MultiRegionKeyTypeReplica MultiRegionKeyType = "REPLICA"
+)
+
+// Values returns all known values for MultiRegionKeyType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MultiRegionKeyType) Values() []MultiRegionKeyType {
+	return []MultiRegionKeyType{
+		"PRIMARY",
+		"REPLICA",
+	}
+}
+
+type SigningAlgorithmType string
+
+// Enum values for SigningAlgorithmType
+const (
+	SigningAlgorithmTypeSha224 SigningAlgorithmType = "SHA224"
+	SigningAlgorithmTypeSha256 SigningAlgorithmType = "SHA256"
+	SigningAlgorithmTypeSha384 SigningAlgorithmType = "SHA384"
+	SigningAlgorithmTypeSha512 SigningAlgorithmType = "SHA512"
+)
+
+// Values returns all known values for SigningAlgorithmType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SigningAlgorithmType) Values() []SigningAlgorithmType {
+	return []SigningAlgorithmType{
+		"SHA224",
+		"SHA256",
+		"SHA384",
+		"SHA512",
+	}
+}
+
 type SymmetricKeyAlgorithm string
 
 // Enum values for SymmetricKeyAlgorithm
 const (
-	SymmetricKeyAlgorithmTdes2key SymmetricKeyAlgorithm = "TDES_2KEY"
-	SymmetricKeyAlgorithmTdes3key SymmetricKeyAlgorithm = "TDES_3KEY"
-	SymmetricKeyAlgorithmAes128   SymmetricKeyAlgorithm = "AES_128"
-	SymmetricKeyAlgorithmAes192   SymmetricKeyAlgorithm = "AES_192"
-	SymmetricKeyAlgorithmAes256   SymmetricKeyAlgorithm = "AES_256"
+	SymmetricKeyAlgorithmTdes2key   SymmetricKeyAlgorithm = "TDES_2KEY"
+	SymmetricKeyAlgorithmTdes3key   SymmetricKeyAlgorithm = "TDES_3KEY"
+	SymmetricKeyAlgorithmAes128     SymmetricKeyAlgorithm = "AES_128"
+	SymmetricKeyAlgorithmAes192     SymmetricKeyAlgorithm = "AES_192"
+	SymmetricKeyAlgorithmAes256     SymmetricKeyAlgorithm = "AES_256"
+	SymmetricKeyAlgorithmHmacSha256 SymmetricKeyAlgorithm = "HMAC_SHA256"
+	SymmetricKeyAlgorithmHmacSha384 SymmetricKeyAlgorithm = "HMAC_SHA384"
+	SymmetricKeyAlgorithmHmacSha512 SymmetricKeyAlgorithm = "HMAC_SHA512"
+	SymmetricKeyAlgorithmHmacSha224 SymmetricKeyAlgorithm = "HMAC_SHA224"
 )
 
 // Values returns all known values for SymmetricKeyAlgorithm. Note that this can
@@ -345,6 +451,10 @@ func (SymmetricKeyAlgorithm) Values() []SymmetricKeyAlgorithm {
 		"AES_128",
 		"AES_192",
 		"AES_256",
+		"HMAC_SHA256",
+		"HMAC_SHA384",
+		"HMAC_SHA512",
+		"HMAC_SHA224",
 	}
 }
 

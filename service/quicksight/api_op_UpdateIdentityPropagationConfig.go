@@ -11,11 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Adds or updates services and authorized targets to configure what the Amazon
-// QuickSight IAM Identity Center application can access.
+// Adds or updates services and authorized targets to configure what the Quick
+// Sight IAM Identity Center application can access.
 //
-// This operation is only supported for Amazon QuickSight accounts using IAM
-// Identity Center
+// This operation is only supported for Quick Sight accounts using IAM Identity
+// Center
 func (c *Client) UpdateIdentityPropagationConfig(ctx context.Context, params *UpdateIdentityPropagationConfigInput, optFns ...func(*Options)) (*UpdateIdentityPropagationConfigOutput, error) {
 	if params == nil {
 		params = &UpdateIdentityPropagationConfigInput{}
@@ -154,16 +154,13 @@ func (c *Client) addOperationUpdateIdentityPropagationConfigMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

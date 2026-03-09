@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Lists all brands in an Amazon QuickSight account.
+// Lists all brands in an Quick Sight account.
 func (c *Client) ListBrands(ctx context.Context, params *ListBrandsInput, optFns ...func(*Options)) (*ListBrandsOutput, error) {
 	if params == nil {
 		params = &ListBrandsInput{}
@@ -147,16 +147,13 @@ func (c *Client) addOperationListBrandsMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

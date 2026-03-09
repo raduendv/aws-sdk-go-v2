@@ -10,7 +10,7 @@ import (
 // vehicle.
 type AccessPoint struct {
 
-	// The position, in longitude and latitude.
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude].
 	Position []float64
 
 	noSmithyDocumentSerde
@@ -59,19 +59,29 @@ type Address struct {
 	// regional postal rules. This is the correctly formatted address.
 	Label *string
 
-	// The locality or city of the address.
+	// The city or locality of the address.
 	//
 	// Example: Vancouver .
 	Locality *string
 
 	// An alphanumeric string included in a postal address to facilitate mail sorting,
-	// such as post code, postcode, or ZIP code, for which the result should posses.
+	// such as post code, postcode, or ZIP code, for which the result should possess.
 	PostalCode *string
 
 	// The region or state results should be present in.
 	//
 	// Example: North Rhine-Westphalia .
 	Region *Region
+
+	// Components that correspond to secondary identifiers on an Address. Secondary
+	// address components include information such as Suite or Unit Number, Building,
+	// or Floor.
+	//
+	// Coverage for Address.SecondaryAddressComponents is available in the following
+	// countries:
+	//
+	// AUS, CAN, NZL, USA, PRI
+	SecondaryAddressComponents []SecondaryAddressComponent
 
 	// The name of the street results should be present in.
 	Street *string
@@ -130,13 +140,19 @@ type AddressComponentMatchScores struct {
 	Locality float64
 
 	// An alphanumeric string included in a postal address to facilitate mail sorting,
-	// such as post code, postcode, or ZIP code, for which the result should posses.
+	// such as post code, postcode, or ZIP code, for which the result should possess.
 	PostalCode float64
 
 	// The region or state results should be to be present in.
 	//
 	// Example: North Rhine-Westphalia .
 	Region float64
+
+	// Match scores for the secondary address components in the result.
+	//
+	// Coverage for this functionality is available in the following countries: AUS,
+	// AUT, BRA, CAN, ESP, FRA, GBR, IDN, IND, NZL, TUR, TWN, USA.
+	SecondaryAddressComponents []SecondaryAddressComponentMatchScore
 
 	// Name of sub-block.
 	//
@@ -200,7 +216,9 @@ type AutocompleteAddressHighlights struct {
 	// The house number or address results should have.
 	AddressNumber []Highlight
 
-	// Name of the block. Example: Sunny Mansion 203 block: 2 Chome
+	// Name of the block.
+	//
+	// Example: Sunny Mansion 203 block: 2 Chome
 	Block []Highlight
 
 	// The name of the building at the address.
@@ -229,7 +247,7 @@ type AutocompleteAddressHighlights struct {
 	Locality []Highlight
 
 	// An alphanumeric string included in a postal address to facilitate mail sorting,
-	// such as post code, postcode, or ZIP code for which the result should posses.
+	// such as post code, postcode, or ZIP code for which the result should possess.
 	PostalCode []Highlight
 
 	// The region or state results should be to be present in.
@@ -240,7 +258,9 @@ type AutocompleteAddressHighlights struct {
 	// The name of the street results should be present in.
 	Street []Highlight
 
-	// Name of sub-block. Example Sunny Mansion 203 sub-block: 4
+	// Name of sub-block.
+	//
+	// Example: Sunny Mansion 203 sub-block: 4
 	SubBlock []Highlight
 
 	// Indicates the starting and ending index of the title in the text query that
@@ -254,7 +274,7 @@ type AutocompleteAddressHighlights struct {
 }
 
 // Autocomplete structure which contains a set of inclusion/exclusion properties
-// that results must posses in order to be returned as a result.
+// that results must possess in order to be returned as a result.
 type AutocompleteFilter struct {
 
 	// The bounding box enclosing the geometric shape (area or line) that an
@@ -370,15 +390,16 @@ type Category struct {
 	noSmithyDocumentSerde
 }
 
-// Indicates how well the input matches the returned element. It is equal to 1 if
-// all input tokens are recognized and matched to the title in the result.
+// Indicates how well the returned title and address components matches the input
+// TextQuery. For each component a score is provied with 1 indicating all tokens
+// were matched and 0 indicating no tokens were matched.
 type ComponentMatchScores struct {
 
 	// The place's address.
 	Address *AddressComponentMatchScores
 
-	// Indicates the starting and ending index of the title in the text query that
-	// match the found title.
+	// Indicates the match score of the title in the text query that match the found
+	// title.
 	Title float64
 
 	noSmithyDocumentSerde
@@ -451,7 +472,8 @@ type CountryHighlights struct {
 // The Circle that all results must be in.
 type FilterCircle struct {
 
-	// The center position, in longitude and latitude, of the FilterCircle .
+	// The center position in World Geodetic System (WGS 84) format: [longitude,
+	// latitude].
 	//
 	// This member is required.
 	Center []float64
@@ -484,7 +506,7 @@ type FoodType struct {
 }
 
 // Geocode structure which contains a set of inclusion/exclusion properties that
-// results must posses in order to be returned as a result.
+// results must possess in order to be returned as a result.
 type GeocodeFilter struct {
 
 	//  A list of countries that all results must be in. Countries are represented by
@@ -493,6 +515,81 @@ type GeocodeFilter struct {
 
 	// The included place types.
 	IncludePlaceTypes []GeocodeFilterPlaceType
+
+	noSmithyDocumentSerde
+}
+
+// Parsed components in the provided QueryText.
+type GeocodeParsedQuery struct {
+
+	// The place address.
+	Address *GeocodeParsedQueryAddressComponents
+
+	// The localized display name of this result item based on request parameter
+	// language .
+	Title []ParsedQueryComponent
+
+	noSmithyDocumentSerde
+}
+
+// Parsed address components in the provided QueryText.
+type GeocodeParsedQueryAddressComponents struct {
+
+	// The number that identifies an address within a street.
+	AddressNumber []ParsedQueryComponent
+
+	// Name of the block.
+	//
+	// Example: Sunny Mansion 203 block: 2 Chome
+	Block []ParsedQueryComponent
+
+	// The name of the building at the address.
+	Building []ParsedQueryComponent
+
+	// The alpha-2 or alpha-3 character code for the country that the results will be
+	// present in.
+	Country []ParsedQueryComponent
+
+	// The district or division of a city the results should be present in.
+	District []ParsedQueryComponent
+
+	// The city or locality of the address.
+	//
+	// Example: Vancouver .
+	Locality []ParsedQueryComponent
+
+	// An alphanumeric string included in a postal address to facilitate mail sorting,
+	// such as post code, postcode, or ZIP code, for which the result should possess.
+	PostalCode []ParsedQueryComponent
+
+	// The region or state results should be present in.
+	//
+	// Example: North Rhine-Westphalia .
+	Region []ParsedQueryComponent
+
+	// Parsed secondary address components from the provided query text.
+	//
+	// Coverage for ParsedQuery.Address.SecondaryAddressComponents is available in the
+	// following countries:
+	//
+	// AUS, AUT, BRA, CAN, ESP, FRA, GBR, HKG, IDN, IND, NZL, TUR, TWN, USA
+	SecondaryAddressComponents []ParsedQuerySecondaryAddressComponent
+
+	// The name of the street results should be present in.
+	Street []ParsedQueryComponent
+
+	// Name of sub-block.
+	//
+	// Example: Sunny Mansion 203 sub-block: 4
+	SubBlock []ParsedQueryComponent
+
+	// A subdivision of a district.
+	//
+	// Example: Minden-Lübbecke .
+	SubDistrict []ParsedQueryComponent
+
+	// The sub-region or county for which results should be present in.
+	SubRegion []ParsedQueryComponent
 
 	noSmithyDocumentSerde
 }
@@ -511,13 +608,13 @@ type GeocodeQueryComponents struct {
 	// The district or division of a city the results should be present in.
 	District *string
 
-	// City or locality results should be present in.
+	// The city or locality results should be present in.
 	//
 	// Example: Vancouver .
 	Locality *string
 
 	// An alphanumeric string included in a postal address to facilitate mail sorting,
-	// such as post code, postcode, or ZIP code for which the result should posses.
+	// such as post code, postcode, or ZIP code for which the result should possess.
 	PostalCode *string
 
 	// The region or state results should be to be present in.
@@ -537,7 +634,7 @@ type GeocodeQueryComponents struct {
 // The Geocoded result.
 type GeocodeResultItem struct {
 
-	// The PlaceId of the place you wish to receive the information for.
+	// The PlaceId of the place result.
 	//
 	// This member is required.
 	PlaceId *string
@@ -553,7 +650,8 @@ type GeocodeResultItem struct {
 	// This member is required.
 	Title *string
 
-	// Position of the access point represent by longitude and latitude.
+	// Position of the access point in World Geodetic System (WGS 84) format:
+	// [longitude, latitude].
 	AccessPoints []AccessPoint
 
 	// The place's address.
@@ -571,6 +669,12 @@ type GeocodeResultItem struct {
 	// List of food types offered by this result.
 	FoodTypes []FoodType
 
+	// All Intersections that are near the provided address.
+	Intersections []Intersection
+
+	// The main address corresponding to a place of type Secondary Address.
+	MainAddress *RelatedPlace
+
 	// The bounding box enclosing the geometric shape (area or line) that an
 	// individual result covers.
 	//
@@ -582,16 +686,27 @@ type GeocodeResultItem struct {
 	// all input tokens are recognized and matched.
 	MatchScores *MatchScoreDetails
 
+	// Free-form text query.
+	ParsedQuery *GeocodeParsedQuery
+
 	// The alpha-2 or alpha-3 character code for the political view of a country. The
 	// political view applies to the results of the request to represent unresolved
 	// territorial claims through the point of view of the specified country.
 	PoliticalView *string
 
-	// The position in longitude and latitude.
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude].
 	Position []float64
 
 	// Contains details about the postal code of the place/result.
 	PostalCodeDetails []PostalCodeDetails
+
+	// All secondary addresses that are associated with a main address. A secondary
+	// address is one that includes secondary designators, such as a Suite or Unit
+	// Number, Building, or Floor information.
+	//
+	// Coverage for this functionality is available in the following countries: AUS,
+	// CAN, NZL, USA, PRI.
+	SecondaryAddresses []RelatedPlace
 
 	// The time zone in which the place is located.
 	TimeZone *TimeZone
@@ -599,7 +714,8 @@ type GeocodeResultItem struct {
 	noSmithyDocumentSerde
 }
 
-// Describes how parts of the result response match the input query.
+// Indicates the starting and ending index of the text query that match the found
+// title.
 type Highlight struct {
 
 	// End index of the highlight.
@@ -610,6 +726,47 @@ type Highlight struct {
 
 	// The highlight's value.
 	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// All Intersections that are near the provided address.
+type Intersection struct {
+
+	// The PlaceId of the place result.
+	//
+	// This member is required.
+	PlaceId *string
+
+	// The localized display name of this result item based on request parameter
+	// language .
+	//
+	// This member is required.
+	Title *string
+
+	// Position of the access point in World Geodetic System (WGS 84) format:
+	// [longitude, latitude].
+	AccessPoints []AccessPoint
+
+	// The place address.
+	Address *Address
+
+	// The distance in meters from the QueryPosition.
+	Distance *int64
+
+	// The bounding box enclosing the geometric shape (area or line) that an
+	// individual result covers.
+	//
+	// The bounding box formed is defined as a set of four coordinates: [{westward
+	// lng}, {southern lat}, {eastward lng}, {northern lat}]
+	MapView []float64
+
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude].
+	Position []float64
+
+	// The distance from the routing position of the nearby address to the street
+	// result.
+	RouteDistance *int64
 
 	noSmithyDocumentSerde
 }
@@ -665,6 +822,55 @@ type OpeningHoursComponents struct {
 	noSmithyDocumentSerde
 }
 
+// Parsed components in the provided QueryText.
+type ParsedQueryComponent struct {
+
+	// End index of the parsed query component.
+	EndIndex *int32
+
+	// The address component that the parsed query component corresponds to.
+	QueryComponent *string
+
+	// Start index of the parsed query component.
+	StartIndex *int32
+
+	// Value of the parsed query component.
+	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// Information about a secondary address component parsed from the query text.
+type ParsedQuerySecondaryAddressComponent struct {
+
+	// Secondary address designator provided in the query.
+	//
+	// This member is required.
+	Designator *string
+
+	// End index of the parsed secondary address component in the query text.
+	//
+	// This member is required.
+	EndIndex *int32
+
+	// Secondary address number provided in the query.
+	//
+	// This member is required.
+	Number *string
+
+	// Start index of the parsed secondary address component in the query text.
+	//
+	// This member is required.
+	StartIndex *int32
+
+	// Value of the parsed secondary address component.
+	//
+	// This member is required.
+	Value *string
+
+	noSmithyDocumentSerde
+}
+
 // The phoneme details.
 type PhonemeDetails struct {
 
@@ -704,7 +910,7 @@ type PostalCodeDetails struct {
 	PostalAuthority PostalAuthority
 
 	// An alphanumeric string included in a postal address to facilitate mail sorting,
-	// such as post code, postcode, or ZIP code for which the result should posses.
+	// such as post code, postcode, or ZIP code for which the result should possess.
 	PostalCode *string
 
 	// The postal code type.
@@ -779,6 +985,38 @@ type RegionHighlights struct {
 	noSmithyDocumentSerde
 }
 
+// Place that is related to the result item.
+type RelatedPlace struct {
+
+	// The PlaceId of the place result.
+	//
+	// This member is required.
+	PlaceId *string
+
+	// A PlaceType is a category that the result place must belong to.
+	//
+	// This member is required.
+	PlaceType PlaceType
+
+	// The localized display name of this result item based on request parameter
+	// language .
+	//
+	// This member is required.
+	Title *string
+
+	// Position of the access point in World Geodetic System (WGS 84) format:
+	// [longitude, latitude].
+	AccessPoints []AccessPoint
+
+	// The place address.
+	Address *Address
+
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude].
+	Position []float64
+
+	noSmithyDocumentSerde
+}
+
 // The included place types.
 type ReverseGeocodeFilter struct {
 
@@ -807,7 +1045,8 @@ type ReverseGeocodeResultItem struct {
 	// This member is required.
 	Title *string
 
-	// Position of the access point represent by longitude and latitude.
+	// Position of the access point in World Geodetic System (WGS 84) format:
+	// [longitude, latitude].
 	AccessPoints []AccessPoint
 
 	// The place's address.
@@ -825,6 +1064,9 @@ type ReverseGeocodeResultItem struct {
 	// List of food types offered by this result.
 	FoodTypes []FoodType
 
+	// All Intersections that are near the provided address.
+	Intersections []Intersection
+
 	// The bounding box enclosing the geometric shape (area or line) that an
 	// individual result covers.
 	//
@@ -837,7 +1079,7 @@ type ReverseGeocodeResultItem struct {
 	// territorial claims through the point of view of the specified country.
 	PoliticalView *string
 
-	// The position in longitude and latitude.
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude].
 	Position []float64
 
 	// Contains details about the postal code of the place/result.
@@ -850,7 +1092,7 @@ type ReverseGeocodeResultItem struct {
 }
 
 // SearchNearby structure which contains a set of inclusion/exclusion properties
-// that results must posses in order to be returned as a result.
+// that results must possess in order to be returned as a result.
 type SearchNearbyFilter struct {
 
 	// The bounding box enclosing the geometric shape (area or line) that an
@@ -903,7 +1145,8 @@ type SearchNearbyResultItem struct {
 	// This member is required.
 	Title *string
 
-	// Position of the access point represent by longitude and latitude.
+	// Position of the access point in World Geodetic System (WGS 84) format:
+	// [longitude, latitude].
 	AccessPoints []AccessPoint
 
 	// Indicates known access restrictions on a vehicle access point. The index
@@ -951,7 +1194,7 @@ type SearchNearbyResultItem struct {
 	// territorial claims through the point of view of the specified country.
 	PoliticalView *string
 
-	// The position in longitude and latitude.
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude].
 	Position []float64
 
 	// The time zone in which the place is located.
@@ -961,7 +1204,7 @@ type SearchNearbyResultItem struct {
 }
 
 // SearchText structure which contains a set of inclusion/exclusion properties
-// that results must posses in order to be returned as a result.
+// that results must possess in order to be returned as a result.
 type SearchTextFilter struct {
 
 	// The bounding box enclosing the geometric shape (area or line) that an
@@ -999,7 +1242,8 @@ type SearchTextResultItem struct {
 	// This member is required.
 	Title *string
 
-	// Position of the access point represent by longitude and latitude.
+	// Position of the access point in World Geodetic System (WGS 84) format:
+	// [longitude, latitude].
 	AccessPoints []AccessPoint
 
 	// Indicates known access restrictions on a vehicle access point. The index
@@ -1047,11 +1291,37 @@ type SearchTextResultItem struct {
 	// territorial claims through the point of view of the specified country.
 	PoliticalView *string
 
-	// The position, in longitude and latitude.
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude].
 	Position []float64
 
 	// The time zone in which the place is located.
 	TimeZone *TimeZone
+
+	noSmithyDocumentSerde
+}
+
+// Components that correspond to secondary identifiers on an address. The only
+// component type supported currently is Unit.
+type SecondaryAddressComponent struct {
+
+	// Number that uniquely identifies a secondary address.
+	//
+	// This member is required.
+	Number *string
+
+	// The designator of the secondary address component.
+	//
+	// Example: Apt .
+	Designator *string
+
+	noSmithyDocumentSerde
+}
+
+// Match score for a secondary address component in the result.
+type SecondaryAddressComponentMatchScore struct {
+
+	// Match score for the secondary address number.
+	Number float64
 
 	noSmithyDocumentSerde
 }
@@ -1061,7 +1331,7 @@ type StreetComponents struct {
 
 	// Base name part of the street name.
 	//
-	// Example: Younge from the “Younge street".
+	// Example: Younge from the "Younge street".
 	BaseName *string
 
 	// Indicates the official directional identifiers assigned to highways.
@@ -1088,13 +1358,13 @@ type StreetComponents struct {
 
 	// Street type part of the street name.
 	//
-	// Example: “avenue" .
+	// Example: "avenue" .
 	Type *string
 
 	// Defines if the street type is before or after the base name.
 	TypePlacement TypePlacement
 
-	// What character(s) separates the string from its type.
+	// Defines a separator character such as "" or " " between the base name and type.
 	TypeSeparator *string
 
 	noSmithyDocumentSerde
@@ -1141,7 +1411,7 @@ type SuggestAddressHighlights struct {
 }
 
 // SuggestFilter structure which contains a set of inclusion/exclusion properties
-// that results must posses in order to be returned as a result.
+// that results must possess in order to be returned as a result.
 type SuggestFilter struct {
 
 	// The bounding box enclosing the geometric shape (area or line) that an
@@ -1178,7 +1448,8 @@ type SuggestHighlights struct {
 // The suggested place results.
 type SuggestPlaceResult struct {
 
-	// Position of the access point represent by longitude and latitude.
+	// Position of the access point in World Geodetic System (WGS 84) format:
+	// [longitude, latitude].
 	AccessPoints []AccessPoint
 
 	// Indicates known access restrictions on a vehicle access point. The index
@@ -1223,7 +1494,7 @@ type SuggestPlaceResult struct {
 	// territorial claims through the point of view of the specified country.
 	PoliticalView *string
 
-	// The position, in longitude and latitude.
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude].
 	Position []float64
 
 	// The time zone in which the place is located.
@@ -1240,10 +1511,12 @@ type SuggestQueryResult struct {
 	// political view and language. See the SearchText API documentation for more
 	// details [SearchText API docs].
 	//
-	// [SearchText API docs]: https://docs.aws.amazon.com/latest/APIReference/API_geoplaces_SearchText.html
+	// The fields QueryText , and QueryID are mutually exclusive.
+	//
+	// [SearchText API docs]: https://docs.aws.amazon.com/location/latest/APIReference/API_geoplaces_SearchText.html
 	QueryId *string
 
-	// The query type. Category qeuries will search for places which have an entry
+	// The query type. Category queries will search for places which have an entry
 	// matching the given category, for example "doctor office". BusinessChain queries
 	// will search for instances of a given business.
 	QueryType QueryType

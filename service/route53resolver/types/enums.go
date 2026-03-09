@@ -107,8 +107,9 @@ type DnsThreatProtection string
 
 // Enum values for DnsThreatProtection
 const (
-	DnsThreatProtectionDga          DnsThreatProtection = "DGA"
-	DnsThreatProtectionDnsTunneling DnsThreatProtection = "DNS_TUNNELING"
+	DnsThreatProtectionDga           DnsThreatProtection = "DGA"
+	DnsThreatProtectionDnsTunneling  DnsThreatProtection = "DNS_TUNNELING"
+	DnsThreatProtectionDictionaryDga DnsThreatProtection = "DICTIONARY_DGA"
 )
 
 // Values returns all known values for DnsThreatProtection. Note that this can be
@@ -119,6 +120,7 @@ func (DnsThreatProtection) Values() []DnsThreatProtection {
 	return []DnsThreatProtection{
 		"DGA",
 		"DNS_TUNNELING",
+		"DICTIONARY_DGA",
 	}
 }
 
@@ -287,6 +289,7 @@ const (
 	IpAddressStatusDeleteFailedFasExpired IpAddressStatus = "DELETE_FAILED_FAS_EXPIRED"
 	IpAddressStatusUpdating               IpAddressStatus = "UPDATING"
 	IpAddressStatusUpdateFailed           IpAddressStatus = "UPDATE_FAILED"
+	IpAddressStatusIsolated               IpAddressStatus = "ISOLATED"
 )
 
 // Values returns all known values for IpAddressStatus. Note that this can be
@@ -307,6 +310,7 @@ func (IpAddressStatus) Values() []IpAddressStatus {
 		"DELETE_FAILED_FAS_EXPIRED",
 		"UPDATING",
 		"UPDATE_FAILED",
+		"ISOLATED",
 	}
 }
 
@@ -439,8 +443,9 @@ type ResolverEndpointDirection string
 
 // Enum values for ResolverEndpointDirection
 const (
-	ResolverEndpointDirectionInbound  ResolverEndpointDirection = "INBOUND"
-	ResolverEndpointDirectionOutbound ResolverEndpointDirection = "OUTBOUND"
+	ResolverEndpointDirectionInbound           ResolverEndpointDirection = "INBOUND"
+	ResolverEndpointDirectionOutbound          ResolverEndpointDirection = "OUTBOUND"
+	ResolverEndpointDirectionInboundDelegation ResolverEndpointDirection = "INBOUND_DELEGATION"
 )
 
 // Values returns all known values for ResolverEndpointDirection. Note that this
@@ -451,6 +456,7 @@ func (ResolverEndpointDirection) Values() []ResolverEndpointDirection {
 	return []ResolverEndpointDirection{
 		"INBOUND",
 		"OUTBOUND",
+		"INBOUND_DELEGATION",
 	}
 }
 
@@ -632,6 +638,7 @@ const (
 	RuleTypeOptionForward   RuleTypeOption = "FORWARD"
 	RuleTypeOptionSystem    RuleTypeOption = "SYSTEM"
 	RuleTypeOptionRecursive RuleTypeOption = "RECURSIVE"
+	RuleTypeOptionDelegate  RuleTypeOption = "DELEGATE"
 )
 
 // Values returns all known values for RuleTypeOption. Note that this can be
@@ -643,6 +650,7 @@ func (RuleTypeOption) Values() []RuleTypeOption {
 		"FORWARD",
 		"SYSTEM",
 		"RECURSIVE",
+		"DELEGATE",
 	}
 }
 

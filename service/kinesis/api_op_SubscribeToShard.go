@@ -73,12 +73,16 @@ type SubscribeToShardInput struct {
 	// This member is required.
 	StartingPosition *types.StartingPosition
 
+	// Not Implemented. Reserved for future use.
+	StreamId *string
+
 	noSmithyDocumentSerde
 }
 
 func (in *SubscribeToShardInput) bindEndpointParams(p *EndpointParameters) {
 
 	p.ConsumerARN = in.ConsumerARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("data")
 }
 
@@ -181,16 +185,13 @@ func (c *Client) addOperationSubscribeToShardMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

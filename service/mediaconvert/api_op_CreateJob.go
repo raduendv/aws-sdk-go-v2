@@ -48,11 +48,9 @@ type CreateJobInput struct {
 	// User Guide.
 	AccelerationSettings *types.AccelerationSettings
 
-	// Optional. Choose a tag type that AWS Billing and Cost Management will use to
-	// sort your AWS Elemental MediaConvert costs on any billing report that you set
-	// up. Any transcoding outputs that don't have an associated tag will appear in
-	// your billing report unsorted. If you don't choose a valid value for this field,
-	// your job outputs will appear on the billing report unsorted.
+	// Optionally choose a Billing tags source that AWS Billing and Cost Management
+	// will use to display tags for individual output costs on any billing report that
+	// you set up. Leave blank to use the default value, Job.
 	BillingTagsSource types.BillingTagsSource
 
 	// Prevent duplicate jobs from being created and ensure idempotency for your
@@ -70,10 +68,11 @@ type CreateJobInput struct {
 	HopDestinations []types.HopDestination
 
 	// Use Job engine versions to run jobs for your production workflow on one
-	// version, while you test and validate the latest version. To specify a Job engine
-	// version: Enter a date in a YYYY-MM-DD format. For a list of valid Job engine
-	// versions, submit a ListVersions request. To not specify a Job engine version:
-	// Leave blank.
+	// version, while you test and validate the latest version. Job engine versions
+	// represent periodically grouped MediaConvert releases with new features, updates,
+	// improvements, and fixes. Job engine versions are in a YYYY-MM-DD format. Note
+	// that the Job engine version feature is not publicly available at this time. To
+	// request access, contact AWS support.
 	JobEngineVersion *string
 
 	// Optional. When you create a job, you can either specify a job template or
@@ -225,16 +224,13 @@ func (c *Client) addOperationCreateJobMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

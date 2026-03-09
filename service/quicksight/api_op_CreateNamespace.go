@@ -12,16 +12,16 @@ import (
 )
 
 // (Enterprise edition only) Creates a new namespace for you to use with Amazon
-// QuickSight.
+// Quick Sight.
 //
-// A namespace allows you to isolate the Amazon QuickSight users and groups that
-// are registered for that namespace. Users that access the namespace can share
-// assets only with other users or groups in the same namespace. They can't see
-// users and groups in other namespaces. You can create a namespace after your
-// Amazon Web Services account is subscribed to Amazon QuickSight. The namespace
-// must be unique within the Amazon Web Services account. By default, there is a
-// limit of 100 namespaces per Amazon Web Services account. To increase your limit,
-// create a ticket with Amazon Web ServicesSupport.
+// A namespace allows you to isolate the Quick Sight users and groups that are
+// registered for that namespace. Users that access the namespace can share assets
+// only with other users or groups in the same namespace. They can't see users and
+// groups in other namespaces. You can create a namespace after your Amazon Web
+// Services account is subscribed to Quick Sight. The namespace must be unique
+// within the Amazon Web Services account. By default, there is a limit of 100
+// namespaces per Amazon Web Services account. To increase your limit, create a
+// ticket with Amazon Web Services Support.
 func (c *Client) CreateNamespace(ctx context.Context, params *CreateNamespaceInput, optFns ...func(*Options)) (*CreateNamespaceOutput, error) {
 	if params == nil {
 		params = &CreateNamespaceInput{}
@@ -39,8 +39,8 @@ func (c *Client) CreateNamespace(ctx context.Context, params *CreateNamespaceInp
 
 type CreateNamespaceInput struct {
 
-	// The ID for the Amazon Web Services account that you want to create the Amazon
-	// QuickSight namespace in.
+	// The ID for the Amazon Web Services account that you want to create the Quick
+	// Sight namespace in.
 	//
 	// This member is required.
 	AwsAccountId *string
@@ -64,7 +64,7 @@ type CreateNamespaceInput struct {
 
 type CreateNamespaceOutput struct {
 
-	// The ARN of the Amazon QuickSight namespace you created.
+	// The ARN of the Quick Sight namespace you created.
 	Arn *string
 
 	// The Amazon Web Services Region; that you want to use for the free SPICE
@@ -185,16 +185,13 @@ func (c *Client) addOperationCreateNamespaceMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

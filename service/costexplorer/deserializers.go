@@ -13,22 +13,12 @@ import (
 	smithyio "github.com/aws/smithy-go/io"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpCreateAnomalyMonitor struct {
 }
@@ -1505,6 +1495,9 @@ func awsAwsjson11_deserializeOpErrorGetCostAndUsage(response *smithyhttp.Respons
 	case strings.EqualFold("BillExpirationException", errorCode):
 		return awsAwsjson11_deserializeErrorBillExpirationException(response, errorBody)
 
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
 	case strings.EqualFold("DataUnavailableException", errorCode):
 		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
 
@@ -1516,6 +1509,129 @@ func awsAwsjson11_deserializeOpErrorGetCostAndUsage(response *smithyhttp.Respons
 
 	case strings.EqualFold("RequestChangedException", errorCode):
 		return awsAwsjson11_deserializeErrorRequestChangedException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+type awsAwsjson11_deserializeOpGetCostAndUsageComparisons struct {
+}
+
+func (*awsAwsjson11_deserializeOpGetCostAndUsageComparisons) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson11_deserializeOpGetCostAndUsageComparisons) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson11_deserializeOpErrorGetCostAndUsageComparisons(response, &metadata)
+	}
+	output := &GetCostAndUsageComparisonsOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson11_deserializeOpDocumentGetCostAndUsageComparisonsOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson11_deserializeOpErrorGetCostAndUsageComparisons(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
+	case strings.EqualFold("DataUnavailableException", errorCode):
+		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
+
+	case strings.EqualFold("InvalidNextTokenException", errorCode):
+		return awsAwsjson11_deserializeErrorInvalidNextTokenException(response, errorBody)
+
+	case strings.EqualFold("LimitExceededException", errorCode):
+		return awsAwsjson11_deserializeErrorLimitExceededException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -1630,6 +1746,9 @@ func awsAwsjson11_deserializeOpErrorGetCostAndUsageWithResources(response *smith
 	switch {
 	case strings.EqualFold("BillExpirationException", errorCode):
 		return awsAwsjson11_deserializeErrorBillExpirationException(response, errorBody)
+
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
 
 	case strings.EqualFold("DataUnavailableException", errorCode):
 		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
@@ -1757,6 +1876,9 @@ func awsAwsjson11_deserializeOpErrorGetCostCategories(response *smithyhttp.Respo
 	case strings.EqualFold("BillExpirationException", errorCode):
 		return awsAwsjson11_deserializeErrorBillExpirationException(response, errorBody)
 
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
 	case strings.EqualFold("DataUnavailableException", errorCode):
 		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
 
@@ -1768,6 +1890,129 @@ func awsAwsjson11_deserializeOpErrorGetCostCategories(response *smithyhttp.Respo
 
 	case strings.EqualFold("RequestChangedException", errorCode):
 		return awsAwsjson11_deserializeErrorRequestChangedException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+type awsAwsjson11_deserializeOpGetCostComparisonDrivers struct {
+}
+
+func (*awsAwsjson11_deserializeOpGetCostComparisonDrivers) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson11_deserializeOpGetCostComparisonDrivers) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson11_deserializeOpErrorGetCostComparisonDrivers(response, &metadata)
+	}
+	output := &GetCostComparisonDriversOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson11_deserializeOpDocumentGetCostComparisonDriversOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson11_deserializeOpErrorGetCostComparisonDrivers(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
+	case strings.EqualFold("DataUnavailableException", errorCode):
+		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
+
+	case strings.EqualFold("InvalidNextTokenException", errorCode):
+		return awsAwsjson11_deserializeErrorInvalidNextTokenException(response, errorBody)
+
+	case strings.EqualFold("LimitExceededException", errorCode):
+		return awsAwsjson11_deserializeErrorLimitExceededException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -1880,6 +2125,9 @@ func awsAwsjson11_deserializeOpErrorGetCostForecast(response *smithyhttp.Respons
 		errorMessage = bodyInfo.Message
 	}
 	switch {
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
 	case strings.EqualFold("DataUnavailableException", errorCode):
 		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
 
@@ -1999,6 +2247,9 @@ func awsAwsjson11_deserializeOpErrorGetDimensionValues(response *smithyhttp.Resp
 	switch {
 	case strings.EqualFold("BillExpirationException", errorCode):
 		return awsAwsjson11_deserializeErrorBillExpirationException(response, errorBody)
+
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
 
 	case strings.EqualFold("DataUnavailableException", errorCode):
 		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
@@ -3167,6 +3418,9 @@ func awsAwsjson11_deserializeOpErrorGetTags(response *smithyhttp.Response, metad
 	case strings.EqualFold("BillExpirationException", errorCode):
 		return awsAwsjson11_deserializeErrorBillExpirationException(response, errorBody)
 
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
 	case strings.EqualFold("DataUnavailableException", errorCode):
 		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
 
@@ -3290,6 +3544,9 @@ func awsAwsjson11_deserializeOpErrorGetUsageForecast(response *smithyhttp.Respon
 		errorMessage = bodyInfo.Message
 	}
 	switch {
+	case strings.EqualFold("BillingViewHealthStatusException", errorCode):
+		return awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response, errorBody)
+
 	case strings.EqualFold("DataUnavailableException", errorCode):
 		return awsAwsjson11_deserializeErrorDataUnavailableException(response, errorBody)
 
@@ -3757,6 +4014,120 @@ func awsAwsjson11_deserializeOpErrorListCostCategoryDefinitions(response *smithy
 	switch {
 	case strings.EqualFold("LimitExceededException", errorCode):
 		return awsAwsjson11_deserializeErrorLimitExceededException(response, errorBody)
+
+	default:
+		genericError := &smithy.GenericAPIError{
+			Code:    errorCode,
+			Message: errorMessage,
+		}
+		return genericError
+
+	}
+}
+
+type awsAwsjson11_deserializeOpListCostCategoryResourceAssociations struct {
+}
+
+func (*awsAwsjson11_deserializeOpListCostCategoryResourceAssociations) ID() string {
+	return "OperationDeserializer"
+}
+
+func (m *awsAwsjson11_deserializeOpListCostCategoryResourceAssociations) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	_, span := tracing.StartSpan(ctx, "OperationDeserializer")
+	endTimer := startMetricTimer(ctx, "client.call.deserialization_duration")
+	defer endTimer()
+	defer span.End()
+	response, ok := out.RawResponse.(*smithyhttp.Response)
+	if !ok {
+		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("unknown transport type %T", out.RawResponse)}
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return out, metadata, awsAwsjson11_deserializeOpErrorListCostCategoryResourceAssociations(response, &metadata)
+	}
+	output := &ListCostCategoryResourceAssociationsOutput{}
+	out.Result = output
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(response.Body, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	err = awsAwsjson11_deserializeOpDocumentListCostCategoryResourceAssociationsOutput(&output, shape)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+func awsAwsjson11_deserializeOpErrorListCostCategoryResourceAssociations(response *smithyhttp.Response, metadata *middleware.Metadata) error {
+	var errorBuffer bytes.Buffer
+	if _, err := io.Copy(&errorBuffer, response.Body); err != nil {
+		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
+	}
+	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
+	headerCode := response.Header.Get("X-Amzn-ErrorType")
+
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	bodyInfo, err := getProtocolErrorInfo(decoder)
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	if typ, ok := resolveProtocolErrorType(headerCode, bodyInfo); ok {
+		errorCode = restjson.SanitizeErrorCode(typ)
+	}
+	if len(bodyInfo.Message) != 0 {
+		errorMessage = bodyInfo.Message
+	}
+	switch {
+	case strings.EqualFold("LimitExceededException", errorCode):
+		return awsAwsjson11_deserializeErrorLimitExceededException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
 
 	default:
 		genericError := &smithy.GenericAPIError{
@@ -5259,6 +5630,41 @@ func awsAwsjson11_deserializeErrorBillExpirationException(response *smithyhttp.R
 	return output
 }
 
+func awsAwsjson11_deserializeErrorBillingViewHealthStatusException(response *smithyhttp.Response, errorBody *bytes.Reader) error {
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	output := &types.BillingViewHealthStatusException{}
+	err := awsAwsjson11_deserializeDocumentBillingViewHealthStatusException(&output, shape)
+
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+	return output
+}
+
 func awsAwsjson11_deserializeErrorDataUnavailableException(response *smithyhttp.Response, errorBody *bytes.Reader) error {
 	var buff [1024]byte
 	ringBuffer := smithyio.NewRingBuffer(buff[:])
@@ -6529,6 +6935,46 @@ func awsAwsjson11_deserializeDocumentBillExpirationException(v **types.BillExpir
 	return nil
 }
 
+func awsAwsjson11_deserializeDocumentBillingViewHealthStatusException(v **types.BillingViewHealthStatusException, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.BillingViewHealthStatusException
+	if *v == nil {
+		sv = &types.BillingViewHealthStatusException{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "message", "Message":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ErrorMessage to be of type string, got %T instead", value)
+				}
+				sv.Message = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson11_deserializeDocumentCommitmentPurchaseAnalysisConfiguration(v **types.CommitmentPurchaseAnalysisConfiguration, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -6554,6 +7000,108 @@ func awsAwsjson11_deserializeDocumentCommitmentPurchaseAnalysisConfiguration(v *
 		case "SavingsPlansPurchaseAnalysisConfiguration":
 			if err := awsAwsjson11_deserializeDocumentSavingsPlansPurchaseAnalysisConfiguration(&sv.SavingsPlansPurchaseAnalysisConfiguration, value); err != nil {
 				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentComparisonMetrics(v *map[string]types.ComparisonMetricValue, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var mv map[string]types.ComparisonMetricValue
+	if *v == nil {
+		mv = map[string]types.ComparisonMetricValue{}
+	} else {
+		mv = *v
+	}
+
+	for key, value := range shape {
+		var parsedVal types.ComparisonMetricValue
+		mapVar := parsedVal
+		destAddr := &mapVar
+		if err := awsAwsjson11_deserializeDocumentComparisonMetricValue(&destAddr, value); err != nil {
+			return err
+		}
+		parsedVal = *destAddr
+		mv[key] = parsedVal
+
+	}
+	*v = mv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentComparisonMetricValue(v **types.ComparisonMetricValue, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.ComparisonMetricValue
+	if *v == nil {
+		sv = &types.ComparisonMetricValue{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "BaselineTimePeriodAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected GenericString to be of type string, got %T instead", value)
+				}
+				sv.BaselineTimePeriodAmount = ptr.String(jtv)
+			}
+
+		case "ComparisonTimePeriodAmount":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected GenericString to be of type string, got %T instead", value)
+				}
+				sv.ComparisonTimePeriodAmount = ptr.String(jtv)
+			}
+
+		case "Difference":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected GenericString to be of type string, got %T instead", value)
+				}
+				sv.Difference = ptr.String(jtv)
+			}
+
+		case "Unit":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected GenericString to be of type string, got %T instead", value)
+				}
+				sv.Unit = ptr.String(jtv)
 			}
 
 		default:
@@ -6775,6 +7323,81 @@ func awsAwsjson11_deserializeDocumentCostAllocationTagList(v *[]types.CostAlloca
 		var col types.CostAllocationTag
 		destAddr := &col
 		if err := awsAwsjson11_deserializeDocumentCostAllocationTag(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentCostAndUsageComparison(v **types.CostAndUsageComparison, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.CostAndUsageComparison
+	if *v == nil {
+		sv = &types.CostAndUsageComparison{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "CostAndUsageSelector":
+			if err := awsAwsjson11_deserializeDocumentExpression(&sv.CostAndUsageSelector, value); err != nil {
+				return err
+			}
+
+		case "Metrics":
+			if err := awsAwsjson11_deserializeDocumentComparisonMetrics(&sv.Metrics, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentCostAndUsageComparisons(v *[]types.CostAndUsageComparison, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.CostAndUsageComparison
+	if *v == nil {
+		cv = []types.CostAndUsageComparison{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.CostAndUsageComparison
+		destAddr := &col
+		if err := awsAwsjson11_deserializeDocumentCostAndUsageComparison(&destAddr, value); err != nil {
 			return err
 		}
 		col = *destAddr
@@ -7138,6 +7761,11 @@ func awsAwsjson11_deserializeDocumentCostCategoryReference(v **types.CostCategor
 				return err
 			}
 
+		case "SupportedResourceTypes":
+			if err := awsAwsjson11_deserializeDocumentResourceTypes(&sv.SupportedResourceTypes, value); err != nil {
+				return err
+			}
+
 		case "Values":
 			if err := awsAwsjson11_deserializeDocumentCostCategoryValuesList(&sv.Values, value); err != nil {
 				return err
@@ -7176,6 +7804,98 @@ func awsAwsjson11_deserializeDocumentCostCategoryReferencesList(v *[]types.CostC
 		var col types.CostCategoryReference
 		destAddr := &col
 		if err := awsAwsjson11_deserializeDocumentCostCategoryReference(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentCostCategoryResourceAssociation(v **types.CostCategoryResourceAssociation, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.CostCategoryResourceAssociation
+	if *v == nil {
+		sv = &types.CostCategoryResourceAssociation{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "CostCategoryArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected Arn to be of type string, got %T instead", value)
+				}
+				sv.CostCategoryArn = ptr.String(jtv)
+			}
+
+		case "CostCategoryName":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected CostCategoryName to be of type string, got %T instead", value)
+				}
+				sv.CostCategoryName = ptr.String(jtv)
+			}
+
+		case "ResourceArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected GenericArn to be of type string, got %T instead", value)
+				}
+				sv.ResourceArn = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentCostCategoryResourceAssociations(v *[]types.CostCategoryResourceAssociation, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.CostCategoryResourceAssociation
+	if *v == nil {
+		cv = []types.CostCategoryResourceAssociation{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.CostCategoryResourceAssociation
+		destAddr := &col
+		if err := awsAwsjson11_deserializeDocumentCostCategoryResourceAssociation(&destAddr, value); err != nil {
 			return err
 		}
 		col = *destAddr
@@ -7602,6 +8322,174 @@ func awsAwsjson11_deserializeDocumentCostCategoryValuesList(v *[]string, value i
 			}
 			col = jtv
 		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentCostComparisonDriver(v **types.CostComparisonDriver, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.CostComparisonDriver
+	if *v == nil {
+		sv = &types.CostComparisonDriver{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "CostDrivers":
+			if err := awsAwsjson11_deserializeDocumentCostDrivers(&sv.CostDrivers, value); err != nil {
+				return err
+			}
+
+		case "CostSelector":
+			if err := awsAwsjson11_deserializeDocumentExpression(&sv.CostSelector, value); err != nil {
+				return err
+			}
+
+		case "Metrics":
+			if err := awsAwsjson11_deserializeDocumentComparisonMetrics(&sv.Metrics, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentCostComparisonDrivers(v *[]types.CostComparisonDriver, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.CostComparisonDriver
+	if *v == nil {
+		cv = []types.CostComparisonDriver{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.CostComparisonDriver
+		destAddr := &col
+		if err := awsAwsjson11_deserializeDocumentCostComparisonDriver(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentCostDriver(v **types.CostDriver, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.CostDriver
+	if *v == nil {
+		sv = &types.CostDriver{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "Metrics":
+			if err := awsAwsjson11_deserializeDocumentComparisonMetrics(&sv.Metrics, value); err != nil {
+				return err
+			}
+
+		case "Name":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected GenericString to be of type string, got %T instead", value)
+				}
+				sv.Name = ptr.String(jtv)
+			}
+
+		case "Type":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected GenericString to be of type string, got %T instead", value)
+				}
+				sv.Type = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentCostDrivers(v *[]types.CostDriver, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []types.CostDriver
+	if *v == nil {
+		cv = []types.CostDriver{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col types.CostDriver
+		destAddr := &col
+		if err := awsAwsjson11_deserializeDocumentCostDriver(&destAddr, value); err != nil {
+			return err
+		}
+		col = *destAddr
 		cv = append(cv, col)
 
 	}
@@ -10285,6 +11173,15 @@ func awsAwsjson11_deserializeDocumentRDSInstanceDetails(v **types.RDSInstanceDet
 				sv.DatabaseEngine = ptr.String(jtv)
 			}
 
+		case "DeploymentModel":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected GenericString to be of type string, got %T instead", value)
+				}
+				sv.DeploymentModel = ptr.String(jtv)
+			}
+
 		case "DeploymentOption":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -11882,6 +12779,42 @@ func awsAwsjson11_deserializeDocumentResourceTagList(v *[]types.ResourceTag, val
 			return err
 		}
 		col = *destAddr
+		cv = append(cv, col)
+
+	}
+	*v = cv
+	return nil
+}
+
+func awsAwsjson11_deserializeDocumentResourceTypes(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected ResourceType to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
 		cv = append(cv, col)
 
 	}
@@ -15449,6 +16382,56 @@ func awsAwsjson11_deserializeOpDocumentGetCommitmentPurchaseAnalysisOutput(v **G
 	return nil
 }
 
+func awsAwsjson11_deserializeOpDocumentGetCostAndUsageComparisonsOutput(v **GetCostAndUsageComparisonsOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *GetCostAndUsageComparisonsOutput
+	if *v == nil {
+		sv = &GetCostAndUsageComparisonsOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "CostAndUsageComparisons":
+			if err := awsAwsjson11_deserializeDocumentCostAndUsageComparisons(&sv.CostAndUsageComparisons, value); err != nil {
+				return err
+			}
+
+		case "NextPageToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected NextPageToken to be of type string, got %T instead", value)
+				}
+				sv.NextPageToken = ptr.String(jtv)
+			}
+
+		case "TotalCostAndUsage":
+			if err := awsAwsjson11_deserializeDocumentComparisonMetrics(&sv.TotalCostAndUsage, value); err != nil {
+				return err
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsAwsjson11_deserializeOpDocumentGetCostAndUsageOutput(v **GetCostAndUsageOutput, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -15624,6 +16607,51 @@ func awsAwsjson11_deserializeOpDocumentGetCostCategoriesOutput(v **GetCostCatego
 					return err
 				}
 				sv.TotalSize = ptr.Int32(int32(i64))
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeOpDocumentGetCostComparisonDriversOutput(v **GetCostComparisonDriversOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *GetCostComparisonDriversOutput
+	if *v == nil {
+		sv = &GetCostComparisonDriversOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "CostComparisonDrivers":
+			if err := awsAwsjson11_deserializeDocumentCostComparisonDrivers(&sv.CostComparisonDrivers, value); err != nil {
+				return err
+			}
+
+		case "NextPageToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected NextPageToken to be of type string, got %T instead", value)
+				}
+				sv.NextPageToken = ptr.String(jtv)
 			}
 
 		default:
@@ -16464,6 +17492,51 @@ func awsAwsjson11_deserializeOpDocumentListCostCategoryDefinitionsOutput(v **Lis
 		switch key {
 		case "CostCategoryReferences":
 			if err := awsAwsjson11_deserializeDocumentCostCategoryReferencesList(&sv.CostCategoryReferences, value); err != nil {
+				return err
+			}
+
+		case "NextToken":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected NextPageToken to be of type string, got %T instead", value)
+				}
+				sv.NextToken = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsAwsjson11_deserializeOpDocumentListCostCategoryResourceAssociationsOutput(v **ListCostCategoryResourceAssociationsOutput, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *ListCostCategoryResourceAssociationsOutput
+	if *v == nil {
+		sv = &ListCostCategoryResourceAssociationsOutput{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "CostCategoryResourceAssociations":
+			if err := awsAwsjson11_deserializeDocumentCostCategoryResourceAssociations(&sv.CostCategoryResourceAssociations, value); err != nil {
 				return err
 			}
 

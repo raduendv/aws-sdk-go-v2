@@ -13,22 +13,12 @@ import (
 	smithyio "github.com/aws/smithy-go/io"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"io/ioutil"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpAbortMultipartUpload struct {
 }
@@ -116,6 +106,9 @@ func awsRestjson1_deserializeOpErrorAbortMultipartUpload(response *smithyhttp.Re
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -219,6 +212,9 @@ func awsRestjson1_deserializeOpErrorAbortVaultLock(response *smithyhttp.Response
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -326,6 +322,9 @@ func awsRestjson1_deserializeOpErrorAddTagsToVault(response *smithyhttp.Response
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -427,6 +426,9 @@ func awsRestjson1_deserializeOpErrorCompleteMultipartUpload(response *smithyhttp
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -554,6 +556,9 @@ func awsRestjson1_deserializeOpErrorCompleteVaultLock(response *smithyhttp.Respo
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -658,6 +663,9 @@ func awsRestjson1_deserializeOpErrorCreateVault(response *smithyhttp.Response, m
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ServiceUnavailableException", errorCode):
 		return awsRestjson1_deserializeErrorServiceUnavailableException(response, errorBody)
@@ -772,6 +780,9 @@ func awsRestjson1_deserializeOpErrorDeleteArchive(response *smithyhttp.Response,
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -874,6 +885,9 @@ func awsRestjson1_deserializeOpErrorDeleteVault(response *smithyhttp.Response, m
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -978,6 +992,9 @@ func awsRestjson1_deserializeOpErrorDeleteVaultAccessPolicy(response *smithyhttp
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -1080,6 +1097,9 @@ func awsRestjson1_deserializeOpErrorDeleteVaultNotifications(response *smithyhtt
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -1205,6 +1225,9 @@ func awsRestjson1_deserializeOpErrorDescribeJob(response *smithyhttp.Response, m
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -1547,6 +1570,9 @@ func awsRestjson1_deserializeOpErrorDescribeVault(response *smithyhttp.Response,
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -1765,6 +1791,9 @@ func awsRestjson1_deserializeOpErrorGetDataRetrievalPolicy(response *smithyhttp.
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ServiceUnavailableException", errorCode):
 		return awsRestjson1_deserializeErrorServiceUnavailableException(response, errorBody)
 
@@ -1904,6 +1933,9 @@ func awsRestjson1_deserializeOpErrorGetJobOutput(response *smithyhttp.Response, 
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -2073,6 +2105,9 @@ func awsRestjson1_deserializeOpErrorGetVaultAccessPolicy(response *smithyhttp.Re
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -2233,6 +2268,9 @@ func awsRestjson1_deserializeOpErrorGetVaultLock(response *smithyhttp.Response, 
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -2426,6 +2464,9 @@ func awsRestjson1_deserializeOpErrorGetVaultNotifications(response *smithyhttp.R
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -2567,6 +2608,9 @@ func awsRestjson1_deserializeOpErrorInitiateJob(response *smithyhttp.Response, m
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("PolicyEnforcedException", errorCode):
 		return awsRestjson1_deserializeErrorPolicyEnforcedException(response, errorBody)
 
@@ -2695,6 +2739,9 @@ func awsRestjson1_deserializeOpErrorInitiateMultipartUpload(response *smithyhttp
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -2814,6 +2861,9 @@ func awsRestjson1_deserializeOpErrorInitiateVaultLock(response *smithyhttp.Respo
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -2952,6 +3002,9 @@ func awsRestjson1_deserializeOpErrorListJobs(response *smithyhttp.Response, meta
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -3123,6 +3176,9 @@ func awsRestjson1_deserializeOpErrorListMultipartUploads(response *smithyhttp.Re
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -3292,6 +3348,9 @@ func awsRestjson1_deserializeOpErrorListParts(response *smithyhttp.Response, met
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -3512,6 +3571,9 @@ func awsRestjson1_deserializeOpErrorListProvisionedCapacity(response *smithyhttp
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ServiceUnavailableException", errorCode):
 		return awsRestjson1_deserializeErrorServiceUnavailableException(response, errorBody)
 
@@ -3669,6 +3731,9 @@ func awsRestjson1_deserializeOpErrorListTagsForVault(response *smithyhttp.Respon
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -3831,6 +3896,9 @@ func awsRestjson1_deserializeOpErrorListVaults(response *smithyhttp.Response, me
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -3981,6 +4049,9 @@ func awsRestjson1_deserializeOpErrorPurchaseProvisionedCapacity(response *smithy
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ServiceUnavailableException", errorCode):
 		return awsRestjson1_deserializeErrorServiceUnavailableException(response, errorBody)
 
@@ -4094,6 +4165,9 @@ func awsRestjson1_deserializeOpErrorRemoveTagsFromVault(response *smithyhttp.Res
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -4197,6 +4271,9 @@ func awsRestjson1_deserializeOpErrorSetDataRetrievalPolicy(response *smithyhttp.
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ServiceUnavailableException", errorCode):
 		return awsRestjson1_deserializeErrorServiceUnavailableException(response, errorBody)
 
@@ -4296,6 +4373,9 @@ func awsRestjson1_deserializeOpErrorSetVaultAccessPolicy(response *smithyhttp.Re
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -4400,6 +4480,9 @@ func awsRestjson1_deserializeOpErrorSetVaultNotifications(response *smithyhttp.R
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
 
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
+
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsRestjson1_deserializeErrorResourceNotFoundException(response, errorBody)
 
@@ -4501,6 +4584,9 @@ func awsRestjson1_deserializeOpErrorUploadArchive(response *smithyhttp.Response,
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("RequestTimeoutException", errorCode):
 		return awsRestjson1_deserializeErrorRequestTimeoutException(response, errorBody)
@@ -4629,6 +4715,9 @@ func awsRestjson1_deserializeOpErrorUploadMultipartPart(response *smithyhttp.Res
 
 	case strings.EqualFold("MissingParameterValueException", errorCode):
 		return awsRestjson1_deserializeErrorMissingParameterValueException(response, errorBody)
+
+	case strings.EqualFold("NoLongerSupportedException", errorCode):
+		return awsRestjson1_deserializeErrorNoLongerSupportedException(response, errorBody)
 
 	case strings.EqualFold("RequestTimeoutException", errorCode):
 		return awsRestjson1_deserializeErrorRequestTimeoutException(response, errorBody)
@@ -4789,6 +4878,42 @@ func awsRestjson1_deserializeErrorMissingParameterValueException(response *smith
 	}
 
 	err := awsRestjson1_deserializeDocumentMissingParameterValueException(&output, shape)
+
+	if err != nil {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	errorBody.Seek(0, io.SeekStart)
+
+	return output
+}
+
+func awsRestjson1_deserializeErrorNoLongerSupportedException(response *smithyhttp.Response, errorBody *bytes.Reader) error {
+	output := &types.NoLongerSupportedException{}
+	var buff [1024]byte
+	ringBuffer := smithyio.NewRingBuffer(buff[:])
+
+	body := io.TeeReader(errorBody, ringBuffer)
+	decoder := json.NewDecoder(body)
+	decoder.UseNumber()
+	var shape interface{}
+	if err := decoder.Decode(&shape); err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		err = &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+		return err
+	}
+
+	err := awsRestjson1_deserializeDocumentNoLongerSupportedException(&output, shape)
 
 	if err != nil {
 		var snapshot bytes.Buffer
@@ -6127,6 +6252,64 @@ func awsRestjson1_deserializeDocumentMissingParameterValueException(v **types.Mi
 	var sv *types.MissingParameterValueException
 	if *v == nil {
 		sv = &types.MissingParameterValueException{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "code":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected string to be of type string, got %T instead", value)
+				}
+				sv.Code = ptr.String(jtv)
+			}
+
+		case "message", "Message":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected string to be of type string, got %T instead", value)
+				}
+				sv.Message = ptr.String(jtv)
+			}
+
+		case "type":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected string to be of type string, got %T instead", value)
+				}
+				sv.Type = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentNoLongerSupportedException(v **types.NoLongerSupportedException, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.NoLongerSupportedException
+	if *v == nil {
+		sv = &types.NoLongerSupportedException{}
 	} else {
 		sv = *v
 	}

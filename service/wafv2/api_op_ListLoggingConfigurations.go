@@ -56,9 +56,14 @@ type ListLoggingConfigurationsInput struct {
 	// from various sources for normalization, analysis, and management. For
 	// information, see [Collecting data from Amazon Web Services services]in the Amazon Security Lake user guide.
 	//
+	// The log scope CLOUDWATCH_TELEMETRY_RULE_MANAGED indicates a configuration that
+	// is managed through Amazon CloudWatch Logs for telemetry data collection and
+	// analysis. For information, see [What is Amazon CloudWatch Logs ?]in the Amazon CloudWatch Logs user guide.
+	//
 	// Default: CUSTOMER
 	//
 	// [Collecting data from Amazon Web Services services]: https://docs.aws.amazon.com/security-lake/latest/userguide/internal-sources.html
+	// [What is Amazon CloudWatch Logs ?]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html
 	LogScope types.LogScope
 
 	// When you request a list of objects with a Limit setting, if the number of
@@ -176,16 +181,13 @@ func (c *Client) addOperationListLoggingConfigurationsMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -30,6 +30,8 @@ import (
 //
 // For more information, see [Proton dashboard] in the Proton User Guide.
 //
+// Deprecated: AWS Proton is not accepting new customers.
+//
 // [Proton dashboard]: https://docs.aws.amazon.com/proton/latest/userguide/monitoring-dashboard.html
 func (c *Client) GetResourcesSummary(ctx context.Context, params *GetResourcesSummaryInput, optFns ...func(*Options)) (*GetResourcesSummaryOutput, error) {
 	if params == nil {
@@ -148,16 +150,13 @@ func (c *Client) addOperationGetResourcesSummaryMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

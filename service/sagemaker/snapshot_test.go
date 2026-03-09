@@ -98,6 +98,30 @@ func TestCheckSnapshot_AssociateTrialComponent(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_AttachClusterNodeVolume(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AttachClusterNodeVolume(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AttachClusterNodeVolume")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_BatchAddClusterNodes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchAddClusterNodes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "BatchAddClusterNodes")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_BatchDeleteClusterNodes(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.BatchDeleteClusterNodes(context.Background(), nil, func(o *Options) {
@@ -115,6 +139,30 @@ func TestCheckSnapshot_BatchDescribeModelPackage(t *testing.T) {
 	_, err := svc.BatchDescribeModelPackage(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "BatchDescribeModelPackage")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_BatchRebootClusterNodes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchRebootClusterNodes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "BatchRebootClusterNodes")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_BatchReplaceClusterNodes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchReplaceClusterNodes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "BatchReplaceClusterNodes")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -422,6 +470,18 @@ func TestCheckSnapshot_CreateHub(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateHubContentPresignedUrls(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateHubContentPresignedUrls(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateHubContentPresignedUrls")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateHubContentReference(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateHubContentReference(context.Background(), nil, func(o *Options) {
@@ -523,6 +583,18 @@ func TestCheckSnapshot_CreateLabelingJob(t *testing.T) {
 	_, err := svc.CreateLabelingJob(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CreateLabelingJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateMlflowApp(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateMlflowApp(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateMlflowApp")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -727,6 +799,18 @@ func TestCheckSnapshot_CreatePresignedDomainUrl(t *testing.T) {
 	_, err := svc.CreatePresignedDomainUrl(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CreatePresignedDomainUrl")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreatePresignedMlflowAppUrl(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreatePresignedMlflowAppUrl(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreatePresignedMlflowAppUrl")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1274,6 +1358,18 @@ func TestCheckSnapshot_DeleteInferenceExperiment(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteMlflowApp(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteMlflowApp(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteMlflowApp")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteMlflowTrackingServer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteMlflowTrackingServer(context.Background(), nil, func(o *Options) {
@@ -1454,6 +1550,18 @@ func TestCheckSnapshot_DeletePipeline(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteProcessingJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProcessingJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteProcessingJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteProject(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteProject(context.Background(), nil, func(o *Options) {
@@ -1495,6 +1603,18 @@ func TestCheckSnapshot_DeleteTags(t *testing.T) {
 	_, err := svc.DeleteTags(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteTags")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteTrainingJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTrainingJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteTrainingJob")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1663,6 +1783,18 @@ func TestCheckSnapshot_DescribeCluster(t *testing.T) {
 	_, err := svc.DescribeCluster(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeCluster")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeClusterEvent(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeClusterEvent(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeClusterEvent")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2018,6 +2150,18 @@ func TestCheckSnapshot_DescribeLineageGroup(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeMlflowApp(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeMlflowApp(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeMlflowApp")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeMlflowTrackingServer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeMlflowTrackingServer(context.Background(), nil, func(o *Options) {
@@ -2246,6 +2390,18 @@ func TestCheckSnapshot_DescribeProject(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeReservedCapacity(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeReservedCapacity(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeReservedCapacity")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeSpace(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeSpace(context.Background(), nil, func(o *Options) {
@@ -2371,6 +2527,18 @@ func TestCheckSnapshot_DescribeWorkteam(t *testing.T) {
 	_, err := svc.DescribeWorkteam(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeWorkteam")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DetachClusterNodeVolume(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DetachClusterNodeVolume(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DetachClusterNodeVolume")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2599,6 +2767,18 @@ func TestCheckSnapshot_ListCandidatesForAutoMLJob(t *testing.T) {
 	_, err := svc.ListCandidatesForAutoMLJob(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListCandidatesForAutoMLJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListClusterEvents(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListClusterEvents(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListClusterEvents")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2990,6 +3170,18 @@ func TestCheckSnapshot_ListLineageGroups(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListMlflowApps(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListMlflowApps(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListMlflowApps")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListMlflowTrackingServers(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListMlflowTrackingServers(context.Background(), nil, func(o *Options) {
@@ -3266,6 +3458,18 @@ func TestCheckSnapshot_ListPipelines(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListPipelineVersions(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListPipelineVersions(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListPipelineVersions")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListProcessingJobs(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListProcessingJobs(context.Background(), nil, func(o *Options) {
@@ -3427,6 +3631,18 @@ func TestCheckSnapshot_ListTrials(t *testing.T) {
 	_, err := svc.ListTrials(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListTrials")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListUltraServersByReservedCapacity(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListUltraServersByReservedCapacity(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListUltraServersByReservedCapacity")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -3643,6 +3859,18 @@ func TestCheckSnapshot_StartPipelineExecution(t *testing.T) {
 	_, err := svc.StartPipelineExecution(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "StartPipelineExecution")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_StartSession(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StartSession(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "StartSession")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -4142,6 +4370,18 @@ func TestCheckSnapshot_UpdateInferenceExperiment(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateMlflowApp(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateMlflowApp(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateMlflowApp")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateMlflowTrackingServer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateMlflowTrackingServer(context.Background(), nil, func(o *Options) {
@@ -4255,6 +4495,18 @@ func TestCheckSnapshot_UpdatePipelineExecution(t *testing.T) {
 	_, err := svc.UpdatePipelineExecution(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdatePipelineExecution")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdatePipelineVersion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdatePipelineVersion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdatePipelineVersion")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -4393,6 +4645,30 @@ func TestUpdateSnapshot_AssociateTrialComponent(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_AttachClusterNodeVolume(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AttachClusterNodeVolume(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AttachClusterNodeVolume")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_BatchAddClusterNodes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchAddClusterNodes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "BatchAddClusterNodes")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_BatchDeleteClusterNodes(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.BatchDeleteClusterNodes(context.Background(), nil, func(o *Options) {
@@ -4410,6 +4686,30 @@ func TestUpdateSnapshot_BatchDescribeModelPackage(t *testing.T) {
 	_, err := svc.BatchDescribeModelPackage(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "BatchDescribeModelPackage")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_BatchRebootClusterNodes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchRebootClusterNodes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "BatchRebootClusterNodes")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_BatchReplaceClusterNodes(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.BatchReplaceClusterNodes(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "BatchReplaceClusterNodes")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -4717,6 +5017,18 @@ func TestUpdateSnapshot_CreateHub(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateHubContentPresignedUrls(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateHubContentPresignedUrls(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateHubContentPresignedUrls")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateHubContentReference(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateHubContentReference(context.Background(), nil, func(o *Options) {
@@ -4818,6 +5130,18 @@ func TestUpdateSnapshot_CreateLabelingJob(t *testing.T) {
 	_, err := svc.CreateLabelingJob(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CreateLabelingJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateMlflowApp(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateMlflowApp(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateMlflowApp")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -5022,6 +5346,18 @@ func TestUpdateSnapshot_CreatePresignedDomainUrl(t *testing.T) {
 	_, err := svc.CreatePresignedDomainUrl(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CreatePresignedDomainUrl")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreatePresignedMlflowAppUrl(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreatePresignedMlflowAppUrl(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreatePresignedMlflowAppUrl")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -5569,6 +5905,18 @@ func TestUpdateSnapshot_DeleteInferenceExperiment(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteMlflowApp(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteMlflowApp(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteMlflowApp")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteMlflowTrackingServer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteMlflowTrackingServer(context.Background(), nil, func(o *Options) {
@@ -5749,6 +6097,18 @@ func TestUpdateSnapshot_DeletePipeline(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteProcessingJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteProcessingJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteProcessingJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteProject(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteProject(context.Background(), nil, func(o *Options) {
@@ -5790,6 +6150,18 @@ func TestUpdateSnapshot_DeleteTags(t *testing.T) {
 	_, err := svc.DeleteTags(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteTags")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteTrainingJob(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteTrainingJob(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteTrainingJob")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -5958,6 +6330,18 @@ func TestUpdateSnapshot_DescribeCluster(t *testing.T) {
 	_, err := svc.DescribeCluster(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeCluster")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeClusterEvent(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeClusterEvent(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeClusterEvent")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -6313,6 +6697,18 @@ func TestUpdateSnapshot_DescribeLineageGroup(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeMlflowApp(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeMlflowApp(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeMlflowApp")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeMlflowTrackingServer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeMlflowTrackingServer(context.Background(), nil, func(o *Options) {
@@ -6541,6 +6937,18 @@ func TestUpdateSnapshot_DescribeProject(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeReservedCapacity(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeReservedCapacity(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeReservedCapacity")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeSpace(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeSpace(context.Background(), nil, func(o *Options) {
@@ -6666,6 +7074,18 @@ func TestUpdateSnapshot_DescribeWorkteam(t *testing.T) {
 	_, err := svc.DescribeWorkteam(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeWorkteam")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DetachClusterNodeVolume(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DetachClusterNodeVolume(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DetachClusterNodeVolume")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -6894,6 +7314,18 @@ func TestUpdateSnapshot_ListCandidatesForAutoMLJob(t *testing.T) {
 	_, err := svc.ListCandidatesForAutoMLJob(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListCandidatesForAutoMLJob")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListClusterEvents(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListClusterEvents(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListClusterEvents")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -7285,6 +7717,18 @@ func TestUpdateSnapshot_ListLineageGroups(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListMlflowApps(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListMlflowApps(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListMlflowApps")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListMlflowTrackingServers(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListMlflowTrackingServers(context.Background(), nil, func(o *Options) {
@@ -7561,6 +8005,18 @@ func TestUpdateSnapshot_ListPipelines(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListPipelineVersions(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListPipelineVersions(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListPipelineVersions")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListProcessingJobs(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListProcessingJobs(context.Background(), nil, func(o *Options) {
@@ -7722,6 +8178,18 @@ func TestUpdateSnapshot_ListTrials(t *testing.T) {
 	_, err := svc.ListTrials(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListTrials")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListUltraServersByReservedCapacity(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListUltraServersByReservedCapacity(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListUltraServersByReservedCapacity")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -7938,6 +8406,18 @@ func TestUpdateSnapshot_StartPipelineExecution(t *testing.T) {
 	_, err := svc.StartPipelineExecution(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "StartPipelineExecution")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_StartSession(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StartSession(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "StartSession")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -8437,6 +8917,18 @@ func TestUpdateSnapshot_UpdateInferenceExperiment(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_UpdateMlflowApp(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateMlflowApp(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateMlflowApp")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_UpdateMlflowTrackingServer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateMlflowTrackingServer(context.Background(), nil, func(o *Options) {
@@ -8550,6 +9042,18 @@ func TestUpdateSnapshot_UpdatePipelineExecution(t *testing.T) {
 	_, err := svc.UpdatePipelineExecution(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdatePipelineExecution")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdatePipelineVersion(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdatePipelineVersion(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdatePipelineVersion")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

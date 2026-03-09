@@ -19,6 +19,8 @@ import (
 // defined by the selected service template. For more information, see [Proton templates]in the
 // Proton User Guide.
 //
+// Deprecated: AWS Proton is not accepting new customers.
+//
 // [Proton templates]: https://docs.aws.amazon.com/proton/latest/userguide/ag-templates.html
 func (c *Client) CreateServiceTemplate(ctx context.Context, params *CreateServiceTemplateInput, optFns ...func(*Options)) (*CreateServiceTemplateOutput, error) {
 	if params == nil {
@@ -171,16 +173,13 @@ func (c *Client) addOperationCreateServiceTemplateMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

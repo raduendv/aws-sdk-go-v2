@@ -12,7 +12,26 @@ import (
 	"time"
 )
 
-// [Calculates a route] given the following required parameters: DeparturePosition and
+// This operation is no longer current and may be deprecated in the future. We
+// recommend you upgrade to CalculateRoutesCalculateRoutes or CalculateIsolinesCalculateIsolines unless you
+// require Grab data.
+//
+//   - CalculateRoute is part of a previous Amazon Location Service Routes API
+//     (version 1) which has been superseded by a more intuitive, powerful, and
+//     complete API (version 2).
+//
+//   - The version 2 CalculateRoutes operation gives better results for
+//     point-to-point routing, while the version 2 CalculateIsolines operation adds
+//     support for calculating service areas and travel time envelopes.
+//
+//   - If you are using an Amazon Web Services SDK or the Amazon Web Services CLI,
+//     note that the Routes API version 2 is found under geo-routes or geo_routes ,
+//     not under location .
+//
+//   - Since Grab is not yet fully supported in Routes API version 2, we recommend
+//     you continue using API version 1 when using Grab.
+//
+// [Calculates a route]given the following required parameters: DeparturePosition and
 // DestinationPosition . Requires that you first [create a route calculator resource].
 //
 // By default, a request that doesn't specify a departure time uses the best time
@@ -37,9 +56,9 @@ import (
 //
 //	start and destination must be within 40km.
 //
-// [Specifying a departure time]: https://docs.aws.amazon.com/location/latest/developerguide/departure-time.html
-// [Specifying a travel mode]: https://docs.aws.amazon.com/location/latest/developerguide/travel-mode.html
-// [Calculates a route]: https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html
+// [Specifying a departure time]: https://docs.aws.amazon.com/location/previous/developerguide/departure-time.html
+// [Specifying a travel mode]: https://docs.aws.amazon.com/location/previous/developerguide/travel-mode.html
+// [Calculates a route]: https://docs.aws.amazon.com/location/previous/developerguide/calculate-route.html
 // [create a route calculator resource]: https://docs.aws.amazon.com/location-routes/latest/APIReference/API_CreateRouteCalculator.html
 func (c *Client) CalculateRoute(ctx context.Context, params *CalculateRouteInput, optFns ...func(*Options)) (*CalculateRouteOutput, error) {
 	if params == nil {
@@ -74,7 +93,7 @@ type CalculateRouteInput struct {
 	//
 	// Valid Values: [-180 to 180,-90 to 90]
 	//
-	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/latest/developerguide/snap-to-nearby-road.html
+	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/previous/developerguide/snap-to-nearby-road.html
 	// [World Geodetic System (WGS 84)]: https://earth-info.nga.mil/index.php?dir=wgs84&action=wgs84
 	//
 	// This member is required.
@@ -88,7 +107,7 @@ type CalculateRouteInput struct {
 	//
 	// Valid Values: [-180 to 180,-90 to 90]
 	//
-	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/latest/developerguide/snap-to-nearby-road.html
+	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/previous/developerguide/snap-to-nearby-road.html
 	// [World Geodetic System (WGS 84)]: https://earth-info.nga.mil/index.php?dir=wgs84&action=wgs84
 	//
 	// This member is required.
@@ -141,7 +160,7 @@ type CalculateRouteInput struct {
 
 	// The optional [API key] to authorize the request.
 	//
-	// [API key]: https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html
+	// [API key]: https://docs.aws.amazon.com/location/previous/developerguide/using-apikeys.html
 	Key *string
 
 	// Specifies the distance to optimize for when calculating a route.
@@ -167,7 +186,7 @@ type CalculateRouteInput struct {
 	//
 	// Default Value: Car
 	//
-	// [GrabMaps]: https://docs.aws.amazon.com/location/latest/developerguide/grab.html
+	// [GrabMaps]: https://docs.aws.amazon.com/location/previous/developerguide/grab.html
 	TravelMode types.TravelMode
 
 	// Specifies route preferences when traveling by Truck , such as avoiding routes
@@ -194,7 +213,7 @@ type CalculateRouteInput struct {
 	//
 	// Valid Values: [-180 to 180,-90 to 90]
 	//
-	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/latest/developerguide/snap-to-nearby-road.html
+	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/previous/developerguide/snap-to-nearby-road.html
 	WaypointPositions [][]float64
 
 	noSmithyDocumentSerde
@@ -225,7 +244,7 @@ type CalculateRouteOutput struct {
 	//   - Leg 2: The StartPosition is the waypoint position. The EndPosition is the
 	//   destination position.
 	//
-	// [snapped to a nearby road]: https://docs.aws.amazon.com/location/latest/developerguide/snap-to-nearby-road.html
+	// [snapped to a nearby road]: https://docs.aws.amazon.com/location/previous/developerguide/snap-to-nearby-road.html
 	//
 	// This member is required.
 	Legs []types.Leg
@@ -333,16 +352,13 @@ func (c *Client) addOperationCalculateRouteMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

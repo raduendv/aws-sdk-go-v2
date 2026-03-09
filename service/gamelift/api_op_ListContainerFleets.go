@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: Container
+//
 // Retrieves a collection of container fleet resources in an Amazon Web Services
 // Region. For fleets that have multiple locations, this operation retrieves fleets
 // based on their home Region only.
@@ -23,8 +25,8 @@ import (
 //   - Get a list of fleets filtered by container group definition. Provide the
 //     container group definition name or ARN value.
 //
-//   - To get a list of all Amazon GameLift Realtime fleets with a specific
-//     configuration script, provide the script ID.
+//   - To get a list of all Amazon GameLift Servers Realtime fleets with a
+//     specific configuration script, provide the script ID.
 //
 // Use the pagination parameters to retrieve results as a set of sequential pages.
 //
@@ -171,16 +173,13 @@ func (c *Client) addOperationListContainerFleetsMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

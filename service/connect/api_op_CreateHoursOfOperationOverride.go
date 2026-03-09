@@ -12,7 +12,7 @@ import (
 )
 
 // Creates an hours of operation override in an Amazon Connect hours of operation
-// resource
+// resource.
 func (c *Client) CreateHoursOfOperationOverride(ctx context.Context, params *CreateHoursOfOperationOverrideInput, optFns ...func(*Options)) (*CreateHoursOfOperationOverrideOutput, error) {
 	if params == nil {
 		params = &CreateHoursOfOperationOverrideInput{}
@@ -36,12 +36,12 @@ type CreateHoursOfOperationOverrideInput struct {
 	// This member is required.
 	Config []types.HoursOfOperationOverrideConfig
 
-	// The date from when the hours of operation override would be effective.
+	// The date from when the hours of operation override is effective.
 	//
 	// This member is required.
 	EffectiveFrom *string
 
-	// The date until when the hours of operation override would be effective.
+	// The date until when the hours of operation override is effective.
 	//
 	// This member is required.
 	EffectiveTill *string
@@ -63,6 +63,17 @@ type CreateHoursOfOperationOverrideInput struct {
 
 	// The description of the hours of operation override.
 	Description *string
+
+	// Whether the override will be defined as a standard or as a recurring event.
+	//
+	// For more information about how override types are applied, see [Build your list of overrides] in the
+	// Administrator Guide.
+	//
+	// [Build your list of overrides]: https://docs.aws.amazon.com/https:/docs.aws.amazon.com/connect/latest/adminguide/hours-of-operation-overrides.html
+	OverrideType types.OverrideType
+
+	// Configuration for a recurring event.
+	RecurrenceConfig *types.RecurrenceConfig
 
 	noSmithyDocumentSerde
 }
@@ -166,16 +177,13 @@ func (c *Client) addOperationCreateHoursOfOperationOverrideMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

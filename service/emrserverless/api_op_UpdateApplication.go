@@ -51,6 +51,15 @@ type UpdateApplicationInput struct {
 	// amount of time being idle.
 	AutoStopConfiguration *types.AutoStopConfig
 
+	// The configuration object that allows encrypting local disks.
+	DiskEncryptionConfiguration *types.DiskEncryptionConfiguration
+
+	// Specifies the IAM Identity Center configuration used to enable or disable
+	// trusted identity propagation. When provided, this configuration determines how
+	// the application interacts with IAM Identity Center for user authentication and
+	// access control.
+	IdentityCenterConfiguration *types.IdentityCenterConfigurationInput
+
 	// The image configuration to be used for all worker types. You can either set
 	// this parameter or imageConfiguration for each worker type in
 	// WorkerTypeSpecificationInput .
@@ -62,6 +71,9 @@ type UpdateApplicationInput struct {
 	// The interactive configuration object that contains new interactive use cases
 	// when the application is updated.
 	InteractiveConfiguration *types.InteractiveConfiguration
+
+	// The configuration object that enables job level cost allocation.
+	JobLevelCostAllocationConfiguration *types.JobLevelCostAllocationConfiguration
 
 	// The maximum capacity to allocate when the application is updated. This is
 	// cumulative across all workers at any given point in time during the lifespan of
@@ -205,16 +217,13 @@ func (c *Client) addOperationUpdateApplicationMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

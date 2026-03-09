@@ -45,6 +45,14 @@ type DescribeLoggingConfigurationInput struct {
 
 type DescribeLoggingConfigurationOutput struct {
 
+	// A boolean that reflects whether or not the firewall monitoring dashboard is
+	// enabled on a firewall.
+	//
+	// Returns TRUE when the firewall monitoring dashboard is enabled on the firewall.
+	// Returns FALSE when the firewall monitoring dashboard is not enabled on the
+	// firewall.
+	EnableMonitoringDashboard *bool
+
 	// The Amazon Resource Name (ARN) of the firewall.
 	FirewallArn *string
 
@@ -142,16 +150,13 @@ func (c *Client) addOperationDescribeLoggingConfigurationMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -13,9 +13,9 @@ import (
 
 // Retrieves the primary contact information of an Amazon Web Services account.
 //
-// For complete details about how to use the primary contact operations, see [Update the primary and alternate contact information].
+// For complete details about how to use the primary contact operations, see [Update the primary contact for your Amazon Web Services account].
 //
-// [Update the primary and alternate contact information]: https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-update-contact.html
+// [Update the primary contact for your Amazon Web Services account]: https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-update-contact-primary.html
 func (c *Client) GetContactInformation(ctx context.Context, params *GetContactInformationInput, optFns ...func(*Options)) (*GetContactInformationOutput, error) {
 	if params == nil {
 		params = &GetContactInformationInput{}
@@ -155,16 +155,13 @@ func (c *Client) addOperationGetContactInformationMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

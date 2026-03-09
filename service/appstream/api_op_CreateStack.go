@@ -36,7 +36,8 @@ type CreateStackInput struct {
 	Name *string
 
 	// The list of interface VPC endpoint (interface endpoint) objects. Users of the
-	// stack can connect to AppStream 2.0 only through the specified endpoints.
+	// stack can connect to WorkSpaces Applications only through the specified
+	// endpoints.
 	AccessEndpoints []types.AccessEndpoint
 
 	// The persistent application settings for users of a stack. When these settings
@@ -50,9 +51,9 @@ type CreateStackInput struct {
 	// The stack name to display.
 	DisplayName *string
 
-	// The domains where AppStream 2.0 streaming sessions can be embedded in an
-	// iframe. You must approve the domains that you want to host embedded AppStream
-	// 2.0 streaming sessions.
+	// The domains where WorkSpaces Applications streaming sessions can be embedded in
+	// an iframe. You must approve the domains that you want to host embedded
+	// WorkSpaces Applications streaming sessions.
 	EmbedHostDomains []string
 
 	// The URL that users are redirected to after they click the Send Feedback link.
@@ -80,7 +81,7 @@ type CreateStackInput struct {
 	//
 	// _ . : / = + \ - @
 	//
-	// For more information about tags, see [Tagging Your Resources] in the Amazon AppStream 2.0
+	// For more information about tags, see [Tagging Your Resources] in the Amazon WorkSpaces Applications
 	// Administration Guide.
 	//
 	// [Tagging Your Resources]: https://docs.aws.amazon.com/appstream2/latest/developerguide/tagging-basic.html
@@ -192,16 +193,13 @@ func (c *Client) addOperationCreateStackMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

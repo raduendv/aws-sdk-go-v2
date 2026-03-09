@@ -15,6 +15,12 @@ import (
 //
 // The current supported channel is chat. This API is not supported for Apple
 // Messages for Business, WhatsApp, or SMS chats.
+//
+// ConnectionToken is used for invoking this API instead of ParticipantToken .
+//
+// The Amazon Connect Participant Service APIs do not use [Signature Version 4 authentication].
+//
+// [Signature Version 4 authentication]: https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
 func (c *Client) CancelParticipantAuthentication(ctx context.Context, params *CancelParticipantAuthenticationInput, optFns ...func(*Options)) (*CancelParticipantAuthenticationOutput, error) {
 	if params == nil {
 		params = &CancelParticipantAuthenticationInput{}
@@ -140,16 +146,13 @@ func (c *Client) addOperationCancelParticipantAuthenticationMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -29,7 +29,7 @@ func (c *Client) GetOutpost(ctx context.Context, params *GetOutpostInput, optFns
 
 type GetOutpostInput struct {
 
-	//  The ID or ARN of the Outpost.
+	// The ID or ARN of the Outpost.
 	//
 	// This member is required.
 	OutpostId *string
@@ -136,16 +136,13 @@ func (c *Client) addOperationGetOutpostMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

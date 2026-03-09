@@ -49,6 +49,10 @@ type UpdateWorkspacesPoolInput struct {
 	// The identifier of the directory.
 	DirectoryId *string
 
+	// The desired running mode for the pool. The running mode can only be updated
+	// when the pool is in a stopped state.
+	RunningMode types.PoolsRunningMode
+
 	// Indicates the timeout settings of the specified pool.
 	TimeoutSettings *types.TimeoutSettings
 
@@ -154,16 +158,13 @@ func (c *Client) addOperationUpdateWorkspacesPoolMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

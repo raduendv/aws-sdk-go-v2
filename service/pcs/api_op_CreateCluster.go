@@ -11,16 +11,16 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Creates a cluster in your account. Amazon Web Services PCS creates the cluster
-// controller in a service-owned account. The cluster controller communicates with
-// the cluster resources in your account. The subnets and security groups for the
-// cluster must already exist before you use this API action.
+// Creates a cluster in your account. PCS creates the cluster controller in a
+// service-owned account. The cluster controller communicates with the cluster
+// resources in your account. The subnets and security groups for the cluster must
+// already exist before you use this API action.
 //
-// It takes time for Amazon Web Services PCS to create the cluster. The cluster is
-// in a Creating state until it is ready to use. There can only be 1 cluster in a
-// Creating state per Amazon Web Services Region per Amazon Web Services account.
-// CreateCluster fails with a ServiceQuotaExceededException if there is already a
-// cluster in a Creating state.
+// It takes time for PCS to create the cluster. The cluster is in a Creating state
+// until it is ready to use. There can only be 1 cluster in a Creating state per
+// Amazon Web Services Region per Amazon Web Services account. CreateCluster fails
+// with a ServiceQuotaExceededException if there is already a cluster in a Creating
+// state.
 func (c *Client) CreateCluster(ctx context.Context, params *CreateClusterInput, optFns ...func(*Options)) (*CreateClusterOutput, error) {
 	if params == nil {
 		params = &CreateClusterInput{}
@@ -185,16 +185,13 @@ func (c *Client) addOperationCreateClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

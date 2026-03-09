@@ -42,6 +42,33 @@ func (AutoEnableMembers) Values() []AutoEnableMembers {
 	}
 }
 
+type ClusterStatus string
+
+// Enum values for ClusterStatus
+const (
+	ClusterStatusCreating ClusterStatus = "CREATING"
+	ClusterStatusActive   ClusterStatus = "ACTIVE"
+	ClusterStatusDeleting ClusterStatus = "DELETING"
+	ClusterStatusFailed   ClusterStatus = "FAILED"
+	ClusterStatusUpdating ClusterStatus = "UPDATING"
+	ClusterStatusPending  ClusterStatus = "PENDING"
+)
+
+// Values returns all known values for ClusterStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ClusterStatus) Values() []ClusterStatus {
+	return []ClusterStatus{
+		"CREATING",
+		"ACTIVE",
+		"DELETING",
+		"FAILED",
+		"UPDATING",
+		"PENDING",
+	}
+}
+
 type CoverageFilterCriterionKey string
 
 // Enum values for CoverageFilterCriterionKey
@@ -242,6 +269,25 @@ func (DestinationType) Values() []DestinationType {
 	}
 }
 
+type DetectionSource string
+
+// Enum values for DetectionSource
+const (
+	DetectionSourceAmazon      DetectionSource = "AMAZON"
+	DetectionSourceBitdefender DetectionSource = "BITDEFENDER"
+)
+
+// Values returns all known values for DetectionSource. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DetectionSource) Values() []DetectionSource {
+	return []DetectionSource{
+		"AMAZON",
+		"BITDEFENDER",
+	}
+}
+
 type DetectorFeature string
 
 // Enum values for DetectorFeature
@@ -341,6 +387,50 @@ func (EbsSnapshotPreservation) Values() []EbsSnapshotPreservation {
 	return []EbsSnapshotPreservation{
 		"NO_RETENTION",
 		"RETENTION_WITH_FINDING",
+	}
+}
+
+type EcsClusterStatus string
+
+// Enum values for EcsClusterStatus
+const (
+	EcsClusterStatusActive         EcsClusterStatus = "ACTIVE"
+	EcsClusterStatusProvisioning   EcsClusterStatus = "PROVISIONING"
+	EcsClusterStatusDeprovisioning EcsClusterStatus = "DEPROVISIONING"
+	EcsClusterStatusFailed         EcsClusterStatus = "FAILED"
+	EcsClusterStatusInactive       EcsClusterStatus = "INACTIVE"
+)
+
+// Values returns all known values for EcsClusterStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EcsClusterStatus) Values() []EcsClusterStatus {
+	return []EcsClusterStatus{
+		"ACTIVE",
+		"PROVISIONING",
+		"DEPROVISIONING",
+		"FAILED",
+		"INACTIVE",
+	}
+}
+
+type EcsLaunchType string
+
+// Enum values for EcsLaunchType
+const (
+	EcsLaunchTypeFargate EcsLaunchType = "FARGATE"
+	EcsLaunchTypeEc2     EcsLaunchType = "EC2"
+)
+
+// Values returns all known values for EcsLaunchType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (EcsLaunchType) Values() []EcsLaunchType {
+	return []EcsLaunchType{
+		"FARGATE",
+		"EC2",
 	}
 }
 
@@ -448,11 +538,22 @@ type FindingResourceType string
 
 // Enum values for FindingResourceType
 const (
-	FindingResourceTypeEc2Instance         FindingResourceType = "EC2_INSTANCE"
-	FindingResourceTypeEc2NetworkInterface FindingResourceType = "EC2_NETWORK_INTERFACE"
-	FindingResourceTypeS3Bucket            FindingResourceType = "S3_BUCKET"
-	FindingResourceTypeS3Object            FindingResourceType = "S3_OBJECT"
-	FindingResourceTypeAccessKey           FindingResourceType = "ACCESS_KEY"
+	FindingResourceTypeEc2Instance                 FindingResourceType = "EC2_INSTANCE"
+	FindingResourceTypeEc2NetworkInterface         FindingResourceType = "EC2_NETWORK_INTERFACE"
+	FindingResourceTypeS3Bucket                    FindingResourceType = "S3_BUCKET"
+	FindingResourceTypeS3Object                    FindingResourceType = "S3_OBJECT"
+	FindingResourceTypeAccessKey                   FindingResourceType = "ACCESS_KEY"
+	FindingResourceTypeEksCluster                  FindingResourceType = "EKS_CLUSTER"
+	FindingResourceTypeKubernetesWorkload          FindingResourceType = "KUBERNETES_WORKLOAD"
+	FindingResourceTypeContainer                   FindingResourceType = "CONTAINER"
+	FindingResourceTypeEcsCluster                  FindingResourceType = "ECS_CLUSTER"
+	FindingResourceTypeEcsTask                     FindingResourceType = "ECS_TASK"
+	FindingResourceTypeAutoscalingAutoScalingGroup FindingResourceType = "AUTOSCALING_AUTO_SCALING_GROUP"
+	FindingResourceTypeIamInstanceProfile          FindingResourceType = "IAM_INSTANCE_PROFILE"
+	FindingResourceTypeCloudformationStack         FindingResourceType = "CLOUDFORMATION_STACK"
+	FindingResourceTypeEc2LaunchTemplate           FindingResourceType = "EC2_LAUNCH_TEMPLATE"
+	FindingResourceTypeEc2Vpc                      FindingResourceType = "EC2_VPC"
+	FindingResourceTypeEc2Image                    FindingResourceType = "EC2_IMAGE"
 )
 
 // Values returns all known values for FindingResourceType. Note that this can be
@@ -466,6 +567,17 @@ func (FindingResourceType) Values() []FindingResourceType {
 		"S3_BUCKET",
 		"S3_OBJECT",
 		"ACCESS_KEY",
+		"EKS_CLUSTER",
+		"KUBERNETES_WORKLOAD",
+		"CONTAINER",
+		"ECS_CLUSTER",
+		"ECS_TASK",
+		"AUTOSCALING_AUTO_SCALING_GROUP",
+		"IAM_INSTANCE_PROFILE",
+		"CLOUDFORMATION_STACK",
+		"EC2_LAUNCH_TEMPLATE",
+		"EC2_VPC",
+		"EC2_IMAGE",
 	}
 }
 
@@ -562,6 +674,12 @@ const (
 	IndicatorTypeUnusualApiForAccount IndicatorType = "UNUSUAL_API_FOR_ACCOUNT"
 	IndicatorTypeUnusualAsnForAccount IndicatorType = "UNUSUAL_ASN_FOR_ACCOUNT"
 	IndicatorTypeUnusualAsnForUser    IndicatorType = "UNUSUAL_ASN_FOR_USER"
+	IndicatorTypeSuspiciousProcess    IndicatorType = "SUSPICIOUS_PROCESS"
+	IndicatorTypeMaliciousDomain      IndicatorType = "MALICIOUS_DOMAIN"
+	IndicatorTypeMaliciousProcess     IndicatorType = "MALICIOUS_PROCESS"
+	IndicatorTypeCryptominingIp       IndicatorType = "CRYPTOMINING_IP"
+	IndicatorTypeCryptominingDomain   IndicatorType = "CRYPTOMINING_DOMAIN"
+	IndicatorTypeCryptominingProcess  IndicatorType = "CRYPTOMINING_PROCESS"
 )
 
 // Values returns all known values for IndicatorType. Note that this can be
@@ -580,6 +698,12 @@ func (IndicatorType) Values() []IndicatorType {
 		"UNUSUAL_API_FOR_ACCOUNT",
 		"UNUSUAL_ASN_FOR_ACCOUNT",
 		"UNUSUAL_ASN_FOR_USER",
+		"SUSPICIOUS_PROCESS",
+		"MALICIOUS_DOMAIN",
+		"MALICIOUS_PROCESS",
+		"CRYPTOMINING_IP",
+		"CRYPTOMINING_DOMAIN",
+		"CRYPTOMINING_PROCESS",
 	}
 }
 
@@ -639,6 +763,69 @@ func (IpSetStatus) Values() []IpSetStatus {
 	}
 }
 
+type KubernetesResourcesTypes string
+
+// Enum values for KubernetesResourcesTypes
+const (
+	KubernetesResourcesTypesPods                   KubernetesResourcesTypes = "PODS"
+	KubernetesResourcesTypesJobs                   KubernetesResourcesTypes = "JOBS"
+	KubernetesResourcesTypesCronjobs               KubernetesResourcesTypes = "CRONJOBS"
+	KubernetesResourcesTypesDeployments            KubernetesResourcesTypes = "DEPLOYMENTS"
+	KubernetesResourcesTypesDaemonsets             KubernetesResourcesTypes = "DAEMONSETS"
+	KubernetesResourcesTypesStatefulsets           KubernetesResourcesTypes = "STATEFULSETS"
+	KubernetesResourcesTypesReplicasets            KubernetesResourcesTypes = "REPLICASETS"
+	KubernetesResourcesTypesReplicationcontrollers KubernetesResourcesTypes = "REPLICATIONCONTROLLERS"
+)
+
+// Values returns all known values for KubernetesResourcesTypes. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (KubernetesResourcesTypes) Values() []KubernetesResourcesTypes {
+	return []KubernetesResourcesTypes{
+		"PODS",
+		"JOBS",
+		"CRONJOBS",
+		"DEPLOYMENTS",
+		"DAEMONSETS",
+		"STATEFULSETS",
+		"REPLICASETS",
+		"REPLICATIONCONTROLLERS",
+	}
+}
+
+type ListMalwareScansCriterionKey string
+
+// Enum values for ListMalwareScansCriterionKey
+const (
+	ListMalwareScansCriterionKeyResourceArn        ListMalwareScansCriterionKey = "RESOURCE_ARN"
+	ListMalwareScansCriterionKeyScanId             ListMalwareScansCriterionKey = "SCAN_ID"
+	ListMalwareScansCriterionKeyAccountId          ListMalwareScansCriterionKey = "ACCOUNT_ID"
+	ListMalwareScansCriterionKeyGuarddutyFindingId ListMalwareScansCriterionKey = "GUARDDUTY_FINDING_ID"
+	ListMalwareScansCriterionKeyResourceType       ListMalwareScansCriterionKey = "RESOURCE_TYPE"
+	ListMalwareScansCriterionKeyScanStartTime      ListMalwareScansCriterionKey = "SCAN_START_TIME"
+	ListMalwareScansCriterionKeyScanStatus         ListMalwareScansCriterionKey = "SCAN_STATUS"
+	ListMalwareScansCriterionKeyScanType           ListMalwareScansCriterionKey = "SCAN_TYPE"
+)
+
+// Values returns all known values for ListMalwareScansCriterionKey. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ListMalwareScansCriterionKey) Values() []ListMalwareScansCriterionKey {
+	return []ListMalwareScansCriterionKey{
+		"RESOURCE_ARN",
+		"SCAN_ID",
+		"ACCOUNT_ID",
+		"GUARDDUTY_FINDING_ID",
+		"RESOURCE_TYPE",
+		"SCAN_START_TIME",
+		"SCAN_STATUS",
+		"SCAN_TYPE",
+	}
+}
+
 type MalwareProtectionPlanStatus string
 
 // Enum values for MalwareProtectionPlanStatus
@@ -677,6 +864,84 @@ func (MalwareProtectionPlanTaggingActionStatus) Values() []MalwareProtectionPlan
 	return []MalwareProtectionPlanTaggingActionStatus{
 		"ENABLED",
 		"DISABLED",
+	}
+}
+
+type MalwareProtectionResourceType string
+
+// Enum values for MalwareProtectionResourceType
+const (
+	MalwareProtectionResourceTypeEbsRecoveryPoint MalwareProtectionResourceType = "EBS_RECOVERY_POINT"
+	MalwareProtectionResourceTypeEbsSnapshot      MalwareProtectionResourceType = "EBS_SNAPSHOT"
+	MalwareProtectionResourceTypeEbsVolume        MalwareProtectionResourceType = "EBS_VOLUME"
+	MalwareProtectionResourceTypeEc2Ami           MalwareProtectionResourceType = "EC2_AMI"
+	MalwareProtectionResourceTypeEc2Instance      MalwareProtectionResourceType = "EC2_INSTANCE"
+	MalwareProtectionResourceTypeEc2RecoveryPoint MalwareProtectionResourceType = "EC2_RECOVERY_POINT"
+	MalwareProtectionResourceTypeS3RecoveryPoint  MalwareProtectionResourceType = "S3_RECOVERY_POINT"
+	MalwareProtectionResourceTypeS3Bucket         MalwareProtectionResourceType = "S3_BUCKET"
+)
+
+// Values returns all known values for MalwareProtectionResourceType. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MalwareProtectionResourceType) Values() []MalwareProtectionResourceType {
+	return []MalwareProtectionResourceType{
+		"EBS_RECOVERY_POINT",
+		"EBS_SNAPSHOT",
+		"EBS_VOLUME",
+		"EC2_AMI",
+		"EC2_INSTANCE",
+		"EC2_RECOVERY_POINT",
+		"S3_RECOVERY_POINT",
+		"S3_BUCKET",
+	}
+}
+
+type MalwareProtectionScanStatus string
+
+// Enum values for MalwareProtectionScanStatus
+const (
+	MalwareProtectionScanStatusRunning             MalwareProtectionScanStatus = "RUNNING"
+	MalwareProtectionScanStatusCompleted           MalwareProtectionScanStatus = "COMPLETED"
+	MalwareProtectionScanStatusCompletedWithIssues MalwareProtectionScanStatus = "COMPLETED_WITH_ISSUES"
+	MalwareProtectionScanStatusFailed              MalwareProtectionScanStatus = "FAILED"
+	MalwareProtectionScanStatusSkipped             MalwareProtectionScanStatus = "SKIPPED"
+)
+
+// Values returns all known values for MalwareProtectionScanStatus. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MalwareProtectionScanStatus) Values() []MalwareProtectionScanStatus {
+	return []MalwareProtectionScanStatus{
+		"RUNNING",
+		"COMPLETED",
+		"COMPLETED_WITH_ISSUES",
+		"FAILED",
+		"SKIPPED",
+	}
+}
+
+type MalwareProtectionScanType string
+
+// Enum values for MalwareProtectionScanType
+const (
+	MalwareProtectionScanTypeBackupInitiated    MalwareProtectionScanType = "BACKUP_INITIATED"
+	MalwareProtectionScanTypeOnDemand           MalwareProtectionScanType = "ON_DEMAND"
+	MalwareProtectionScanTypeGuarddutyInitiated MalwareProtectionScanType = "GUARDDUTY_INITIATED"
+)
+
+// Values returns all known values for MalwareProtectionScanType. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (MalwareProtectionScanType) Values() []MalwareProtectionScanType {
+	return []MalwareProtectionScanType{
+		"BACKUP_INITIATED",
+		"ON_DEMAND",
+		"GUARDDUTY_INITIATED",
 	}
 }
 
@@ -972,6 +1237,25 @@ func (ResourceType) Values() []ResourceType {
 	}
 }
 
+type ScanCategory string
+
+// Enum values for ScanCategory
+const (
+	ScanCategoryFullScan        ScanCategory = "FULL_SCAN"
+	ScanCategoryIncrementalScan ScanCategory = "INCREMENTAL_SCAN"
+)
+
+// Values returns all known values for ScanCategory. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanCategory) Values() []ScanCategory {
+	return []ScanCategory{
+		"FULL_SCAN",
+		"INCREMENTAL_SCAN",
+	}
+}
+
 type ScanCriterionKey string
 
 // Enum values for ScanCriterionKey
@@ -1008,6 +1292,25 @@ func (ScanResult) Values() []ScanResult {
 	}
 }
 
+type ScanResultStatus string
+
+// Enum values for ScanResultStatus
+const (
+	ScanResultStatusNoThreatsFound ScanResultStatus = "NO_THREATS_FOUND"
+	ScanResultStatusThreatsFound   ScanResultStatus = "THREATS_FOUND"
+)
+
+// Values returns all known values for ScanResultStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanResultStatus) Values() []ScanResultStatus {
+	return []ScanResultStatus{
+		"NO_THREATS_FOUND",
+		"THREATS_FOUND",
+	}
+}
+
 type ScanStatus string
 
 // Enum values for ScanStatus
@@ -1028,6 +1331,55 @@ func (ScanStatus) Values() []ScanStatus {
 		"COMPLETED",
 		"FAILED",
 		"SKIPPED",
+	}
+}
+
+type ScanStatusReason string
+
+// Enum values for ScanStatusReason
+const (
+	ScanStatusReasonAccessDenied                      ScanStatusReason = "ACCESS_DENIED"
+	ScanStatusReasonResourceNotFound                  ScanStatusReason = "RESOURCE_NOT_FOUND"
+	ScanStatusReasonSnapshotSizeLimitExceeded         ScanStatusReason = "SNAPSHOT_SIZE_LIMIT_EXCEEDED"
+	ScanStatusReasonResourceUnavailable               ScanStatusReason = "RESOURCE_UNAVAILABLE"
+	ScanStatusReasonInconsistentSource                ScanStatusReason = "INCONSISTENT_SOURCE"
+	ScanStatusReasonIncrementalNoDifference           ScanStatusReason = "INCREMENTAL_NO_DIFFERENCE"
+	ScanStatusReasonNoEbsVolumesFound                 ScanStatusReason = "NO_EBS_VOLUMES_FOUND"
+	ScanStatusReasonUnsupportedProductCodeType        ScanStatusReason = "UNSUPPORTED_PRODUCT_CODE_TYPE"
+	ScanStatusReasonAmiSnapshotLimitExceeded          ScanStatusReason = "AMI_SNAPSHOT_LIMIT_EXCEEDED"
+	ScanStatusReasonUnrelatedResources                ScanStatusReason = "UNRELATED_RESOURCES"
+	ScanStatusReasonBaseResourceNotScanned            ScanStatusReason = "BASE_RESOURCE_NOT_SCANNED"
+	ScanStatusReasonBaseCreatedAfterTarget            ScanStatusReason = "BASE_CREATED_AFTER_TARGET"
+	ScanStatusReasonUnsupportedForIncremental         ScanStatusReason = "UNSUPPORTED_FOR_INCREMENTAL"
+	ScanStatusReasonUnsupportedAmi                    ScanStatusReason = "UNSUPPORTED_AMI"
+	ScanStatusReasonUnsupportedSnapshot               ScanStatusReason = "UNSUPPORTED_SNAPSHOT"
+	ScanStatusReasonUnsupportedCompositeRecoveryPoint ScanStatusReason = "UNSUPPORTED_COMPOSITE_RECOVERY_POINT"
+	ScanStatusReasonAllFilesSkippedOrFailed           ScanStatusReason = "ALL_FILES_SKIPPED_OR_FAILED"
+)
+
+// Values returns all known values for ScanStatusReason. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ScanStatusReason) Values() []ScanStatusReason {
+	return []ScanStatusReason{
+		"ACCESS_DENIED",
+		"RESOURCE_NOT_FOUND",
+		"SNAPSHOT_SIZE_LIMIT_EXCEEDED",
+		"RESOURCE_UNAVAILABLE",
+		"INCONSISTENT_SOURCE",
+		"INCREMENTAL_NO_DIFFERENCE",
+		"NO_EBS_VOLUMES_FOUND",
+		"UNSUPPORTED_PRODUCT_CODE_TYPE",
+		"AMI_SNAPSHOT_LIMIT_EXCEEDED",
+		"UNRELATED_RESOURCES",
+		"BASE_RESOURCE_NOT_SCANNED",
+		"BASE_CREATED_AFTER_TARGET",
+		"UNSUPPORTED_FOR_INCREMENTAL",
+		"UNSUPPORTED_AMI",
+		"UNSUPPORTED_SNAPSHOT",
+		"UNSUPPORTED_COMPOSITE_RECOVERY_POINT",
+		"ALL_FILES_SKIPPED_OR_FAILED",
 	}
 }
 
@@ -1054,9 +1406,13 @@ type SignalType string
 
 // Enum values for SignalType
 const (
-	SignalTypeFinding      SignalType = "FINDING"
-	SignalTypeCloudTrail   SignalType = "CLOUD_TRAIL"
-	SignalTypeS3DataEvents SignalType = "S3_DATA_EVENTS"
+	SignalTypeFinding           SignalType = "FINDING"
+	SignalTypeCloudTrail        SignalType = "CLOUD_TRAIL"
+	SignalTypeS3DataEvents      SignalType = "S3_DATA_EVENTS"
+	SignalTypeEksAuditLogs      SignalType = "EKS_AUDIT_LOGS"
+	SignalTypeFlowLogs          SignalType = "FLOW_LOGS"
+	SignalTypeDnsLogs           SignalType = "DNS_LOGS"
+	SignalTypeRuntimeMonitoring SignalType = "RUNTIME_MONITORING"
 )
 
 // Values returns all known values for SignalType. Note that this can be expanded
@@ -1068,6 +1424,66 @@ func (SignalType) Values() []SignalType {
 		"FINDING",
 		"CLOUD_TRAIL",
 		"S3_DATA_EVENTS",
+		"EKS_AUDIT_LOGS",
+		"FLOW_LOGS",
+		"DNS_LOGS",
+		"RUNTIME_MONITORING",
+	}
+}
+
+type ThreatEntitySetFormat string
+
+// Enum values for ThreatEntitySetFormat
+const (
+	ThreatEntitySetFormatTxt        ThreatEntitySetFormat = "TXT"
+	ThreatEntitySetFormatStix       ThreatEntitySetFormat = "STIX"
+	ThreatEntitySetFormatOtxCsv     ThreatEntitySetFormat = "OTX_CSV"
+	ThreatEntitySetFormatAlienVault ThreatEntitySetFormat = "ALIEN_VAULT"
+	ThreatEntitySetFormatProofPoint ThreatEntitySetFormat = "PROOF_POINT"
+	ThreatEntitySetFormatFireEye    ThreatEntitySetFormat = "FIRE_EYE"
+)
+
+// Values returns all known values for ThreatEntitySetFormat. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ThreatEntitySetFormat) Values() []ThreatEntitySetFormat {
+	return []ThreatEntitySetFormat{
+		"TXT",
+		"STIX",
+		"OTX_CSV",
+		"ALIEN_VAULT",
+		"PROOF_POINT",
+		"FIRE_EYE",
+	}
+}
+
+type ThreatEntitySetStatus string
+
+// Enum values for ThreatEntitySetStatus
+const (
+	ThreatEntitySetStatusInactive      ThreatEntitySetStatus = "INACTIVE"
+	ThreatEntitySetStatusActivating    ThreatEntitySetStatus = "ACTIVATING"
+	ThreatEntitySetStatusActive        ThreatEntitySetStatus = "ACTIVE"
+	ThreatEntitySetStatusDeactivating  ThreatEntitySetStatus = "DEACTIVATING"
+	ThreatEntitySetStatusError         ThreatEntitySetStatus = "ERROR"
+	ThreatEntitySetStatusDeletePending ThreatEntitySetStatus = "DELETE_PENDING"
+	ThreatEntitySetStatusDeleted       ThreatEntitySetStatus = "DELETED"
+)
+
+// Values returns all known values for ThreatEntitySetStatus. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ThreatEntitySetStatus) Values() []ThreatEntitySetStatus {
+	return []ThreatEntitySetStatus{
+		"INACTIVE",
+		"ACTIVATING",
+		"ACTIVE",
+		"DEACTIVATING",
+		"ERROR",
+		"DELETE_PENDING",
+		"DELETED",
 	}
 }
 
@@ -1117,6 +1533,81 @@ const (
 // The ordering of this slice is not guaranteed to be stable across updates.
 func (ThreatIntelSetStatus) Values() []ThreatIntelSetStatus {
 	return []ThreatIntelSetStatus{
+		"INACTIVE",
+		"ACTIVATING",
+		"ACTIVE",
+		"DEACTIVATING",
+		"ERROR",
+		"DELETE_PENDING",
+		"DELETED",
+	}
+}
+
+type TriggerType string
+
+// Enum values for TriggerType
+const (
+	TriggerTypeBackup    TriggerType = "BACKUP"
+	TriggerTypeGuardduty TriggerType = "GUARDDUTY"
+)
+
+// Values returns all known values for TriggerType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TriggerType) Values() []TriggerType {
+	return []TriggerType{
+		"BACKUP",
+		"GUARDDUTY",
+	}
+}
+
+type TrustedEntitySetFormat string
+
+// Enum values for TrustedEntitySetFormat
+const (
+	TrustedEntitySetFormatTxt        TrustedEntitySetFormat = "TXT"
+	TrustedEntitySetFormatStix       TrustedEntitySetFormat = "STIX"
+	TrustedEntitySetFormatOtxCsv     TrustedEntitySetFormat = "OTX_CSV"
+	TrustedEntitySetFormatAlienVault TrustedEntitySetFormat = "ALIEN_VAULT"
+	TrustedEntitySetFormatProofPoint TrustedEntitySetFormat = "PROOF_POINT"
+	TrustedEntitySetFormatFireEye    TrustedEntitySetFormat = "FIRE_EYE"
+)
+
+// Values returns all known values for TrustedEntitySetFormat. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TrustedEntitySetFormat) Values() []TrustedEntitySetFormat {
+	return []TrustedEntitySetFormat{
+		"TXT",
+		"STIX",
+		"OTX_CSV",
+		"ALIEN_VAULT",
+		"PROOF_POINT",
+		"FIRE_EYE",
+	}
+}
+
+type TrustedEntitySetStatus string
+
+// Enum values for TrustedEntitySetStatus
+const (
+	TrustedEntitySetStatusInactive      TrustedEntitySetStatus = "INACTIVE"
+	TrustedEntitySetStatusActivating    TrustedEntitySetStatus = "ACTIVATING"
+	TrustedEntitySetStatusActive        TrustedEntitySetStatus = "ACTIVE"
+	TrustedEntitySetStatusDeactivating  TrustedEntitySetStatus = "DEACTIVATING"
+	TrustedEntitySetStatusError         TrustedEntitySetStatus = "ERROR"
+	TrustedEntitySetStatusDeletePending TrustedEntitySetStatus = "DELETE_PENDING"
+	TrustedEntitySetStatusDeleted       TrustedEntitySetStatus = "DELETED"
+)
+
+// Values returns all known values for TrustedEntitySetStatus. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (TrustedEntitySetStatus) Values() []TrustedEntitySetStatus {
+	return []TrustedEntitySetStatus{
 		"INACTIVE",
 		"ACTIVATING",
 		"ACTIVE",

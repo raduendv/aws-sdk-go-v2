@@ -54,6 +54,9 @@ type UpdateFlowAliasInput struct {
 	// This member is required.
 	RoutingConfiguration []types.FlowAliasRoutingConfigurationListItem
 
+	// The configuration that specifies how nodes in the flow are executed in parallel.
+	ConcurrencyConfiguration *types.FlowAliasConcurrencyConfiguration
+
 	// A description for the alias.
 	Description *string
 
@@ -96,6 +99,9 @@ type UpdateFlowAliasOutput struct {
 	//
 	// This member is required.
 	UpdatedAt *time.Time
+
+	// The configuration that specifies how nodes in the flow are executed in parallel.
+	ConcurrencyConfiguration *types.FlowAliasConcurrencyConfiguration
 
 	// The description of the flow.
 	Description *string
@@ -194,16 +200,13 @@ func (c *Client) addOperationUpdateFlowAliasMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

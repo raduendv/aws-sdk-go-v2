@@ -57,12 +57,19 @@ type CreateSecurityProfileInput struct {
 	// in Amazon Connect.
 	AllowedAccessControlTags map[string]string
 
-	// A list of third-party applications that the security profile will give access
-	// to.
+	//  A list of Flow Modules an AI Agent can invoke as a tool.
+	AllowedFlowModules []types.FlowModule
+
+	// A list of third-party applications or MCP Servers that the security profile
+	// will give access to.
 	Applications []types.Application
 
 	// The description of the security profile.
 	Description *string
+
+	// The granular access control configuration for the security profile, including
+	// data table permissions.
+	GranularAccessControlConfiguration *types.GranularAccessControlConfiguration
 
 	// The list of resources that a security profile applies hierarchy restrictions to
 	// in Amazon Connect. Following are acceptable ResourceNames: User .
@@ -190,16 +197,13 @@ func (c *Client) addOperationCreateSecurityProfileMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

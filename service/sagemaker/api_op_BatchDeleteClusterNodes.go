@@ -57,9 +57,12 @@ type BatchDeleteClusterNodesInput struct {
 	//   - If you need to delete more than 99 instances, contact [Support]for assistance.
 	//
 	// [Support]: http://aws.amazon.com/contact-us/
-	//
-	// This member is required.
 	NodeIds []string
+
+	// A list of NodeLogicalIds identifying the nodes to be deleted. You can specify
+	// up to 50 NodeLogicalIds . You must specify either NodeLogicalIds , InstanceIds ,
+	// or both, with a combined maximum of 50 identifiers.
+	NodeLogicalIds []string
 
 	noSmithyDocumentSerde
 }
@@ -69,8 +72,15 @@ type BatchDeleteClusterNodesOutput struct {
 	// A list of errors encountered when deleting the specified nodes.
 	Failed []types.BatchDeleteClusterNodesError
 
+	// A list of NodeLogicalIds that could not be deleted, along with error
+	// information explaining why the deletion failed.
+	FailedNodeLogicalIds []types.BatchDeleteClusterNodeLogicalIdsError
+
 	// A list of node IDs that were successfully deleted from the specified cluster.
 	Successful []string
+
+	// A list of NodeLogicalIds that were successfully deleted from the cluster.
+	SuccessfulNodeLogicalIds []string
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -166,16 +176,13 @@ func (c *Client) addOperationBatchDeleteClusterNodesMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

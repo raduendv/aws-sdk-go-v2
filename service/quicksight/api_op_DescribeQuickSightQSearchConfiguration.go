@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Describes the state of a Amazon QuickSight Q Search configuration.
+// Describes the state of a Quick Sight Q Search configuration.
 func (c *Client) DescribeQuickSightQSearchConfiguration(ctx context.Context, params *DescribeQuickSightQSearchConfigurationInput, optFns ...func(*Options)) (*DescribeQuickSightQSearchConfigurationOutput, error) {
 	if params == nil {
 		params = &DescribeQuickSightQSearchConfigurationInput{}
@@ -29,7 +29,7 @@ func (c *Client) DescribeQuickSightQSearchConfiguration(ctx context.Context, par
 
 type DescribeQuickSightQSearchConfigurationInput struct {
 
-	// The ID of the Amazon Web Services account that contains the Amazon QuickSight Q
+	// The ID of the Amazon Web Services account that contains the Quick Sight Q
 	// Search configuration that the user wants described.
 	//
 	// This member is required.
@@ -40,7 +40,7 @@ type DescribeQuickSightQSearchConfigurationInput struct {
 
 type DescribeQuickSightQSearchConfigurationOutput struct {
 
-	// The status of Amazon QuickSight Q Search configuration.
+	// The status of Quick Sight Q Search configuration.
 	QSearchStatus types.QSearchStatus
 
 	// The Amazon Web Services request ID for this operation.
@@ -143,16 +143,13 @@ func (c *Client) addOperationDescribeQuickSightQSearchConfigurationMiddlewares(s
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

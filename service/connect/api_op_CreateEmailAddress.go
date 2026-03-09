@@ -32,7 +32,7 @@ func (c *Client) CreateEmailAddress(ctx context.Context, params *CreateEmailAddr
 
 type CreateEmailAddressInput struct {
 
-	// The email address with the instance, in [^\s@]+@[^\s@]+\.[^\s@]+ format.
+	// The email address, including the domain.
 	//
 	// This member is required.
 	EmailAddress *string
@@ -167,16 +167,13 @@ func (c *Client) addOperationCreateEmailAddressMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

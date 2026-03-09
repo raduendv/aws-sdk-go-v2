@@ -21,6 +21,25 @@ func (AcceptRuleBehavior) Values() []AcceptRuleBehavior {
 	}
 }
 
+type AttributeEntityType string
+
+// Enum values for AttributeEntityType
+const (
+	AttributeEntityTypeAsset   AttributeEntityType = "ASSET"
+	AttributeEntityTypeListing AttributeEntityType = "LISTING"
+)
+
+// Values returns all known values for AttributeEntityType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AttributeEntityType) Values() []AttributeEntityType {
+	return []AttributeEntityType{
+		"ASSET",
+		"LISTING",
+	}
+}
+
 type AuthenticationType string
 
 // Enum values for AuthenticationType
@@ -121,6 +140,44 @@ func (ConfigurableActionTypeAuthorization) Values() []ConfigurableActionTypeAuth
 	}
 }
 
+type ConfigurationStatus string
+
+// Enum values for ConfigurationStatus
+const (
+	ConfigurationStatusCompleted ConfigurationStatus = "COMPLETED"
+	ConfigurationStatusFailed    ConfigurationStatus = "FAILED"
+)
+
+// Values returns all known values for ConfigurationStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConfigurationStatus) Values() []ConfigurationStatus {
+	return []ConfigurationStatus{
+		"COMPLETED",
+		"FAILED",
+	}
+}
+
+type ConnectionScope string
+
+// Enum values for ConnectionScope
+const (
+	ConnectionScopeDomain  ConnectionScope = "DOMAIN"
+	ConnectionScopeProject ConnectionScope = "PROJECT"
+)
+
+// Values returns all known values for ConnectionScope. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ConnectionScope) Values() []ConnectionScope {
+	return []ConnectionScope{
+		"DOMAIN",
+		"PROJECT",
+	}
+}
+
 type ConnectionStatus string
 
 // Enum values for ConnectionStatus
@@ -168,6 +225,7 @@ const (
 	ConnectionTypeOracle        ConnectionType = "ORACLE"
 	ConnectionTypePostgresql    ConnectionType = "POSTGRESQL"
 	ConnectionTypeRedshift      ConnectionType = "REDSHIFT"
+	ConnectionTypeS3            ConnectionType = "S3"
 	ConnectionTypeSaphana       ConnectionType = "SAPHANA"
 	ConnectionTypeSnowflake     ConnectionType = "SNOWFLAKE"
 	ConnectionTypeSpark         ConnectionType = "SPARK"
@@ -175,6 +233,8 @@ const (
 	ConnectionTypeTeradata      ConnectionType = "TERADATA"
 	ConnectionTypeVertica       ConnectionType = "VERTICA"
 	ConnectionTypeWorkflowsMwaa ConnectionType = "WORKFLOWS_MWAA"
+	ConnectionTypeAmazonQ       ConnectionType = "AMAZON_Q"
+	ConnectionTypeMlflow        ConnectionType = "MLFLOW"
 )
 
 // Values returns all known values for ConnectionType. Note that this can be
@@ -195,6 +255,7 @@ func (ConnectionType) Values() []ConnectionType {
 		"ORACLE",
 		"POSTGRESQL",
 		"REDSHIFT",
+		"S3",
 		"SAPHANA",
 		"SNOWFLAKE",
 		"SPARK",
@@ -202,6 +263,8 @@ func (ConnectionType) Values() []ConnectionType {
 		"TERADATA",
 		"VERTICA",
 		"WORKFLOWS_MWAA",
+		"AMAZON_Q",
+		"MLFLOW",
 	}
 }
 
@@ -638,6 +701,33 @@ func (FilterExpressionType) Values() []FilterExpressionType {
 	}
 }
 
+type FilterOperator string
+
+// Enum values for FilterOperator
+const (
+	FilterOperatorEq         FilterOperator = "EQ"
+	FilterOperatorLe         FilterOperator = "LE"
+	FilterOperatorLt         FilterOperator = "LT"
+	FilterOperatorGe         FilterOperator = "GE"
+	FilterOperatorGt         FilterOperator = "GT"
+	FilterOperatorTextSearch FilterOperator = "TEXT_SEARCH"
+)
+
+// Values returns all known values for FilterOperator. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (FilterOperator) Values() []FilterOperator {
+	return []FilterOperator{
+		"EQ",
+		"LE",
+		"LT",
+		"GE",
+		"GT",
+		"TEXT_SEARCH",
+	}
+}
+
 type FilterStatus string
 
 // Enum values for FilterStatus
@@ -714,6 +804,23 @@ func (GlossaryTermStatus) Values() []GlossaryTermStatus {
 	}
 }
 
+type GlossaryUsageRestriction string
+
+// Enum values for GlossaryUsageRestriction
+const (
+	GlossaryUsageRestrictionAssetGovernedTerms GlossaryUsageRestriction = "ASSET_GOVERNED_TERMS"
+)
+
+// Values returns all known values for GlossaryUsageRestriction. Note that this
+// can be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GlossaryUsageRestriction) Values() []GlossaryUsageRestriction {
+	return []GlossaryUsageRestriction{
+		"ASSET_GOVERNED_TERMS",
+	}
+}
+
 type GlueConnectionType string
 
 // Enum values for GlueConnectionType
@@ -771,6 +878,23 @@ func (GovernanceType) Values() []GovernanceType {
 	return []GovernanceType{
 		"AWS_MANAGED",
 		"USER_MANAGED",
+	}
+}
+
+type GovernedEntityType string
+
+// Enum values for GovernedEntityType
+const (
+	GovernedEntityTypeAsset GovernedEntityType = "ASSET"
+)
+
+// Values returns all known values for GovernedEntityType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (GovernedEntityType) Values() []GovernedEntityType {
+	return []GovernedEntityType{
+		"ASSET",
 	}
 }
 
@@ -1006,6 +1130,7 @@ const (
 	ManagedPolicyTypeCreateEnvironment                ManagedPolicyType = "CREATE_ENVIRONMENT"
 	ManagedPolicyTypeCreateEnvironmentFromBlueprint   ManagedPolicyType = "CREATE_ENVIRONMENT_FROM_BLUEPRINT"
 	ManagedPolicyTypeCreateProjectFromProjectProfile  ManagedPolicyType = "CREATE_PROJECT_FROM_PROJECT_PROFILE"
+	ManagedPolicyTypeUseAssetType                     ManagedPolicyType = "USE_ASSET_TYPE"
 )
 
 // Values returns all known values for ManagedPolicyType. Note that this can be
@@ -1027,6 +1152,7 @@ func (ManagedPolicyType) Values() []ManagedPolicyType {
 		"CREATE_ENVIRONMENT",
 		"CREATE_ENVIRONMENT_FROM_BLUEPRINT",
 		"CREATE_PROJECT_FROM_PROJECT_PROFILE",
+		"USE_ASSET_TYPE",
 	}
 }
 
@@ -1034,11 +1160,12 @@ type MetadataGenerationRunStatus string
 
 // Enum values for MetadataGenerationRunStatus
 const (
-	MetadataGenerationRunStatusSubmitted  MetadataGenerationRunStatus = "SUBMITTED"
-	MetadataGenerationRunStatusInProgress MetadataGenerationRunStatus = "IN_PROGRESS"
-	MetadataGenerationRunStatusCanceled   MetadataGenerationRunStatus = "CANCELED"
-	MetadataGenerationRunStatusSucceeded  MetadataGenerationRunStatus = "SUCCEEDED"
-	MetadataGenerationRunStatusFailed     MetadataGenerationRunStatus = "FAILED"
+	MetadataGenerationRunStatusSubmitted          MetadataGenerationRunStatus = "SUBMITTED"
+	MetadataGenerationRunStatusInProgress         MetadataGenerationRunStatus = "IN_PROGRESS"
+	MetadataGenerationRunStatusCanceled           MetadataGenerationRunStatus = "CANCELED"
+	MetadataGenerationRunStatusSucceeded          MetadataGenerationRunStatus = "SUCCEEDED"
+	MetadataGenerationRunStatusFailed             MetadataGenerationRunStatus = "FAILED"
+	MetadataGenerationRunStatusPartiallySucceeded MetadataGenerationRunStatus = "PARTIALLY_SUCCEEDED"
 )
 
 // Values returns all known values for MetadataGenerationRunStatus. Note that this
@@ -1052,6 +1179,7 @@ func (MetadataGenerationRunStatus) Values() []MetadataGenerationRunStatus {
 		"CANCELED",
 		"SUCCEEDED",
 		"FAILED",
+		"PARTIALLY_SUCCEEDED",
 	}
 }
 
@@ -1059,7 +1187,9 @@ type MetadataGenerationRunType string
 
 // Enum values for MetadataGenerationRunType
 const (
-	MetadataGenerationRunTypeBusinessDescriptions MetadataGenerationRunType = "BUSINESS_DESCRIPTIONS"
+	MetadataGenerationRunTypeBusinessDescriptions         MetadataGenerationRunType = "BUSINESS_DESCRIPTIONS"
+	MetadataGenerationRunTypeBusinessNames                MetadataGenerationRunType = "BUSINESS_NAMES"
+	MetadataGenerationRunTypeBusinessGlossaryAssociations MetadataGenerationRunType = "BUSINESS_GLOSSARY_ASSOCIATIONS"
 )
 
 // Values returns all known values for MetadataGenerationRunType. Note that this
@@ -1069,6 +1199,8 @@ const (
 func (MetadataGenerationRunType) Values() []MetadataGenerationRunType {
 	return []MetadataGenerationRunType{
 		"BUSINESS_DESCRIPTIONS",
+		"BUSINESS_NAMES",
+		"BUSINESS_GLOSSARY_ASSOCIATIONS",
 	}
 }
 
@@ -1254,6 +1386,7 @@ const (
 	ProjectStatusDeleteFailed ProjectStatus = "DELETE_FAILED"
 	ProjectStatusUpdating     ProjectStatus = "UPDATING"
 	ProjectStatusUpdateFailed ProjectStatus = "UPDATE_FAILED"
+	ProjectStatusMoving       ProjectStatus = "MOVING"
 )
 
 // Values returns all known values for ProjectStatus. Note that this can be
@@ -1267,6 +1400,7 @@ func (ProjectStatus) Values() []ProjectStatus {
 		"DELETE_FAILED",
 		"UPDATING",
 		"UPDATE_FAILED",
+		"MOVING",
 	}
 }
 
@@ -1315,6 +1449,42 @@ func (RejectRuleBehavior) Values() []RejectRuleBehavior {
 	return []RejectRuleBehavior{
 		"ALL",
 		"NONE",
+	}
+}
+
+type ResolutionStrategy string
+
+// Enum values for ResolutionStrategy
+const (
+	ResolutionStrategyManual ResolutionStrategy = "MANUAL"
+)
+
+// Values returns all known values for ResolutionStrategy. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResolutionStrategy) Values() []ResolutionStrategy {
+	return []ResolutionStrategy{
+		"MANUAL",
+	}
+}
+
+type ResourceTagSource string
+
+// Enum values for ResourceTagSource
+const (
+	ResourceTagSourceProject        ResourceTagSource = "PROJECT"
+	ResourceTagSourceProjectProfile ResourceTagSource = "PROJECT_PROFILE"
+)
+
+// Values returns all known values for ResourceTagSource. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ResourceTagSource) Values() []ResourceTagSource {
+	return []ResourceTagSource{
+		"PROJECT",
+		"PROJECT_PROFILE",
 	}
 }
 
@@ -1378,6 +1548,7 @@ type RuleType string
 // Enum values for RuleType
 const (
 	RuleTypeMetadataFormEnforcement RuleType = "METADATA_FORM_ENFORCEMENT"
+	RuleTypeGlossaryTermEnforcement RuleType = "GLOSSARY_TERM_ENFORCEMENT"
 )
 
 // Values returns all known values for RuleType. Note that this can be expanded in
@@ -1387,6 +1558,26 @@ const (
 func (RuleType) Values() []RuleType {
 	return []RuleType{
 		"METADATA_FORM_ENFORCEMENT",
+		"GLOSSARY_TERM_ENFORCEMENT",
+	}
+}
+
+type S3Permission string
+
+// Enum values for S3Permission
+const (
+	S3PermissionRead  S3Permission = "READ"
+	S3PermissionWrite S3Permission = "WRITE"
+)
+
+// Values returns all known values for S3Permission. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (S3Permission) Values() []S3Permission {
+	return []S3Permission{
+		"READ",
+		"WRITE",
 	}
 }
 
@@ -1396,6 +1587,7 @@ type SearchOutputAdditionalAttribute string
 const (
 	SearchOutputAdditionalAttributeForms                    SearchOutputAdditionalAttribute = "FORMS"
 	SearchOutputAdditionalAttributeTimeSeriesDataPointForms SearchOutputAdditionalAttribute = "TIME_SERIES_DATA_POINT_FORMS"
+	SearchOutputAdditionalAttributeTextMatchRationale       SearchOutputAdditionalAttribute = "TEXT_MATCH_RATIONALE"
 )
 
 // Values returns all known values for SearchOutputAdditionalAttribute. Note that
@@ -1407,6 +1599,7 @@ func (SearchOutputAdditionalAttribute) Values() []SearchOutputAdditionalAttribut
 	return []SearchOutputAdditionalAttribute{
 		"FORMS",
 		"TIME_SERIES_DATA_POINT_FORMS",
+		"TEXT_MATCH_RATIONALE",
 	}
 }
 
@@ -1436,6 +1629,23 @@ func (SelfGrantStatus) Values() []SelfGrantStatus {
 		"GRANTED",
 		"GRANT_FAILED",
 		"REVOKE_FAILED",
+	}
+}
+
+type SortFieldAccountPool string
+
+// Enum values for SortFieldAccountPool
+const (
+	SortFieldAccountPoolName SortFieldAccountPool = "NAME"
+)
+
+// Values returns all known values for SortFieldAccountPool. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SortFieldAccountPool) Values() []SortFieldAccountPool {
+	return []SortFieldAccountPool{
+		"NAME",
 	}
 }
 
@@ -1527,6 +1737,26 @@ func (Status) Values() []Status {
 	return []Status{
 		"ENABLED",
 		"DISABLED",
+	}
+}
+
+type SubscriptionGrantCreationMode string
+
+// Enum values for SubscriptionGrantCreationMode
+const (
+	SubscriptionGrantCreationModeAutomatic SubscriptionGrantCreationMode = "AUTOMATIC"
+	SubscriptionGrantCreationModeManual    SubscriptionGrantCreationMode = "MANUAL"
+)
+
+// Values returns all known values for SubscriptionGrantCreationMode. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SubscriptionGrantCreationMode) Values() []SubscriptionGrantCreationMode {
+	return []SubscriptionGrantCreationMode{
+		"AUTOMATIC",
+		"MANUAL",
 	}
 }
 
@@ -1640,6 +1870,7 @@ const (
 	TargetEntityTypeDomainUnit                        TargetEntityType = "DOMAIN_UNIT"
 	TargetEntityTypeEnvironmentBlueprintConfiguration TargetEntityType = "ENVIRONMENT_BLUEPRINT_CONFIGURATION"
 	TargetEntityTypeEnvironmentProfile                TargetEntityType = "ENVIRONMENT_PROFILE"
+	TargetEntityTypeAssetType                         TargetEntityType = "ASSET_TYPE"
 )
 
 // Values returns all known values for TargetEntityType. Note that this can be
@@ -1651,6 +1882,7 @@ func (TargetEntityType) Values() []TargetEntityType {
 		"DOMAIN_UNIT",
 		"ENVIRONMENT_BLUEPRINT_CONFIGURATION",
 		"ENVIRONMENT_PROFILE",
+		"ASSET_TYPE",
 	}
 }
 

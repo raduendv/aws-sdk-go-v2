@@ -29,12 +29,12 @@ func (c *Client) CancelQuantumTask(ctx context.Context, params *CancelQuantumTas
 
 type CancelQuantumTaskInput struct {
 
-	// The client token associated with the request.
+	// The client token associated with the cancellation request.
 	//
 	// This member is required.
 	ClientToken *string
 
-	// The ARN of the task to cancel.
+	// The ARN of the quantum task to cancel.
 	//
 	// This member is required.
 	QuantumTaskArn *string
@@ -44,12 +44,12 @@ type CancelQuantumTaskInput struct {
 
 type CancelQuantumTaskOutput struct {
 
-	// The status of the cancellation request.
+	// The status of the quantum task.
 	//
 	// This member is required.
 	CancellationStatus types.CancellationStatus
 
-	// The ARN of the task.
+	// The ARN of the quantum task.
 	//
 	// This member is required.
 	QuantumTaskArn *string
@@ -151,16 +151,13 @@ func (c *Client) addOperationCancelQuantumTaskMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -39,12 +39,13 @@ type CreateResourceConfigurationInput struct {
 	// This member is required.
 	Name *string
 
-	// The type of resource configuration.
+	// The type of resource configuration. A resource configuration can be one of the
+	// following types:
 	//
 	//   - SINGLE - A single resource.
 	//
-	//   - GROUP - A group of resources. You must create a group resource configuration
-	//   before you create a child resource configuration.
+	//   - GROUP - A group of resources. You must create a group resource
+	//   configuration before you create a child resource configuration.
 	//
 	//   - CHILD - A single resource that is part of a group resource configuration.
 	//
@@ -63,6 +64,19 @@ type CreateResourceConfigurationInput struct {
 	// actions. If the parameters aren't identical, the retry fails.
 	ClientToken *string
 
+	//  A custom domain name for your resource configuration. Additionally, provide a
+	// DomainVerificationID to prove your ownership of a domain.
+	CustomDomainName *string
+
+	//  The domain verification ID of your verified custom domain name. If you don't
+	// provide an ID, you must configure the DNS settings yourself.
+	DomainVerificationIdentifier *string
+
+	//  (GROUP) The group domain for a group resource configuration. Any domains that
+	// you create for the child resource are subdomains of the group domain. Child
+	// resources inherit the verification status of the domain.
+	GroupDomain *string
+
 	// (SINGLE, GROUP, CHILD) The TCP port ranges that a consumer can use to access a
 	// resource configuration (for example: 1-65535). You can separate port ranges
 	// using commas (for example: 1,2,22-30).
@@ -71,11 +85,19 @@ type CreateResourceConfigurationInput struct {
 	// (SINGLE, GROUP) The protocol accepted by the resource configuration.
 	Protocol types.ProtocolType
 
-	// (SINGLE, CHILD, ARN) The resource configuration.
+	// Identifies the resource configuration in one of the following ways:
+	//
+	//   - Amazon Resource Name (ARN) - Supported resource-types that are provisioned
+	//   by Amazon Web Services services, such as RDS databases, can be identified by
+	//   their ARN.
+	//
+	//   - Domain name - Any domain name that is publicly resolvable.
+	//
+	//   - IP address - For IPv4 and IPv6, only IP addresses in the VPC are supported.
 	ResourceConfigurationDefinition types.ResourceConfigurationDefinition
 
-	// (CHILD) The ID or ARN of the parent resource configuration (type is GROUP ).
-	// This is used to associate a child resource configuration with a group resource
+	// (CHILD) The ID or ARN of the parent resource configuration of type GROUP . This
+	// is used to associate a child resource configuration with a group resource
 	// configuration.
 	ResourceConfigurationGroupIdentifier *string
 
@@ -103,8 +125,22 @@ type CreateResourceConfigurationOutput struct {
 	// format.
 	CreatedAt *time.Time
 
+	//  The custom domain name for your resource configuration.
+	CustomDomainName *string
+
+	//  The verification ID ARN
+	DomainVerificationArn *string
+
+	//  The domain name verification ID.
+	DomainVerificationId *string
+
 	// The reason that the request failed.
 	FailureReason *string
+
+	//  (GROUP) The group domain for a group resource configuration. Any domains that
+	// you create for the child resource are subdomains of the group domain. Child
+	// resources inherit the verification status of the domain.
+	GroupDomain *string
 
 	// The ID of the resource configuration.
 	Id *string
@@ -118,10 +154,18 @@ type CreateResourceConfigurationOutput struct {
 	// The protocol.
 	Protocol types.ProtocolType
 
-	// The resource configuration.
+	// Identifies the resource configuration in one of the following ways:
+	//
+	//   - Amazon Resource Name (ARN) - Supported resource-types that are provisioned
+	//   by Amazon Web Services services, such as RDS databases, can be identified by
+	//   their ARN.
+	//
+	//   - Domain name - Any domain name that is publicly resolvable.
+	//
+	//   - IP address - For IPv4 and IPv6, only IP addresses in the VPC are supported.
 	ResourceConfigurationDefinition types.ResourceConfigurationDefinition
 
-	// The ID of the parent resource configuration (type is GROUP).
+	// The ID of the parent resource configuration of type GROUP .
 	ResourceConfigurationGroupId *string
 
 	// The ID of the resource gateway associated with the resource configuration.
@@ -130,7 +174,17 @@ type CreateResourceConfigurationOutput struct {
 	// The current status of the resource configuration.
 	Status types.ResourceConfigurationStatus
 
-	// The type of resource configuration.
+	// The type of resource configuration. A resource configuration can be one of the
+	// following types:
+	//
+	//   - SINGLE - A single resource.
+	//
+	//   - GROUP - A group of resources. You must create a group resource
+	//   configuration before you create a child resource configuration.
+	//
+	//   - CHILD - A single resource that is part of a group resource configuration.
+	//
+	//   - ARN - An Amazon Web Services resource.
 	Type types.ResourceConfigurationType
 
 	// Metadata pertaining to the operation's result.
@@ -230,16 +284,13 @@ func (c *Client) addOperationCreateResourceConfigurationMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

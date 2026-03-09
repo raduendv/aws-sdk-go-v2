@@ -37,8 +37,8 @@ type ReleasePhoneNumberInput struct {
 	// The PhoneNumberId or PhoneNumberArn of the phone number to release. You can use DescribePhoneNumbers
 	// to get the values for PhoneNumberId and PhoneNumberArn.
 	//
-	// If you are using a shared AWS End User Messaging SMS and Voice resource then
-	// you must use the full Amazon Resource Name(ARN).
+	// If you are using a shared End User Messaging SMS resource then you must use the
+	// full Amazon Resource Name(ARN).
 	//
 	// This member is required.
 	PhoneNumberId *string
@@ -83,12 +83,12 @@ type ReleasePhoneNumberOutput struct {
 	// The unique identifier for the registration.
 	RegistrationId *string
 
-	// By default this is set to false. When an end recipient sends a message that
-	// begins with HELP or STOP to one of your dedicated numbers, AWS End User
-	// Messaging SMS and Voice automatically replies with a customizable message and
-	// adds the end recipient to the OptOutList. When set to true you're responsible
-	// for responding to HELP and STOP requests. You're also responsible for tracking
-	// and honoring opt-out requests.
+	// By default this is set to false. When set to false and an end recipient sends a
+	// message that begins with HELP or STOP to one of your dedicated numbers, End User
+	// Messaging SMS automatically replies with a customizable message and adds the end
+	// recipient to the OptOutList. When set to true you're responsible for responding
+	// to HELP and STOP requests. You're also responsible for tracking and honoring
+	// opt-out requests.
 	SelfManagedOptOutsEnabled bool
 
 	// The current status of the request.
@@ -199,16 +199,13 @@ func (c *Client) addOperationReleasePhoneNumberMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

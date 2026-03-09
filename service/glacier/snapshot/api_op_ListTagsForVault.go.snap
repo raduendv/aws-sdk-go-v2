@@ -1,14 +1,11 @@
 ListTagsForVault
 	Initialize stack step
-		spanInitializeStart
 		Glacier:DefaultAccountID
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		SetLogger
 		OperationInputValidation
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		Glacier:APIVersion
 		setOperationInput
 		ResolveEndpoint
@@ -20,11 +17,12 @@ ListTagsForVault
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		Glacier:TreeHash
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

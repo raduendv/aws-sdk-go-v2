@@ -85,23 +85,9 @@ type StartExportTaskInput struct {
 	// authorized to run the following operations. These can be set in the Amazon Web
 	// Services KMS key policy:
 	//
-	//   - kms:Encrypt
-	//
-	//   - kms:Decrypt
-	//
-	//   - kms:GenerateDataKey
-	//
-	//   - kms:GenerateDataKeyWithoutPlaintext
-	//
-	//   - kms:ReEncryptFrom
-	//
-	//   - kms:ReEncryptTo
-	//
 	//   - kms:CreateGrant
 	//
 	//   - kms:DescribeKey
-	//
-	//   - kms:RetireGrant
 	//
 	// This member is required.
 	KmsKeyId *string
@@ -319,16 +305,13 @@ func (c *Client) addOperationStartExportTaskMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

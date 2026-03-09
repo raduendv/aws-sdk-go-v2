@@ -9,8 +9,36 @@ import (
 )
 
 // The model must request at least one tool (no text is generated). For example,
-// {"any" : {}} .
+// {"any" : {}} . For more information, see [Call a tool with the Converse API] in the Amazon Bedrock User Guide.
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type AnyToolChoice struct {
+	noSmithyDocumentSerde
+}
+
+// Details about the specific guardrail that was applied during this assessment,
+// including its identifier, version, ARN, origin, and ownership information.
+type AppliedGuardrailDetails struct {
+
+	// The ARN of the guardrail that was applied.
+	GuardrailArn *string
+
+	// The unique ID of the guardrail that was applied.
+	GuardrailId *string
+
+	// The origin of how the guardrail was applied. This can be either requested at
+	// the API level or enforced at the account or organization level as a default
+	// guardrail.
+	GuardrailOrigin []GuardrailOrigin
+
+	// The ownership type of the guardrail, indicating whether it is owned by the
+	// requesting account or is a cross-account guardrail shared from another AWS
+	// account.
+	GuardrailOwnership GuardrailOwnership
+
+	// The version of the guardrail that was applied.
+	GuardrailVersion *string
+
 	noSmithyDocumentSerde
 }
 
@@ -90,9 +118,82 @@ type AsyncInvokeSummary struct {
 	noSmithyDocumentSerde
 }
 
+// An audio content block that contains audio data in various supported formats.
+type AudioBlock struct {
+
+	// The format of the audio data, such as MP3, WAV, FLAC, or other supported audio
+	// formats.
+	//
+	// This member is required.
+	Format AudioFormat
+
+	// The source of the audio data, which can be provided as raw bytes or an S3
+	// location.
+	//
+	// This member is required.
+	Source AudioSource
+
+	// Error information if the audio block could not be processed or contains invalid
+	// data.
+	Error *ErrorBlock
+
+	noSmithyDocumentSerde
+}
+
+// The source of audio data, which can be provided either as raw bytes or a
+// reference to an S3 location.
+//
+// The following types satisfy this interface:
+//
+//	AudioSourceMemberBytes
+//	AudioSourceMemberS3Location
+type AudioSource interface {
+	isAudioSource()
+}
+
+// Audio data encoded in base64.
+type AudioSourceMemberBytes struct {
+	Value []byte
+
+	noSmithyDocumentSerde
+}
+
+func (*AudioSourceMemberBytes) isAudioSource() {}
+
+// A reference to audio data stored in an Amazon S3 bucket. To see which models
+// support S3 uploads, see [Supported models and features for Converse].
+//
+// [Supported models and features for Converse]: https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference-supported-models-features.html
+type AudioSourceMemberS3Location struct {
+	Value S3Location
+
+	noSmithyDocumentSerde
+}
+
+func (*AudioSourceMemberS3Location) isAudioSource() {}
+
 // The Model automatically decides if a tool should be called or whether to
-// generate text instead. For example, {"auto" : {}} .
+// generate text instead. For example, {"auto" : {}} . For more information, see [Call a tool with the Converse API]
+// in the Amazon Bedrock User Guide
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type AutoToolChoice struct {
+	noSmithyDocumentSerde
+}
+
+// Cache creation metrics for a specific TTL duration
+type CacheDetail struct {
+
+	// Number of tokens written to cache with this TTL (cache creation tokens)
+	//
+	// This member is required.
+	InputTokens *int32
+
+	// TTL duration for these cached tokens
+	//
+	// This member is required.
+	Ttl CacheTTL
+
 	noSmithyDocumentSerde
 }
 
@@ -104,6 +205,200 @@ type CachePointBlock struct {
 	// This member is required.
 	Type CachePointType
 
+	// Optional TTL duration for cache entries. When specified, enables extended TTL
+	// caching with the specified duration. When omitted, uses type value for caching
+	// behavior.
+	Ttl CacheTTL
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a citation that references a specific source
+// document. Citations provide traceability between the model's generated response
+// and the source documents that informed that response.
+type Citation struct {
+
+	// The precise location within the source document where the cited content can be
+	// found, including character positions, page numbers, or chunk identifiers.
+	Location CitationLocation
+
+	// The source from the original search result that provided the cited content.
+	Source *string
+
+	// The specific content from the source document that was referenced or cited in
+	// the generated response.
+	SourceContent []CitationSourceContent
+
+	// The title or identifier of the source document being cited.
+	Title *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains the generated text content that corresponds to or is supported by a
+// citation from a source document.
+//
+// The following types satisfy this interface:
+//
+//	CitationGeneratedContentMemberText
+type CitationGeneratedContent interface {
+	isCitationGeneratedContent()
+}
+
+// The text content that was generated by the model and is supported by the
+// associated citation.
+type CitationGeneratedContentMemberText struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*CitationGeneratedContentMemberText) isCitationGeneratedContent() {}
+
+// Specifies the precise location within a source document where cited content can
+// be found. This can include character-level positions, page numbers, or document
+// chunks depending on the document type and indexing method.
+//
+// The following types satisfy this interface:
+//
+//	CitationLocationMemberDocumentChar
+//	CitationLocationMemberDocumentChunk
+//	CitationLocationMemberDocumentPage
+//	CitationLocationMemberSearchResultLocation
+//	CitationLocationMemberWeb
+type CitationLocation interface {
+	isCitationLocation()
+}
+
+// The character-level location within the document where the cited content is
+// found.
+type CitationLocationMemberDocumentChar struct {
+	Value DocumentCharLocation
+
+	noSmithyDocumentSerde
+}
+
+func (*CitationLocationMemberDocumentChar) isCitationLocation() {}
+
+// The chunk-level location within the document where the cited content is found,
+// typically used for documents that have been segmented into logical chunks.
+type CitationLocationMemberDocumentChunk struct {
+	Value DocumentChunkLocation
+
+	noSmithyDocumentSerde
+}
+
+func (*CitationLocationMemberDocumentChunk) isCitationLocation() {}
+
+// The page-level location within the document where the cited content is found.
+type CitationLocationMemberDocumentPage struct {
+	Value DocumentPageLocation
+
+	noSmithyDocumentSerde
+}
+
+func (*CitationLocationMemberDocumentPage) isCitationLocation() {}
+
+// The search result location where the cited content is found, including the
+// search result index and block positions within the content array.
+type CitationLocationMemberSearchResultLocation struct {
+	Value SearchResultLocation
+
+	noSmithyDocumentSerde
+}
+
+func (*CitationLocationMemberSearchResultLocation) isCitationLocation() {}
+
+// The web URL that was cited for this reference.
+type CitationLocationMemberWeb struct {
+	Value WebLocation
+
+	noSmithyDocumentSerde
+}
+
+func (*CitationLocationMemberWeb) isCitationLocation() {}
+
+// Configuration settings for enabling and controlling document citations in
+// Converse API responses. When enabled, the model can include citation information
+// that links generated content back to specific source documents.
+type CitationsConfig struct {
+
+	// Specifies whether citations from the selected document should be used in the
+	// model's response. When set to true, the model can generate citations that
+	// reference the source documents used to inform the response.
+	//
+	// This member is required.
+	Enabled *bool
+
+	noSmithyDocumentSerde
+}
+
+// A content block that contains both generated text and associated citation
+// information. This block type is returned when document citations are enabled,
+// providing traceability between the generated content and the source documents
+// that informed the response.
+type CitationsContentBlock struct {
+
+	// An array of citations that reference the source documents used to generate the
+	// associated content.
+	Citations []Citation
+
+	// The generated content that is supported by the associated citations.
+	Content []CitationGeneratedContent
+
+	noSmithyDocumentSerde
+}
+
+// Contains incremental updates to citation information during streaming
+// responses. This allows clients to build up citation data progressively as the
+// response is generated.
+type CitationsDelta struct {
+
+	// Specifies the precise location within a source document where cited content can
+	// be found. This can include character-level positions, page numbers, or document
+	// chunks depending on the document type and indexing method.
+	Location CitationLocation
+
+	// The source from the original search result that provided the cited content.
+	Source *string
+
+	// The specific content from the source document that was referenced or cited in
+	// the generated response.
+	SourceContent []CitationSourceContentDelta
+
+	// The title or identifier of the source document being cited.
+	Title *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains the actual text content from a source document that is being cited or
+// referenced in the model's response.
+//
+// The following types satisfy this interface:
+//
+//	CitationSourceContentMemberText
+type CitationSourceContent interface {
+	isCitationSourceContent()
+}
+
+// The text content from the source document that is being cited.
+type CitationSourceContentMemberText struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*CitationSourceContentMemberText) isCitationSourceContent() {}
+
+// Contains incremental updates to the source content text during streaming
+// responses, allowing clients to build up the cited content progressively.
+type CitationSourceContentDelta struct {
+
+	// An incremental update to the text content from the source document that is
+	// being cited.
+	Text *string
+
 	noSmithyDocumentSerde
 }
 
@@ -112,11 +407,14 @@ type CachePointBlock struct {
 //
 // The following types satisfy this interface:
 //
+//	ContentBlockMemberAudio
 //	ContentBlockMemberCachePoint
+//	ContentBlockMemberCitationsContent
 //	ContentBlockMemberDocument
 //	ContentBlockMemberGuardContent
 //	ContentBlockMemberImage
 //	ContentBlockMemberReasoningContent
+//	ContentBlockMemberSearchResult
 //	ContentBlockMemberText
 //	ContentBlockMemberToolResult
 //	ContentBlockMemberToolUse
@@ -128,6 +426,15 @@ type ContentBlock interface {
 	isContentBlock()
 }
 
+// An audio content block containing audio data in the conversation.
+type ContentBlockMemberAudio struct {
+	Value AudioBlock
+
+	noSmithyDocumentSerde
+}
+
+func (*ContentBlockMemberAudio) isContentBlock() {}
+
 // CachePoint to include in the message.
 type ContentBlockMemberCachePoint struct {
 	Value CachePointBlock
@@ -136,6 +443,16 @@ type ContentBlockMemberCachePoint struct {
 }
 
 func (*ContentBlockMemberCachePoint) isContentBlock() {}
+
+// A content block that contains both generated text and associated citation
+// information, providing traceability between the response and source documents.
+type ContentBlockMemberCitationsContent struct {
+	Value CitationsContentBlock
+
+	noSmithyDocumentSerde
+}
+
+func (*ContentBlockMemberCitationsContent) isContentBlock() {}
 
 // A document to include in the message.
 type ContentBlockMemberDocument struct {
@@ -182,6 +499,15 @@ type ContentBlockMemberReasoningContent struct {
 
 func (*ContentBlockMemberReasoningContent) isContentBlock() {}
 
+// Search result to include in the message.
+type ContentBlockMemberSearchResult struct {
+	Value SearchResultBlock
+
+	noSmithyDocumentSerde
+}
+
+func (*ContentBlockMemberSearchResult) isContentBlock() {}
+
 // Text to include in the message.
 type ContentBlockMemberText struct {
 	Value string
@@ -222,12 +548,34 @@ func (*ContentBlockMemberVideo) isContentBlock() {}
 //
 // The following types satisfy this interface:
 //
+//	ContentBlockDeltaMemberCitation
+//	ContentBlockDeltaMemberImage
 //	ContentBlockDeltaMemberReasoningContent
 //	ContentBlockDeltaMemberText
+//	ContentBlockDeltaMemberToolResult
 //	ContentBlockDeltaMemberToolUse
 type ContentBlockDelta interface {
 	isContentBlockDelta()
 }
+
+// Incremental citation information that is streamed as part of the response
+// generation process.
+type ContentBlockDeltaMemberCitation struct {
+	Value CitationsDelta
+
+	noSmithyDocumentSerde
+}
+
+func (*ContentBlockDeltaMemberCitation) isContentBlockDelta() {}
+
+// A streaming delta event containing incremental image data.
+type ContentBlockDeltaMemberImage struct {
+	Value ImageBlockDelta
+
+	noSmithyDocumentSerde
+}
+
+func (*ContentBlockDeltaMemberImage) isContentBlockDelta() {}
 
 // Contains content regarding the reasoning that is carried out by the model.
 // Reasoning refers to a Chain of Thought (CoT) that the model generates to enhance
@@ -248,6 +596,15 @@ type ContentBlockDeltaMemberText struct {
 }
 
 func (*ContentBlockDeltaMemberText) isContentBlockDelta() {}
+
+// An incremental update that contains the results from a tool call.
+type ContentBlockDeltaMemberToolResult struct {
+	Value []ToolResultBlockDelta
+
+	noSmithyDocumentSerde
+}
+
+func (*ContentBlockDeltaMemberToolResult) isContentBlockDelta() {}
 
 // Information about a tool that the model is requesting to use.
 type ContentBlockDeltaMemberToolUse struct {
@@ -278,10 +635,30 @@ type ContentBlockDeltaEvent struct {
 //
 // The following types satisfy this interface:
 //
+//	ContentBlockStartMemberImage
+//	ContentBlockStartMemberToolResult
 //	ContentBlockStartMemberToolUse
 type ContentBlockStart interface {
 	isContentBlockStart()
 }
+
+// The initial event indicating the start of a streaming image block.
+type ContentBlockStartMemberImage struct {
+	Value ImageBlockStart
+
+	noSmithyDocumentSerde
+}
+
+func (*ContentBlockStartMemberImage) isContentBlockStart() {}
+
+// The
+type ContentBlockStartMemberToolResult struct {
+	Value ToolResultBlockStart
+
+	noSmithyDocumentSerde
+}
+
+func (*ContentBlockStartMemberToolResult) isContentBlockStart() {}
 
 // Information about a tool that the model is requesting to use.
 type ContentBlockStartMemberToolUse struct {
@@ -367,6 +744,9 @@ type ConverseStreamMetadataEvent struct {
 
 	// Model performance configuration metadata for the conversation stream event.
 	PerformanceConfig *PerformanceConfiguration
+
+	// Specifies the processing tier configuration used for serving the request.
+	ServiceTier *ServiceTier
 
 	// The trace object in the response from [ConverseStream] that contains information about the
 	// guardrail behavior.
@@ -456,7 +836,7 @@ type ConverseStreamOutputMemberMetadata struct {
 
 func (*ConverseStreamOutputMemberMetadata) isConverseStreamOutput() {}
 
-// The trace object in a response from [ConverseStream]. Currently, you can only trace guardrails.
+// The trace object in a response from [ConverseStream].
 //
 // [ConverseStream]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ConverseStream.html
 type ConverseStreamTrace struct {
@@ -470,7 +850,33 @@ type ConverseStreamTrace struct {
 	noSmithyDocumentSerde
 }
 
-// The trace object in a response from [Converse]. Currently, you can only trace guardrails.
+// The inputs from a Converse API request for token counting.
+//
+// This structure mirrors the input format for the Converse operation, allowing
+// you to count tokens for conversation-based inference requests.
+type ConverseTokensRequest struct {
+
+	// The additionalModelRequestFields of Converse input request to count tokens for.
+	// Use this field when you want to pass additional parameters that the model
+	// supports.
+	AdditionalModelRequestFields document.Interface
+
+	// An array of messages to count tokens for.
+	Messages []Message
+
+	// The system content blocks to count tokens for. System content provides
+	// instructions or context to the model about how it should behave or respond. The
+	// token count will include any system content provided.
+	System []SystemContentBlock
+
+	// The toolConfig of Converse input request to count tokens for. Configuration
+	// information for the tools that the model can use when generating a response.
+	ToolConfig *ToolConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The trace object in a response from [Converse].
 //
 // [Converse]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html
 type ConverseTrace struct {
@@ -484,13 +890,41 @@ type ConverseTrace struct {
 	noSmithyDocumentSerde
 }
 
+// The input value for token counting. The value should be either an InvokeModel
+// or Converse request body.
+//
+// The following types satisfy this interface:
+//
+//	CountTokensInputMemberConverse
+//	CountTokensInputMemberInvokeModel
+type CountTokensInput interface {
+	isCountTokensInput()
+}
+
+// A Converse request for which to count tokens. Use this field when you want to
+// count tokens for a conversation-based input that would be sent to the Converse
+// operation.
+type CountTokensInputMemberConverse struct {
+	Value ConverseTokensRequest
+
+	noSmithyDocumentSerde
+}
+
+func (*CountTokensInputMemberConverse) isCountTokensInput() {}
+
+// An InvokeModel request for which to count tokens. Use this field when you want
+// to count tokens for a raw text input that would be sent to the InvokeModel
+// operation.
+type CountTokensInputMemberInvokeModel struct {
+	Value InvokeModelTokensRequest
+
+	noSmithyDocumentSerde
+}
+
+func (*CountTokensInputMemberInvokeModel) isCountTokensInput() {}
+
 // A document to include in a message.
 type DocumentBlock struct {
-
-	// The format of a document, or its extension.
-	//
-	// This member is required.
-	Format DocumentFormat
 
 	// A name for the document. The name can only contain the following characters:
 	//
@@ -516,6 +950,84 @@ type DocumentBlock struct {
 	// This member is required.
 	Source DocumentSource
 
+	// Configuration settings that control how citations should be generated for this
+	// specific document.
+	Citations *CitationsConfig
+
+	// Contextual information about how the document should be processed or
+	// interpreted by the model when generating citations.
+	Context *string
+
+	// The format of a document, or its extension.
+	Format DocumentFormat
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a character-level location within a document, providing precise
+// positioning information for cited content using start and end character indices.
+type DocumentCharLocation struct {
+
+	// The index of the document within the array of documents provided in the request.
+	DocumentIndex *int32
+
+	// The ending character position of the cited content within the document.
+	End *int32
+
+	// The starting character position of the cited content within the document.
+	Start *int32
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a chunk-level location within a document, providing positioning
+// information for cited content using logical document segments or chunks.
+type DocumentChunkLocation struct {
+
+	// The index of the document within the array of documents provided in the request.
+	DocumentIndex *int32
+
+	// The ending chunk identifier or index of the cited content within the document.
+	End *int32
+
+	// The starting chunk identifier or index of the cited content within the document.
+	Start *int32
+
+	noSmithyDocumentSerde
+}
+
+// Contains the actual content of a document that can be processed by the model
+// and potentially cited in the response.
+//
+// The following types satisfy this interface:
+//
+//	DocumentContentBlockMemberText
+type DocumentContentBlock interface {
+	isDocumentContentBlock()
+}
+
+// The text content of the document.
+type DocumentContentBlockMemberText struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*DocumentContentBlockMemberText) isDocumentContentBlock() {}
+
+// Specifies a page-level location within a document, providing positioning
+// information for cited content using page numbers.
+type DocumentPageLocation struct {
+
+	// The index of the document within the array of documents provided in the request.
+	DocumentIndex *int32
+
+	// The ending page number of the cited content within the document.
+	End *int32
+
+	// The starting page number of the cited content within the document.
+	Start *int32
+
 	noSmithyDocumentSerde
 }
 
@@ -524,7 +1036,9 @@ type DocumentBlock struct {
 // The following types satisfy this interface:
 //
 //	DocumentSourceMemberBytes
+//	DocumentSourceMemberContent
 //	DocumentSourceMemberS3Location
+//	DocumentSourceMemberText
 type DocumentSource interface {
 	isDocumentSource()
 }
@@ -539,6 +1053,16 @@ type DocumentSourceMemberBytes struct {
 
 func (*DocumentSourceMemberBytes) isDocumentSource() {}
 
+// The structured content of the document source, which may include various
+// content blocks such as text, images, or other document elements.
+type DocumentSourceMemberContent struct {
+	Value []DocumentContentBlock
+
+	noSmithyDocumentSerde
+}
+
+func (*DocumentSourceMemberContent) isDocumentSource() {}
+
 // The location of a document object in an Amazon S3 bucket. To see which models
 // support S3 uploads, see [Supported models and features for Converse].
 //
@@ -551,9 +1075,36 @@ type DocumentSourceMemberS3Location struct {
 
 func (*DocumentSourceMemberS3Location) isDocumentSource() {}
 
+// The text content of the document source.
+type DocumentSourceMemberText struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*DocumentSourceMemberText) isDocumentSource() {}
+
+// A block containing error information when content processing fails.
+type ErrorBlock struct {
+
+	// A human-readable error message describing what went wrong during content
+	// processing.
+	Message *string
+
+	noSmithyDocumentSerde
+}
+
 // A behavior assessment of the guardrail policies used in a call to the Converse
 // API.
 type GuardrailAssessment struct {
+
+	// Details about the specific guardrail that was applied during this assessment,
+	// including its identifier, version, ARN, origin, and ownership information.
+	AppliedGuardrailDetails *AppliedGuardrailDetails
+
+	// The automated reasoning policy assessment results, including logical validation
+	// findings for the input content.
+	AutomatedReasoningPolicy *GuardrailAutomatedReasoningPolicyAssessment
 
 	// The content policy.
 	ContentPolicy *GuardrailContentPolicyAssessment
@@ -576,19 +1127,325 @@ type GuardrailAssessment struct {
 	noSmithyDocumentSerde
 }
 
+// Represents a logical validation result from automated reasoning policy
+// evaluation. The finding indicates whether claims in the input are logically
+// valid, invalid, satisfiable, impossible, or have other logical issues.
+//
+// The following types satisfy this interface:
+//
+//	GuardrailAutomatedReasoningFindingMemberImpossible
+//	GuardrailAutomatedReasoningFindingMemberInvalid
+//	GuardrailAutomatedReasoningFindingMemberNoTranslations
+//	GuardrailAutomatedReasoningFindingMemberSatisfiable
+//	GuardrailAutomatedReasoningFindingMemberTooComplex
+//	GuardrailAutomatedReasoningFindingMemberTranslationAmbiguous
+//	GuardrailAutomatedReasoningFindingMemberValid
+type GuardrailAutomatedReasoningFinding interface {
+	isGuardrailAutomatedReasoningFinding()
+}
+
+// Contains the result when the automated reasoning evaluation determines that no
+// valid logical conclusions can be drawn due to contradictions in the premises or
+// policy rules themselves.
+type GuardrailAutomatedReasoningFindingMemberImpossible struct {
+	Value GuardrailAutomatedReasoningImpossibleFinding
+
+	noSmithyDocumentSerde
+}
+
+func (*GuardrailAutomatedReasoningFindingMemberImpossible) isGuardrailAutomatedReasoningFinding() {}
+
+// Contains the result when the automated reasoning evaluation determines that the
+// claims in the input are logically invalid and contradict the established
+// premises or policy rules.
+type GuardrailAutomatedReasoningFindingMemberInvalid struct {
+	Value GuardrailAutomatedReasoningInvalidFinding
+
+	noSmithyDocumentSerde
+}
+
+func (*GuardrailAutomatedReasoningFindingMemberInvalid) isGuardrailAutomatedReasoningFinding() {}
+
+// Contains the result when the automated reasoning evaluation cannot extract any
+// relevant logical information from the input that can be validated against the
+// policy rules.
+type GuardrailAutomatedReasoningFindingMemberNoTranslations struct {
+	Value GuardrailAutomatedReasoningNoTranslationsFinding
+
+	noSmithyDocumentSerde
+}
+
+func (*GuardrailAutomatedReasoningFindingMemberNoTranslations) isGuardrailAutomatedReasoningFinding() {
+}
+
+// Contains the result when the automated reasoning evaluation determines that the
+// claims in the input could be either true or false depending on additional
+// assumptions not provided in the input context.
+type GuardrailAutomatedReasoningFindingMemberSatisfiable struct {
+	Value GuardrailAutomatedReasoningSatisfiableFinding
+
+	noSmithyDocumentSerde
+}
+
+func (*GuardrailAutomatedReasoningFindingMemberSatisfiable) isGuardrailAutomatedReasoningFinding() {}
+
+// Contains the result when the automated reasoning evaluation cannot process the
+// input due to its complexity or volume exceeding the system's processing capacity
+// for logical analysis.
+type GuardrailAutomatedReasoningFindingMemberTooComplex struct {
+	Value GuardrailAutomatedReasoningTooComplexFinding
+
+	noSmithyDocumentSerde
+}
+
+func (*GuardrailAutomatedReasoningFindingMemberTooComplex) isGuardrailAutomatedReasoningFinding() {}
+
+// Contains the result when the automated reasoning evaluation detects that the
+// input has multiple valid logical interpretations, requiring additional context
+// or clarification to proceed with validation.
+type GuardrailAutomatedReasoningFindingMemberTranslationAmbiguous struct {
+	Value GuardrailAutomatedReasoningTranslationAmbiguousFinding
+
+	noSmithyDocumentSerde
+}
+
+func (*GuardrailAutomatedReasoningFindingMemberTranslationAmbiguous) isGuardrailAutomatedReasoningFinding() {
+}
+
+// Contains the result when the automated reasoning evaluation determines that the
+// claims in the input are logically valid and definitively true based on the
+// provided premises and policy rules.
+type GuardrailAutomatedReasoningFindingMemberValid struct {
+	Value GuardrailAutomatedReasoningValidFinding
+
+	noSmithyDocumentSerde
+}
+
+func (*GuardrailAutomatedReasoningFindingMemberValid) isGuardrailAutomatedReasoningFinding() {}
+
+// Indicates that no valid claims can be made due to logical contradictions in the
+// premises or rules.
+type GuardrailAutomatedReasoningImpossibleFinding struct {
+
+	// The automated reasoning policy rules that contradict the claims and/or premises
+	// in the input.
+	ContradictingRules []GuardrailAutomatedReasoningRule
+
+	// Indication of a logic issue with the translation without needing to consider
+	// the automated reasoning policy rules.
+	LogicWarning *GuardrailAutomatedReasoningLogicWarning
+
+	// The logical translation of the input that this finding evaluates.
+	Translation *GuardrailAutomatedReasoningTranslation
+
+	noSmithyDocumentSerde
+}
+
+// References a portion of the original input text that corresponds to logical
+// elements.
+type GuardrailAutomatedReasoningInputTextReference struct {
+
+	// The specific text from the original input that this reference points to.
+	Text *string
+
+	noSmithyDocumentSerde
+}
+
+// Indicates that the claims are logically false and contradictory to the
+// established rules or premises.
+type GuardrailAutomatedReasoningInvalidFinding struct {
+
+	// The automated reasoning policy rules that contradict the claims in the input.
+	ContradictingRules []GuardrailAutomatedReasoningRule
+
+	// Indication of a logic issue with the translation without needing to consider
+	// the automated reasoning policy rules.
+	LogicWarning *GuardrailAutomatedReasoningLogicWarning
+
+	// The logical translation of the input that this finding invalidates.
+	Translation *GuardrailAutomatedReasoningTranslation
+
+	noSmithyDocumentSerde
+}
+
+// Identifies logical issues in the translated statements that exist independent
+// of any policy rules, such as statements that are always true or always false.
+type GuardrailAutomatedReasoningLogicWarning struct {
+
+	// The logical statements that are validated while assuming the policy and
+	// premises.
+	Claims []GuardrailAutomatedReasoningStatement
+
+	// The logical statements that serve as premises under which the claims are
+	// validated.
+	Premises []GuardrailAutomatedReasoningStatement
+
+	// The category of the detected logical issue, such as statements that are always
+	// true or always false.
+	Type GuardrailAutomatedReasoningLogicWarningType
+
+	noSmithyDocumentSerde
+}
+
+// Indicates that no relevant logical information could be extracted from the
+// input for validation.
+type GuardrailAutomatedReasoningNoTranslationsFinding struct {
+	noSmithyDocumentSerde
+}
+
+// Contains the results of automated reasoning policy evaluation, including
+// logical findings about the validity of claims made in the input content.
+type GuardrailAutomatedReasoningPolicyAssessment struct {
+
+	// List of logical validation results produced by evaluating the input content
+	// against automated reasoning policies.
+	Findings []GuardrailAutomatedReasoningFinding
+
+	noSmithyDocumentSerde
+}
+
+// References a specific automated reasoning policy rule that was applied during
+// evaluation.
+type GuardrailAutomatedReasoningRule struct {
+
+	// The unique identifier of the automated reasoning rule.
+	Identifier *string
+
+	// The ARN of the automated reasoning policy version that contains this rule.
+	PolicyVersionArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Indicates that the claims could be either true or false depending on additional
+// assumptions not provided in the input.
+type GuardrailAutomatedReasoningSatisfiableFinding struct {
+
+	// An example scenario demonstrating how the claims could be logically false.
+	ClaimsFalseScenario *GuardrailAutomatedReasoningScenario
+
+	// An example scenario demonstrating how the claims could be logically true.
+	ClaimsTrueScenario *GuardrailAutomatedReasoningScenario
+
+	// Indication of a logic issue with the translation without needing to consider
+	// the automated reasoning policy rules.
+	LogicWarning *GuardrailAutomatedReasoningLogicWarning
+
+	// The logical translation of the input that this finding evaluates.
+	Translation *GuardrailAutomatedReasoningTranslation
+
+	noSmithyDocumentSerde
+}
+
+// Represents a logical scenario where claims can be evaluated as true or false,
+// containing specific logical assignments.
+type GuardrailAutomatedReasoningScenario struct {
+
+	// List of logical assignments and statements that define this scenario.
+	Statements []GuardrailAutomatedReasoningStatement
+
+	noSmithyDocumentSerde
+}
+
+// A logical statement that includes both formal logic representation and natural
+// language explanation.
+type GuardrailAutomatedReasoningStatement struct {
+
+	// The formal logical representation of the statement.
+	Logic *string
+
+	// The natural language explanation of the logical statement.
+	NaturalLanguage *string
+
+	noSmithyDocumentSerde
+}
+
+// Indicates that the input exceeds the processing capacity due to the volume or
+// complexity of the logical information.
+type GuardrailAutomatedReasoningTooComplexFinding struct {
+	noSmithyDocumentSerde
+}
+
+// Contains the logical translation of natural language input into formal logical
+// statements, including premises, claims, and confidence scores.
+type GuardrailAutomatedReasoningTranslation struct {
+
+	// The logical statements that are being validated against the premises and policy
+	// rules.
+	Claims []GuardrailAutomatedReasoningStatement
+
+	// A confidence score between 0 and 1 indicating how certain the system is about
+	// the logical translation.
+	Confidence *float64
+
+	// The logical statements that serve as the foundation or assumptions for the
+	// claims.
+	Premises []GuardrailAutomatedReasoningStatement
+
+	// References to portions of the original input text that correspond to the claims
+	// but could not be fully translated.
+	UntranslatedClaims []GuardrailAutomatedReasoningInputTextReference
+
+	// References to portions of the original input text that correspond to the
+	// premises but could not be fully translated.
+	UntranslatedPremises []GuardrailAutomatedReasoningInputTextReference
+
+	noSmithyDocumentSerde
+}
+
+// Indicates that the input has multiple valid logical interpretations, requiring
+// additional context or clarification.
+type GuardrailAutomatedReasoningTranslationAmbiguousFinding struct {
+
+	// Scenarios showing how the different translation options differ in meaning.
+	DifferenceScenarios []GuardrailAutomatedReasoningScenario
+
+	// Different logical interpretations that were detected during translation of the
+	// input.
+	Options []GuardrailAutomatedReasoningTranslationOption
+
+	noSmithyDocumentSerde
+}
+
+// Represents one possible logical interpretation of ambiguous input content.
+type GuardrailAutomatedReasoningTranslationOption struct {
+
+	// Example translations that provide this possible interpretation of the input.
+	Translations []GuardrailAutomatedReasoningTranslation
+
+	noSmithyDocumentSerde
+}
+
+// Indicates that the claims are definitively true and logically implied by the
+// premises, with no possible alternative interpretations.
+type GuardrailAutomatedReasoningValidFinding struct {
+
+	// An example scenario demonstrating how the claims are logically true.
+	ClaimsTrueScenario *GuardrailAutomatedReasoningScenario
+
+	// Indication of a logic issue with the translation without needing to consider
+	// the automated reasoning policy rules.
+	LogicWarning *GuardrailAutomatedReasoningLogicWarning
+
+	// The automated reasoning policy rules that support why this result is considered
+	// valid.
+	SupportingRules []GuardrailAutomatedReasoningRule
+
+	// The logical translation of the input that this finding validates.
+	Translation *GuardrailAutomatedReasoningTranslation
+
+	noSmithyDocumentSerde
+}
+
 // Configuration information for a guardrail that you use with the [Converse] operation.
 //
 // [Converse]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html
 type GuardrailConfiguration struct {
 
 	// The identifier for the guardrail.
-	//
-	// This member is required.
 	GuardrailIdentifier *string
 
 	// The version of the guardrail.
-	//
-	// This member is required.
 	GuardrailVersion *string
 
 	// The trace behavior for the guardrail.
@@ -770,7 +1627,9 @@ type GuardrailConverseImageSourceMemberBytes struct {
 func (*GuardrailConverseImageSourceMemberBytes) isGuardrailConverseImageSource() {}
 
 // A text block that contains text that you want to assess with a guardrail. For
-// more information, see GuardrailConverseContentBlock.
+// more information, see [GuardrailConverseContentBlock].
+//
+// [GuardrailConverseContentBlock]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_GuardrailConverseContentBlock.html
 type GuardrailConverseTextBlock struct {
 
 	// The text that you want to guard.
@@ -964,7 +1823,7 @@ type GuardrailRegexFilter struct {
 	noSmithyDocumentSerde
 }
 
-// The assessment for aPersonally Identifiable Information (PII) policy.
+// The assessment for a Personally Identifiable Information (PII) policy.
 type GuardrailSensitiveInformationPolicyAssessment struct {
 
 	// The PII entities in the assessment.
@@ -980,17 +1839,15 @@ type GuardrailSensitiveInformationPolicyAssessment struct {
 	noSmithyDocumentSerde
 }
 
-// Configuration information for a guardrail that you use with the ConverseStream action.
+// Configuration information for a guardrail that you use with the [ConverseStream] action.
+//
+// [ConverseStream]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ConverseStream.html
 type GuardrailStreamConfiguration struct {
 
 	// The identifier for the guardrail.
-	//
-	// This member is required.
 	GuardrailIdentifier *string
 
 	// The version of the guardrail.
-	//
-	// This member is required.
 	GuardrailVersion *string
 
 	// The processing mode.
@@ -1068,7 +1925,9 @@ type GuardrailTopicPolicyAssessment struct {
 	noSmithyDocumentSerde
 }
 
-// A Top level guardrail trace object. For more information, see ConverseTrace.
+// A Top level guardrail trace object. For more information, see [ConverseTrace].
+//
+// [ConverseTrace]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ConverseTrace.html
 type GuardrailTraceAssessment struct {
 
 	// Provides the reason for the action taken when harmful content is detected.
@@ -1119,6 +1978,13 @@ type GuardrailUsage struct {
 	// This member is required.
 	WordPolicyUnits *int32
 
+	// The number of automated reasoning policies that were processed during the
+	// guardrail evaluation.
+	AutomatedReasoningPolicies *int32
+
+	// The number of text units processed by the automated reasoning policy.
+	AutomatedReasoningPolicyUnits *int32
+
 	// The content policy image units processed by the guardrail.
 	ContentPolicyImageUnits *int32
 
@@ -1153,6 +2019,35 @@ type ImageBlock struct {
 	//
 	// This member is required.
 	Source ImageSource
+
+	// Error information if the image block could not be processed or contains invalid
+	// data.
+	Error *ErrorBlock
+
+	noSmithyDocumentSerde
+}
+
+// A streaming delta event that contains incremental image data during streaming
+// responses.
+type ImageBlockDelta struct {
+
+	// Error information if this image delta could not be processed.
+	Error *ErrorBlock
+
+	// The incremental image source data for this delta event.
+	Source ImageSource
+
+	noSmithyDocumentSerde
+}
+
+// The initial event in a streaming image block that indicates the start of image
+// content.
+type ImageBlockStart struct {
+
+	// The format of the image data that will be streamed in subsequent delta events.
+	//
+	// This member is required.
+	Format ImageFormat
 
 	noSmithyDocumentSerde
 }
@@ -1238,6 +2133,42 @@ type InferenceConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// The body of an InvokeModel API request for token counting. This structure
+// mirrors the input format for the InvokeModel operation, allowing you to count
+// tokens for raw text inference requests.
+type InvokeModelTokensRequest struct {
+
+	// The request body to count tokens for, formatted according to the model's
+	// expected input format. To learn about the input format for different models, see
+	// [Model inference parameters and responses].
+	//
+	// [Model inference parameters and responses]: https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html
+	//
+	// This member is required.
+	Body []byte
+
+	noSmithyDocumentSerde
+}
+
+// JSON schema structured output format options.
+type JsonSchemaDefinition struct {
+
+	//  The JSON schema to constrain the model's output. For more information, see [JSON Schema Reference].
+	//
+	// [JSON Schema Reference]: https://json-schema.org/understanding-json-schema/reference
+	//
+	// This member is required.
+	Schema *string
+
+	//  A description of the JSON schema.
+	Description *string
+
+	//  The name of the JSON schema.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
 // A message input, or returned from, a call to [Converse] or [ConverseStream].
 //
 // [Converse]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html
@@ -1292,6 +2223,52 @@ type MessageStopEvent struct {
 
 	noSmithyDocumentSerde
 }
+
+// Output configuration for a model response in a call to [Converse] or [ConverseStream].
+//
+// [Converse]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html
+// [ConverseStream]: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ConverseStream.html
+type OutputConfig struct {
+
+	// Structured output parameters to control the model's text response.
+	TextFormat *OutputFormat
+
+	noSmithyDocumentSerde
+}
+
+// Structured output parameters to control the model's response.
+type OutputFormat struct {
+
+	//  The structure that the model's output must adhere to.
+	//
+	// This member is required.
+	Structure OutputFormatStructure
+
+	//  The type of structured output format.
+	//
+	// This member is required.
+	Type OutputFormatType
+
+	noSmithyDocumentSerde
+}
+
+//	The structure that the model's output must adhere to.
+//
+// The following types satisfy this interface:
+//
+//	OutputFormatStructureMemberJsonSchema
+type OutputFormatStructure interface {
+	isOutputFormatStructure()
+}
+
+// A JSON schema structure that the model's output must adhere to.
+type OutputFormatStructureMemberJsonSchema struct {
+	Value JsonSchemaDefinition
+
+	noSmithyDocumentSerde
+}
+
+func (*OutputFormatStructureMemberJsonSchema) isOutputFormatStructure() {}
 
 // Payload content included in the response.
 type PayloadPart struct {
@@ -1466,10 +2443,79 @@ type S3Location struct {
 	noSmithyDocumentSerde
 }
 
+// A search result block that enables natural citations with proper source
+// attribution for retrieved content.
+//
+// This field is only supported by Anthropic Claude Opus 4.1, Opus 4, Sonnet 4.5,
+// Sonnet 4, Sonnet 3.7, and 3.5 Haiku models.
+type SearchResultBlock struct {
+
+	// An array of search result content block.
+	//
+	// This member is required.
+	Content []SearchResultContentBlock
+
+	// The source URL or identifier for the content.
+	//
+	// This member is required.
+	Source *string
+
+	// A descriptive title for the search result.
+	//
+	// This member is required.
+	Title *string
+
+	// Configuration setting for citations
+	Citations *CitationsConfig
+
+	noSmithyDocumentSerde
+}
+
+// A block within a search result that contains the content.
+type SearchResultContentBlock struct {
+
+	// The actual text content
+	//
+	// This member is required.
+	Text *string
+
+	noSmithyDocumentSerde
+}
+
+// Specifies a search result location within the content array, providing
+// positioning information for cited content using search result index and block
+// positions.
+type SearchResultLocation struct {
+
+	// The ending position in the content array where the cited content ends.
+	End *int32
+
+	// The index of the search result content block where the cited content is found.
+	SearchResultIndex *int32
+
+	// The starting position in the content array where the cited content begins.
+	Start *int32
+
+	noSmithyDocumentSerde
+}
+
+// Specifies the processing tier configuration used for serving the request.
+type ServiceTier struct {
+
+	// Specifies the processing tier type used for serving the request.
+	//
+	// This member is required.
+	Type ServiceTierType
+
+	noSmithyDocumentSerde
+}
+
 // The model must request a specific tool. For example, {"tool" : {"name" : "Your
-// tool name"}} .
+// tool name"}} . For more information, see [Call a tool with the Converse API] in the Amazon Bedrock User Guide
 //
 // This field is only supported by Anthropic Claude 3 models.
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type SpecificToolChoice struct {
 
 	// The name of the tool that the model must request.
@@ -1480,13 +2526,16 @@ type SpecificToolChoice struct {
 	noSmithyDocumentSerde
 }
 
-// A system content block.
+// Contains configurations for instructions to provide the model for how to handle
+// input. To learn more, see [Using the Converse API].
 //
 // The following types satisfy this interface:
 //
 //	SystemContentBlockMemberCachePoint
 //	SystemContentBlockMemberGuardContent
 //	SystemContentBlockMemberText
+//
+// [Using the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference-call.html
 type SystemContentBlock interface {
 	isSystemContentBlock()
 }
@@ -1524,6 +2573,18 @@ type SystemContentBlockMemberText struct {
 
 func (*SystemContentBlockMemberText) isSystemContentBlock() {}
 
+// Specifies a system-defined tool for the model to use. System-defined tools are
+// tools that are created and provided by the model provider.
+type SystemTool struct {
+
+	// The name of the system-defined tool that you want to call.
+	//
+	// This member is required.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
 // A tag.
 type Tag struct {
 
@@ -1558,6 +2619,10 @@ type TokenUsage struct {
 	// This member is required.
 	TotalTokens *int32
 
+	// Detailed breakdown of cache writes by TTL. Empty if no cache creation occurred.
+	// Sorted by TTL duration (1h before 5m).
+	CacheDetails []CacheDetail
+
 	// The number of input tokens read from the cache for the request.
 	CacheReadInputTokens *int32
 
@@ -1568,14 +2633,15 @@ type TokenUsage struct {
 }
 
 // Information about a tool that you can use with the Converse API. For more
-// information, see [Tool use (function calling)]in the Amazon Bedrock User Guide.
+// information, see [Call a tool with the Converse API]in the Amazon Bedrock User Guide.
 //
 // The following types satisfy this interface:
 //
 //	ToolMemberCachePoint
+//	ToolMemberSystemTool
 //	ToolMemberToolSpec
 //
-// [Tool use (function calling)]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type Tool interface {
 	isTool()
 }
@@ -1589,6 +2655,15 @@ type ToolMemberCachePoint struct {
 
 func (*ToolMemberCachePoint) isTool() {}
 
+// Specifies the system-defined tool that you want use.
+type ToolMemberSystemTool struct {
+	Value SystemTool
+
+	noSmithyDocumentSerde
+}
+
+func (*ToolMemberSystemTool) isTool() {}
+
 // The specfication for the tool.
 type ToolMemberToolSpec struct {
 	Value ToolSpecification
@@ -1599,14 +2674,15 @@ type ToolMemberToolSpec struct {
 func (*ToolMemberToolSpec) isTool() {}
 
 // Determines which tools the model should request in a call to Converse or
-// ConverseStream . ToolChoice is only supported by Anthropic Claude 3 models and
-// by Mistral AI Mistral Large.
+// ConverseStream . For more information, see [Call a tool with the Converse API] in the Amazon Bedrock User Guide.
 //
 // The following types satisfy this interface:
 //
 //	ToolChoiceMemberAny
 //	ToolChoiceMemberAuto
 //	ToolChoiceMemberTool
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type ToolChoice interface {
 	isToolChoice()
 }
@@ -1631,7 +2707,7 @@ type ToolChoiceMemberAuto struct {
 func (*ToolChoiceMemberAuto) isToolChoice() {}
 
 // The Model must request the specified tool. Only supported by Anthropic Claude 3
-// models.
+// and Amazon Nova models.
 type ToolChoiceMemberTool struct {
 	Value SpecificToolChoice
 
@@ -1657,11 +2733,14 @@ type ToolConfiguration struct {
 	noSmithyDocumentSerde
 }
 
-// The schema for the tool. The top level schema type must be object .
+// The schema for the tool. The top level schema type must be object . For more
+// information, see [Call a tool with the Converse API]in the Amazon Bedrock User Guide.
 //
 // The following types satisfy this interface:
 //
 //	ToolInputSchemaMemberJson
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type ToolInputSchema interface {
 	isToolInputSchema()
 }
@@ -1678,7 +2757,9 @@ type ToolInputSchemaMemberJson struct {
 func (*ToolInputSchemaMemberJson) isToolInputSchema() {}
 
 // A tool result block that contains the results for a tool request that the model
-// previously made.
+// previously made. For more information, see [Call a tool with the Converse API]in the Amazon Bedrock User Guide.
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type ToolResultBlock struct {
 
 	// The content for tool result content block.
@@ -1693,21 +2774,80 @@ type ToolResultBlock struct {
 
 	// The status for the tool result content block.
 	//
-	// This field is only supported Anthropic Claude 3 models.
+	// This field is only supported by Amazon Nova and Anthropic Claude 3 and 4 models.
 	Status ToolResultStatus
+
+	// The type for the tool result content block.
+	Type *string
 
 	noSmithyDocumentSerde
 }
 
-// The tool result content block.
+// Contains incremental updates to tool results information during streaming
+// responses. This allows clients to build up tool results data progressively as
+// the response is generated.
+//
+// The following types satisfy this interface:
+//
+//	ToolResultBlockDeltaMemberJson
+//	ToolResultBlockDeltaMemberText
+type ToolResultBlockDelta interface {
+	isToolResultBlockDelta()
+}
+
+// The JSON schema for the tool result content block. see [JSON Schema Reference].
+//
+// [JSON Schema Reference]: https://json-schema.org/understanding-json-schema/reference
+type ToolResultBlockDeltaMemberJson struct {
+	Value document.Interface
+
+	noSmithyDocumentSerde
+}
+
+func (*ToolResultBlockDeltaMemberJson) isToolResultBlockDelta() {}
+
+// The reasoning the model used to return the output.
+type ToolResultBlockDeltaMemberText struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*ToolResultBlockDeltaMemberText) isToolResultBlockDelta() {}
+
+// The start of a tool result block. For more information, see [Call a tool with the Converse API] in the Amazon
+// Bedrock User Guide.
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
+type ToolResultBlockStart struct {
+
+	// The ID of the tool that was used to generate this tool result block.
+	//
+	// This member is required.
+	ToolUseId *string
+
+	// The status of the tool result block.
+	Status ToolResultStatus
+
+	// The type for the tool that was used to generate this tool result block.
+	Type *string
+
+	noSmithyDocumentSerde
+}
+
+// The tool result content block. For more information, see [Call a tool with the Converse API] in the Amazon Bedrock
+// User Guide.
 //
 // The following types satisfy this interface:
 //
 //	ToolResultContentBlockMemberDocument
 //	ToolResultContentBlockMemberImage
 //	ToolResultContentBlockMemberJson
+//	ToolResultContentBlockMemberSearchResult
 //	ToolResultContentBlockMemberText
 //	ToolResultContentBlockMemberVideo
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type ToolResultContentBlock interface {
 	isToolResultContentBlock()
 }
@@ -1723,7 +2863,7 @@ func (*ToolResultContentBlockMemberDocument) isToolResultContentBlock() {}
 
 // A tool result that is an image.
 //
-// This field is only supported by Anthropic Claude 3 models.
+// This field is only supported by Amazon Nova and Anthropic Claude 3 and 4 models.
 type ToolResultContentBlockMemberImage struct {
 	Value ImageBlock
 
@@ -1740,6 +2880,15 @@ type ToolResultContentBlockMemberJson struct {
 }
 
 func (*ToolResultContentBlockMemberJson) isToolResultContentBlock() {}
+
+// A tool result that is a search result.
+type ToolResultContentBlockMemberSearchResult struct {
+	Value SearchResultBlock
+
+	noSmithyDocumentSerde
+}
+
+func (*ToolResultContentBlockMemberSearchResult) isToolResultContentBlock() {}
 
 // A tool result that is text.
 type ToolResultContentBlockMemberText struct {
@@ -1759,7 +2908,10 @@ type ToolResultContentBlockMemberVideo struct {
 
 func (*ToolResultContentBlockMemberVideo) isToolResultContentBlock() {}
 
-// The specification for the tool.
+// The specification for the tool. For more information, see [Call a tool with the Converse API] in the Amazon
+// Bedrock User Guide.
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type ToolSpecification struct {
 
 	// The input schema for the tool in JSON format.
@@ -1775,12 +2927,17 @@ type ToolSpecification struct {
 	// The description for the tool.
 	Description *string
 
+	// Flag to enable structured output enforcement on a tool usage response.
+	Strict *bool
+
 	noSmithyDocumentSerde
 }
 
 // A tool use content block. Contains information about a tool that the model is
 // requesting be run., The model uses the result from the tool to generate a
-// response.
+// response. For more information, see [Call a tool with the Converse API]in the Amazon Bedrock User Guide.
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type ToolUseBlock struct {
 
 	// The input to pass to the tool.
@@ -1798,6 +2955,9 @@ type ToolUseBlock struct {
 	// This member is required.
 	ToolUseId *string
 
+	// The type for the tool request.
+	Type ToolUseType
+
 	noSmithyDocumentSerde
 }
 
@@ -1812,7 +2972,10 @@ type ToolUseBlockDelta struct {
 	noSmithyDocumentSerde
 }
 
-// The start of a tool use block.
+// The start of a tool use block. For more information, see [Call a tool with the Converse API] in the Amazon Bedrock
+// User Guide.
+//
+// [Call a tool with the Converse API]: https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html
 type ToolUseBlockStart struct {
 
 	// The name of the tool that the model is requesting to use.
@@ -1824,6 +2987,9 @@ type ToolUseBlockStart struct {
 	//
 	// This member is required.
 	ToolUseId *string
+
+	// The type for the tool request.
+	Type ToolUseType
 
 	noSmithyDocumentSerde
 }
@@ -1877,6 +3043,19 @@ type VideoSourceMemberS3Location struct {
 
 func (*VideoSourceMemberS3Location) isVideoSource() {}
 
+// Provides the URL and domain information for the website that was cited when
+// performing a web search.
+type WebLocation struct {
+
+	// The domain that was cited when performing a web search.
+	Domain *string
+
+	// The URL that was cited when performing a web search.
+	Url *string
+
+	noSmithyDocumentSerde
+}
+
 type noSmithyDocumentSerde = smithydocument.NoSerde
 
 // UnknownUnionMember is returned when a union member is returned over the wire,
@@ -1888,25 +3067,34 @@ type UnknownUnionMember struct {
 	noSmithyDocumentSerde
 }
 
-func (*UnknownUnionMember) isAsyncInvokeOutputDataConfig()   {}
-func (*UnknownUnionMember) isContentBlock()                  {}
-func (*UnknownUnionMember) isContentBlockDelta()             {}
-func (*UnknownUnionMember) isContentBlockStart()             {}
-func (*UnknownUnionMember) isConverseOutput()                {}
-func (*UnknownUnionMember) isConverseStreamOutput()          {}
-func (*UnknownUnionMember) isDocumentSource()                {}
-func (*UnknownUnionMember) isGuardrailContentBlock()         {}
-func (*UnknownUnionMember) isGuardrailConverseContentBlock() {}
-func (*UnknownUnionMember) isGuardrailConverseImageSource()  {}
-func (*UnknownUnionMember) isGuardrailImageSource()          {}
-func (*UnknownUnionMember) isImageSource()                   {}
-func (*UnknownUnionMember) isPromptVariableValues()          {}
-func (*UnknownUnionMember) isReasoningContentBlock()         {}
-func (*UnknownUnionMember) isReasoningContentBlockDelta()    {}
-func (*UnknownUnionMember) isResponseStream()                {}
-func (*UnknownUnionMember) isSystemContentBlock()            {}
-func (*UnknownUnionMember) isTool()                          {}
-func (*UnknownUnionMember) isToolChoice()                    {}
-func (*UnknownUnionMember) isToolInputSchema()               {}
-func (*UnknownUnionMember) isToolResultContentBlock()        {}
-func (*UnknownUnionMember) isVideoSource()                   {}
+func (*UnknownUnionMember) isAsyncInvokeOutputDataConfig()        {}
+func (*UnknownUnionMember) isAudioSource()                        {}
+func (*UnknownUnionMember) isCitationGeneratedContent()           {}
+func (*UnknownUnionMember) isCitationLocation()                   {}
+func (*UnknownUnionMember) isCitationSourceContent()              {}
+func (*UnknownUnionMember) isContentBlock()                       {}
+func (*UnknownUnionMember) isContentBlockDelta()                  {}
+func (*UnknownUnionMember) isContentBlockStart()                  {}
+func (*UnknownUnionMember) isConverseOutput()                     {}
+func (*UnknownUnionMember) isConverseStreamOutput()               {}
+func (*UnknownUnionMember) isCountTokensInput()                   {}
+func (*UnknownUnionMember) isDocumentContentBlock()               {}
+func (*UnknownUnionMember) isDocumentSource()                     {}
+func (*UnknownUnionMember) isGuardrailAutomatedReasoningFinding() {}
+func (*UnknownUnionMember) isGuardrailContentBlock()              {}
+func (*UnknownUnionMember) isGuardrailConverseContentBlock()      {}
+func (*UnknownUnionMember) isGuardrailConverseImageSource()       {}
+func (*UnknownUnionMember) isGuardrailImageSource()               {}
+func (*UnknownUnionMember) isImageSource()                        {}
+func (*UnknownUnionMember) isOutputFormatStructure()              {}
+func (*UnknownUnionMember) isPromptVariableValues()               {}
+func (*UnknownUnionMember) isReasoningContentBlock()              {}
+func (*UnknownUnionMember) isReasoningContentBlockDelta()         {}
+func (*UnknownUnionMember) isResponseStream()                     {}
+func (*UnknownUnionMember) isSystemContentBlock()                 {}
+func (*UnknownUnionMember) isTool()                               {}
+func (*UnknownUnionMember) isToolChoice()                         {}
+func (*UnknownUnionMember) isToolInputSchema()                    {}
+func (*UnknownUnionMember) isToolResultBlockDelta()               {}
+func (*UnknownUnionMember) isToolResultContentBlock()             {}
+func (*UnknownUnionMember) isVideoSource()                        {}

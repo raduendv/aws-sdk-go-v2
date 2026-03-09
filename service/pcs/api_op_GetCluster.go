@@ -31,7 +31,7 @@ func (c *Client) GetCluster(ctx context.Context, params *GetClusterInput, optFns
 
 type GetClusterInput struct {
 
-	// The name or ID of the cluster of the queue.
+	// The name or ID of the cluster.
 	//
 	// This member is required.
 	ClusterIdentifier *string
@@ -138,16 +138,13 @@ func (c *Client) addOperationGetClusterMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

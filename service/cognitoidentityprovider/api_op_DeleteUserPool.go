@@ -17,7 +17,7 @@ import (
 // Amazon Web Services account. Amazon Cognito retains deleted user pools in an
 // inactive state for 14 days, then begins a cleanup process that fully removes
 // them from Amazon Web Services systems. In case of accidental deletion, contact
-// Amazon Web ServicesSupport within 14 days for restoration assistance.
+// Amazon Web Services Support within 14 days for restoration assistance.
 //
 // Amazon Cognito begins full deletion of all resources from deleted user pools
 // after 14 days. In the case of large user pools, the cleanup process might take
@@ -143,16 +143,13 @@ func (c *Client) addOperationDeleteUserPoolMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

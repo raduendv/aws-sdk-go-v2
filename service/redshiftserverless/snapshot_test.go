@@ -326,6 +326,18 @@ func TestCheckSnapshot_GetEndpointAccess(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetIdentityCenterAuthToken(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetIdentityCenterAuthToken(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetIdentityCenterAuthToken")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetNamespace(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetNamespace(context.Background(), nil, func(o *Options) {
@@ -746,6 +758,18 @@ func TestCheckSnapshot_UpdateEndpointAccess(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateLakehouseConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateLakehouseConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateLakehouseConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateNamespace(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateNamespace(context.Background(), nil, func(o *Options) {
@@ -1074,6 +1098,18 @@ func TestUpdateSnapshot_GetEndpointAccess(t *testing.T) {
 	_, err := svc.GetEndpointAccess(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetEndpointAccess")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetIdentityCenterAuthToken(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetIdentityCenterAuthToken(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetIdentityCenterAuthToken")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1494,6 +1530,18 @@ func TestUpdateSnapshot_UpdateEndpointAccess(t *testing.T) {
 	_, err := svc.UpdateEndpointAccess(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateEndpointAccess")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateLakehouseConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateLakehouseConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateLakehouseConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

@@ -11,11 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Lists all services and authorized targets that the Amazon QuickSight IAM
-// Identity Center application can access.
+// Lists all services and authorized targets that the Quick Sight IAM Identity
+// Center application can access.
 //
-// This operation is only supported for Amazon QuickSight accounts that use IAM
-// Identity Center.
+// This operation is only supported for Quick Sight accounts that use IAM Identity
+// Center.
 func (c *Client) ListIdentityPropagationConfigs(ctx context.Context, params *ListIdentityPropagationConfigsInput, optFns ...func(*Options)) (*ListIdentityPropagationConfigsOutput, error) {
 	if params == nil {
 		params = &ListIdentityPropagationConfigsInput{}
@@ -56,7 +56,7 @@ type ListIdentityPropagationConfigsOutput struct {
 	// The Amazon Web Services request ID for this operation.
 	RequestId *string
 
-	// A list of services and their authorized targets that the Amazon QuickSight IAM
+	// A list of services and their authorized targets that the Quick Sight IAM
 	// Identity Center application can access.
 	Services []types.AuthorizedTargetsByService
 
@@ -157,16 +157,13 @@ func (c *Client) addOperationListIdentityPropagationConfigsMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

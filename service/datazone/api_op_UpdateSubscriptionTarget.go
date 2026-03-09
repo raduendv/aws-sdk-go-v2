@@ -65,6 +65,10 @@ type UpdateSubscriptionTargetInput struct {
 	// The provider to be updated as part of the UpdateSubscriptionTarget action.
 	Provider *string
 
+	//  Determines the subscription grant creation mode for this target, defining if
+	// grants are auto-created upon subscription approval or managed manually.
+	SubscriptionGrantCreationMode types.SubscriptionGrantCreationMode
+
 	// The configuration to be updated as part of the UpdateSubscriptionTarget action.
 	SubscriptionTargetConfig []types.SubscriptionTargetForm
 
@@ -80,7 +84,7 @@ type UpdateSubscriptionTargetOutput struct {
 	ApplicableAssetTypes []string
 
 	// The authorized principals to be updated as part of the UpdateSubscriptionTarget
-	// action.
+	// action. Updates are supported in batches of 5 at a time.
 	//
 	// This member is required.
 	AuthorizedPrincipals []string
@@ -140,6 +144,10 @@ type UpdateSubscriptionTargetOutput struct {
 	// The manage access role to be updated as part of the UpdateSubscriptionTarget
 	// action.
 	ManageAccessRole *string
+
+	//  Determines the subscription grant creation mode for this target, defining if
+	// grants are auto-created upon subscription approval or managed manually.
+	SubscriptionGrantCreationMode types.SubscriptionGrantCreationMode
 
 	// The timestamp of when the subscription target was updated.
 	UpdatedAt *time.Time
@@ -241,16 +249,13 @@ func (c *Client) addOperationUpdateSubscriptionTargetMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

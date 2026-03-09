@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/customerprofiles/types"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
+	"time"
 )
 
 // Determines if the given profiles are within a segment.
@@ -52,6 +53,10 @@ type GetSegmentMembershipOutput struct {
 	// An array of maps where each contains a response per profile failed for the
 	// request.
 	Failures []types.ProfileQueryFailures
+
+	// The timestamp indicating when the segment membership was last computed or
+	// updated.
+	LastComputedAt *time.Time
 
 	// An array of maps where each contains a response per profile requested.
 	Profiles []types.ProfileQueryResult
@@ -153,16 +158,13 @@ func (c *Client) addOperationGetSegmentMembershipMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

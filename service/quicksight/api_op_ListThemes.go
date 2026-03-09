@@ -45,9 +45,9 @@ type ListThemesInput struct {
 	//
 	//   - ALL (default) - Display all existing themes.
 	//
-	//   - CUSTOM - Display only the themes created by people using Amazon QuickSight.
+	//   - CUSTOM - Display only the themes created by people using Amazon Quick Sight.
 	//
-	//   - QUICKSIGHT - Display only the starting themes defined by Amazon QuickSight.
+	//   - QUICKSIGHT - Display only the starting themes defined by Quick Sight.
 	Type types.ThemeType
 
 	noSmithyDocumentSerde
@@ -161,16 +161,13 @@ func (c *Client) addOperationListThemesMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

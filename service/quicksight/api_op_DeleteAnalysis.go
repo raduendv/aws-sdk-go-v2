@@ -11,11 +11,11 @@ import (
 	"time"
 )
 
-// Deletes an analysis from Amazon QuickSight. You can optionally include a
+// Deletes an analysis from Amazon Quick Sight. You can optionally include a
 // recovery window during which you can restore the analysis. If you don't specify
-// a recovery window value, the operation defaults to 30 days. Amazon QuickSight
+// a recovery window value, the operation defaults to 30 days. Amazon Quick Sight
 // attaches a DeletionTime stamp to the response that specifies the end of the
-// recovery window. At the end of the recovery window, Amazon QuickSight deletes
+// recovery window. At the end of the recovery window, Amazon Quick Sight deletes
 // the analysis permanently.
 //
 // At any time before recovery window ends, you can use the RestoreAnalysis API
@@ -23,9 +23,9 @@ import (
 // analysis. The analysis remains visible in the API until it's deleted, so you can
 // describe it but you can't make a template from it.
 //
-// An analysis that's scheduled for deletion isn't accessible in the Amazon
-// QuickSight console. To access it in the console, restore it. Deleting an
-// analysis doesn't delete the dashboards that you publish from it.
+// An analysis that's scheduled for deletion isn't accessible in the Amazon Quick
+// Sight console. To access it in the console, restore it. Deleting an analysis
+// doesn't delete the dashboards that you publish from it.
 func (c *Client) DeleteAnalysis(ctx context.Context, params *DeleteAnalysisInput, optFns ...func(*Options)) (*DeleteAnalysisOutput, error) {
 	if params == nil {
 		params = &DeleteAnalysisInput{}
@@ -58,7 +58,7 @@ type DeleteAnalysisInput struct {
 	// restore an analysis after it's deleted.
 	ForceDeleteWithoutRecovery bool
 
-	// A value that specifies the number of days that Amazon QuickSight waits before
+	// A value that specifies the number of days that Amazon Quick Sight waits before
 	// it deletes the analysis. You can't use this parameter with the
 	// ForceDeleteWithoutRecovery option in the same API call. The default value is 30.
 	RecoveryWindowInDays *int64
@@ -177,16 +177,13 @@ func (c *Client) addOperationDeleteAnalysisMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

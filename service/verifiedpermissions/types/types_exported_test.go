@@ -14,7 +14,13 @@ func ExampleAttributeValue_outputUsage() {
 	case *types.AttributeValueMemberBoolean:
 		_ = v.Value // Value is bool
 
+	case *types.AttributeValueMemberDatetime:
+		_ = v.Value // Value is string
+
 	case *types.AttributeValueMemberDecimal:
+		_ = v.Value // Value is string
+
+	case *types.AttributeValueMemberDuration:
 		_ = v.Value // Value is string
 
 	case *types.AttributeValueMemberEntityIdentifier:
@@ -48,10 +54,66 @@ var _ *types.EntityIdentifier
 var _ *string
 var _ *string
 var _ *string
+var _ *string
+var _ *string
 var _ map[string]types.AttributeValue
 var _ *bool
 var _ *int64
 var _ []types.AttributeValue
+
+func ExampleCedarTagValue_outputUsage() {
+	var union types.CedarTagValue
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.CedarTagValueMemberBoolean:
+		_ = v.Value // Value is bool
+
+	case *types.CedarTagValueMemberDatetime:
+		_ = v.Value // Value is string
+
+	case *types.CedarTagValueMemberDecimal:
+		_ = v.Value // Value is string
+
+	case *types.CedarTagValueMemberDuration:
+		_ = v.Value // Value is string
+
+	case *types.CedarTagValueMemberEntityIdentifier:
+		_ = v.Value // Value is types.EntityIdentifier
+
+	case *types.CedarTagValueMemberIpaddr:
+		_ = v.Value // Value is string
+
+	case *types.CedarTagValueMemberLong:
+		_ = v.Value // Value is int64
+
+	case *types.CedarTagValueMemberRecord:
+		_ = v.Value // Value is map[string]types.CedarTagValue
+
+	case *types.CedarTagValueMemberSet:
+		_ = v.Value // Value is []types.CedarTagValue
+
+	case *types.CedarTagValueMemberString:
+		_ = v.Value // Value is string
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.EntityIdentifier
+var _ map[string]types.CedarTagValue
+var _ *string
+var _ *string
+var _ *string
+var _ *string
+var _ *string
+var _ []types.CedarTagValue
+var _ *bool
+var _ *int64
 
 func ExampleConfiguration_outputUsage() {
 	var union types.Configuration
@@ -140,6 +202,50 @@ func ExampleContextDefinition_outputUsage() {
 
 var _ *string
 var _ map[string]types.AttributeValue
+
+func ExampleEncryptionSettings_outputUsage() {
+	var union types.EncryptionSettings
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.EncryptionSettingsMemberDefault:
+		_ = v.Value // Value is types.Unit
+
+	case *types.EncryptionSettingsMemberKmsEncryptionSettings:
+		_ = v.Value // Value is types.KmsEncryptionSettings
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.Unit
+var _ *types.KmsEncryptionSettings
+
+func ExampleEncryptionState_outputUsage() {
+	var union types.EncryptionState
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.EncryptionStateMemberDefault:
+		_ = v.Value // Value is types.Unit
+
+	case *types.EncryptionStateMemberKmsEncryptionState:
+		_ = v.Value // Value is types.KmsEncryptionState
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.KmsEncryptionState
+var _ *types.Unit
 
 func ExampleEntitiesDefinition_outputUsage() {
 	var union types.EntitiesDefinition

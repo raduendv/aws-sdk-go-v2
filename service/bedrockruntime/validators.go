@@ -70,6 +70,26 @@ func (m *validateOpConverseStream) HandleInitialize(ctx context.Context, in midd
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCountTokens struct {
+}
+
+func (*validateOpCountTokens) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCountTokens) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CountTokensInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCountTokensInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetAsyncInvoke struct {
 }
 
@@ -162,6 +182,10 @@ func addOpConverseStreamValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpConverseStream{}, middleware.After)
 }
 
+func addOpCountTokensValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCountTokens{}, middleware.After)
+}
+
 func addOpGetAsyncInvokeValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetAsyncInvoke{}, middleware.After)
 }
@@ -212,6 +236,47 @@ func validateAsyncInvokeS3OutputDataConfig(v *types.AsyncInvokeS3OutputDataConfi
 	}
 }
 
+func validateAudioBlock(v *types.AudioBlock) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AudioBlock"}
+	if len(v.Format) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Format"))
+	}
+	if v.Source == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Source"))
+	} else if v.Source != nil {
+		if err := validateAudioSource(v.Source); err != nil {
+			invalidParams.AddNested("Source", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateAudioSource(v types.AudioSource) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AudioSource"}
+	switch uv := v.(type) {
+	case *types.AudioSourceMemberS3Location:
+		if err := validateS3Location(&uv.Value); err != nil {
+			invalidParams.AddNested("[s3Location]", err.(smithy.InvalidParamsError))
+		}
+
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateCachePointBlock(v *types.CachePointBlock) error {
 	if v == nil {
 		return nil
@@ -227,12 +292,32 @@ func validateCachePointBlock(v *types.CachePointBlock) error {
 	}
 }
 
+func validateCitationsConfig(v *types.CitationsConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CitationsConfig"}
+	if v.Enabled == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Enabled"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateContentBlock(v types.ContentBlock) error {
 	if v == nil {
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "ContentBlock"}
 	switch uv := v.(type) {
+	case *types.ContentBlockMemberAudio:
+		if err := validateAudioBlock(&uv.Value); err != nil {
+			invalidParams.AddNested("[audio]", err.(smithy.InvalidParamsError))
+		}
+
 	case *types.ContentBlockMemberCachePoint:
 		if err := validateCachePointBlock(&uv.Value); err != nil {
 			invalidParams.AddNested("[cachePoint]", err.(smithy.InvalidParamsError))
@@ -256,6 +341,11 @@ func validateContentBlock(v types.ContentBlock) error {
 	case *types.ContentBlockMemberReasoningContent:
 		if err := validateReasoningContentBlock(uv.Value); err != nil {
 			invalidParams.AddNested("[reasoningContent]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.ContentBlockMemberSearchResult:
+		if err := validateSearchResultBlock(&uv.Value); err != nil {
+			invalidParams.AddNested("[searchResult]", err.(smithy.InvalidParamsError))
 		}
 
 	case *types.ContentBlockMemberToolResult:
@@ -298,14 +388,62 @@ func validateContentBlocks(v []types.ContentBlock) error {
 	}
 }
 
+func validateConverseTokensRequest(v *types.ConverseTokensRequest) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ConverseTokensRequest"}
+	if v.Messages != nil {
+		if err := validateMessages(v.Messages); err != nil {
+			invalidParams.AddNested("Messages", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.System != nil {
+		if err := validateSystemContentBlocks(v.System); err != nil {
+			invalidParams.AddNested("System", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.ToolConfig != nil {
+		if err := validateToolConfiguration(v.ToolConfig); err != nil {
+			invalidParams.AddNested("ToolConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateCountTokensInput(v types.CountTokensInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CountTokensInput"}
+	switch uv := v.(type) {
+	case *types.CountTokensInputMemberConverse:
+		if err := validateConverseTokensRequest(&uv.Value); err != nil {
+			invalidParams.AddNested("[converse]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.CountTokensInputMemberInvokeModel:
+		if err := validateInvokeModelTokensRequest(&uv.Value); err != nil {
+			invalidParams.AddNested("[invokeModel]", err.(smithy.InvalidParamsError))
+		}
+
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateDocumentBlock(v *types.DocumentBlock) error {
 	if v == nil {
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "DocumentBlock"}
-	if len(v.Format) == 0 {
-		invalidParams.Add(smithy.NewErrParamRequired("Format"))
-	}
 	if v.Name == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Name"))
 	}
@@ -314,6 +452,11 @@ func validateDocumentBlock(v *types.DocumentBlock) error {
 	} else if v.Source != nil {
 		if err := validateDocumentSource(v.Source); err != nil {
 			invalidParams.AddNested("Source", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Citations != nil {
+		if err := validateCitationsConfig(v.Citations); err != nil {
+			invalidParams.AddNested("Citations", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -334,24 +477,6 @@ func validateDocumentSource(v types.DocumentSource) error {
 			invalidParams.AddNested("[s3Location]", err.(smithy.InvalidParamsError))
 		}
 
-	}
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	} else {
-		return nil
-	}
-}
-
-func validateGuardrailConfiguration(v *types.GuardrailConfiguration) error {
-	if v == nil {
-		return nil
-	}
-	invalidParams := smithy.InvalidParamsError{Context: "GuardrailConfiguration"}
-	if v.GuardrailIdentifier == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("GuardrailIdentifier"))
-	}
-	if v.GuardrailVersion == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("GuardrailVersion"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -476,24 +601,6 @@ func validateGuardrailImageBlock(v *types.GuardrailImageBlock) error {
 	}
 }
 
-func validateGuardrailStreamConfiguration(v *types.GuardrailStreamConfiguration) error {
-	if v == nil {
-		return nil
-	}
-	invalidParams := smithy.InvalidParamsError{Context: "GuardrailStreamConfiguration"}
-	if v.GuardrailIdentifier == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("GuardrailIdentifier"))
-	}
-	if v.GuardrailVersion == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("GuardrailVersion"))
-	}
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	} else {
-		return nil
-	}
-}
-
 func validateGuardrailTextBlock(v *types.GuardrailTextBlock) error {
 	if v == nil {
 		return nil
@@ -550,6 +657,36 @@ func validateImageSource(v types.ImageSource) error {
 	}
 }
 
+func validateInvokeModelTokensRequest(v *types.InvokeModelTokensRequest) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "InvokeModelTokensRequest"}
+	if v.Body == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Body"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateJsonSchemaDefinition(v *types.JsonSchemaDefinition) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "JsonSchemaDefinition"}
+	if v.Schema == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Schema"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateMessage(v *types.Message) error {
 	if v == nil {
 		return nil
@@ -581,6 +718,64 @@ func validateMessages(v []types.Message) error {
 		if err := validateMessage(&v[i]); err != nil {
 			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOutputConfig(v *types.OutputConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "OutputConfig"}
+	if v.TextFormat != nil {
+		if err := validateOutputFormat(v.TextFormat); err != nil {
+			invalidParams.AddNested("TextFormat", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOutputFormat(v *types.OutputFormat) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "OutputFormat"}
+	if len(v.Type) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Type"))
+	}
+	if v.Structure == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Structure"))
+	} else if v.Structure != nil {
+		if err := validateOutputFormatStructure(v.Structure); err != nil {
+			invalidParams.AddNested("Structure", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOutputFormatStructure(v types.OutputFormatStructure) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "OutputFormatStructure"}
+	switch uv := v.(type) {
+	case *types.OutputFormatStructureMemberJsonSchema:
+		if err := validateJsonSchemaDefinition(&uv.Value); err != nil {
+			invalidParams.AddNested("[jsonSchema]", err.(smithy.InvalidParamsError))
+		}
+
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -630,6 +825,83 @@ func validateS3Location(v *types.S3Location) error {
 	invalidParams := smithy.InvalidParamsError{Context: "S3Location"}
 	if v.Uri == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Uri"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateSearchResultBlock(v *types.SearchResultBlock) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SearchResultBlock"}
+	if v.Source == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Source"))
+	}
+	if v.Title == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Title"))
+	}
+	if v.Content == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Content"))
+	} else if v.Content != nil {
+		if err := validateSearchResultContentBlocks(v.Content); err != nil {
+			invalidParams.AddNested("Content", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.Citations != nil {
+		if err := validateCitationsConfig(v.Citations); err != nil {
+			invalidParams.AddNested("Citations", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateSearchResultContentBlock(v *types.SearchResultContentBlock) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SearchResultContentBlock"}
+	if v.Text == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Text"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateSearchResultContentBlocks(v []types.SearchResultContentBlock) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SearchResultContentBlocks"}
+	for i := range v {
+		if err := validateSearchResultContentBlock(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateServiceTier(v *types.ServiceTier) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ServiceTier"}
+	if len(v.Type) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Type"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -694,6 +966,21 @@ func validateSystemContentBlocks(v []types.SystemContentBlock) error {
 	}
 }
 
+func validateSystemTool(v *types.SystemTool) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SystemTool"}
+	if v.Name == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Name"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateTag(v *types.Tag) error {
 	if v == nil {
 		return nil
@@ -738,6 +1025,11 @@ func validateTool(v types.Tool) error {
 	case *types.ToolMemberCachePoint:
 		if err := validateCachePointBlock(&uv.Value); err != nil {
 			invalidParams.AddNested("[cachePoint]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.ToolMemberSystemTool:
+		if err := validateSystemTool(&uv.Value); err != nil {
+			invalidParams.AddNested("[systemTool]", err.(smithy.InvalidParamsError))
 		}
 
 	case *types.ToolMemberToolSpec:
@@ -832,6 +1124,11 @@ func validateToolResultContentBlock(v types.ToolResultContentBlock) error {
 	case *types.ToolResultContentBlockMemberImage:
 		if err := validateImageBlock(&uv.Value); err != nil {
 			invalidParams.AddNested("[image]", err.(smithy.InvalidParamsError))
+		}
+
+	case *types.ToolResultContentBlockMemberSearchResult:
+		if err := validateSearchResultBlock(&uv.Value); err != nil {
+			invalidParams.AddNested("[searchResult]", err.(smithy.InvalidParamsError))
 		}
 
 	case *types.ToolResultContentBlockMemberVideo:
@@ -1012,9 +1309,14 @@ func validateOpConverseInput(v *ConverseInput) error {
 			invalidParams.AddNested("ToolConfig", err.(smithy.InvalidParamsError))
 		}
 	}
-	if v.GuardrailConfig != nil {
-		if err := validateGuardrailConfiguration(v.GuardrailConfig); err != nil {
-			invalidParams.AddNested("GuardrailConfig", err.(smithy.InvalidParamsError))
+	if v.ServiceTier != nil {
+		if err := validateServiceTier(v.ServiceTier); err != nil {
+			invalidParams.AddNested("ServiceTier", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.OutputConfig != nil {
+		if err := validateOutputConfig(v.OutputConfig); err != nil {
+			invalidParams.AddNested("OutputConfig", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -1047,9 +1349,36 @@ func validateOpConverseStreamInput(v *ConverseStreamInput) error {
 			invalidParams.AddNested("ToolConfig", err.(smithy.InvalidParamsError))
 		}
 	}
-	if v.GuardrailConfig != nil {
-		if err := validateGuardrailStreamConfiguration(v.GuardrailConfig); err != nil {
-			invalidParams.AddNested("GuardrailConfig", err.(smithy.InvalidParamsError))
+	if v.ServiceTier != nil {
+		if err := validateServiceTier(v.ServiceTier); err != nil {
+			invalidParams.AddNested("ServiceTier", err.(smithy.InvalidParamsError))
+		}
+	}
+	if v.OutputConfig != nil {
+		if err := validateOutputConfig(v.OutputConfig); err != nil {
+			invalidParams.AddNested("OutputConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpCountTokensInput(v *CountTokensInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CountTokensInput"}
+	if v.ModelId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ModelId"))
+	}
+	if v.Input == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Input"))
+	} else if v.Input != nil {
+		if err := validateCountTokensInput(v.Input); err != nil {
+			invalidParams.AddNested("Input", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {

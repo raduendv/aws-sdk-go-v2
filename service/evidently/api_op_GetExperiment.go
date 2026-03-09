@@ -14,6 +14,8 @@ import (
 // Returns the details about one experiment. You must already know the experiment
 // name. To retrieve a list of experiments in your account, use [ListExperiments].
 //
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
+//
 // [ListExperiments]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_ListExperiments.html
 func (c *Client) GetExperiment(ctx context.Context, params *GetExperimentInput, optFns ...func(*Options)) (*GetExperimentOutput, error) {
 	if params == nil {
@@ -35,11 +37,15 @@ type GetExperimentInput struct {
 	// The name of the experiment that you want to see the details of.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Experiment *string
 
 	// The name or ARN of the project that contains the experiment.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	noSmithyDocumentSerde
@@ -48,6 +54,8 @@ type GetExperimentInput struct {
 type GetExperimentOutput struct {
 
 	// A structure containing the configuration details of the experiment.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Experiment *types.Experiment
 
 	// Metadata pertaining to the operation's result.
@@ -144,16 +152,13 @@ func (c *Client) addOperationGetExperimentMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

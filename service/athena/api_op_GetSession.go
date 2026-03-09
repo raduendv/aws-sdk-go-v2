@@ -50,6 +50,10 @@ type GetSessionOutput struct {
 	// You can get a list of engine versions by calling ListEngineVersions.
 	EngineVersion *string
 
+	// Contains the configuration settings for managed log persistence, delivering
+	// logs to Amazon S3 buckets, Amazon CloudWatch log groups etc.
+	MonitoringConfiguration *types.MonitoringConfiguration
+
 	// The notebook version.
 	NotebookVersion *string
 
@@ -162,16 +166,13 @@ func (c *Client) addOperationGetSessionMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

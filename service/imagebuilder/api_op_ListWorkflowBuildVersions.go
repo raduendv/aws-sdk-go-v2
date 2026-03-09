@@ -29,18 +29,16 @@ func (c *Client) ListWorkflowBuildVersions(ctx context.Context, params *ListWork
 
 type ListWorkflowBuildVersionsInput struct {
 
-	// The Amazon Resource Name (ARN) of the workflow resource for which to get a list
-	// of build versions.
-	//
-	// This member is required.
-	WorkflowVersionArn *string
-
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	MaxResults *int32
 
 	// A token to specify where to start paginating. This is the nextToken from a
 	// previously truncated response.
 	NextToken *string
+
+	// The Amazon Resource Name (ARN) of the workflow resource for which to get a list
+	// of build versions.
+	WorkflowVersionArn *string
 
 	noSmithyDocumentSerde
 }
@@ -129,9 +127,6 @@ func (c *Client) addOperationListWorkflowBuildVersionsMiddlewares(stack *middlew
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
-	if err = addOpListWorkflowBuildVersionsValidationMiddleware(stack); err != nil {
-		return err
-	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opListWorkflowBuildVersions(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -150,16 +145,13 @@ func (c *Client) addOperationListWorkflowBuildVersionsMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -168,7 +160,7 @@ func (c *Client) addOperationListWorkflowBuildVersionsMiddlewares(stack *middlew
 // ListWorkflowBuildVersionsPaginatorOptions is the paginator options for
 // ListWorkflowBuildVersions
 type ListWorkflowBuildVersionsPaginatorOptions struct {
-	// The maximum items to return in a request.
+	// Specify the maximum number of items to return in a request.
 	Limit int32
 
 	// Set to true if pagination should stop if the service returns a pagination token

@@ -74,11 +74,35 @@ func TestCheckSnapshot_AssociateKmsKey(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_AssociateSourceToS3TableIntegration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AssociateSourceToS3TableIntegration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AssociateSourceToS3TableIntegration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CancelExportTask(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CancelExportTask(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CancelExportTask")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CancelImportTask(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CancelImportTask(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CancelImportTask")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -103,6 +127,18 @@ func TestCheckSnapshot_CreateExportTask(t *testing.T) {
 	_, err := svc.CreateExportTask(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CreateExportTask")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateImportTask(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateImportTask(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateImportTask")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -139,6 +175,18 @@ func TestCheckSnapshot_CreateLogStream(t *testing.T) {
 	_, err := svc.CreateLogStream(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CreateLogStream")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateScheduledQuery(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateScheduledQuery(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateScheduledQuery")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -338,6 +386,18 @@ func TestCheckSnapshot_DeleteRetentionPolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteScheduledQuery(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteScheduledQuery(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteScheduledQuery")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteSubscriptionFilter(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteSubscriptionFilter(context.Background(), nil, func(o *Options) {
@@ -458,6 +518,30 @@ func TestCheckSnapshot_DescribeFieldIndexes(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeImportTaskBatches(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeImportTaskBatches(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeImportTaskBatches")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeImportTasks(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeImportTasks(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeImportTasks")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeIndexPolicies(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeIndexPolicies(context.Background(), nil, func(o *Options) {
@@ -559,6 +643,18 @@ func TestCheckSnapshot_DisassociateKmsKey(t *testing.T) {
 	_, err := svc.DisassociateKmsKey(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DisassociateKmsKey")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DisassociateSourceFromS3TableIntegration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DisassociateSourceFromS3TableIntegration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DisassociateSourceFromS3TableIntegration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -674,11 +770,35 @@ func TestCheckSnapshot_GetLogEvents(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetLogFields(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetLogFields(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetLogFields")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetLogGroupFields(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetLogGroupFields(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetLogGroupFields")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetLogObject(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetLogObject(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetLogObject")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -710,11 +830,47 @@ func TestCheckSnapshot_GetQueryResults(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetScheduledQuery(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetScheduledQuery(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetScheduledQuery")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetScheduledQueryHistory(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetScheduledQueryHistory(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetScheduledQueryHistory")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetTransformer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetTransformer(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetTransformer")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListAggregateLogGroupSummaries(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAggregateLogGroupSummaries(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListAggregateLogGroupSummaries")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -758,11 +914,47 @@ func TestCheckSnapshot_ListLogAnomalyDetectors(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListLogGroups(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListLogGroups(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListLogGroups")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListLogGroupsForQuery(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListLogGroupsForQuery(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListLogGroupsForQuery")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListScheduledQueries(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListScheduledQueries(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListScheduledQueries")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListSourcesForS3TableIntegration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListSourcesForS3TableIntegration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListSourcesForS3TableIntegration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -907,6 +1099,18 @@ func TestCheckSnapshot_PutLogEvents(t *testing.T) {
 	_, err := svc.PutLogEvents(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "PutLogEvents")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_PutLogGroupDeletionProtection(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutLogGroupDeletionProtection(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutLogGroupDeletionProtection")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1129,6 +1333,18 @@ func TestCheckSnapshot_UpdateLogAnomalyDetector(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestCheckSnapshot_UpdateScheduledQuery(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateScheduledQuery(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateScheduledQuery")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
 func TestUpdateSnapshot_AssociateKmsKey(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.AssociateKmsKey(context.Background(), nil, func(o *Options) {
@@ -1141,11 +1357,35 @@ func TestUpdateSnapshot_AssociateKmsKey(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_AssociateSourceToS3TableIntegration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AssociateSourceToS3TableIntegration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AssociateSourceToS3TableIntegration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CancelExportTask(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CancelExportTask(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CancelExportTask")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CancelImportTask(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CancelImportTask(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CancelImportTask")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1170,6 +1410,18 @@ func TestUpdateSnapshot_CreateExportTask(t *testing.T) {
 	_, err := svc.CreateExportTask(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CreateExportTask")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateImportTask(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateImportTask(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateImportTask")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1206,6 +1458,18 @@ func TestUpdateSnapshot_CreateLogStream(t *testing.T) {
 	_, err := svc.CreateLogStream(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CreateLogStream")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateScheduledQuery(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateScheduledQuery(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateScheduledQuery")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1405,6 +1669,18 @@ func TestUpdateSnapshot_DeleteRetentionPolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteScheduledQuery(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteScheduledQuery(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteScheduledQuery")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteSubscriptionFilter(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteSubscriptionFilter(context.Background(), nil, func(o *Options) {
@@ -1525,6 +1801,30 @@ func TestUpdateSnapshot_DescribeFieldIndexes(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeImportTaskBatches(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeImportTaskBatches(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeImportTaskBatches")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeImportTasks(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeImportTasks(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeImportTasks")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeIndexPolicies(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeIndexPolicies(context.Background(), nil, func(o *Options) {
@@ -1626,6 +1926,18 @@ func TestUpdateSnapshot_DisassociateKmsKey(t *testing.T) {
 	_, err := svc.DisassociateKmsKey(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DisassociateKmsKey")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DisassociateSourceFromS3TableIntegration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DisassociateSourceFromS3TableIntegration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DisassociateSourceFromS3TableIntegration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1741,11 +2053,35 @@ func TestUpdateSnapshot_GetLogEvents(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetLogFields(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetLogFields(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetLogFields")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetLogGroupFields(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetLogGroupFields(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetLogGroupFields")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetLogObject(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetLogObject(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetLogObject")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1777,11 +2113,47 @@ func TestUpdateSnapshot_GetQueryResults(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetScheduledQuery(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetScheduledQuery(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetScheduledQuery")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetScheduledQueryHistory(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetScheduledQueryHistory(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetScheduledQueryHistory")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetTransformer(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetTransformer(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetTransformer")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListAggregateLogGroupSummaries(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAggregateLogGroupSummaries(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListAggregateLogGroupSummaries")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1825,11 +2197,47 @@ func TestUpdateSnapshot_ListLogAnomalyDetectors(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListLogGroups(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListLogGroups(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListLogGroups")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListLogGroupsForQuery(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListLogGroupsForQuery(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListLogGroupsForQuery")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListScheduledQueries(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListScheduledQueries(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListScheduledQueries")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListSourcesForS3TableIntegration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListSourcesForS3TableIntegration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListSourcesForS3TableIntegration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1974,6 +2382,18 @@ func TestUpdateSnapshot_PutLogEvents(t *testing.T) {
 	_, err := svc.PutLogEvents(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "PutLogEvents")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_PutLogGroupDeletionProtection(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutLogGroupDeletionProtection(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutLogGroupDeletionProtection")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2190,6 +2610,18 @@ func TestUpdateSnapshot_UpdateLogAnomalyDetector(t *testing.T) {
 	_, err := svc.UpdateLogAnomalyDetector(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateLogAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateScheduledQuery(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateScheduledQuery(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateScheduledQuery")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

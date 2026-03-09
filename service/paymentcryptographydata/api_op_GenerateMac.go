@@ -24,8 +24,8 @@ import (
 // You can use this operation to generate a DUPKT, CMAC, HMAC or EMV MAC by
 // setting generation attributes and algorithm to the associated values. The MAC
 // generation encryption key must have valid values for KeyUsage such as
-// TR31_M7_HMAC_KEY for HMAC generation, and they key must have KeyModesOfUse set
-// to Generate and Verify .
+// TR31_M7_HMAC_KEY for HMAC generation, and the key must have KeyModesOfUse set
+// to Generate .
 //
 // For information about valid keys for this operation, see [Understanding key attributes] and [Key types for specific data operations] in the Amazon
 // Web Services Payment Cryptography User Guide.
@@ -195,16 +195,13 @@ func (c *Client) addOperationGenerateMacMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

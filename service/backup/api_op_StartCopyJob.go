@@ -15,6 +15,10 @@ import (
 // Starts a job to create a one-time copy of the specified resource.
 //
 // Does not support continuous backups.
+//
+// See [Copy job retry] for information on how Backup retries copy job operations.
+//
+// [Copy job retry]: https://docs.aws.amazon.com/aws-backup/latest/devguide/recov-point-create-a-copy.html#backup-copy-retry
 func (c *Client) StartCopyJob(ctx context.Context, params *StartCopyJobInput, optFns ...func(*Options)) (*StartCopyJobOutput, error) {
 	if params == nil {
 		params = &StartCopyJobInput{}
@@ -174,6 +178,9 @@ func (c *Client) addOperationStartCopyJobMiddlewares(stack *middleware.Stack, op
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
+	if err = addIdempotencyToken_opStartCopyJobMiddleware(stack, options); err != nil {
+		return err
+	}
 	if err = addOpStartCopyJobValidationMiddleware(stack); err != nil {
 		return err
 	}
@@ -195,19 +202,49 @@ func (c *Client) addOperationStartCopyJobMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
+}
+
+type idempotencyToken_initializeOpStartCopyJob struct {
+	tokenProvider IdempotencyTokenProvider
+}
+
+func (*idempotencyToken_initializeOpStartCopyJob) ID() string {
+	return "OperationIdempotencyTokenAutoFill"
+}
+
+func (m *idempotencyToken_initializeOpStartCopyJob) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	if m.tokenProvider == nil {
+		return next.HandleInitialize(ctx, in)
+	}
+
+	input, ok := in.Parameters.(*StartCopyJobInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("expected middleware input to be of type *StartCopyJobInput ")
+	}
+
+	if input.IdempotencyToken == nil {
+		t, err := m.tokenProvider.GetIdempotencyToken()
+		if err != nil {
+			return out, metadata, err
+		}
+		input.IdempotencyToken = &t
+	}
+	return next.HandleInitialize(ctx, in)
+}
+func addIdempotencyToken_opStartCopyJobMiddleware(stack *middleware.Stack, cfg Options) error {
+	return stack.Initialize.Add(&idempotencyToken_initializeOpStartCopyJob{tokenProvider: cfg.IdempotencyTokenProvider}, middleware.Before)
 }
 
 func newServiceMetadataMiddleware_opStartCopyJob(region string) *awsmiddleware.RegisterServiceMetadata {

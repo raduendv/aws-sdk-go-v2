@@ -67,9 +67,10 @@ type CreatePermissionInput struct {
 	// Specifies the name of the resource type that this customer managed permission
 	// applies to.
 	//
-	// The format is  :  and is not case sensitive. For example, to specify an Amazon
-	// EC2 Subnet, you can use the string ec2:subnet . To see the list of valid values
-	// for this parameter, query the ListResourceTypesoperation.
+	// The format is  :  and is case sensitive. For example, to specify an Amazon EC2
+	// Subnet, you can use the string ec2:Subnet . To see the list of valid values for
+	// this parameter, query the ListResourceTypesoperation. This value must match the display name of
+	// the resource (available in ListResourceTypes ).
 	//
 	// This member is required.
 	ResourceType *string
@@ -201,16 +202,13 @@ func (c *Client) addOperationCreatePermissionMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

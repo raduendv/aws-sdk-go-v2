@@ -458,6 +458,18 @@ func TestCheckSnapshot_CreateDevEndpoint(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateGlueIdentityCenterConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateGlueIdentityCenterConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateGlueIdentityCenterConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateIntegration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateIntegration(context.Background(), nil, func(o *Options) {
@@ -758,6 +770,18 @@ func TestCheckSnapshot_DeleteConnection(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteConnectionType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteConnectionType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteConnectionType")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteCrawler(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteCrawler(context.Background(), nil, func(o *Options) {
@@ -818,11 +842,35 @@ func TestCheckSnapshot_DeleteDevEndpoint(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteGlueIdentityCenterConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteGlueIdentityCenterConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteGlueIdentityCenterConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteIntegration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteIntegration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteIntegration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteIntegrationResourceProperty(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteIntegrationResourceProperty(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteIntegrationResourceProperty")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1478,6 +1526,18 @@ func TestCheckSnapshot_GetEntityRecords(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetGlueIdentityCenterConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetGlueIdentityCenterConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetGlueIdentityCenterConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetIntegrationResourceProperty(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetIntegrationResourceProperty(context.Background(), nil, func(o *Options) {
@@ -1567,6 +1627,18 @@ func TestCheckSnapshot_GetMapping(t *testing.T) {
 	_, err := svc.GetMapping(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetMapping")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetMaterializedViewRefreshTaskRun(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetMaterializedViewRefreshTaskRun(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetMaterializedViewRefreshTaskRun")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2198,11 +2270,35 @@ func TestCheckSnapshot_ListEntities(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_ListIntegrationResourceProperties(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListIntegrationResourceProperties(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListIntegrationResourceProperties")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_ListJobs(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListJobs(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListJobs")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListMaterializedViewRefreshTaskRuns(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListMaterializedViewRefreshTaskRuns(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListMaterializedViewRefreshTaskRuns")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2414,6 +2510,18 @@ func TestCheckSnapshot_QuerySchemaVersionMetadata(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_RegisterConnectionType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RegisterConnectionType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "RegisterConnectionType")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_RegisterSchemaVersion(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.RegisterSchemaVersion(context.Background(), nil, func(o *Options) {
@@ -2606,6 +2714,18 @@ func TestCheckSnapshot_StartJobRun(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_StartMaterializedViewRefreshTaskRun(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StartMaterializedViewRefreshTaskRun(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "StartMaterializedViewRefreshTaskRun")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_StartMLEvaluationTaskRun(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.StartMLEvaluationTaskRun(context.Background(), nil, func(o *Options) {
@@ -2695,6 +2815,18 @@ func TestCheckSnapshot_StopCrawlerSchedule(t *testing.T) {
 	_, err := svc.StopCrawlerSchedule(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "StopCrawlerSchedule")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_StopMaterializedViewRefreshTaskRun(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StopMaterializedViewRefreshTaskRun(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "StopMaterializedViewRefreshTaskRun")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2911,6 +3043,18 @@ func TestCheckSnapshot_UpdateDevEndpoint(t *testing.T) {
 	_, err := svc.UpdateDevEndpoint(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdateDevEndpoint")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateGlueIdentityCenterConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateGlueIdentityCenterConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateGlueIdentityCenterConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -3493,6 +3637,18 @@ func TestUpdateSnapshot_CreateDevEndpoint(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateGlueIdentityCenterConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateGlueIdentityCenterConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateGlueIdentityCenterConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateIntegration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateIntegration(context.Background(), nil, func(o *Options) {
@@ -3793,6 +3949,18 @@ func TestUpdateSnapshot_DeleteConnection(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteConnectionType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteConnectionType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteConnectionType")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteCrawler(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteCrawler(context.Background(), nil, func(o *Options) {
@@ -3853,11 +4021,35 @@ func TestUpdateSnapshot_DeleteDevEndpoint(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteGlueIdentityCenterConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteGlueIdentityCenterConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteGlueIdentityCenterConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteIntegration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteIntegration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteIntegration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteIntegrationResourceProperty(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteIntegrationResourceProperty(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteIntegrationResourceProperty")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -4513,6 +4705,18 @@ func TestUpdateSnapshot_GetEntityRecords(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetGlueIdentityCenterConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetGlueIdentityCenterConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetGlueIdentityCenterConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetIntegrationResourceProperty(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetIntegrationResourceProperty(context.Background(), nil, func(o *Options) {
@@ -4602,6 +4806,18 @@ func TestUpdateSnapshot_GetMapping(t *testing.T) {
 	_, err := svc.GetMapping(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetMapping")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetMaterializedViewRefreshTaskRun(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetMaterializedViewRefreshTaskRun(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetMaterializedViewRefreshTaskRun")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -5233,11 +5449,35 @@ func TestUpdateSnapshot_ListEntities(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_ListIntegrationResourceProperties(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListIntegrationResourceProperties(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListIntegrationResourceProperties")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_ListJobs(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.ListJobs(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListJobs")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListMaterializedViewRefreshTaskRuns(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListMaterializedViewRefreshTaskRuns(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListMaterializedViewRefreshTaskRuns")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -5449,6 +5689,18 @@ func TestUpdateSnapshot_QuerySchemaVersionMetadata(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_RegisterConnectionType(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RegisterConnectionType(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "RegisterConnectionType")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_RegisterSchemaVersion(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.RegisterSchemaVersion(context.Background(), nil, func(o *Options) {
@@ -5641,6 +5893,18 @@ func TestUpdateSnapshot_StartJobRun(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_StartMaterializedViewRefreshTaskRun(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StartMaterializedViewRefreshTaskRun(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "StartMaterializedViewRefreshTaskRun")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_StartMLEvaluationTaskRun(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.StartMLEvaluationTaskRun(context.Background(), nil, func(o *Options) {
@@ -5730,6 +5994,18 @@ func TestUpdateSnapshot_StopCrawlerSchedule(t *testing.T) {
 	_, err := svc.StopCrawlerSchedule(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "StopCrawlerSchedule")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_StopMaterializedViewRefreshTaskRun(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.StopMaterializedViewRefreshTaskRun(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "StopMaterializedViewRefreshTaskRun")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -5946,6 +6222,18 @@ func TestUpdateSnapshot_UpdateDevEndpoint(t *testing.T) {
 	_, err := svc.UpdateDevEndpoint(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateDevEndpoint")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateGlueIdentityCenterConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateGlueIdentityCenterConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateGlueIdentityCenterConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

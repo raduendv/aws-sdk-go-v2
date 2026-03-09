@@ -13,6 +13,27 @@ import (
 )
 
 // Creates a revision of the asset.
+//
+// Asset revisions represent new versions of existing assets, capturing changes to
+// either the underlying data or its metadata. They maintain a historical record of
+// how assets evolve over time, who made changes, and when those changes occurred.
+// This versioning capability is crucial for governance and compliance, allowing
+// organizations to track changes, understand their impact, and roll back if
+// necessary.
+//
+// Prerequisites:
+//
+//   - Asset must already exist in the domain with identifier.
+//
+//   - formsInput is required when asset has the form type. typeRevision should be
+//     the latest version of form type.
+//
+//   - The form content must include all required fields (e.g., bucketArn for
+//     S3ObjectCollectionForm ).
+//
+//   - The owning project of the original asset must still exist and be active.
+//
+//   - User must have write access to the project and domain.
 func (c *Client) CreateAssetRevision(ctx context.Context, params *CreateAssetRevisionInput, optFns ...func(*Options)) (*CreateAssetRevisionOutput, error) {
 	if params == nil {
 		params = &CreateAssetRevisionInput{}
@@ -132,6 +153,9 @@ type CreateAssetRevisionOutput struct {
 	// The glossary terms that were attached to the asset as part of asset revision.
 	GlossaryTerms []string
 
+	// The glossary terms in a restricted glossary.
+	GovernedGlossaryTerms []string
+
 	// The latest data point that was imported into the time series form for the
 	// asset.
 	LatestTimeSeriesDataPointFormsOutput []types.TimeSeriesDataPointSummaryFormOutput
@@ -244,16 +268,13 @@ func (c *Client) addOperationCreateAssetRevisionMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -11,11 +11,13 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Creates a multiplayer game session for players in a specific fleet location.
 // This operation prompts an available server process to start a game session and
 // retrieves connection information for the new game session. As an alternative,
-// consider using the Amazon GameLift game session placement feature with [StartGameSessionPlacement], which
-// uses the FleetIQ algorithm and queues to optimize the placement process.
+// consider using the Amazon GameLift Servers game session placement feature with [StartGameSessionPlacement]
+// , which uses the FleetIQ algorithm and queues to optimize the placement process.
 //
 // When creating a game session, you specify exactly where you want to place it
 // and provide a set of game session configuration settings. The target fleet must
@@ -33,17 +35,18 @@ import (
 //   - To create a game session on an instance in an Anywhere fleet, specify the
 //     fleet's custom location.
 //
-// If successful, Amazon GameLift initiates a workflow to start a new game session
-// and returns a GameSession object containing the game session configuration and
-// status. When the game session status is ACTIVE , it is updated with connection
-// information and you can create player sessions for the game session. By default,
-// newly created game sessions are open to new players. You can restrict new player
-// access by using [UpdateGameSession]to change the game session's player session creation policy.
+// If successful, Amazon GameLift Servers initiates a workflow to start a new game
+// session and returns a GameSession object containing the game session
+// configuration and status. When the game session status is ACTIVE , it is updated
+// with connection information and you can create player sessions for the game
+// session. By default, newly created game sessions are open to new players. You
+// can restrict new player access by using [UpdateGameSession]to change the game session's player
+// session creation policy.
 //
-// Amazon GameLift retains logs for active for 14 days. To access the logs, call [GetGameSessionLogUrl]
-// to download the log files.
+// Amazon GameLift Servers retains logs for active for 14 days. To access the
+// logs, call [GetGameSessionLogUrl]to download the log files.
 //
-// Available in Amazon GameLift Local.
+// Available in Amazon GameLift Servers Local.
 //
 // # Learn more
 //
@@ -87,12 +90,13 @@ type CreateGameSessionInput struct {
 	// A unique identifier for a player or entity creating the game session.
 	//
 	// If you add a resource creation limit policy to a fleet, the CreateGameSession
-	// operation requires a CreatorId . Amazon GameLift limits the number of game
-	// session creation requests with the same CreatorId in a specified time period.
+	// operation requires a CreatorId . Amazon GameLift Servers limits the number of
+	// game session creation requests with the same CreatorId in a specified time
+	// period.
 	//
 	// If you your fleet doesn't have a resource creation limit policy and you provide
-	// a CreatorId in your CreateGameSession requests, Amazon GameLift limits requests
-	// to one request per CreatorId per second.
+	// a CreatorId in your CreateGameSession requests, Amazon GameLift Servers limits
+	// requests to one request per CreatorId per second.
 	//
 	// To not limit CreateGameSession requests with the same CreatorId , don't provide
 	// a CreatorId in your CreateGameSession request.
@@ -105,6 +109,10 @@ type CreateGameSessionInput struct {
 
 	// A set of key-value pairs that can store custom data in a game session. For
 	// example: {"Key": "difficulty", "Value": "novice"} . For an example, see [Create a game session with custom properties].
+	//
+	// Avoid using periods (".") in property keys if you plan to search for game
+	// sessions by properties. Property keys containing periods cannot be searched and
+	// will be filtered out from search results due to search index limitations.
 	//
 	// [Create a game session with custom properties]: https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-sdk-client-api.html#game-properties-create
 	GameProperties []types.GameProperty
@@ -246,16 +254,13 @@ func (c *Client) addOperationCreateGameSessionMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

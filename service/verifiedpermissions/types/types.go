@@ -37,13 +37,15 @@ type ActionIdentifier struct {
 // Contains information about the runtime context for a request for which an
 // authorization decision is made.
 //
-// This data type is used as a member of the [ContextDefinition] structure which is uses as a request
+// This data type is used as a member of the [ContextDefinition] structure which is used as a request
 // parameter for the [IsAuthorized], [BatchIsAuthorized], and [IsAuthorizedWithToken] operations.
 //
 // The following types satisfy this interface:
 //
 //	AttributeValueMemberBoolean
+//	AttributeValueMemberDatetime
 //	AttributeValueMemberDecimal
+//	AttributeValueMemberDuration
 //	AttributeValueMemberEntityIdentifier
 //	AttributeValueMemberIpaddr
 //	AttributeValueMemberLong
@@ -63,7 +65,7 @@ type AttributeValue interface {
 //
 // Example: {"boolean": true}
 //
-// [Boolean]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#boolean
+// [Boolean]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-bool
 type AttributeValueMemberBoolean struct {
 	Value bool
 
@@ -71,6 +73,19 @@ type AttributeValueMemberBoolean struct {
 }
 
 func (*AttributeValueMemberBoolean) isAttributeValue() {}
+
+// An attribute value of [datetime] type.
+//
+// Example: {"datetime": "2024-10-15T11:35:00Z"}
+//
+// [datetime]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-datetime
+type AttributeValueMemberDatetime struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*AttributeValueMemberDatetime) isAttributeValue() {}
 
 // An attribute value of [decimal] type.
 //
@@ -85,10 +100,22 @@ type AttributeValueMemberDecimal struct {
 
 func (*AttributeValueMemberDecimal) isAttributeValue() {}
 
+// An attribute value of [duration] type.
+//
+// Example: {"duration": "1h30m"}
+//
+// [duration]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-duration
+type AttributeValueMemberDuration struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*AttributeValueMemberDuration) isAttributeValue() {}
+
 // An attribute value of type [EntityIdentifier].
 //
-// Example: "entityIdentifier": { "entityId": "<id>", "entityType": "<entity
-// type>"}
+// Example: {"entityIdentifier": { "entityId": "alice", "entityType": "User"} }
 //
 // [EntityIdentifier]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_EntityIdentifier.html
 type AttributeValueMemberEntityIdentifier struct {
@@ -116,7 +143,7 @@ func (*AttributeValueMemberIpaddr) isAttributeValue() {}
 //
 // Example: {"long": 0}
 //
-// [Long]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#long
+// [Long]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-long
 type AttributeValueMemberLong struct {
 	Value int64
 
@@ -129,7 +156,7 @@ func (*AttributeValueMemberLong) isAttributeValue() {}
 //
 // Example: {"record": { "keyName": {} } }
 //
-// [Record]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#record
+// [Record]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-record
 type AttributeValueMemberRecord struct {
 	Value map[string]AttributeValue
 
@@ -142,7 +169,7 @@ func (*AttributeValueMemberRecord) isAttributeValue() {}
 //
 // Example: {"set": [ {} ] }
 //
-// [Set]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#set
+// [Set]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-set
 type AttributeValueMemberSet struct {
 	Value []AttributeValue
 
@@ -155,7 +182,7 @@ func (*AttributeValueMemberSet) isAttributeValue() {}
 //
 // Example: {"string": "abc"}
 //
-// [String]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#string
+// [String]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-string
 type AttributeValueMemberString struct {
 	Value string
 
@@ -356,6 +383,163 @@ type BatchIsAuthorizedWithTokenOutputItem struct {
 
 	noSmithyDocumentSerde
 }
+
+// The value of an entity's Cedar tag.
+//
+// This data type is used as a member of the [EntityItem] structure that forms the body of the
+// Entities request parameter for the [IsAuthorized], [BatchIsAuthorized], [IsAuthorizedWithToken], and [BatchIsAuthorizedWithToken] operations.
+//
+// The following types satisfy this interface:
+//
+//	CedarTagValueMemberBoolean
+//	CedarTagValueMemberDatetime
+//	CedarTagValueMemberDecimal
+//	CedarTagValueMemberDuration
+//	CedarTagValueMemberEntityIdentifier
+//	CedarTagValueMemberIpaddr
+//	CedarTagValueMemberLong
+//	CedarTagValueMemberRecord
+//	CedarTagValueMemberSet
+//	CedarTagValueMemberString
+//
+// [BatchIsAuthorized]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_BatchIsAuthorized.html
+// [IsAuthorizedWithToken]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_IsAuthorizedWithToken.html
+// [IsAuthorized]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_IsAuthorized.html
+// [EntityItem]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_EntityItem.html
+// [BatchIsAuthorizedWithToken]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_BatchIsAuthorizedWithToken.html
+type CedarTagValue interface {
+	isCedarTagValue()
+}
+
+// A Cedar tag value of [Boolean] type.
+//
+// Example: {"boolean": false}
+//
+// [Boolean]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-bool
+type CedarTagValueMemberBoolean struct {
+	Value bool
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberBoolean) isCedarTagValue() {}
+
+// A Cedar tag value of [datetime] type.
+//
+// Example: {"datetime": "2025-11-04T11:35:00.000+0100"}
+//
+// [datetime]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-datetime
+type CedarTagValueMemberDatetime struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberDatetime) isCedarTagValue() {}
+
+// A Cedar tag value of [decimal] type.
+//
+// Example: {"decimal": "-2.0"}
+//
+// [decimal]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-decimal
+type CedarTagValueMemberDecimal struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberDecimal) isCedarTagValue() {}
+
+// A Cedar tag value of [duration] type.
+//
+// Example: {"duration": "-1d12h"}
+//
+// [duration]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-duration
+type CedarTagValueMemberDuration struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberDuration) isCedarTagValue() {}
+
+// A Cedar tag value of type [EntityIdentifier].
+//
+// Example: {"entityIdentifier": { "entityId": "alice", "entityType": "User"} }
+//
+// [EntityIdentifier]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_EntityIdentifier.html
+type CedarTagValueMemberEntityIdentifier struct {
+	Value EntityIdentifier
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberEntityIdentifier) isCedarTagValue() {}
+
+// A Cedar tag value of [ipaddr] type.
+//
+// Example: {"ip": "10.50.0.0/24"}
+//
+// [ipaddr]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-ipaddr
+type CedarTagValueMemberIpaddr struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberIpaddr) isCedarTagValue() {}
+
+// A Cedar tag value of [Long] type.
+//
+// Example: {"long": 0}
+//
+// [Long]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-long
+type CedarTagValueMemberLong struct {
+	Value int64
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberLong) isCedarTagValue() {}
+
+// A Cedar tag value of [Record] type.
+//
+// Example: {"record": { "keyName": {} } }
+//
+// [Record]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-record
+type CedarTagValueMemberRecord struct {
+	Value map[string]CedarTagValue
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberRecord) isCedarTagValue() {}
+
+// A Cedar tag value of [Set] type.
+//
+// Example: {"set": [ { "string": "abc" } ] }
+//
+// [Set]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-set
+type CedarTagValueMemberSet struct {
+	Value []CedarTagValue
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberSet) isCedarTagValue() {}
+
+// A Cedar tag value of [String] type.
+//
+// Example: {"string": "abc"}
+//
+// [String]: https://docs.cedarpolicy.com/policies/syntax-datatypes.html#datatype-string
+type CedarTagValueMemberString struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*CedarTagValueMemberString) isCedarTagValue() {}
 
 // The type of entity that a policy store maps to groups from an Amazon Cognito
 // user pool identity source.
@@ -762,6 +946,77 @@ type DeterminingPolicyItem struct {
 	noSmithyDocumentSerde
 }
 
+// A structure that contains the encryption configuration for the policy store and
+// child resources.
+//
+// This data type is used as a request parameter in the [CreatePolicyStore] operation.
+//
+// The following types satisfy this interface:
+//
+//	EncryptionSettingsMemberDefault
+//	EncryptionSettingsMemberKmsEncryptionSettings
+//
+// [CreatePolicyStore]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_CreatePolicyStore.html
+type EncryptionSettings interface {
+	isEncryptionSettings()
+}
+
+// This is the default encryption setting. The policy store uses an Amazon Web
+// Services owned key for encrypting data.
+type EncryptionSettingsMemberDefault struct {
+	Value Unit
+
+	noSmithyDocumentSerde
+}
+
+func (*EncryptionSettingsMemberDefault) isEncryptionSettings() {}
+
+// The KMS encryption settings for this policy store to encrypt data with. It will
+// contain the customer-managed KMS key, and a user-defined encryption context.
+type EncryptionSettingsMemberKmsEncryptionSettings struct {
+	Value KmsEncryptionSettings
+
+	noSmithyDocumentSerde
+}
+
+func (*EncryptionSettingsMemberKmsEncryptionSettings) isEncryptionSettings() {}
+
+// A structure that contains the encryption configuration for the policy store and
+// child resources.
+//
+// This data type is used as a response parameter field for the [GetPolicyStore] operation.
+//
+// The following types satisfy this interface:
+//
+//	EncryptionStateMemberDefault
+//	EncryptionStateMemberKmsEncryptionState
+//
+// [GetPolicyStore]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_GetPolicyStore.html
+type EncryptionState interface {
+	isEncryptionState()
+}
+
+// This is the default encryption state. The policy store is encrypted using an
+// Amazon Web Services owned key.
+type EncryptionStateMemberDefault struct {
+	Value Unit
+
+	noSmithyDocumentSerde
+}
+
+func (*EncryptionStateMemberDefault) isEncryptionState() {}
+
+// The KMS encryption settings currently configured for this policy store to
+// encrypt data with. It contains the customer-managed KMS key, and a user-defined
+// encryption context.
+type EncryptionStateMemberKmsEncryptionState struct {
+	Value KmsEncryptionState
+
+	noSmithyDocumentSerde
+}
+
+func (*EncryptionStateMemberKmsEncryptionState) isEncryptionState() {}
+
 // Contains the list of entities to be considered during an authorization request.
 // This includes all principals, resources, and actions required to successfully
 // evaluate the request.
@@ -865,6 +1120,9 @@ type EntityItem struct {
 	// 91 groups if one of those groups is a member of eight groups, for a total of
 	// 100: one entity, 91 entity parents, and eight parents of parents.
 	Parents []EntityIdentifier
+
+	// A list of cedar tags for the entity.
+	Tags map[string]CedarTagValue
 
 	noSmithyDocumentSerde
 }
@@ -1070,6 +1328,58 @@ type IdentitySourceItemDetails struct {
 	// Deprecated: This attribute has been replaced by
 	// configuration.cognitoUserPoolConfiguration.userPoolArn
 	UserPoolArn *string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that contains the KMS encryption configuration for the policy
+// store. The encryption settings determine what customer-managed KMS key will be
+// used to encrypt all resources within the policy store, and any user-defined
+// context key-value pairs to append during encryption processes.
+//
+// This data type is used as a field that is part of the [EncryptionSettings] type.
+//
+// [EncryptionSettings]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_EncryptionSettings.html
+type KmsEncryptionSettings struct {
+
+	// The customer-managed KMS key [Amazon Resource Name (ARN)], alias or ID to be used for encryption processes.
+	//
+	// Users can provide the full KMS key ARN, a KMS key alias, or a KMS key ID, but
+	// it will be mapped to the full KMS key ARN after policy store creation, and
+	// referenced when encrypting child resources.
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
+	//
+	// This member is required.
+	Key *string
+
+	// User-defined, additional context to be added to encryption processes.
+	EncryptionContext map[string]string
+
+	noSmithyDocumentSerde
+}
+
+// A structure that contains the KMS encryption configuration for the policy
+// store. The encryption state shows what customer-managed KMS key is being used to
+// encrypt all resources within the policy store, and any user-defined context
+// key-value pairs added during encryption processes.
+//
+// This data type is used as a field that is part of the [EncryptionState] type.
+//
+// [EncryptionState]: https://docs.aws.amazon.com/verifiedpermissions/latest/apireference/API_EncryptionState.html
+type KmsEncryptionState struct {
+
+	// User-defined, additional context added to encryption processes.
+	//
+	// This member is required.
+	EncryptionContext map[string]string
+
+	// The customer-managed KMS key [Amazon Resource Name (ARN)] being used for encryption processes.
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
+	//
+	// This member is required.
+	Key *string
 
 	noSmithyDocumentSerde
 }
@@ -1915,8 +2225,6 @@ type TemplateLinkedPolicyDefinitionDetail struct {
 }
 
 // Contains information about a policy created by instantiating a policy template.
-//
-// This
 type TemplateLinkedPolicyDefinitionItem struct {
 
 	// The unique identifier of the policy template used to create this policy.
@@ -2255,6 +2563,10 @@ type ValidationSettings struct {
 	noSmithyDocumentSerde
 }
 
+type Unit struct {
+	noSmithyDocumentSerde
+}
+
 type noSmithyDocumentSerde = smithydocument.NoSerde
 
 // UnknownUnionMember is returned when a union member is returned over the wire,
@@ -2267,10 +2579,13 @@ type UnknownUnionMember struct {
 }
 
 func (*UnknownUnionMember) isAttributeValue()                    {}
+func (*UnknownUnionMember) isCedarTagValue()                     {}
 func (*UnknownUnionMember) isConfiguration()                     {}
 func (*UnknownUnionMember) isConfigurationDetail()               {}
 func (*UnknownUnionMember) isConfigurationItem()                 {}
 func (*UnknownUnionMember) isContextDefinition()                 {}
+func (*UnknownUnionMember) isEncryptionSettings()                {}
+func (*UnknownUnionMember) isEncryptionState()                   {}
 func (*UnknownUnionMember) isEntitiesDefinition()                {}
 func (*UnknownUnionMember) isEntityReference()                   {}
 func (*UnknownUnionMember) isOpenIdConnectTokenSelection()       {}

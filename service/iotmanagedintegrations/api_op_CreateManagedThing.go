@@ -13,8 +13,8 @@ import (
 )
 
 // Creates a managed thing. A managed thing contains the device identifier,
-// protocol supported, and capabilities of the device in a protocol-specific
-// format.
+// protocol supported, and capabilities of the device in a data model format
+// defined by Managed integrations.
 func (c *Client) CreateManagedThing(ctx context.Context, params *CreateManagedThingInput, optFns ...func(*Options)) (*CreateManagedThingOutput, error) {
 	if params == nil {
 		params = &CreateManagedThingInput{}
@@ -33,7 +33,7 @@ func (c *Client) CreateManagedThing(ctx context.Context, params *CreateManagedTh
 type CreateManagedThingInput struct {
 
 	// The authentication material defining the device connectivity setup requests.
-	// The authentication materials used are the device bar code.
+	// The authorization materials used are the device bar code.
 	//
 	// This member is required.
 	AuthenticationMaterial *string
@@ -58,6 +58,11 @@ type CreateManagedThingInput struct {
 	// A report of the capabilities for the managed thing.
 	CapabilityReport *types.CapabilityReport
 
+	// The capability schemas that define the functionality and features supported by
+	// the managed thing, including device capabilities and their associated
+	// properties.
+	CapabilitySchemas []types.CapabilitySchemaItem
+
 	// The classification of the managed thing such as light bulb or thermostat.
 	Classification *string
 
@@ -70,6 +75,11 @@ type CreateManagedThingInput struct {
 	CredentialLockerId *string
 
 	// The metadata for the managed thing.
+	//
+	// The managedThing metadata parameter is used for associating attributes with a
+	// managedThing that can be used for grouping over-the-air (OTA) tasks. Name value
+	// pairs in metadata can be used in the OtaTargetQueryString parameter for the
+	// CreateOtaTask API operation.
 	MetaData map[string]string
 
 	// The model of the device.
@@ -87,6 +97,10 @@ type CreateManagedThingInput struct {
 
 	// A set of key/value pairs that are used to manage the managed thing.
 	Tags map[string]string
+
+	// The Wi-Fi Simple Setup configuration for the managed thing, which defines
+	// provisioning capabilities and timeout settings.
+	WiFiSimpleSetupConfiguration *types.WiFiSimpleSetupConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -199,16 +213,13 @@ func (c *Client) addOperationCreateManagedThingMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

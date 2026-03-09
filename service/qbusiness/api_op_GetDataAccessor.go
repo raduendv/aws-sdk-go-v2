@@ -58,6 +58,10 @@ type GetDataAccessorOutput struct {
 	// data accessor.
 	ApplicationId *string
 
+	// The authentication configuration details for the data accessor. This specifies
+	// how the ISV authenticates when accessing data through this data accessor.
+	AuthenticationDetail *types.DataAccessorAuthenticationDetail
+
 	// The timestamp when the data accessor was created.
 	CreatedAt *time.Time
 
@@ -175,16 +179,13 @@ func (c *Client) addOperationGetDataAccessorMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

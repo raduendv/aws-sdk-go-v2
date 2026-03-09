@@ -31,14 +31,16 @@ func (c *Client) CreateApi(ctx context.Context, params *CreateApiInput, optFns .
 
 type CreateApiInput struct {
 
+	// The Event API configuration. This includes the default authorization
+	// configuration for connecting, publishing, and subscribing to an Event API.
+	//
+	// This member is required.
+	EventConfig *types.EventConfig
+
 	// The name for the Api .
 	//
 	// This member is required.
 	Name *string
-
-	// The Event API configuration. This includes the default authorization
-	// configuration for connecting, publishing, and subscribing to an Event API.
-	EventConfig *types.EventConfig
 
 	// The owner contact information for the Api .
 	OwnerContact *string
@@ -148,16 +150,13 @@ func (c *Client) addOperationCreateApiMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -1871,8 +1871,16 @@ func awsAwsjson10_serializeDocumentAttributeValue(v types.AttributeValue, value 
 		av := object.Key("boolean")
 		av.Boolean(uv.Value)
 
+	case *types.AttributeValueMemberDatetime:
+		av := object.Key("datetime")
+		av.String(uv.Value)
+
 	case *types.AttributeValueMemberDecimal:
 		av := object.Key("decimal")
+		av.String(uv.Value)
+
+	case *types.AttributeValueMemberDuration:
+		av := object.Key("duration")
 		av.String(uv.Value)
 
 	case *types.AttributeValueMemberEntityIdentifier:
@@ -2042,6 +2050,96 @@ func awsAwsjson10_serializeDocumentBatchIsAuthorizedWithTokenInputList(v []types
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentCedarTagRecordAttribute(v map[string]types.CedarTagValue, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	for key := range v {
+		om := object.Key(key)
+		if vv := v[key]; vv == nil {
+			continue
+		}
+		if err := awsAwsjson10_serializeDocumentCedarTagValue(v[key], om); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentCedarTagSetAttribute(v []types.CedarTagValue, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if vv := v[i]; vv == nil {
+			continue
+		}
+		if err := awsAwsjson10_serializeDocumentCedarTagValue(v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentCedarTagValue(v types.CedarTagValue, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	switch uv := v.(type) {
+	case *types.CedarTagValueMemberBoolean:
+		av := object.Key("boolean")
+		av.Boolean(uv.Value)
+
+	case *types.CedarTagValueMemberDatetime:
+		av := object.Key("datetime")
+		av.String(uv.Value)
+
+	case *types.CedarTagValueMemberDecimal:
+		av := object.Key("decimal")
+		av.String(uv.Value)
+
+	case *types.CedarTagValueMemberDuration:
+		av := object.Key("duration")
+		av.String(uv.Value)
+
+	case *types.CedarTagValueMemberEntityIdentifier:
+		av := object.Key("entityIdentifier")
+		if err := awsAwsjson10_serializeDocumentEntityIdentifier(&uv.Value, av); err != nil {
+			return err
+		}
+
+	case *types.CedarTagValueMemberIpaddr:
+		av := object.Key("ipaddr")
+		av.String(uv.Value)
+
+	case *types.CedarTagValueMemberLong:
+		av := object.Key("long")
+		av.Long(uv.Value)
+
+	case *types.CedarTagValueMemberRecord:
+		av := object.Key("record")
+		if err := awsAwsjson10_serializeDocumentCedarTagRecordAttribute(uv.Value, av); err != nil {
+			return err
+		}
+
+	case *types.CedarTagValueMemberSet:
+		av := object.Key("set")
+		if err := awsAwsjson10_serializeDocumentCedarTagSetAttribute(uv.Value, av); err != nil {
+			return err
+		}
+
+	case *types.CedarTagValueMemberString:
+		av := object.Key("string")
+		av.String(uv.Value)
+
+	default:
+		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
+
+	}
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentClientIds(v []string, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -2153,6 +2251,41 @@ func awsAwsjson10_serializeDocumentContextMap(v map[string]types.AttributeValue,
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentEncryptionContext(v map[string]string, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	for key := range v {
+		om := object.Key(key)
+		om.String(v[key])
+	}
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentEncryptionSettings(v types.EncryptionSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	switch uv := v.(type) {
+	case *types.EncryptionSettingsMemberDefault:
+		av := object.Key("default")
+		if err := awsAwsjson10_serializeDocumentUnit(&uv.Value, av); err != nil {
+			return err
+		}
+
+	case *types.EncryptionSettingsMemberKmsEncryptionSettings:
+		av := object.Key("kmsEncryptionSettings")
+		if err := awsAwsjson10_serializeDocumentKmsEncryptionSettings(&uv.Value, av); err != nil {
+			return err
+		}
+
+	default:
+		return fmt.Errorf("attempted to serialize unknown member type %T for union %T", uv, v)
+
+	}
+	return nil
+}
+
 func awsAwsjson10_serializeDocumentEntitiesDefinition(v types.EntitiesDefinition, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -2185,6 +2318,22 @@ func awsAwsjson10_serializeDocumentEntityAttributes(v map[string]types.Attribute
 			continue
 		}
 		if err := awsAwsjson10_serializeDocumentAttributeValue(v[key], om); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentEntityCedarTags(v map[string]types.CedarTagValue, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	for key := range v {
+		om := object.Key(key)
+		if vv := v[key]; vv == nil {
+			continue
+		}
+		if err := awsAwsjson10_serializeDocumentCedarTagValue(v[key], om); err != nil {
 			return err
 		}
 	}
@@ -2229,6 +2378,13 @@ func awsAwsjson10_serializeDocumentEntityItem(v *types.EntityItem, value smithyj
 	if v.Parents != nil {
 		ok := object.Key("parents")
 		if err := awsAwsjson10_serializeDocumentParentList(v.Parents, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.Tags != nil {
+		ok := object.Key("tags")
+		if err := awsAwsjson10_serializeDocumentEntityCedarTags(v.Tags, ok); err != nil {
 			return err
 		}
 	}
@@ -2293,6 +2449,25 @@ func awsAwsjson10_serializeDocumentIdentitySourceFilters(v []types.IdentitySourc
 			return err
 		}
 	}
+	return nil
+}
+
+func awsAwsjson10_serializeDocumentKmsEncryptionSettings(v *types.KmsEncryptionSettings, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.EncryptionContext != nil {
+		ok := object.Key("encryptionContext")
+		if err := awsAwsjson10_serializeDocumentEncryptionContext(v.EncryptionContext, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.Key != nil {
+		ok := object.Key("key")
+		ok.String(*v.Key)
+	}
+
 	return nil
 }
 
@@ -2806,6 +2981,13 @@ func awsAwsjson10_serializeDocumentValidationSettings(v *types.ValidationSetting
 	return nil
 }
 
+func awsAwsjson10_serializeDocumentUnit(v *types.Unit, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	return nil
+}
+
 func awsAwsjson10_serializeOpDocumentBatchGetPolicyInput(v *BatchGetPolicyInput, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -2952,6 +3134,13 @@ func awsAwsjson10_serializeOpDocumentCreatePolicyStoreInput(v *CreatePolicyStore
 	if v.Description != nil {
 		ok := object.Key("description")
 		ok.String(*v.Description)
+	}
+
+	if v.EncryptionSettings != nil {
+		ok := object.Key("encryptionSettings")
+		if err := awsAwsjson10_serializeDocumentEncryptionSettings(v.EncryptionSettings, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.Tags != nil {

@@ -82,6 +82,16 @@ type Certificate struct {
 	// The key length of the cryptographic algorithm being used.
 	KeyLength *int32
 
+	// An KMS key identifier that is used to encrypt the certificate.
+	//
+	// If you don't specify a value for the KmsKeyId parameter, then DMS uses your
+	// default encryption key.
+	//
+	// KMS creates the default encryption key for your Amazon Web Services account.
+	// Your Amazon Web Services account has a different default encryption key for each
+	// Amazon Web Services Region.
+	KmsKeyId *string
+
 	// The signing algorithm for the certificate.
 	SigningAlgorithm *string
 
@@ -500,12 +510,15 @@ type DataProvider struct {
 
 	// The type of database engine for the data provider. Valid values include "aurora"
 	// , "aurora-postgresql" , "mysql" , "oracle" , "postgres" , "sqlserver" , redshift
-	// , mariadb , mongodb , db2 , db2-zos and docdb . A value of "aurora" represents
-	// Amazon Aurora MySQL-Compatible Edition.
+	// , mariadb , mongodb , db2 , db2-zos , docdb , and sybase . A value of "aurora"
+	// represents Amazon Aurora MySQL-Compatible Edition.
 	Engine *string
 
 	// The settings in JSON format for a data provider.
 	Settings DataProviderSettings
+
+	// Indicates whether the data provider is virtual.
+	Virtual *bool
 
 	noSmithyDocumentSerde
 }
@@ -561,6 +574,7 @@ type DataProviderDescriptorDefinition struct {
 //	DataProviderSettingsMemberOracleSettings
 //	DataProviderSettingsMemberPostgreSqlSettings
 //	DataProviderSettingsMemberRedshiftSettings
+//	DataProviderSettingsMemberSybaseAseSettings
 type DataProviderSettings interface {
 	isDataProviderSettings()
 }
@@ -654,6 +668,15 @@ type DataProviderSettingsMemberRedshiftSettings struct {
 }
 
 func (*DataProviderSettingsMemberRedshiftSettings) isDataProviderSettings() {}
+
+// Provides information that defines an SAP ASE data provider.
+type DataProviderSettingsMemberSybaseAseSettings struct {
+	Value SybaseAseDataProviderSettings
+
+	noSmithyDocumentSerde
+}
+
+func (*DataProviderSettingsMemberSybaseAseSettings) isDataProviderSettings() {}
 
 // Provides error information about a schema conversion operation.
 type DefaultErrorDetails struct {
@@ -903,6 +926,12 @@ type Endpoint struct {
 	// IBMDb2Settings structure.
 	IBMDb2Settings *IBMDb2Settings
 
+	// Indicates whether the endpoint is read-only. When set to true , this endpoint is
+	// managed by DMS as part of a zero-ETL integration and cannot be modified or
+	// deleted directly. You can only modify or delete read-only endpoints through
+	// their associated zero-ETL integration.
+	IsReadOnly *bool
+
 	// The settings for the Apache Kafka target endpoint. For more information, see
 	// the KafkaSettings structure.
 	KafkaSettings *KafkaSettings
@@ -921,6 +950,11 @@ type Endpoint struct {
 	// Your Amazon Web Services account has a different default encryption key for each
 	// Amazon Web Services Region.
 	KmsKeyId *string
+
+	// Settings in JSON format for the target Lakehouse endpoint. This parameter
+	// applies to endpoints that are automatically created by DMS for a Lakehouse data
+	// warehouse as part of a zero-ETL integration.
+	LakehouseSettings *LakehouseSettings
 
 	// The settings for the Microsoft SQL Server source and target endpoint. For more
 	// information, see the MicrosoftSQLServerSettings structure.
@@ -1362,6 +1396,13 @@ type IbmDb2LuwDataProviderSettings struct {
 	// The port value for the DB2 LUW data provider.
 	Port *int32
 
+	// The ARN for the role the application uses to access its Amazon S3 bucket.
+	S3AccessRoleArn *string
+
+	// The path for the Amazon S3 bucket that the application uses for accessing the
+	// user-defined schema.
+	S3Path *string
+
 	// The name of the DB2 LUW server.
 	ServerName *string
 
@@ -1454,6 +1495,13 @@ type IbmDb2zOsDataProviderSettings struct {
 	// The port value for the DB2 for z/OS data provider.
 	Port *int32
 
+	// The ARN for the role the application uses to access its Amazon S3 bucket.
+	S3AccessRoleArn *string
+
+	// The path for the Amazon S3 bucket that the application uses for accessing the
+	// user-defined schema.
+	S3Path *string
+
 	// The name of the DB2 for z/OS server.
 	ServerName *string
 
@@ -1489,12 +1537,8 @@ type InstanceProfile struct {
 	// The Amazon Resource Name (ARN) of the KMS key that is used to encrypt the
 	// connection parameters for the instance profile.
 	//
-	// If you don't specify a value for the KmsKeyArn parameter, then DMS uses your
-	// default encryption key.
-	//
-	// KMS creates the default encryption key for your Amazon Web Services account.
-	// Your Amazon Web Services account has a different default encryption key for each
-	// Amazon Web Services Region.
+	// If you don't specify a value for the KmsKeyArn parameter, then DMS uses an
+	// Amazon Web Services owned encryption key to encrypt your resources.
 	KmsKeyArn *string
 
 	// Specifies the network type for the instance profile. A value of IPV4 represents
@@ -1723,6 +1767,19 @@ type KinesisSettings struct {
 	noSmithyDocumentSerde
 }
 
+// Provides information that defines a Lakehouse endpoint. This endpoint type is
+// used for zero-ETL integrations with Lakehouse data warehouses.
+type LakehouseSettings struct {
+
+	// The Amazon Resource Name (ARN) of the Lakehouse resource that serves as the
+	// target for this endpoint.
+	//
+	// This member is required.
+	Arn *string
+
+	noSmithyDocumentSerde
+}
+
 // Provides information about the limitations of target Amazon Web Services
 // engines.
 //
@@ -1772,12 +1829,51 @@ type MariaDbDataProviderSettings struct {
 	// The port value for the MariaDB data provider
 	Port *int32
 
+	// The ARN for the role the application uses to access its Amazon S3 bucket.
+	S3AccessRoleArn *string
+
+	// The path for the Amazon S3 bucket that the application uses for accessing the
+	// user-defined schema.
+	S3Path *string
+
 	// The name of the MariaDB server.
 	ServerName *string
 
 	// The SSL mode used to connect to the MariaDB data provider. The default value is
 	// none .
 	SslMode DmsSslModeValue
+
+	noSmithyDocumentSerde
+}
+
+// The properties of metadata model in JSON format. This object is a Union. Only
+// one member of this object can be specified or returned.
+//
+// The following types satisfy this interface:
+//
+//	MetadataModelPropertiesMemberStatementProperties
+type MetadataModelProperties interface {
+	isMetadataModelProperties()
+}
+
+// The properties of the statement.
+type MetadataModelPropertiesMemberStatementProperties struct {
+	Value StatementProperties
+
+	noSmithyDocumentSerde
+}
+
+func (*MetadataModelPropertiesMemberStatementProperties) isMetadataModelProperties() {}
+
+// A reference to a metadata model, including its name and selection rules for
+// location identification.
+type MetadataModelReference struct {
+
+	// The name of the metadata model.
+	MetadataModelName *string
+
+	// The JSON string representing metadata model location.
+	SelectionRules *string
 
 	noSmithyDocumentSerde
 }
@@ -1793,6 +1889,13 @@ type MicrosoftSqlServerDataProviderSettings struct {
 
 	// The port value for the Microsoft SQL Server data provider.
 	Port *int32
+
+	// The ARN for the role the application uses to access its Amazon S3 bucket.
+	S3AccessRoleArn *string
+
+	// The path for the Amazon S3 bucket that the application uses for accessing the
+	// user-defined schema.
+	S3Path *string
 
 	// The name of the Microsoft SQL Server server.
 	ServerName *string
@@ -2102,6 +2205,13 @@ type MySqlDataProviderSettings struct {
 	// The port value for the MySQL data provider.
 	Port *int32
 
+	// The ARN for the role the application uses to access its Amazon S3 bucket.
+	S3AccessRoleArn *string
+
+	// The path for the Amazon S3 bucket that the application uses for accessing the
+	// user-defined schema.
+	S3Path *string
+
 	// The name of the MySQL server.
 	ServerName *string
 
@@ -2122,6 +2232,9 @@ type MySQLSettings struct {
 	// For this parameter, provide the code of the script itself, not the name of a
 	// file containing the script.
 	AfterConnectScript *string
+
+	// This attribute allows you to specify the authentication method as "iam auth".
+	AuthenticationMethod MySQLAuthenticationMethod
 
 	// Cleans and recreates table metadata information on the replication instance
 	// when a mismatch occurs. For example, in a situation where running an alter DDL
@@ -2207,6 +2320,10 @@ type MySQLSettings struct {
 	// Note: Do not enclose time zones in single quotes.
 	ServerTimezone *string
 
+	// The IAM role you can use to authenticate when connecting to your endpoint.
+	// Ensure to include iam:PassRole and rds-db:connect actions in permission policy.
+	ServiceAccessRoleArn *string
+
 	// Specifies where to migrate source tables on the target, either to a single
 	// database or multiple databases. If you specify SPECIFIC_DATABASE , specify the
 	// database name using the DatabaseName parameter of the Endpoint object.
@@ -2286,6 +2403,13 @@ type OracleDataProviderSettings struct {
 
 	// The port value for the Oracle data provider.
 	Port *int32
+
+	// The ARN for the role the application uses to access its Amazon S3 bucket.
+	S3AccessRoleArn *string
+
+	// The path for the Amazon S3 bucket that the application uses for accessing the
+	// user-defined schema.
+	S3Path *string
 
 	// The ARN of the IAM role that provides access to the secret in Secrets Manager
 	// that contains the Oracle ASM connection details.
@@ -2733,6 +2857,13 @@ type PostgreSqlDataProviderSettings struct {
 	// The port value for the PostgreSQL data provider.
 	Port *int32
 
+	// The ARN for the role the application uses to access its Amazon S3 bucket.
+	S3AccessRoleArn *string
+
+	// The path for the Amazon S3 bucket that the application uses for accessing the
+	// user-defined schema.
+	S3Path *string
+
 	// The name of the PostgreSQL server.
 	ServerName *string
 
@@ -2751,6 +2882,9 @@ type PostgreSQLSettings struct {
 	//
 	// Example: afterConnectScript=SET session_replication_role='replica'
 	AfterConnectScript *string
+
+	// This attribute allows you to specify the authentication method as "iam auth".
+	AuthenticationMethod PostgreSQLAuthenticationMethod
 
 	// The Babelfish for Aurora PostgreSQL database name for the endpoint.
 	BabelfishDatabaseName *string
@@ -2890,6 +3024,10 @@ type PostgreSQLSettings struct {
 	// [DescribeDBClusters]: https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBClusters.html
 	ServerName *string
 
+	// The IAM role arn you can use to authenticate the connection to your endpoint.
+	// Ensure to include iam:PassRole and rds-db:connect actions in permission policy.
+	ServiceAccessRoleArn *string
+
 	// Sets the name of a previously created logical replication slot for a change
 	// data capture (CDC) load of the PostgreSQL source instance.
 	//
@@ -2994,6 +3132,59 @@ type PremigrationAssessmentStatus struct {
 	//   - warning : At least one individual assessment completed with a warning
 	//   status.
 	Status *string
+
+	noSmithyDocumentSerde
+}
+
+// The database object that the schema conversion operation currently uses.
+type ProcessedObject struct {
+
+	// The type of the data provider. This parameter can store one of the following
+	// values: "SOURCE" or "TARGET" .
+	EndpointType *string
+
+	// The name of the database object.
+	Name *string
+
+	// The type of the database object. For example, a table, view, procedure, and so
+	// on.
+	Type *string
+
+	noSmithyDocumentSerde
+}
+
+// Provides information about the progress of the schema conversion operation.
+type Progress struct {
+
+	// The name of the database object that the schema conversion operation currently
+	// uses.
+	ProcessedObject *ProcessedObject
+
+	// The percent complete for the current step of the schema conversion operation.
+	ProgressPercent *float64
+
+	// The step of the schema conversion operation. This parameter can store one of
+	// the following values:
+	//
+	//   - IN_PROGRESS – The operation is running.
+	//
+	//   - LOADING_METADATA – Loads metadata from the source database.
+	//
+	//   - COUNTING_OBJECTS – Determines the number of objects involved in the
+	//   operation.
+	//
+	//   - ANALYZING – Analyzes the source database objects.
+	//
+	//   - CONVERTING – Converts the source database objects to a format compatible
+	//   with the target database.
+	//
+	//   - APPLYING – Applies the converted code to the target database.
+	//
+	//   - FINISHED – The operation completed successfully.
+	ProgressStep *string
+
+	// The number of objects in this schema conversion operation.
+	TotalObjects int64
 
 	noSmithyDocumentSerde
 }
@@ -3242,6 +3433,13 @@ type RedshiftDataProviderSettings struct {
 	// The port value for the Amazon Redshift data provider.
 	Port *int32
 
+	// The ARN for the role the application uses to access its Amazon S3 bucket.
+	S3AccessRoleArn *string
+
+	// The path for the Amazon S3 bucket that the application uses for accessing the
+	// user-defined schema.
+	S3Path *string
+
 	// The name of the Amazon Redshift server.
 	ServerName *string
 
@@ -3488,6 +3686,12 @@ type Replication struct {
 	// Error and other information about why a serverless replication failed.
 	FailureMessages []string
 
+	// Indicates whether the serverless replication is read-only. When set to true ,
+	// this replication is managed by DMS as part of a zero-ETL integration and cannot
+	// be modified or deleted directly. You can only modify or delete read-only
+	// replications through their associated zero-ETL integration.
+	IsReadOnly *bool
+
 	// The status output of premigration assessment in describe-replications.
 	PremigrationAssessmentStatuses []PremigrationAssessmentStatus
 
@@ -3583,6 +3787,13 @@ type ReplicationConfig struct {
 
 	// Configuration parameters for provisioning an DMS serverless replication.
 	ComputeConfig *ComputeConfig
+
+	// Indicates whether the replication configuration is read-only. When set to true ,
+	// this replication configuration is managed by DMS as part of a zero-ETL
+	// integration and cannot be modified or deleted directly. You can only modify or
+	// delete read-only replication configurations through their associated zero-ETL
+	// integration.
+	IsReadOnly *bool
 
 	// The Amazon Resource Name (ARN) of this DMS Serverless replication configuration.
 	ReplicationConfigArn *string
@@ -3870,6 +4081,12 @@ type ReplicationStats struct {
 // Describes a subnet group in response to a request by the
 // DescribeReplicationSubnetGroups operation.
 type ReplicationSubnetGroup struct {
+
+	// Indicates whether the replication subnet group is read-only. When set to true ,
+	// this subnet group is managed by DMS as part of a zero-ETL integration and cannot
+	// be modified or deleted directly. You can only modify or delete read-only subnet
+	// groups through their associated zero-ETL integration.
+	IsReadOnly *bool
 
 	// A description for the replication subnet group.
 	ReplicationSubnetGroupDescription *string
@@ -4551,7 +4768,7 @@ type S3Settings struct {
 	// current UTC time into a specified time zone. The conversion occurs when a date
 	// partition folder is created and a CDC filename is generated. The time zone
 	// format is Area/Location. Use this parameter when DatePartitionedEnabled is set
-	// to true , as shown in the following example.
+	// to true, as shown in the following example:
 	//
 	//     s3-settings='{"DatePartitionEnabled": true, "DatePartitionSequence":
 	//     "YYYYMMDDHH", "DatePartitionDelimiter": "SLASH",
@@ -4816,6 +5033,9 @@ type SchemaConversionRequest struct {
 	// The migration project ARN.
 	MigrationProjectArn *string
 
+	// Provides information about the progress of the schema conversion operation.
+	Progress *Progress
+
 	// The identifier for the schema conversion action.
 	RequestIdentifier *string
 
@@ -4932,6 +5152,17 @@ type StartRecommendationsRequestEntry struct {
 	noSmithyDocumentSerde
 }
 
+// The properties of the statement for metadata model creation.
+type StatementProperties struct {
+
+	// The SQL text of the statement.
+	//
+	// This member is required.
+	Definition *string
+
+	noSmithyDocumentSerde
+}
+
 // In response to a request by the DescribeReplicationSubnetGroups operation, this
 // object identifies a subnet by its given Availability Zone, subnet identifier,
 // and status.
@@ -4976,6 +5207,33 @@ type SupportedEndpointType struct {
 
 	// Indicates if change data capture (CDC) is supported.
 	SupportsCDC bool
+
+	noSmithyDocumentSerde
+}
+
+// Provides information that defines an SAP ASE data provider.
+type SybaseAseDataProviderSettings struct {
+
+	// The Amazon Resource Name (ARN) of the certificate used for SSL connection.
+	CertificateArn *string
+
+	// The database name on the SAP ASE data provider.
+	DatabaseName *string
+
+	// Specifies whether to encrypt the password when connecting to the Sybase ASE
+	// database. When set to true, the connection password is encrypted during
+	// transmission. Default is true.
+	EncryptPassword *bool
+
+	// The port value for the SAP ASE data provider.
+	Port *int32
+
+	// The name of the SAP ASE server.
+	ServerName *string
+
+	// The SSL mode used to connect to the SAP ASE data provider. The default value is
+	// none .
+	SslMode DmsSslModeValue
 
 	noSmithyDocumentSerde
 }
@@ -5071,6 +5329,39 @@ type TableStatistics struct {
 
 	// The last time a table was updated.
 	LastUpdateTime *time.Time
+
+	// Calculates the percentage of failed validations that were successfully resynced
+	// to the system.
+	ResyncProgress *float64
+
+	// Records the total number of mismatched data rows where the system attempted to
+	// apply fixes in the target database.
+	ResyncRowsAttempted *int64
+
+	// Records the total number of mismatched data rows where fix attempts failed in
+	// the target database.
+	ResyncRowsFailed *int64
+
+	// Records the total number of mismatched data rows where fixes were successfully
+	// applied in the target database.
+	ResyncRowsSucceeded *int64
+
+	// Records the current state of table resynchronization in the migration task.
+	//
+	// This parameter can have the following values:
+	//
+	//   - Not enabled – Resync is not enabled for the table in the migration task.
+	//
+	//   - Pending – The tables are waiting for resync.
+	//
+	//   - In progress – Resync in progress for some records in the table.
+	//
+	//   - No primary key – The table could not be resynced because it has no primary
+	//   key.
+	//
+	//   - Last resync at: date/time – Resync session is finished at time. Time
+	//   provided in UTC format.
+	ResyncState *string
 
 	// The schema name.
 	SchemaName *string
@@ -5261,5 +5552,6 @@ type UnknownUnionMember struct {
 	noSmithyDocumentSerde
 }
 
-func (*UnknownUnionMember) isDataProviderSettings() {}
-func (*UnknownUnionMember) isErrorDetails()         {}
+func (*UnknownUnionMember) isDataProviderSettings()    {}
+func (*UnknownUnionMember) isErrorDetails()            {}
+func (*UnknownUnionMember) isMetadataModelProperties() {}

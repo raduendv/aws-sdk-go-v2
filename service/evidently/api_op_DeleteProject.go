@@ -13,6 +13,8 @@ import (
 // Deletes an Evidently project. Before you can delete a project, you must delete
 // all the features that the project contains. To delete a feature, use [DeleteFeature].
 //
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
+//
 // [DeleteFeature]: https://docs.aws.amazon.com/cloudwatchevidently/latest/APIReference/API_DeleteFeature.html
 func (c *Client) DeleteProject(ctx context.Context, params *DeleteProjectInput, optFns ...func(*Options)) (*DeleteProjectOutput, error) {
 	if params == nil {
@@ -34,6 +36,8 @@ type DeleteProjectInput struct {
 	// The name or ARN of the project to delete.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	noSmithyDocumentSerde
@@ -134,16 +138,13 @@ func (c *Client) addOperationDeleteProjectMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

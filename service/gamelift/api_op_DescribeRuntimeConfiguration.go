@@ -11,11 +11,13 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2
+//
 // Retrieves a fleet's runtime configuration settings. The runtime configuration
 // determines which server processes run, and how, on computes in the fleet. For
 // managed EC2 fleets, the runtime configuration describes server processes that
-// run on each fleet instance. can update a fleet's runtime configuration at any
-// time using [UpdateRuntimeConfiguration].
+// run on each fleet instance. You can update a fleet's runtime configuration at
+// any time using [UpdateRuntimeConfiguration].
 //
 // To get the current runtime configuration for a fleet, provide the fleet ID.
 //
@@ -24,13 +26,13 @@ import (
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift fleets]
+// [Setting up Amazon GameLift Servers fleets]
 //
 // [Running multiple processes on a fleet]
 //
 // [UpdateRuntimeConfiguration]: https://docs.aws.amazon.com/gamelift/latest/apireference/API_UpdateRuntimeConfiguration.html
-// [Setting up Amazon GameLift fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 // [Running multiple processes on a fleet]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-multiprocess.html
+// [Setting up Amazon GameLift Servers fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 func (c *Client) DescribeRuntimeConfiguration(ctx context.Context, params *DescribeRuntimeConfigurationInput, optFns ...func(*Options)) (*DescribeRuntimeConfigurationOutput, error) {
 	if params == nil {
 		params = &DescribeRuntimeConfigurationInput{}
@@ -157,16 +159,13 @@ func (c *Client) addOperationDescribeRuntimeConfigurationMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -34,6 +34,9 @@ type ModifyClusterInput struct {
 	// This member is required.
 	ClusterId *string
 
+	// Reserved.
+	ExtendedSupport *bool
+
 	// The number of steps that can be executed concurrently. You can specify a
 	// minimum of 1 step and a maximum of 256 steps. We recommend that you do not
 	// change this parameter while steps are running or the ActionOnFailure setting
@@ -44,6 +47,9 @@ type ModifyClusterInput struct {
 }
 
 type ModifyClusterOutput struct {
+
+	// Reserved.
+	ExtendedSupport *bool
 
 	// The number of steps that can be executed concurrently.
 	StepConcurrencyLevel *int32
@@ -142,16 +148,13 @@ func (c *Client) addOperationModifyClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

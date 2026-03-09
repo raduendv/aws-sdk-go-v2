@@ -1692,6 +1692,25 @@ func awsRestjson1_serializeOpDocumentCreateWorkflowInput(v *CreateWorkflowInput,
 		ok.String(string(v.Accelerators))
 	}
 
+	if v.ContainerRegistryMap != nil {
+		ok := object.Key("containerRegistryMap")
+		if err := awsRestjson1_serializeDocumentContainerRegistryMap(v.ContainerRegistryMap, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ContainerRegistryMapUri != nil {
+		ok := object.Key("containerRegistryMapUri")
+		ok.String(*v.ContainerRegistryMapUri)
+	}
+
+	if v.DefinitionRepository != nil {
+		ok := object.Key("definitionRepository")
+		if err := awsRestjson1_serializeDocumentDefinitionRepository(v.DefinitionRepository, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.DefinitionUri != nil {
 		ok := object.Key("definitionUri")
 		ok.String(*v.DefinitionUri)
@@ -1729,6 +1748,26 @@ func awsRestjson1_serializeOpDocumentCreateWorkflowInput(v *CreateWorkflowInput,
 		}
 	}
 
+	if v.ParameterTemplatePath != nil {
+		ok := object.Key("parameterTemplatePath")
+		ok.String(*v.ParameterTemplatePath)
+	}
+
+	if v.ReadmeMarkdown != nil {
+		ok := object.Key("readmeMarkdown")
+		ok.String(*v.ReadmeMarkdown)
+	}
+
+	if v.ReadmePath != nil {
+		ok := object.Key("readmePath")
+		ok.String(*v.ReadmePath)
+	}
+
+	if v.ReadmeUri != nil {
+		ok := object.Key("readmeUri")
+		ok.String(*v.ReadmeUri)
+	}
+
 	if v.RequestId != nil {
 		ok := object.Key("requestId")
 		ok.String(*v.RequestId)
@@ -1749,6 +1788,11 @@ func awsRestjson1_serializeOpDocumentCreateWorkflowInput(v *CreateWorkflowInput,
 		if err := awsRestjson1_serializeDocumentTagMap(v.Tags, ok); err != nil {
 			return err
 		}
+	}
+
+	if v.WorkflowBucketOwnerId != nil {
+		ok := object.Key("workflowBucketOwnerId")
+		ok.String(*v.WorkflowBucketOwnerId)
 	}
 
 	return nil
@@ -1845,6 +1889,25 @@ func awsRestjson1_serializeOpDocumentCreateWorkflowVersionInput(v *CreateWorkflo
 		ok.String(string(v.Accelerators))
 	}
 
+	if v.ContainerRegistryMap != nil {
+		ok := object.Key("containerRegistryMap")
+		if err := awsRestjson1_serializeDocumentContainerRegistryMap(v.ContainerRegistryMap, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.ContainerRegistryMapUri != nil {
+		ok := object.Key("containerRegistryMapUri")
+		ok.String(*v.ContainerRegistryMapUri)
+	}
+
+	if v.DefinitionRepository != nil {
+		ok := object.Key("definitionRepository")
+		if err := awsRestjson1_serializeDocumentDefinitionRepository(v.DefinitionRepository, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.DefinitionUri != nil {
 		ok := object.Key("definitionUri")
 		ok.String(*v.DefinitionUri)
@@ -1875,6 +1938,26 @@ func awsRestjson1_serializeOpDocumentCreateWorkflowVersionInput(v *CreateWorkflo
 		if err := awsRestjson1_serializeDocumentWorkflowParameterTemplate(v.ParameterTemplate, ok); err != nil {
 			return err
 		}
+	}
+
+	if v.ParameterTemplatePath != nil {
+		ok := object.Key("parameterTemplatePath")
+		ok.String(*v.ParameterTemplatePath)
+	}
+
+	if v.ReadmeMarkdown != nil {
+		ok := object.Key("readmeMarkdown")
+		ok.String(*v.ReadmeMarkdown)
+	}
+
+	if v.ReadmePath != nil {
+		ok := object.Key("readmePath")
+		ok.String(*v.ReadmePath)
+	}
+
+	if v.ReadmeUri != nil {
+		ok := object.Key("readmeUri")
+		ok.String(*v.ReadmeUri)
 	}
 
 	if v.RequestId != nil {
@@ -8661,6 +8744,11 @@ func awsRestjson1_serializeOpDocumentUpdateWorkflowInput(v *UpdateWorkflowInput,
 		ok.String(*v.Name)
 	}
 
+	if v.ReadmeMarkdown != nil {
+		ok := object.Key("readmeMarkdown")
+		ok.String(*v.ReadmeMarkdown)
+	}
+
 	if v.StorageCapacity != nil {
 		ok := object.Key("storageCapacity")
 		ok.Integer(*v.StorageCapacity)
@@ -8772,6 +8860,11 @@ func awsRestjson1_serializeOpDocumentUpdateWorkflowVersionInput(v *UpdateWorkflo
 	if v.Description != nil {
 		ok := object.Key("description")
 		ok.String(*v.Description)
+	}
+
+	if v.ReadmeMarkdown != nil {
+		ok := object.Key("readmeMarkdown")
+		ok.String(*v.ReadmeMarkdown)
 	}
 
 	if v.StorageCapacity != nil {
@@ -8991,6 +9084,69 @@ func awsRestjson1_serializeDocumentCompleteReadSetUploadPartListItem(v *types.Co
 	return nil
 }
 
+func awsRestjson1_serializeDocumentContainerRegistryMap(v *types.ContainerRegistryMap, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ImageMappings != nil {
+		ok := object.Key("imageMappings")
+		if err := awsRestjson1_serializeDocumentImageMappingsList(v.ImageMappings, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.RegistryMappings != nil {
+		ok := object.Key("registryMappings")
+		if err := awsRestjson1_serializeDocumentRegistryMappingsList(v.RegistryMappings, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentDefinitionRepository(v *types.DefinitionRepository, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ConnectionArn != nil {
+		ok := object.Key("connectionArn")
+		ok.String(*v.ConnectionArn)
+	}
+
+	if v.ExcludeFilePatterns != nil {
+		ok := object.Key("excludeFilePatterns")
+		if err := awsRestjson1_serializeDocumentExcludeFilePatternList(v.ExcludeFilePatterns, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.FullRepositoryId != nil {
+		ok := object.Key("fullRepositoryId")
+		ok.String(*v.FullRepositoryId)
+	}
+
+	if v.SourceReference != nil {
+		ok := object.Key("sourceReference")
+		if err := awsRestjson1_serializeDocumentSourceReference(v.SourceReference, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentExcludeFilePatternList(v []string, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		av.String(v[i])
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocumentExportReadSet(v *types.ExportReadSet, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -9108,6 +9264,36 @@ func awsRestjson1_serializeDocumentIdList(v []string, value smithyjson.Value) er
 	for i := range v {
 		av := array.Value()
 		av.String(v[i])
+	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentImageMapping(v *types.ImageMapping, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.DestinationImage != nil {
+		ok := object.Key("destinationImage")
+		ok.String(*v.DestinationImage)
+	}
+
+	if v.SourceImage != nil {
+		ok := object.Key("sourceImage")
+		ok.String(*v.SourceImage)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentImageMappingsList(v []types.ImageMapping, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentImageMapping(&v[i], av); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -9434,6 +9620,46 @@ func awsRestjson1_serializeDocumentReferenceStoreFilter(v *types.ReferenceStoreF
 	return nil
 }
 
+func awsRestjson1_serializeDocumentRegistryMapping(v *types.RegistryMapping, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.EcrAccountId != nil {
+		ok := object.Key("ecrAccountId")
+		ok.String(*v.EcrAccountId)
+	}
+
+	if v.EcrRepositoryPrefix != nil {
+		ok := object.Key("ecrRepositoryPrefix")
+		ok.String(*v.EcrRepositoryPrefix)
+	}
+
+	if v.UpstreamRegistryUrl != nil {
+		ok := object.Key("upstreamRegistryUrl")
+		ok.String(*v.UpstreamRegistryUrl)
+	}
+
+	if v.UpstreamRepositoryPrefix != nil {
+		ok := object.Key("upstreamRepositoryPrefix")
+		ok.String(*v.UpstreamRepositoryPrefix)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentRegistryMappingsList(v []types.RegistryMapping, value smithyjson.Value) error {
+	array := value.Array()
+	defer array.Close()
+
+	for i := range v {
+		av := array.Value()
+		if err := awsRestjson1_serializeDocumentRegistryMapping(&v[i], av); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func awsRestjson1_serializeDocumentRunParameters(v document.Interface, value smithyjson.Value) error {
 	if v == nil {
 		return nil
@@ -9537,6 +9763,23 @@ func awsRestjson1_serializeDocumentSourceFiles(v *types.SourceFiles, value smith
 	if v.Source2 != nil {
 		ok := object.Key("source2")
 		ok.String(*v.Source2)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeDocumentSourceReference(v *types.SourceReference, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.Type) > 0 {
+		ok := object.Key("type")
+		ok.String(string(v.Type))
+	}
+
+	if v.Value != nil {
+		ok := object.Key("value")
+		ok.String(*v.Value)
 	}
 
 	return nil

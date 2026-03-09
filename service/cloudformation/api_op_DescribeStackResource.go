@@ -55,7 +55,7 @@ type DescribeStackResourceInput struct {
 // The output for a DescribeStackResource action.
 type DescribeStackResourceOutput struct {
 
-	// A StackResourceDetail structure containing the description of the specified
+	// A StackResourceDetail structure that contains the description of the specified
 	// resource in the specified stack.
 	StackResourceDetail *types.StackResourceDetail
 
@@ -153,16 +153,13 @@ func (c *Client) addOperationDescribeStackResourceMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

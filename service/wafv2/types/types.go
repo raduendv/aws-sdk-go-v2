@@ -134,6 +134,53 @@ type APIKeySummary struct {
 	noSmithyDocumentSerde
 }
 
+// Application details defined during the web ACL creation process. Application
+// attributes help WAF give recommendations for protection packs.
+type ApplicationAttribute struct {
+
+	// Specifies the attribute name.
+	Name *string
+
+	// Specifies the attribute value.
+	Values []string
+
+	noSmithyDocumentSerde
+}
+
+// A list of ApplicationAttribute s that contains information about the application.
+type ApplicationConfig struct {
+
+	// Contains the attribute name and a list of values for that attribute.
+	Attributes []ApplicationAttribute
+
+	noSmithyDocumentSerde
+}
+
+// A rule statement that inspects web traffic based on the Autonomous System
+// Number (ASN) associated with the request's IP address.
+//
+// For additional details, see [ASN match rule statement] in the [WAF Developer Guide].
+//
+// [ASN match rule statement]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-statement-type-asn-match.html
+// [WAF Developer Guide]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-chapter.html
+type AsnMatchStatement struct {
+
+	// Contains one or more Autonomous System Numbers (ASNs). ASNs are unique
+	// identifiers assigned to large internet networks managed by organizations such as
+	// internet service providers, enterprises, universities, or government agencies.
+	//
+	// This member is required.
+	AsnList []int64
+
+	// The configuration for inspecting IP addresses to match against an ASN in an
+	// HTTP header that you specify, instead of using the IP address that's reported by
+	// the web request origin. Commonly, this is the X-Forwarded-For (XFF) header, but
+	// you can specify any header name.
+	ForwardedIPConfig *ForwardedIPConfig
+
+	noSmithyDocumentSerde
+}
+
 // Specifies custom configurations for the associations between the web ACL and
 // protected resources.
 //
@@ -173,6 +220,12 @@ type AssociationConfig struct {
 // Details for your use of the account creation fraud prevention managed rule
 // group, AWSManagedRulesACFPRuleSet . This configuration is used in
 // ManagedRuleGroupConfig .
+//
+// For additional information about this and the other intelligent threat
+// mitigation rule groups, see [Intelligent threat mitigation in WAF]and [Amazon Web Services Managed Rules rule groups list] in the WAF Developer Guide.
+//
+// [Amazon Web Services Managed Rules rule groups list]: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list
+// [Intelligent threat mitigation in WAF]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-managed-protections
 type AWSManagedRulesACFPRuleSet struct {
 
 	// The path of the account creation endpoint for your application. This is the
@@ -231,9 +284,58 @@ type AWSManagedRulesACFPRuleSet struct {
 	noSmithyDocumentSerde
 }
 
+// Configures the use of the anti-DDoS managed rule group,
+// AWSManagedRulesAntiDDoSRuleSet . This configuration is used in
+// ManagedRuleGroupConfig .
+//
+// The configuration that you provide here determines whether and how the rules in
+// the rule group are used.
+//
+// For additional information about this and the other intelligent threat
+// mitigation rule groups, see [Intelligent threat mitigation in WAF]and [Amazon Web Services Managed Rules rule groups list] in the WAF Developer Guide.
+//
+// [Amazon Web Services Managed Rules rule groups list]: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list
+// [Intelligent threat mitigation in WAF]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-managed-protections
+type AWSManagedRulesAntiDDoSRuleSet struct {
+
+	// Configures the request handling that's applied by the managed rule group rules
+	// ChallengeAllDuringEvent and ChallengeDDoSRequests during a distributed denial
+	// of service (DDoS) attack.
+	//
+	// This member is required.
+	ClientSideActionConfig *ClientSideActionConfig
+
+	// The sensitivity that the rule group rule DDoSRequests uses when matching
+	// against the DDoS suspicion labeling on a request. The managed rule group adds
+	// the labeling during DDoS events, before the DDoSRequests rule runs.
+	//
+	// The higher the sensitivity, the more levels of labeling that the rule matches:
+	//
+	//   - Low sensitivity is less sensitive, causing the rule to match only on the
+	//   most likely participants in an attack, which are the requests with the high
+	//   suspicion label awswaf:managed:aws:anti-ddos:high-suspicion-ddos-request .
+	//
+	//   - Medium sensitivity causes the rule to match on the medium and high
+	//   suspicion labels.
+	//
+	//   - High sensitivity causes the rule to match on all of the suspicion labels:
+	//   low, medium, and high.
+	//
+	// Default: LOW
+	SensitivityToBlock SensitivityToAct
+
+	noSmithyDocumentSerde
+}
+
 // Details for your use of the account takeover prevention managed rule group,
 // AWSManagedRulesATPRuleSet . This configuration is used in ManagedRuleGroupConfig
 // .
+//
+// For additional information about this and the other intelligent threat
+// mitigation rule groups, see [Intelligent threat mitigation in WAF]and [Amazon Web Services Managed Rules rule groups list] in the WAF Developer Guide.
+//
+// [Amazon Web Services Managed Rules rule groups list]: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list
+// [Intelligent threat mitigation in WAF]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-managed-protections
 type AWSManagedRulesATPRuleSet struct {
 
 	// The path of the login endpoint for your application. For example, for the URL
@@ -275,6 +377,12 @@ type AWSManagedRulesATPRuleSet struct {
 // Details for your use of the Bot Control managed rule group,
 // AWSManagedRulesBotControlRuleSet . This configuration is used in
 // ManagedRuleGroupConfig .
+//
+// For additional information about this and the other intelligent threat
+// mitigation rule groups, see [Intelligent threat mitigation in WAF]and [Amazon Web Services Managed Rules rule groups list] in the WAF Developer Guide.
+//
+// [Amazon Web Services Managed Rules rule groups list]: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list
+// [Intelligent threat mitigation in WAF]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-managed-protections
 type AWSManagedRulesBotControlRuleSet struct {
 
 	// The inspection level to use for the Bot Control rule group. The common level is
@@ -642,6 +750,113 @@ type ChallengeResponse struct {
 	noSmithyDocumentSerde
 }
 
+// This is part of the AWSManagedRulesAntiDDoSRuleSet ClientSideActionConfig
+// configuration in ManagedRuleGroupConfig .
+type ClientSideAction struct {
+
+	// Determines whether to use the AWSManagedRulesAntiDDoSRuleSet rules
+	// ChallengeAllDuringEvent and ChallengeDDoSRequests in the rule group evaluation
+	// and the related label awswaf:managed:aws:anti-ddos:challengeable-request .
+	//
+	//   - If usage is enabled:
+	//
+	//   - The managed rule group adds the label
+	//   awswaf:managed:aws:anti-ddos:challengeable-request to any web request whose
+	//   URL does NOT match the regular expressions provided in the ClientSideAction
+	//   setting ExemptUriRegularExpressions .
+	//
+	//   - The two rules are evaluated against web requests for protected resources
+	//   that are experiencing a DDoS attack. The two rules only apply their action to
+	//   matching requests that have the label
+	//   awswaf:managed:aws:anti-ddos:challengeable-request .
+	//
+	//   - If usage is disabled:
+	//
+	//   - The managed rule group doesn't add the label
+	//   awswaf:managed:aws:anti-ddos:challengeable-request to any web requests.
+	//
+	//   - The two rules are not evaluated.
+	//
+	//   - None of the other ClientSideAction settings have any effect.
+	//
+	// This setting only enables or disables the use of the two anti-DDOS rules
+	// ChallengeAllDuringEvent and ChallengeDDoSRequests in the anti-DDoS managed rule
+	// group.
+	//
+	// This setting doesn't alter the action setting in the two rules. To override the
+	// actions used by the rules ChallengeAllDuringEvent and ChallengeDDoSRequests ,
+	// enable this setting, and then override the rule actions in the usual way, in
+	// your managed rule group configuration.
+	//
+	// This member is required.
+	UsageOfAction UsageOfAction
+
+	// The regular expression to match against the web request URI, used to identify
+	// requests that can't handle a silent browser challenge. When the ClientSideAction
+	// setting UsageOfAction is enabled, the managed rule group uses this setting to
+	// determine which requests to label with
+	// awswaf:managed:aws:anti-ddos:challengeable-request . If UsageOfAction is
+	// disabled, this setting has no effect and the managed rule group doesn't add the
+	// label to any requests.
+	//
+	// The anti-DDoS managed rule group doesn't evaluate the rules
+	// ChallengeDDoSRequests or ChallengeAllDuringEvent for web requests whose URIs
+	// match this regex. This is true regardless of whether you override the rule
+	// action for either of the rules in your web ACL configuration.
+	//
+	// Amazon Web Services recommends using a regular expression.
+	//
+	// This setting is required if UsageOfAction is set to ENABLED . If required, you
+	// can provide between 1 and 5 regex objects in the array of settings.
+	//
+	// Amazon Web Services recommends starting with the following setting. Review and
+	// update it for your application's needs:
+	//
+	//     \/api\/|\.(acc|avi|css|gif|jpe?g|js|mp[34]|ogg|otf|pdf|png|tiff?|ttf|webm|webp|woff2?)$
+	ExemptUriRegularExpressions []Regex
+
+	// The sensitivity that the rule group rule ChallengeDDoSRequests uses when
+	// matching against the DDoS suspicion labeling on a request. The managed rule
+	// group adds the labeling during DDoS events, before the ChallengeDDoSRequests
+	// rule runs.
+	//
+	// The higher the sensitivity, the more levels of labeling that the rule matches:
+	//
+	//   - Low sensitivity is less sensitive, causing the rule to match only on the
+	//   most likely participants in an attack, which are the requests with the high
+	//   suspicion label awswaf:managed:aws:anti-ddos:high-suspicion-ddos-request .
+	//
+	//   - Medium sensitivity causes the rule to match on the medium and high
+	//   suspicion labels.
+	//
+	//   - High sensitivity causes the rule to match on all of the suspicion labels:
+	//   low, medium, and high.
+	//
+	// Default: HIGH
+	Sensitivity SensitivityToAct
+
+	noSmithyDocumentSerde
+}
+
+// This is part of the configuration for the managed rules
+// AWSManagedRulesAntiDDoSRuleSet in ManagedRuleGroupConfig .
+type ClientSideActionConfig struct {
+
+	// Configuration for the use of the AWSManagedRulesAntiDDoSRuleSet rules
+	// ChallengeAllDuringEvent and ChallengeDDoSRequests .
+	//
+	// This setting isn't related to the configuration of the Challenge action itself.
+	// It only configures the use of the two anti-DDoS rules named here.
+	//
+	// You can enable or disable the use of these rules, and you can configure how to
+	// use them when they are enabled.
+	//
+	// This member is required.
+	Challenge *ClientSideAction
+
+	noSmithyDocumentSerde
+}
+
 // A single match condition for a Filter.
 type Condition struct {
 
@@ -942,6 +1157,19 @@ type DefaultAction struct {
 
 	// Specifies that WAF should block requests by default.
 	Block *BlockAction
+
+	noSmithyDocumentSerde
+}
+
+// A WAF feature that is not supported by the CloudFront pricing plan associated
+// with the web ACL.
+type DisallowedFeature struct {
+
+	// The name of the disallowed WAF feature.
+	Feature *string
+
+	// The name of the CloudFront pricing plan required to use the WAF feature.
+	RequiredPricingPlan *string
 
 	noSmithyDocumentSerde
 }
@@ -1303,7 +1531,7 @@ type FirewallManagerStatement struct {
 // If the specified header isn't present in the request, WAF doesn't apply the
 // rule to the web request at all.
 //
-// This configuration is used for GeoMatchStatement and RateBasedStatement. For IPSetReferenceStatement, use IPSetForwardedIPConfig instead.
+// This configuration is used for GeoMatchStatement, AsnMatchStatement, and RateBasedStatement. For IPSetReferenceStatement, use IPSetForwardedIPConfig instead.
 //
 // WAF only evaluates the first IP address found in the specified HTTP header.
 type ForwardedIPConfig struct {
@@ -1421,11 +1649,11 @@ type HeaderMatchPattern struct {
 // for example host:user-agent:accept:authorization:referer .
 type HeaderOrder struct {
 
-	// What WAF should do if the headers of the request are more numerous or larger
-	// than WAF can inspect. WAF does not support inspecting the entire contents of
-	// request headers when they exceed 8 KB (8192 bytes) or 200 total headers. The
-	// underlying host service forwards a maximum of 200 headers and at most 8 KB of
-	// header contents to WAF.
+	// What WAF should do if the headers determined by your match scope are more
+	// numerous or larger than WAF can inspect. WAF does not support inspecting the
+	// entire contents of request headers when they exceed 8 KB (8192 bytes) or 200
+	// total headers. The underlying host service forwards a maximum of 200 headers and
+	// at most 8 KB of header contents to WAF.
 	//
 	// The options for oversize handling are the following:
 	//
@@ -1481,11 +1709,11 @@ type Headers struct {
 	// This member is required.
 	MatchScope MapMatchScope
 
-	// What WAF should do if the headers of the request are more numerous or larger
-	// than WAF can inspect. WAF does not support inspecting the entire contents of
-	// request headers when they exceed 8 KB (8192 bytes) or 200 total headers. The
-	// underlying host service forwards a maximum of 200 headers and at most 8 KB of
-	// header contents to WAF.
+	// What WAF should do if the headers determined by your match scope are more
+	// numerous or larger than WAF can inspect. WAF does not support inspecting the
+	// entire contents of request headers when they exceed 8 KB (8192 bytes) or 200
+	// total headers. The underlying host service forwards a maximum of 200 headers and
+	// at most 8 KB of header contents to WAF.
 	//
 	// The options for oversize handling are the following:
 	//
@@ -2111,9 +2339,14 @@ type LoggingConfiguration struct {
 	// from various sources for normalization, analysis, and management. For
 	// information, see [Collecting data from Amazon Web Services services]in the Amazon Security Lake user guide.
 	//
+	// The log scope CLOUDWATCH_TELEMETRY_RULE_MANAGED indicates a configuration that
+	// is managed through Amazon CloudWatch Logs for telemetry data collection and
+	// analysis. For information, see [What is Amazon CloudWatch Logs ?]in the Amazon CloudWatch Logs user guide.
+	//
 	// Default: CUSTOMER
 	//
 	// [Collecting data from Amazon Web Services services]: https://docs.aws.amazon.com/security-lake/latest/userguide/internal-sources.html
+	// [What is Amazon CloudWatch Logs ?]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html
 	LogScope LogScope
 
 	// Used to distinguish between various logging options. Currently, there is one
@@ -2243,6 +2476,12 @@ type ManagedProductDescriptor struct {
 //     account creation request payload of data, such as the user email and phone
 //     number fields.
 //
+//   - Use the AWSManagedRulesAntiDDoSRuleSet configuration object to configure the
+//     anti-DDoS managed rule group. The configuration includes the sensitivity levels
+//     to use in the rules that typically block and challenge requests that might be
+//     participating in DDoS attacks and the specification to use to indicate whether a
+//     request can handle a silent browser challenge.
+//
 //   - Use the AWSManagedRulesATPRuleSet configuration object to configure the
 //     account takeover prevention managed rule group. The configuration includes the
 //     sign-in page of your application and the locations in the login request payload
@@ -2282,6 +2521,17 @@ type ManagedRuleGroupConfig struct {
 	// [WAF Fraud Control account takeover prevention (ATP) rule group]: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-atp.html
 	// [WAF Fraud Control account takeover prevention (ATP)]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-atp.html
 	AWSManagedRulesATPRuleSet *AWSManagedRulesATPRuleSet
+
+	// Additional configuration for using the anti-DDoS managed rule group,
+	// AWSManagedRulesAntiDDoSRuleSet . Use this to configure anti-DDoS behavior for
+	// the rule group.
+	//
+	// For information about using the anti-DDoS managed rule group, see [WAF Anti-DDoS rule group] and [Distributed Denial of Service (DDoS) prevention] in the
+	// WAF Developer Guide.
+	//
+	// [WAF Anti-DDoS rule group]: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-anti-ddos.html
+	// [Distributed Denial of Service (DDoS) prevention]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-anti-ddos.html
+	AWSManagedRulesAntiDDoSRuleSet *AWSManagedRulesAntiDDoSRuleSet
 
 	// Additional configuration for using the Bot Control managed rule group. Use this
 	// to specify the inspection level that you want to use. For information about
@@ -2372,6 +2622,12 @@ type ManagedRuleGroupStatement struct {
 	//   account creation request payload of data, such as the user email and phone
 	//   number fields.
 	//
+	//   - Use the AWSManagedRulesAntiDDoSRuleSet configuration object to configure the
+	//   anti-DDoS managed rule group. The configuration includes the sensitivity levels
+	//   to use in the rules that typically block and challenge requests that might be
+	//   participating in DDoS attacks and the specification to use to indicate whether a
+	//   request can handle a silent browser challenge.
+	//
 	//   - Use the AWSManagedRulesATPRuleSet configuration object to configure the
 	//   account takeover prevention managed rule group. The configuration includes the
 	//   sign-in page of your application and the locations in the login request payload
@@ -2385,9 +2641,11 @@ type ManagedRuleGroupStatement struct {
 	// inside the rule group. You specify one override for each rule whose action you
 	// want to change.
 	//
-	// Take care to verify the rule names in your overrides. If you provide a rule
-	// name that doesn't match the name of any rule in the rule group, WAF doesn't
-	// return an error and doesn't apply the override setting.
+	// Verify the rule names in your overrides carefully. With managed rule groups,
+	// WAF silently ignores any override that uses an invalid rule name. With
+	// customer-owned rule groups, invalid rule names in your overrides will cause web
+	// ACL updates to fail. An invalid rule name is any name that doesn't exactly match
+	// the case-sensitive name of an existing rule in the rule group.
 	//
 	// You can use overrides for testing, for example you can override all of rule
 	// actions to Count and then monitor the resulting count metrics to understand how
@@ -2679,6 +2937,27 @@ type NotStatement struct {
 	//
 	// This member is required.
 	Statement *Statement
+
+	noSmithyDocumentSerde
+}
+
+// Configures the level of DDoS protection that applies to web ACLs associated
+// with Application Load Balancers.
+type OnSourceDDoSProtectionConfig struct {
+
+	// The level of DDoS protection that applies to web ACLs associated with
+	// Application Load Balancers. ACTIVE_UNDER_DDOS protection is enabled by default
+	// whenever a web ACL is associated with an Application Load Balancer. In the event
+	// that an Application Load Balancer experiences high-load conditions or suspected
+	// DDoS attacks, the ACTIVE_UNDER_DDOS protection automatically rate limits
+	// traffic from known low reputation sources without disrupting Application Load
+	// Balancer availability. ALWAYS_ON protection provides constant, always-on
+	// monitoring of known low reputation sources for suspected DDoS attacks. While
+	// this provides a higher level of protection, there may be potential impacts on
+	// legitimate traffic.
+	//
+	// This member is required.
+	ALBLowReputationMode LowReputationMode
 
 	noSmithyDocumentSerde
 }
@@ -2993,6 +3272,11 @@ type RateBasedStatement struct {
 // aggregation keys are omitted from the rate-based rule evaluation and handling.
 type RateBasedStatementCustomKey struct {
 
+	// Use an Autonomous System Number (ASN) derived from the request's originating or
+	// forwarded IP address as an aggregate key. Each distinct ASN contributes to the
+	// aggregation instance.
+	ASN *RateLimitAsn
+
 	// Use the value of a cookie in the request as an aggregate key. Each distinct
 	// value in the cookie contributes to the aggregation instance. If you use a single
 	// cookie as your custom key, then each value fully defines an aggregation
@@ -3095,6 +3379,14 @@ type RateBasedStatementManagedKeysIPSet struct {
 	// The version of the IP addresses, either IPV4 or IPV6 .
 	IPAddressVersion IPAddressVersion
 
+	noSmithyDocumentSerde
+}
+
+// Specifies an Autonomous System Number (ASN) derived from the request's
+// originating or forwarded IP address as an aggregate key for a rate-based rule.
+// Each distinct ASN contributes to the aggregation instance. If you use a single
+// ASN as your custom key, then each ASN fully defines an aggregation instance.
+type RateLimitAsn struct {
 	noSmithyDocumentSerde
 }
 
@@ -3331,7 +3623,9 @@ type RateLimitUriPath struct {
 	noSmithyDocumentSerde
 }
 
-// A single regular expression. This is used in a RegexPatternSet.
+// A single regular expression. This is used in a RegexPatternSet and also in the configuration
+// for the Amazon Web Services Managed Rules rule group
+// AWSManagedRulesAntiDDoSRuleSet .
 type Regex struct {
 
 	// The string representing the regular expression.
@@ -4021,9 +4315,11 @@ type RuleAction struct {
 // the rule group. You specify one override for each rule whose action you want to
 // change.
 //
-// Take care to verify the rule names in your overrides. If you provide a rule
-// name that doesn't match the name of any rule in the rule group, WAF doesn't
-// return an error and doesn't apply the override setting.
+// Verify the rule names in your overrides carefully. With managed rule groups,
+// WAF silently ignores any override that uses an invalid rule name. With
+// customer-owned rule groups, invalid rule names in your overrides will cause web
+// ACL updates to fail. An invalid rule name is any name that doesn't exactly match
+// the case-sensitive name of an existing rule in the rule group.
 //
 // You can use overrides for testing, for example you can override all of rule
 // actions to Count and then monitor the resulting count metrics to understand how
@@ -4039,9 +4335,11 @@ type RuleActionOverride struct {
 
 	// The name of the rule to override.
 	//
-	// Take care to verify the rule names in your overrides. If you provide a rule
-	// name that doesn't match the name of any rule in the rule group, WAF doesn't
-	// return an error and doesn't apply the override setting.
+	// Verify the rule names in your overrides carefully. With managed rule groups,
+	// WAF silently ignores any override that uses an invalid rule name. With
+	// customer-owned rule groups, invalid rule names in your overrides will cause web
+	// ACL updates to fail. An invalid rule name is any name that doesn't exactly match
+	// the case-sensitive name of an existing rule in the rule group.
 	//
 	// This member is required.
 	Name *string
@@ -4175,9 +4473,11 @@ type RuleGroupReferenceStatement struct {
 	// inside the rule group. You specify one override for each rule whose action you
 	// want to change.
 	//
-	// Take care to verify the rule names in your overrides. If you provide a rule
-	// name that doesn't match the name of any rule in the rule group, WAF doesn't
-	// return an error and doesn't apply the override setting.
+	// Verify the rule names in your overrides carefully. With managed rule groups,
+	// WAF silently ignores any override that uses an invalid rule name. With
+	// customer-owned rule groups, invalid rule names in your overrides will cause web
+	// ACL updates to fail. An invalid rule name is any name that doesn't exactly match
+	// the case-sensitive name of an existing rule in the rule group.
 	//
 	// You can use overrides for testing, for example you can override all of rule
 	// actions to Count and then monitor the resulting count metrics to understand how
@@ -4430,6 +4730,15 @@ type Statement struct {
 	// A logical rule statement used to combine other rule statements with AND logic.
 	// You provide more than one Statementwithin the AndStatement .
 	AndStatement *AndStatement
+
+	// A rule statement that inspects web traffic based on the Autonomous System
+	// Number (ASN) associated with the request's IP address.
+	//
+	// For additional details, see [ASN match rule statement] in the [WAF Developer Guide].
+	//
+	// [ASN match rule statement]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-statement-type-asn-match.html
+	// [WAF Developer Guide]: https://docs.aws.amazon.com/waf/latest/developerguide/waf-chapter.html
+	AsnMatchStatement *AsnMatchStatement
 
 	// A rule statement that defines a string match search for WAF to apply to web
 	// requests. The byte match statement provides the bytes to search for, the
@@ -4972,6 +5281,9 @@ type WebACL struct {
 	// This member is required.
 	VisibilityConfig *VisibilityConfig
 
+	// Returns a list of ApplicationAttribute s.
+	ApplicationConfig *ApplicationConfig
+
 	// Specifies custom configurations for the associations between the web ACL and
 	// protected resources.
 	//
@@ -5061,6 +5373,10 @@ type WebACL struct {
 	// properties RetrofittedByFirewallManager , PreProcessFirewallManagerRuleGroups ,
 	// and PostProcessFirewallManagerRuleGroups .
 	ManagedByFirewallManager bool
+
+	// Configures the level of DDoS protection that applies to web ACLs associated
+	// with Application Load Balancers.
+	OnSourceDDoSProtectionConfig *OnSourceDDoSProtectionConfig
 
 	// The last set of rules for WAF to process in the web ACL. This is defined in an
 	// Firewall Manager WAF policy and contains only rule group references. You can't

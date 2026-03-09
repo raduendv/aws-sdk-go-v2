@@ -49,6 +49,15 @@ type GetBucketsInput struct {
 	// [SetResourceAccessForBucket]: https://docs.aws.amazon.com/lightsail/2016-11-28/api-reference/API_SetResourceAccessForBucket.html
 	IncludeConnectedResources *bool
 
+	// A Boolean value that indicates whether to include Lightsail bucket CORS
+	// configuration in the response. For more information, see [Configuring cross-origin resource sharing (CORS)].
+	//
+	// This parameter is only supported when getting a single bucket with bucketName
+	// specified. The default value for this parameter is False .
+	//
+	// [Configuring cross-origin resource sharing (CORS)]: https://docs.aws.amazon.com/lightsail/latest/userguide/configure-cors.html
+	IncludeCors *bool
+
 	// The token to advance to the next page of results from your request.
 	//
 	// To get a page token, perform an initial GetBuckets request. If your results are
@@ -172,16 +181,13 @@ func (c *Client) addOperationGetBucketsMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

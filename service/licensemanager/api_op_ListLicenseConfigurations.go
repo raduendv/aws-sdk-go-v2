@@ -33,14 +33,13 @@ type ListLicenseConfigurationsInput struct {
 	// supported:
 	//
 	//   - licenseCountingType - The dimension for which licenses are counted. Possible
-	//   values are vCPU | Instance | Core | Socket . Logical operators are EQUALS |
-	//   NOT_EQUALS .
+	//   values are vCPU | Instance | Core | Socket .
 	//
 	//   - enforceLicenseCount - A Boolean value that indicates whether hard license
-	//   enforcement is used. Logical operators are EQUALS | NOT_EQUALS .
+	//   enforcement is used.
 	//
 	//   - usagelimitExceeded - A Boolean value that indicates whether the available
-	//   licenses have been exceeded. Logical operators are EQUALS | NOT_EQUALS .
+	//   licenses have been exceeded.
 	Filters []types.Filter
 
 	// Amazon Resource Names (ARN) of the license configurations.
@@ -154,16 +153,13 @@ func (c *Client) addOperationListLicenseConfigurationsMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

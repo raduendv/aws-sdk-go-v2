@@ -10,6 +10,26 @@ import (
 	"github.com/aws/smithy-go/middleware"
 )
 
+type validateOpAddKeyReplicationRegions struct {
+}
+
+func (*validateOpAddKeyReplicationRegions) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpAddKeyReplicationRegions) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*AddKeyReplicationRegionsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpAddKeyReplicationRegionsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateAlias struct {
 }
 
@@ -90,6 +110,46 @@ func (m *validateOpDeleteKey) HandleInitialize(ctx context.Context, in middlewar
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpDisableDefaultKeyReplicationRegions struct {
+}
+
+func (*validateOpDisableDefaultKeyReplicationRegions) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDisableDefaultKeyReplicationRegions) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DisableDefaultKeyReplicationRegionsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDisableDefaultKeyReplicationRegionsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpEnableDefaultKeyReplicationRegions struct {
+}
+
+func (*validateOpEnableDefaultKeyReplicationRegions) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpEnableDefaultKeyReplicationRegions) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*EnableDefaultKeyReplicationRegionsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpEnableDefaultKeyReplicationRegionsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpExportKey struct {
 }
 
@@ -125,6 +185,26 @@ func (m *validateOpGetAlias) HandleInitialize(ctx context.Context, in middleware
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpGetAliasInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetCertificateSigningRequest struct {
+}
+
+func (*validateOpGetCertificateSigningRequest) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetCertificateSigningRequest) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetCertificateSigningRequestInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetCertificateSigningRequestInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -250,6 +330,26 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpRemoveKeyReplicationRegions struct {
+}
+
+func (*validateOpRemoveKeyReplicationRegions) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpRemoveKeyReplicationRegions) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*RemoveKeyReplicationRegionsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpRemoveKeyReplicationRegionsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpRestoreKey struct {
 }
 
@@ -370,6 +470,10 @@ func (m *validateOpUpdateAlias) HandleInitialize(ctx context.Context, in middlew
 	return next.HandleInitialize(ctx, in)
 }
 
+func addOpAddKeyReplicationRegionsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpAddKeyReplicationRegions{}, middleware.After)
+}
+
 func addOpCreateAliasValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateAlias{}, middleware.After)
 }
@@ -386,12 +490,24 @@ func addOpDeleteKeyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteKey{}, middleware.After)
 }
 
+func addOpDisableDefaultKeyReplicationRegionsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDisableDefaultKeyReplicationRegions{}, middleware.After)
+}
+
+func addOpEnableDefaultKeyReplicationRegionsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpEnableDefaultKeyReplicationRegions{}, middleware.After)
+}
+
 func addOpExportKeyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpExportKey{}, middleware.After)
 }
 
 func addOpGetAliasValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetAlias{}, middleware.After)
+}
+
+func addOpGetCertificateSigningRequestValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetCertificateSigningRequest{}, middleware.After)
 }
 
 func addOpGetKeyValidationMiddleware(stack *middleware.Stack) error {
@@ -418,6 +534,10 @@ func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
 }
 
+func addOpRemoveKeyReplicationRegionsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpRemoveKeyReplicationRegions{}, middleware.After)
+}
+
 func addOpRestoreKeyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpRestoreKey{}, middleware.After)
 }
@@ -440,6 +560,39 @@ func addOpUntagResourceValidationMiddleware(stack *middleware.Stack) error {
 
 func addOpUpdateAliasValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateAlias{}, middleware.After)
+}
+
+func validateCertificateSubjectType(v *types.CertificateSubjectType) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CertificateSubjectType"}
+	if v.CommonName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("CommonName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateExportAs2805KeyCryptogram(v *types.ExportAs2805KeyCryptogram) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ExportAs2805KeyCryptogram"}
+	if v.WrappingKeyIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("WrappingKeyIdentifier"))
+	}
+	if len(v.As2805KeyVariant) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("As2805KeyVariant"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
 }
 
 func validateExportAttributes(v *types.ExportAttributes) error {
@@ -531,6 +684,11 @@ func validateExportKeyMaterial(v types.ExportKeyMaterial) error {
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "ExportKeyMaterial"}
 	switch uv := v.(type) {
+	case *types.ExportKeyMaterialMemberAs2805KeyCryptogram:
+		if err := validateExportAs2805KeyCryptogram(&uv.Value); err != nil {
+			invalidParams.AddNested("[As2805KeyCryptogram]", err.(smithy.InvalidParamsError))
+		}
+
 	case *types.ExportKeyMaterialMemberDiffieHellmanTr31KeyBlock:
 		if err := validateExportDiffieHellmanTr31KeyBlock(&uv.Value); err != nil {
 			invalidParams.AddNested("[DiffieHellmanTr31KeyBlock]", err.(smithy.InvalidParamsError))
@@ -585,11 +743,38 @@ func validateExportTr34KeyBlock(v *types.ExportTr34KeyBlock) error {
 	if v.WrappingKeyCertificate == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("WrappingKeyCertificate"))
 	}
-	if v.ExportToken == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("ExportToken"))
-	}
 	if len(v.KeyBlockFormat) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("KeyBlockFormat"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateImportAs2805KeyCryptogram(v *types.ImportAs2805KeyCryptogram) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ImportAs2805KeyCryptogram"}
+	if len(v.As2805KeyVariant) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("As2805KeyVariant"))
+	}
+	if v.KeyModesOfUse == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("KeyModesOfUse"))
+	}
+	if len(v.KeyAlgorithm) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("KeyAlgorithm"))
+	}
+	if v.Exportable == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Exportable"))
+	}
+	if v.WrappingKeyIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("WrappingKeyIdentifier"))
+	}
+	if v.WrappedKeyCryptogram == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("WrappedKeyCryptogram"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -668,6 +853,11 @@ func validateImportKeyMaterial(v types.ImportKeyMaterial) error {
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "ImportKeyMaterial"}
 	switch uv := v.(type) {
+	case *types.ImportKeyMaterialMemberAs2805KeyCryptogram:
+		if err := validateImportAs2805KeyCryptogram(&uv.Value); err != nil {
+			invalidParams.AddNested("[As2805KeyCryptogram]", err.(smithy.InvalidParamsError))
+		}
+
 	case *types.ImportKeyMaterialMemberDiffieHellmanTr31KeyBlock:
 		if err := validateImportDiffieHellmanTr31KeyBlock(&uv.Value); err != nil {
 			invalidParams.AddNested("[DiffieHellmanTr31KeyBlock]", err.(smithy.InvalidParamsError))
@@ -734,9 +924,6 @@ func validateImportTr34KeyBlock(v *types.ImportTr34KeyBlock) error {
 	}
 	if v.SigningKeyCertificate == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("SigningKeyCertificate"))
-	}
-	if v.ImportToken == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("ImportToken"))
 	}
 	if v.WrappedKeyBlock == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("WrappedKeyBlock"))
@@ -857,6 +1044,24 @@ func validateTrustedCertificatePublicKey(v *types.TrustedCertificatePublicKey) e
 	}
 }
 
+func validateOpAddKeyReplicationRegionsInput(v *AddKeyReplicationRegionsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AddKeyReplicationRegionsInput"}
+	if v.KeyIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("KeyIdentifier"))
+	}
+	if v.ReplicationRegions == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReplicationRegions"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateAliasInput(v *CreateAliasInput) error {
 	if v == nil {
 		return nil
@@ -929,6 +1134,36 @@ func validateOpDeleteKeyInput(v *DeleteKeyInput) error {
 	}
 }
 
+func validateOpDisableDefaultKeyReplicationRegionsInput(v *DisableDefaultKeyReplicationRegionsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DisableDefaultKeyReplicationRegionsInput"}
+	if v.ReplicationRegions == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReplicationRegions"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpEnableDefaultKeyReplicationRegionsInput(v *EnableDefaultKeyReplicationRegionsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "EnableDefaultKeyReplicationRegionsInput"}
+	if v.ReplicationRegions == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReplicationRegions"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpExportKeyInput(v *ExportKeyInput) error {
 	if v == nil {
 		return nil
@@ -963,6 +1198,31 @@ func validateOpGetAliasInput(v *GetAliasInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "GetAliasInput"}
 	if v.AliasName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("AliasName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetCertificateSigningRequestInput(v *GetCertificateSigningRequestInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetCertificateSigningRequestInput"}
+	if v.KeyIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("KeyIdentifier"))
+	}
+	if len(v.SigningAlgorithm) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("SigningAlgorithm"))
+	}
+	if v.CertificateSubject == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("CertificateSubject"))
+	} else if v.CertificateSubject != nil {
+		if err := validateCertificateSubjectType(v.CertificateSubject); err != nil {
+			invalidParams.AddNested("CertificateSubject", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1068,6 +1328,24 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ListTagsForResourceInput"}
 	if v.ResourceArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpRemoveKeyReplicationRegionsInput(v *RemoveKeyReplicationRegionsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RemoveKeyReplicationRegionsInput"}
+	if v.KeyIdentifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("KeyIdentifier"))
+	}
+	if v.ReplicationRegions == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReplicationRegions"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

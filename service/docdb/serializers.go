@@ -14,6 +14,7 @@ import (
 	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
+	"math"
 	"path"
 )
 
@@ -4047,6 +4048,49 @@ func awsAwsquery_serializeDocumentParametersList(v []types.Parameter, value quer
 	return nil
 }
 
+func awsAwsquery_serializeDocumentServerlessV2ScalingConfiguration(v *types.ServerlessV2ScalingConfiguration, value query.Value) error {
+	object := value.Object()
+	_ = object
+
+	if v.MaxCapacity != nil {
+		objectKey := object.Key("MaxCapacity")
+		switch {
+		case math.IsNaN(*v.MaxCapacity):
+			objectKey.String("NaN")
+
+		case math.IsInf(*v.MaxCapacity, 1):
+			objectKey.String("Infinity")
+
+		case math.IsInf(*v.MaxCapacity, -1):
+			objectKey.String("-Infinity")
+
+		default:
+			objectKey.Double(*v.MaxCapacity)
+
+		}
+	}
+
+	if v.MinCapacity != nil {
+		objectKey := object.Key("MinCapacity")
+		switch {
+		case math.IsNaN(*v.MinCapacity):
+			objectKey.String("NaN")
+
+		case math.IsInf(*v.MinCapacity, 1):
+			objectKey.String("Infinity")
+
+		case math.IsInf(*v.MinCapacity, -1):
+			objectKey.String("-Infinity")
+
+		default:
+			objectKey.Double(*v.MinCapacity)
+
+		}
+	}
+
+	return nil
+}
+
 func awsAwsquery_serializeDocumentSourceIdsList(v []string, value query.Value) error {
 	array := value.Array("SourceId")
 
@@ -4325,6 +4369,11 @@ func awsAwsquery_serializeOpDocumentCreateDBClusterInput(v *CreateDBClusterInput
 		objectKey.String(*v.MasterUserSecretKmsKeyId)
 	}
 
+	if v.NetworkType != nil {
+		objectKey := object.Key("NetworkType")
+		objectKey.String(*v.NetworkType)
+	}
+
 	if v.Port != nil {
 		objectKey := object.Key("Port")
 		objectKey.Integer(*v.Port)
@@ -4343,6 +4392,13 @@ func awsAwsquery_serializeOpDocumentCreateDBClusterInput(v *CreateDBClusterInput
 	if v.PreSignedUrl != nil {
 		objectKey := object.Key("PreSignedUrl")
 		objectKey.String(*v.PreSignedUrl)
+	}
+
+	if v.ServerlessV2ScalingConfiguration != nil {
+		objectKey := object.Key("ServerlessV2ScalingConfiguration")
+		if err := awsAwsquery_serializeDocumentServerlessV2ScalingConfiguration(v.ServerlessV2ScalingConfiguration, objectKey); err != nil {
+			return err
+		}
 	}
 
 	if v.StorageEncrypted != nil {
@@ -5372,6 +5428,11 @@ func awsAwsquery_serializeOpDocumentModifyDBClusterInput(v *ModifyDBClusterInput
 		objectKey.String(*v.MasterUserSecretKmsKeyId)
 	}
 
+	if v.NetworkType != nil {
+		objectKey := object.Key("NetworkType")
+		objectKey.String(*v.NetworkType)
+	}
+
 	if v.NewDBClusterIdentifier != nil {
 		objectKey := object.Key("NewDBClusterIdentifier")
 		objectKey.String(*v.NewDBClusterIdentifier)
@@ -5395,6 +5456,13 @@ func awsAwsquery_serializeOpDocumentModifyDBClusterInput(v *ModifyDBClusterInput
 	if v.RotateMasterUserPassword != nil {
 		objectKey := object.Key("RotateMasterUserPassword")
 		objectKey.Boolean(*v.RotateMasterUserPassword)
+	}
+
+	if v.ServerlessV2ScalingConfiguration != nil {
+		objectKey := object.Key("ServerlessV2ScalingConfiguration")
+		if err := awsAwsquery_serializeDocumentServerlessV2ScalingConfiguration(v.ServerlessV2ScalingConfiguration, objectKey); err != nil {
+			return err
+		}
 	}
 
 	if v.StorageType != nil {
@@ -5756,9 +5824,21 @@ func awsAwsquery_serializeOpDocumentRestoreDBClusterFromSnapshotInput(v *Restore
 		objectKey.String(*v.KmsKeyId)
 	}
 
+	if v.NetworkType != nil {
+		objectKey := object.Key("NetworkType")
+		objectKey.String(*v.NetworkType)
+	}
+
 	if v.Port != nil {
 		objectKey := object.Key("Port")
 		objectKey.Integer(*v.Port)
+	}
+
+	if v.ServerlessV2ScalingConfiguration != nil {
+		objectKey := object.Key("ServerlessV2ScalingConfiguration")
+		if err := awsAwsquery_serializeDocumentServerlessV2ScalingConfiguration(v.ServerlessV2ScalingConfiguration, objectKey); err != nil {
+			return err
+		}
 	}
 
 	if v.SnapshotIdentifier != nil {
@@ -5819,6 +5899,11 @@ func awsAwsquery_serializeOpDocumentRestoreDBClusterToPointInTimeInput(v *Restor
 		objectKey.String(*v.KmsKeyId)
 	}
 
+	if v.NetworkType != nil {
+		objectKey := object.Key("NetworkType")
+		objectKey.String(*v.NetworkType)
+	}
+
 	if v.Port != nil {
 		objectKey := object.Key("Port")
 		objectKey.Integer(*v.Port)
@@ -5832,6 +5917,13 @@ func awsAwsquery_serializeOpDocumentRestoreDBClusterToPointInTimeInput(v *Restor
 	if v.RestoreType != nil {
 		objectKey := object.Key("RestoreType")
 		objectKey.String(*v.RestoreType)
+	}
+
+	if v.ServerlessV2ScalingConfiguration != nil {
+		objectKey := object.Key("ServerlessV2ScalingConfiguration")
+		if err := awsAwsquery_serializeDocumentServerlessV2ScalingConfiguration(v.ServerlessV2ScalingConfiguration, objectKey); err != nil {
+			return err
+		}
 	}
 
 	if v.SourceDBClusterIdentifier != nil {

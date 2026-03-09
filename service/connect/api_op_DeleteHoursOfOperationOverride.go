@@ -11,7 +11,7 @@ import (
 )
 
 // Deletes an hours of operation override in an Amazon Connect hours of operation
-// resource
+// resource.
 func (c *Client) DeleteHoursOfOperationOverride(ctx context.Context, params *DeleteHoursOfOperationOverrideInput, optFns ...func(*Options)) (*DeleteHoursOfOperationOverrideOutput, error) {
 	if params == nil {
 		params = &DeleteHoursOfOperationOverrideInput{}
@@ -142,16 +142,13 @@ func (c *Client) addOperationDeleteHoursOfOperationOverrideMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

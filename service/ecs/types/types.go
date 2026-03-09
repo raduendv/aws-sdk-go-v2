@@ -3,9 +3,71 @@
 package types
 
 import (
+	"github.com/aws/aws-sdk-go-v2/service/ecs/document"
 	smithydocument "github.com/aws/smithy-go/document"
 	"time"
 )
+
+// The minimum and maximum number of accelerators (such as GPUs) for instance type
+// selection. This is used for workloads that require specific numbers of
+// accelerators.
+type AcceleratorCountRequest struct {
+
+	// The maximum number of accelerators. Instance types with more accelerators are
+	// excluded from selection.
+	Max *int32
+
+	// The minimum number of accelerators. Instance types with fewer accelerators are
+	// excluded from selection.
+	Min *int32
+
+	noSmithyDocumentSerde
+}
+
+// The minimum and maximum total accelerator memory in mebibytes (MiB) for
+// instance type selection. This is important for GPU workloads that require
+// specific amounts of video memory.
+type AcceleratorTotalMemoryMiBRequest struct {
+
+	// The maximum total accelerator memory in MiB. Instance types with more
+	// accelerator memory are excluded from selection.
+	Max *int32
+
+	// The minimum total accelerator memory in MiB. Instance types with less
+	// accelerator memory are excluded from selection.
+	Min *int32
+
+	noSmithyDocumentSerde
+}
+
+// The advanced settings for a load balancer used in blue/green deployments.
+// Specify the alternate target group, listener rules, and IAM role required for
+// traffic shifting during blue/green deployments. For more information, see [Required resources for Amazon ECS blue/green deployments]in
+// the Amazon Elastic Container Service Developer Guide.
+//
+// [Required resources for Amazon ECS blue/green deployments]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/blue-green-deployment-implementation.html
+type AdvancedConfiguration struct {
+
+	// The Amazon Resource Name (ARN) of the alternate target group for Amazon ECS
+	// blue/green deployments.
+	AlternateTargetGroupArn *string
+
+	// The Amazon Resource Name (ARN) that that identifies the production listener
+	// rule (in the case of an Application Load Balancer) or listener (in the case for
+	// an Network Load Balancer) for routing production traffic.
+	ProductionListenerRule *string
+
+	// The Amazon Resource Name (ARN) of the IAM role that grants Amazon ECS
+	// permission to call the Elastic Load Balancing APIs for you.
+	RoleArn *string
+
+	// The Amazon Resource Name (ARN) that identifies ) that identifies the test
+	// listener rule (in the case of an Application Load Balancer) or listener (in the
+	// case for an Network Load Balancer) for routing test traffic.
+	TestListenerRule *string
+
+	noSmithyDocumentSerde
+}
 
 // An object representing a container instance or task attachment.
 type Attachment struct {
@@ -190,6 +252,44 @@ type AwsVpcConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// The minimum and maximum baseline Amazon EBS bandwidth in megabits per second
+// (Mbps) for instance type selection. This is important for workloads with high
+// storage I/O requirements.
+type BaselineEbsBandwidthMbpsRequest struct {
+
+	// The maximum baseline Amazon EBS bandwidth in Mbps. Instance types with higher
+	// Amazon EBS bandwidth are excluded from selection.
+	Max *int32
+
+	// The minimum baseline Amazon EBS bandwidth in Mbps. Instance types with lower
+	// Amazon EBS bandwidth are excluded from selection.
+	Min *int32
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for a canary deployment strategy that shifts a fixed percentage
+// of traffic to the new service revision, waits for a specified bake time, then
+// shifts the remaining traffic.
+//
+// This is only valid when you run CreateService or UpdateService with
+// deploymentController set to ECS and a deploymentConfiguration with a strategy
+// set to CANARY .
+type CanaryConfiguration struct {
+
+	// The amount of time in minutes to wait during the canary phase before shifting
+	// the remaining production traffic to the new service revision. Valid values are 0
+	// to 1440 minutes (24 hours). The default value is 10.
+	CanaryBakeTimeInMinutes *int32
+
+	// The percentage of production traffic to shift to the new service revision
+	// during the canary phase. Valid values are multiples of 0.1 from 0.1 to 100.0.
+	// The default value is 5.0.
+	CanaryPercent *float64
+
+	noSmithyDocumentSerde
+}
+
 // The details for a capacity provider.
 type CapacityProvider struct {
 
@@ -198,6 +298,18 @@ type CapacityProvider struct {
 
 	// The Amazon Resource Name (ARN) that identifies the capacity provider.
 	CapacityProviderArn *string
+
+	// The cluster that this capacity provider is associated with. Managed instances
+	// capacity providers are cluster-scoped, meaning they can only be used within
+	// their associated cluster.
+	//
+	// This is required for Managed instances.
+	Cluster *string
+
+	// The configuration for the Amazon ECS Managed Instances provider. This includes
+	// the infrastructure role, the launch template configuration, and tag propagation
+	// settings.
+	ManagedInstancesProvider *ManagedInstancesProvider
 
 	// The name of the capacity provider.
 	Name *string
@@ -233,6 +345,11 @@ type CapacityProvider struct {
 	//   You cannot edit or delete tag keys or values with this prefix. Tags with this
 	//   prefix do not count against your tags per resource limit.
 	Tags []Tag
+
+	// The type of capacity provider. For Amazon ECS Managed Instances, this value is
+	// MANAGED_INSTANCES , indicating that Amazon ECS manages the underlying Amazon EC2
+	// instances on your behalf.
+	Type CapacityProviderType
 
 	// The update status of the capacity provider. The following are the possible
 	// states that is returned.
@@ -292,9 +409,19 @@ type CapacityProviderStrategyItem struct {
 	CapacityProvider *string
 
 	// The base value designates how many tasks, at a minimum, to run on the specified
-	// capacity provider. Only one capacity provider in a capacity provider strategy
-	// can have a base defined. If no value is specified, the default value of 0 is
-	// used.
+	// capacity provider for each service. Only one capacity provider in a capacity
+	// provider strategy can have a base defined. If no value is specified, the default
+	// value of 0 is used.
+	//
+	// Base value characteristics:
+	//
+	//   - Only one capacity provider in a strategy can have a base defined
+	//
+	//   - The default value is 0 if not specified
+	//
+	//   - The valid range is 0 to 100,000
+	//
+	//   - Base requirements are satisfied first before weight distribution
 	Base int32
 
 	// The weight value designates the relative percentage of the total number of
@@ -310,12 +437,33 @@ type CapacityProviderStrategyItem struct {
 	// any RunTask or CreateService actions using the capacity provider strategy will
 	// fail.
 	//
-	// An example scenario for using weights is defining a strategy that contains two
-	// capacity providers and both have a weight of 1 , then when the base is
-	// satisfied, the tasks will be split evenly across the two capacity providers.
-	// Using that same logic, if you specify a weight of 1 for capacityProviderA and a
-	// weight of 4 for capacityProviderB, then for every one task that's run using
-	// capacityProviderA, four tasks would use capacityProviderB.
+	// Weight value characteristics:
+	//
+	//   - Weight is considered after the base value is satisfied
+	//
+	//   - The default value is 0 if not specified
+	//
+	//   - The valid range is 0 to 1,000
+	//
+	//   - At least one capacity provider must have a weight greater than zero
+	//
+	//   - Capacity providers with weight of 0 cannot place tasks
+	//
+	// Task distribution logic:
+	//
+	//   - Base satisfaction: The minimum number of tasks specified by the base value
+	//   are placed on that capacity provider
+	//
+	//   - Weight distribution: After base requirements are met, additional tasks are
+	//   distributed according to weight ratios
+	//
+	// Examples:
+	//
+	// Equal Distribution: Two capacity providers both with weight 1 will split tasks
+	// evenly after base requirements are met.
+	//
+	// Weighted Distribution: If capacityProviderA has weight 1 and capacityProviderB
+	// has weight 4 , then for every 1 task on A, 4 tasks will run on B.
 	Weight int32
 
 	noSmithyDocumentSerde
@@ -328,9 +476,9 @@ type CapacityProviderStrategyItem struct {
 type Cluster struct {
 
 	// The number of services that are running on the cluster in an ACTIVE state. You
-	// can view these services with [PListServices].
+	// can view these services with [ListServices].
 	//
-	// [PListServices]: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ListServices.html
+	// [ListServices]: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ListServices.html
 	ActiveServicesCount int32
 
 	// The resources attached to a cluster. When using a capacity provider with a
@@ -361,7 +509,7 @@ type Cluster struct {
 	// A user-generated string that you use to identify your cluster.
 	ClusterName *string
 
-	// The execute command configuration for the cluster.
+	// The execute command and managed storage configuration for the cluster.
 	Configuration *ClusterConfiguration
 
 	// The default capacity provider strategy for the cluster. When services or tasks
@@ -645,7 +793,7 @@ type Container struct {
 	// The network interfaces associated with the container.
 	NetworkInterfaces []NetworkInterface
 
-	// A short (255 max characters) human-readable string to provide additional
+	// A short (1024 max characters) human-readable string to provide additional
 	// details about a running or stopped container.
 	Reason *string
 
@@ -668,7 +816,7 @@ type ContainerDefinition struct {
 	Command []string
 
 	// The number of cpu units reserved for the container. This parameter maps to
-	// CpuShares in the docker container create commandand the --cpu-shares option to
+	// CpuShares in the docker container create command and the --cpu-shares option to
 	// docker run.
 	//
 	// This field is optional for tasks using the Fargate launch type, and the only
@@ -915,10 +1063,15 @@ type ContainerDefinition struct {
 	// The image used to start a container. This string is passed directly to the
 	// Docker daemon. By default, images in the Docker Hub registry are available.
 	// Other repositories are specified with either repository-url/image:tag  or
-	// repository-url/image@digest . Up to 255 letters (uppercase and lowercase),
-	// numbers, hyphens, underscores, colons, periods, forward slashes, and number
-	// signs are allowed. This parameter maps to Image in the docker container create
-	// command and the IMAGE parameter of docker run.
+	// repository-url/image@digest . For images using tags (repository-url/image:tag),
+	// up to 255 characters total are allowed, including letters (uppercase and
+	// lowercase), numbers, hyphens, underscores, colons, periods, forward slashes, and
+	// number signs (#). For images using digests (repository-url/image@digest), the
+	// 255 character limit applies only to the repository URL and image name
+	// (everything before the @ sign). The only supported hash function is sha256, and
+	// the hash value after sha256: must be exactly 64 characters (only letters A-F,
+	// a-f, and numbers 0-9 are allowed). This parameter maps to Image in the docker
+	// container create command and the IMAGE parameter of docker run.
 	//
 	//   - When a new task starts, the Amazon ECS container agent pulls the latest
 	//   version of the specified image and tag for the container to use. However,
@@ -1080,11 +1233,11 @@ type ContainerDefinition struct {
 	// There's no loopback for port mappings on Windows, so you can't access a
 	// container's mapped port from the host itself.
 	//
-	// This parameter maps to PortBindings in the the docker container create command
-	// and the --publish option to docker run. If the network mode of a task
-	// definition is set to none , then you can't specify port mappings. If the network
-	// mode of a task definition is set to host , then host ports must either be
-	// undefined or they must match the container port in the port mapping.
+	// This parameter maps to PortBindings in the docker container create command and
+	// the --publish option to docker run. If the network mode of a task definition is
+	// set to none , then you can't specify port mappings. If the network mode of a
+	// task definition is set to host , then host ports must either be undefined or
+	// they must match the container port in the port mapping.
 	//
 	// After a task reaches the RUNNING status, manual and automatic host and
 	// container port assignments are visible in the Network Bindings section of a
@@ -1641,6 +1794,49 @@ type CreatedAt struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration for creating a Amazon ECS Managed Instances provider. This
+// specifies how Amazon ECS should manage Amazon EC2 instances, including the
+// infrastructure role, instance launch template, and whether to propagate tags
+// from the capacity provider to the instances.
+type CreateManagedInstancesProviderConfiguration struct {
+
+	// The Amazon Resource Name (ARN) of the infrastructure role that Amazon ECS uses
+	// to manage instances on your behalf. This role must have permissions to launch,
+	// terminate, and manage Amazon EC2 instances, as well as access to other Amazon
+	// Web Services services required for Amazon ECS Managed Instances functionality.
+	//
+	// For more information, see [Amazon ECS infrastructure IAM role] in the Amazon ECS Developer Guide.
+	//
+	// [Amazon ECS infrastructure IAM role]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/infrastructure_IAM_role.html
+	//
+	// This member is required.
+	InfrastructureRoleArn *string
+
+	// The launch template configuration that specifies how Amazon ECS should launch
+	// Amazon EC2 instances. This includes the instance profile, network configuration,
+	// storage settings, and instance requirements for attribute-based instance type
+	// selection.
+	//
+	// For more information, see [Store instance launch parameters in Amazon EC2 launch templates] in the Amazon EC2 User Guide.
+	//
+	// [Store instance launch parameters in Amazon EC2 launch templates]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html
+	//
+	// This member is required.
+	InstanceLaunchTemplate *InstanceLaunchTemplate
+
+	// Defines how Amazon ECS Managed Instances optimizes the infrastastructure in
+	// your capacity provider. Provides control over the delay between when EC2
+	// instances become idle or underutilized and when Amazon ECS optimizes them.
+	InfrastructureOptimization *InfrastructureOptimization
+
+	// Specifies whether to propagate tags from the capacity provider to the Amazon
+	// ECS Managed Instances. When enabled, tags applied to the capacity provider are
+	// automatically applied to all instances launched by this provider.
+	PropagateTags PropagateMITags
+
+	noSmithyDocumentSerde
+}
+
 // The details of an Amazon ECS service deployment. This is used only when a
 // service uses the ECS deployment controller type.
 type Deployment struct {
@@ -1778,7 +1974,7 @@ type Deployment struct {
 // to the last completed deployment after a failure.
 //
 // You can only use the DeploymentAlarms method to detect failures when the
-// DeploymentController is set to ECS (rolling update).
+// DeploymentController is set to ECS .
 //
 // For more information, see [Rolling update] in the Amazon Elastic Container Service Developer
 // Guide .
@@ -1846,6 +2042,18 @@ type DeploymentConfiguration struct {
 	// Information about the CloudWatch alarms.
 	Alarms *DeploymentAlarms
 
+	// The time period when both blue and green service revisions are running
+	// simultaneously after the production traffic has shifted.
+	//
+	// You must provide this parameter when you use the BLUE_GREEN deployment strategy.
+	BakeTimeInMinutes *int32
+
+	// Configuration for canary deployment strategy. Only valid when the deployment
+	// strategy is CANARY . This configuration enables shifting a fixed percentage of
+	// traffic for testing, followed by shifting the remaining traffic after a bake
+	// period.
+	CanaryConfiguration *CanaryConfiguration
+
 	// The deployment circuit breaker can only be used for services using the rolling
 	// update ( ECS ) deployment type.
 	//
@@ -1859,6 +2067,15 @@ type DeploymentConfiguration struct {
 	//
 	// [Rolling update]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-ecs.html
 	DeploymentCircuitBreaker *DeploymentCircuitBreaker
+
+	// An array of deployment lifecycle hook objects to run custom logic at specific
+	// stages of the deployment lifecycle.
+	LifecycleHooks []DeploymentLifecycleHook
+
+	// Configuration for linear deployment strategy. Only valid when the deployment
+	// strategy is LINEAR . This configuration enables progressive traffic shifting in
+	// equal percentage increments with configurable bake times between each step.
+	LinearConfiguration *LinearConfiguration
 
 	// If a service is using the rolling update ( ECS ) deployment type, the
 	// maximumPercent parameter represents an upper limit on the number of your
@@ -1965,6 +2182,33 @@ type DeploymentConfiguration struct {
 	// [Amazon ECS services]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_services.html
 	MinimumHealthyPercent *int32
 
+	// The deployment strategy for the service. Choose from these valid values:
+	//
+	//   - ROLLING - When you create a service which uses the rolling update ( ROLLING
+	//   ) deployment strategy, the Amazon ECS service scheduler replaces the currently
+	//   running tasks with new tasks. The number of tasks that Amazon ECS adds or
+	//   removes from the service during a rolling update is controlled by the service
+	//   deployment configuration.
+	//
+	//   - BLUE_GREEN - A blue/green deployment strategy ( BLUE_GREEN ) is a release
+	//   methodology that reduces downtime and risk by running two identical production
+	//   environments called blue and green. With Amazon ECS blue/green deployments, you
+	//   can validate new service revisions before directing production traffic to them.
+	//   This approach provides a safer way to deploy changes with the ability to quickly
+	//   roll back if needed.
+	//
+	//   - LINEAR - A linear deployment strategy ( LINEAR ) gradually shifts traffic
+	//   from the current production environment to a new environment in equal
+	//   percentages over time. With Amazon ECS linear deployments, you can control the
+	//   pace of traffic shifting and validate new service revisions with increasing
+	//   amounts of production traffic.
+	//
+	//   - CANARY - A canary deployment strategy ( CANARY ) shifts a small percentage
+	//   of traffic to the new service revision first, then shifts the remaining traffic
+	//   all at once after a specified time period. This allows you to test the new
+	//   version with a subset of users before full deployment.
+	Strategy DeploymentStrategy
+
 	noSmithyDocumentSerde
 }
 
@@ -1973,35 +2217,84 @@ type DeploymentController struct {
 
 	// The deployment controller type to use.
 	//
-	// There are three deployment controller types available:
+	// The deployment controller is the mechanism that determines how tasks are
+	// deployed for your service. The valid options are:
 	//
-	// ECS The rolling update ( ECS ) deployment type involves replacing the current
-	// running version of the container with the latest version. The number of
-	// containers Amazon ECS adds or removes from the service during a rolling update
-	// is controlled by adjusting the minimum and maximum number of healthy tasks
-	// allowed during a service deployment, as specified in the [DeploymentConfiguration].
+	//   - ECS
 	//
-	// For more information about rolling deployments, see [Deploy Amazon ECS services by replacing tasks] in the Amazon Elastic
-	// Container Service Developer Guide.
+	// When you create a service which uses the ECS deployment controller, you can
+	//   choose between the following deployment strategies:
 	//
-	// CODE_DEPLOY The blue/green ( CODE_DEPLOY ) deployment type uses the blue/green
-	// deployment model powered by CodeDeploy, which allows you to verify a new
-	// deployment of a service before sending production traffic to it.
+	//   - ROLLING : When you create a service which uses the rolling update ( ROLLING
+	//   ) deployment strategy, the Amazon ECS service scheduler replaces the currently
+	//   running tasks with new tasks. The number of tasks that Amazon ECS adds or
+	//   removes from the service during a rolling update is controlled by the service
+	//   deployment configuration.
 	//
-	// For more information about blue/green deployments, see [Validate the state of an Amazon ECS service before deployment] in the Amazon Elastic
-	// Container Service Developer Guide.
+	// Rolling update deployments are best suited for the following scenarios:
 	//
-	// EXTERNAL The external ( EXTERNAL ) deployment type enables you to use any
-	// third-party deployment controller for full control over the deployment process
-	// for an Amazon ECS service.
+	//   - Gradual service updates: You need to update your service incrementally
+	//   without taking the entire service offline at once.
 	//
-	// For more information about external deployments, see [Deploy Amazon ECS services using a third-party controller] in the Amazon Elastic
-	// Container Service Developer Guide.
+	//   - Limited resource requirements: You want to avoid the additional resource
+	//   costs of running two complete environments simultaneously (as required by
+	//   blue/green deployments).
 	//
-	// [Validate the state of an Amazon ECS service before deployment]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-bluegreen.html
-	// [Deploy Amazon ECS services by replacing tasks]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-ecs.html
-	// [Deploy Amazon ECS services using a third-party controller]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-external.html
-	// [DeploymentConfiguration]: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_DeploymentConfiguration.html
+	//   - Acceptable deployment time: Your application can tolerate a longer
+	//   deployment process, as rolling updates replace tasks one by one.
+	//
+	//   - No need for instant roll back: Your service can tolerate a rollback process
+	//   that takes minutes rather than seconds.
+	//
+	//   - Simple deployment process: You prefer a straightforward deployment approach
+	//   without the complexity of managing multiple environments, target groups, and
+	//   listeners.
+	//
+	//   - No load balancer requirement: Your service doesn't use or require a load
+	//   balancer, Application Load Balancer, Network Load Balancer, or Service Connect
+	//   (which are required for blue/green deployments).
+	//
+	//   - Stateful applications: Your application maintains state that makes it
+	//   difficult to run two parallel environments.
+	//
+	//   - Cost sensitivity: You want to minimize deployment costs by not running
+	//   duplicate environments during deployment.
+	//
+	// Rolling updates are the default deployment strategy for services and provide a
+	//   balance between deployment safety and resource efficiency for many common
+	//   application scenarios.
+	//
+	//   - BLUE_GREEN : A blue/green deployment strategy ( BLUE_GREEN ) is a release
+	//   methodology that reduces downtime and risk by running two identical production
+	//   environments called blue and green. With Amazon ECS blue/green deployments, you
+	//   can validate new service revisions before directing production traffic to them.
+	//   This approach provides a safer way to deploy changes with the ability to quickly
+	//   roll back if needed.
+	//
+	// Amazon ECS blue/green deployments are best suited for the following scenarios:
+	//
+	//   - Service validation: When you need to validate new service revisions before
+	//   directing production traffic to them
+	//
+	//   - Zero downtime: When your service requires zero-downtime deployments
+	//
+	//   - Instant roll back: When you need the ability to quickly roll back if issues
+	//   are detected
+	//
+	//   - Load balancer requirement: When your service uses Application Load
+	//   Balancer, Network Load Balancer, or Service Connect
+	//
+	//   - External
+	//
+	// Use a third-party deployment controller.
+	//
+	//   - Blue/green deployment (powered by CodeDeploy)
+	//
+	// CodeDeploy installs an updated version of the application as a new replacement
+	//   task set and reroutes production traffic from the original application task set
+	//   to the replacement task set. The original task set is terminated after a
+	//   successful deployment. Use this deployment controller to verify a new deployment
+	//   of a service before sending production traffic to it.
 	//
 	// This member is required.
 	Type DeploymentControllerType
@@ -2015,6 +2308,91 @@ type DeploymentEphemeralStorage struct {
 	// Specify an Key Management Service key ID to encrypt the ephemeral storage for
 	// deployment.
 	KmsKeyId *string
+
+	noSmithyDocumentSerde
+}
+
+// A deployment lifecycle hook runs custom logic at specific stages of the
+// deployment process. Currently, you can use Lambda functions as hook targets.
+//
+// For more information, see [Lifecycle hooks for Amazon ECS service deployments] in the Amazon Elastic Container Service Developer
+// Guide.
+//
+// [Lifecycle hooks for Amazon ECS service deployments]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-lifecycle-hooks.html
+type DeploymentLifecycleHook struct {
+
+	// Use this field to specify custom parameters that Amazon ECS will pass to your
+	// hook target invocations (such as a Lambda function).
+	HookDetails document.Interface
+
+	// The Amazon Resource Name (ARN) of the hook target. Currently, only Lambda
+	// function ARNs are supported.
+	//
+	// You must provide this parameter when configuring a deployment lifecycle hook.
+	HookTargetArn *string
+
+	// The lifecycle stages at which to run the hook. Choose from these valid values:
+	//
+	//   - RECONCILE_SERVICE
+	//
+	// The reconciliation stage that only happens when you start a new service
+	//   deployment with more than 1 service revision in an ACTIVE state.
+	//
+	// You can use a lifecycle hook for this stage.
+	//
+	//   - PRE_SCALE_UP
+	//
+	// The green service revision has not started. The blue service revision is
+	//   handling 100% of the production traffic. There is no test traffic.
+	//
+	// You can use a lifecycle hook for this stage.
+	//
+	//   - POST_SCALE_UP
+	//
+	// The green service revision has started. The blue service revision is handling
+	//   100% of the production traffic. There is no test traffic.
+	//
+	// You can use a lifecycle hook for this stage.
+	//
+	//   - TEST_TRAFFIC_SHIFT
+	//
+	// The blue and green service revisions are running. The blue service revision
+	//   handles 100% of the production traffic. The green service revision is migrating
+	//   from 0% to 100% of test traffic.
+	//
+	// You can use a lifecycle hook for this stage.
+	//
+	//   - POST_TEST_TRAFFIC_SHIFT
+	//
+	// The test traffic shift is complete. The green service revision handles 100% of
+	//   the test traffic.
+	//
+	// You can use a lifecycle hook for this stage.
+	//
+	//   - PRODUCTION_TRAFFIC_SHIFT
+	//
+	// Production traffic is shifting to the green service revision. The green service
+	//   revision is migrating from 0% to 100% of production traffic.
+	//
+	// You can use a lifecycle hook for this stage.
+	//
+	//   - POST_PRODUCTION_TRAFFIC_SHIFT
+	//
+	// The production traffic shift is complete.
+	//
+	// You can use a lifecycle hook for this stage.
+	//
+	// You must provide this parameter when configuring a deployment lifecycle hook.
+	LifecycleStages []DeploymentLifecycleHookStage
+
+	// The Amazon Resource Name (ARN) of the IAM role that grants Amazon ECS
+	// permission to call Lambda functions on your behalf.
+	//
+	// For more information, see [Permissions required for Lambda functions in Amazon ECS blue/green deployments] in the Amazon Elastic Container Service Developer
+	// Guide.
+	//
+	// [Permissions required for Lambda functions in Amazon ECS blue/green deployments]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/blue-green-permissions.html
+	RoleArn *string
 
 	noSmithyDocumentSerde
 }
@@ -2094,6 +2472,75 @@ type EBSTagSpecification struct {
 	// The tags applied to this Amazon EBS volume. AmazonECSCreated and
 	// AmazonECSManaged are reserved tags that can't be used.
 	Tags []Tag
+
+	noSmithyDocumentSerde
+}
+
+// Represents an Express service, which provides a simplified way to deploy
+// containerized web applications on Amazon ECS with managed Amazon Web Services
+// infrastructure. An Express service automatically provisions and manages
+// Application Load Balancers, target groups, security groups, and auto-scaling
+// policies.
+//
+// Express services use a service revision architecture where each service can
+// have multiple active configurations, enabling blue-green deployments and gradual
+// rollouts. The service maintains a list of active configurations and manages the
+// lifecycle of the underlying Amazon Web Services resources.
+type ECSExpressGatewayService struct {
+
+	// The list of active service configurations for the Express service.
+	ActiveConfigurations []ExpressGatewayServiceConfiguration
+
+	// The short name or full ARN of the cluster that hosts the Express service.
+	Cluster *string
+
+	// The Unix timestamp for when the Express service was created.
+	CreatedAt *time.Time
+
+	// The current deployment configuration for the Express service.
+	CurrentDeployment *string
+
+	// The ARN of the infrastructure role that manages Amazon Web Services resources
+	// for the Express service.
+	InfrastructureRoleArn *string
+
+	// The ARN that identifies the Express service.
+	ServiceArn *string
+
+	// The name of the Express service.
+	ServiceName *string
+
+	// The current status of the Express service.
+	Status *ExpressGatewayServiceStatus
+
+	// The metadata applied to the Express service.
+	Tags []Tag
+
+	// The Unix timestamp for when the Express service was last updated.
+	UpdatedAt *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Represents the Amazon Web Services resources managed by Amazon ECS for an
+// Express service, including ingress paths, auto-scaling policies, metric alarms,
+// and security groups.
+type ECSManagedResources struct {
+
+	// The auto-scaling configuration and policies for the Express service.
+	AutoScaling *ManagedAutoScaling
+
+	// The ingress paths and endpoints for the Express service.
+	IngressPaths []ManagedIngressPath
+
+	// The log groups managed by the Express service.
+	LogGroups []ManagedLogGroup
+
+	// The CloudWatch metric alarms associated with the Express service.
+	MetricAlarms []ManagedMetricAlarm
+
+	// The security groups managed by the Express service.
+	ServiceSecurityGroups []ManagedSecurityGroup
 
 	noSmithyDocumentSerde
 }
@@ -2295,6 +2742,173 @@ type ExecuteCommandLogConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// Defines the configuration for the primary container in an Express service. This
+// container receives traffic from the Application Load Balancer and runs your
+// application code.
+//
+// The container configuration includes the container image, port mapping, logging
+// settings, environment variables, and secrets. The container image is the only
+// required parameter, with sensible defaults provided for other settings.
+type ExpressGatewayContainer struct {
+
+	// The image used to start a container. This string is passed directly to the
+	// Docker daemon. Images in the Docker Hub registry are available by default. Other
+	// repositories are specified with either repository-url/image:tag or
+	// repository-url/image@digest .
+	//
+	// For Express services, the image typically contains a web application that
+	// listens on the specified container port. The image can be stored in Amazon ECR,
+	// Docker Hub, or any other container registry accessible to your execution role.
+	//
+	// This member is required.
+	Image *string
+
+	// The log configuration for the container.
+	AwsLogsConfiguration *ExpressGatewayServiceAwsLogsConfiguration
+
+	// The command that is passed to the container.
+	Command []string
+
+	// The port number on the container that receives traffic from the load balancer.
+	// Default is 80.
+	ContainerPort *int32
+
+	// The environment variables to pass to the container.
+	Environment []KeyValuePair
+
+	// The configuration for repository credentials for private registry
+	// authentication.
+	RepositoryCredentials *ExpressGatewayRepositoryCredentials
+
+	// The secrets to pass to the container.
+	Secrets []Secret
+
+	noSmithyDocumentSerde
+}
+
+// The repository credentials for private registry authentication to pass to the
+// container.
+type ExpressGatewayRepositoryCredentials struct {
+
+	// The Amazon Resource Name (ARN) of the secret containing the private repository
+	// credentials.
+	CredentialsParameter *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the auto-scaling configuration for an Express service. This determines
+// how the service automatically adjusts the number of running tasks based on
+// demand metrics such as CPU utilization, memory utilization, or request count per
+// target.
+//
+// Auto-scaling helps ensure your application can handle varying levels of traffic
+// while optimizing costs by scaling down during low-demand periods. You can
+// specify the minimum and maximum number of tasks, the scaling metric, and the
+// target value for that metric.
+type ExpressGatewayScalingTarget struct {
+
+	// The metric used for auto-scaling decisions. The default metric used for an
+	// Express service is CPUUtilization .
+	AutoScalingMetric ExpressGatewayServiceScalingMetric
+
+	// The target value for the auto-scaling metric. The default value for an Express
+	// service is 60.
+	AutoScalingTargetValue *int32
+
+	// The maximum number of tasks to run in the Express service.
+	MaxTaskCount *int32
+
+	// The minimum number of tasks to run in the Express service.
+	MinTaskCount *int32
+
+	noSmithyDocumentSerde
+}
+
+// Specifies the Amazon CloudWatch Logs configuration for the Express service
+// container.
+type ExpressGatewayServiceAwsLogsConfiguration struct {
+
+	// The name of the CloudWatch Logs log group to send container logs to.
+	//
+	// This member is required.
+	LogGroup *string
+
+	// The prefix for the CloudWatch Logs log stream names. The default for an Express
+	// service is ecs .
+	//
+	// This member is required.
+	LogStreamPrefix *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents a specific configuration revision of an Express service, containing
+// all the settings and parameters for that revision.
+type ExpressGatewayServiceConfiguration struct {
+
+	// The CPU allocation for tasks in this service revision.
+	Cpu *string
+
+	// The Unix timestamp for when this service revision was created.
+	CreatedAt *time.Time
+
+	// The ARN of the task execution role for the service revision.
+	ExecutionRoleArn *string
+
+	// The health check path for this service revision.
+	HealthCheckPath *string
+
+	// The entry point into this service revision.
+	IngressPaths []IngressPathSummary
+
+	// The memory allocation for tasks in this service revision.
+	Memory *string
+
+	// The network configuration for tasks in this service revision.
+	NetworkConfiguration *ExpressGatewayServiceNetworkConfiguration
+
+	// The primary container configuration for this service revision.
+	PrimaryContainer *ExpressGatewayContainer
+
+	// The auto-scaling configuration for this service revision.
+	ScalingTarget *ExpressGatewayScalingTarget
+
+	// The ARN of the service revision.
+	ServiceRevisionArn *string
+
+	// The ARN of the task role for the service revision.
+	TaskRoleArn *string
+
+	noSmithyDocumentSerde
+}
+
+// The network configuration for an Express service. By default, an Express
+// service utilizes subnets and security groups associated with the default VPC.
+type ExpressGatewayServiceNetworkConfiguration struct {
+
+	// The IDs of the security groups associated with the Express service.
+	SecurityGroups []string
+
+	// The IDs of the subnets associated with the Express service.
+	Subnets []string
+
+	noSmithyDocumentSerde
+}
+
+// An object that defines the status of Express service creation and information
+// about the status of the service.
+type ExpressGatewayServiceStatus struct {
+
+	// The status of the Express service.
+	StatusCode ExpressGatewayServiceStatusCode
+
+	// Information about why the Express service is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
 // A failed resource. For a list of common causes, see [API failure reasons] in the Amazon Elastic
 // Container Service Developer Guide.
 //
@@ -2481,6 +3095,41 @@ type FSxWindowsFileServerVolumeConfiguration struct {
 // service, if the task reports as unhealthy then the task will be stopped and the
 // service scheduler will replace it.
 //
+// When a container health check fails for a task that is part of a service, the
+// following process occurs:
+//
+//   - The task is marked as UNHEALTHY .
+//
+//   - The unhealthy task will be stopped, and during the stopping process, it
+//     will go through the following states:
+//
+//   - DEACTIVATING - In this state, Amazon ECS performs additional steps before
+//     stopping the task. For example, for tasks that are part of services configured
+//     to use Elastic Load Balancing target groups, target groups will be deregistered
+//     in this state.
+//
+//   - STOPPING - The task is in the process of being stopped.
+//
+//   - DEPROVISIONING - Resources associated with the task are being cleaned up.
+//
+//   - STOPPED - The task has been completely stopped.
+//
+//   - After the old task stops, a new task will be launched to ensure service
+//     operation, and the new task will go through the following lifecycle:
+//
+//   - PROVISIONING - Resources required for the task are being provisioned.
+//
+//   - PENDING - The task is waiting to be placed on a container instance.
+//
+//   - ACTIVATING - In this state, Amazon ECS pulls container images, creates
+//     containers, configures task networking, registers load balancer target groups,
+//     and configures service discovery status.
+//
+//   - RUNNING - The task is running and performing its work.
+//
+// For more detailed information about task lifecycle states, see [Task lifecycle] in the Amazon
+// Elastic Container Service Developer Guide.
+//
 // The following are notes about container health check support:
 //
 //   - If the Amazon ECS container agent becomes disconnected from the Amazon ECS
@@ -2506,6 +3155,7 @@ type FSxWindowsFileServerVolumeConfiguration struct {
 // Service Developer Guide.
 //
 // [Updating the Amazon ECS container agent]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-update.html
+// [Task lifecycle]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-lifecycle-explanation.html
 // [Fargate platform versions]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html
 // [Container dependency]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/example_task_definitions.html#example_task_definition-containerdependency
 type HealthCheck struct {
@@ -2638,6 +3288,45 @@ type InferenceAcceleratorOverride struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration that controls how Amazon ECS optimizes your infrastructure.
+type InfrastructureOptimization struct {
+
+	// This parameter defines the number of seconds Amazon ECS Managed Instances waits
+	// before optimizing EC2 instances that have become idle or underutilized. A longer
+	// delay increases the likelihood of placing new tasks on idle or underutilized
+	// instances instances, reducing startup time. A shorter delay helps reduce
+	// infrastructure costs by optimizing idle or underutilized instances,instances
+	// more quickly.
+	//
+	// Valid values are:
+	//
+	//   - null - Uses the default optimization behavior.
+	//
+	//   - -1 - Disables automatic infrastructure optimization.
+	//
+	//   - A value between 0 and 3600 (inclusive) - Specifies the number of seconds to
+	//   wait before optimizing instances.
+	ScaleInAfter *int32
+
+	noSmithyDocumentSerde
+}
+
+// The entry point into an Express service.
+type IngressPathSummary struct {
+
+	// The type of access to the endpoint for the Express service.
+	//
+	// This member is required.
+	AccessType AccessType
+
+	// The endpoint for access to the service.
+	//
+	// This member is required.
+	Endpoint *string
+
+	noSmithyDocumentSerde
+}
+
 // An object representing the result of a container instance health status check.
 type InstanceHealthCheckResult struct {
 
@@ -2653,6 +3342,256 @@ type InstanceHealthCheckResult struct {
 
 	// The type of container instance health status that was verified.
 	Type InstanceHealthCheckType
+
+	noSmithyDocumentSerde
+}
+
+// The launch template configuration for Amazon ECS Managed Instances. This
+// defines how Amazon ECS launches Amazon EC2 instances, including the instance
+// profile for your tasks, network and storage configuration, capacity options, and
+// instance requirements for flexible instance type selection.
+type InstanceLaunchTemplate struct {
+
+	// The Amazon Resource Name (ARN) of the instance profile that Amazon ECS applies
+	// to Amazon ECS Managed Instances. This instance profile must include the
+	// necessary permissions for your tasks to access Amazon Web Services services and
+	// resources.
+	//
+	// For more information, see [Amazon ECS instance profile for Managed Instances] in the Amazon ECS Developer Guide.
+	//
+	// [Amazon ECS instance profile for Managed Instances]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/managed-instances-instance-profile.html
+	//
+	// This member is required.
+	Ec2InstanceProfileArn *string
+
+	// The network configuration for Amazon ECS Managed Instances. This specifies the
+	// subnets and security groups that instances use for network connectivity.
+	//
+	// This member is required.
+	NetworkConfiguration *ManagedInstancesNetworkConfiguration
+
+	// The capacity option type. This determines whether Amazon ECS launches On-Demand
+	// or Spot Instances for your managed instance capacity provider.
+	//
+	// Valid values are:
+	//
+	//   - ON_DEMAND - Launches standard On-Demand Instances. On-Demand Instances
+	//   provide predictable pricing and availability.
+	//
+	//   - SPOT - Launches Spot Instances that use spare Amazon EC2 capacity at reduced
+	//   cost. Spot Instances can be interrupted by Amazon EC2 with a two-minute
+	//   notification when the capacity is needed back.
+	//
+	// The default is On-Demand
+	//
+	// For more information about Amazon EC2 capacity options, see [Instance purchasing options] in the Amazon EC2
+	// User Guide.
+	//
+	// [Instance purchasing options]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html
+	CapacityOptionType CapacityOptionType
+
+	// Determines whether to enable FIPS 140-2 validated cryptographic modules on EC2
+	// instances launched by the capacity provider. If true , instances use
+	// FIPS-compliant cryptographic algorithms and modules for enhanced security
+	// compliance. If false , instances use standard cryptographic implementations.
+	//
+	// If not specified, instances are launched with FIPS enabled in AWS GovCloud (US)
+	// regions and FIPS disabled in other regions.
+	FipsEnabled *bool
+
+	// The instance requirements. You can specify:
+	//
+	//   - The instance types
+	//
+	//   - Instance requirements such as vCPU count, memory, network performance, and
+	//   accelerator specifications
+	//
+	// Amazon ECS automatically selects the instances that match the specified
+	// criteria.
+	InstanceRequirements *InstanceRequirementsRequest
+
+	// CloudWatch provides two categories of monitoring: basic monitoring and detailed
+	// monitoring. By default, your managed instance is configured for basic
+	// monitoring. You can optionally enable detailed monitoring to help you more
+	// quickly identify and act on operational issues. You can enable or turn off
+	// detailed monitoring at launch or when the managed instance is running or
+	// stopped. For more information, see [Detailed monitoring for Amazon ECS Managed Instances]in the Amazon ECS Developer Guide.
+	//
+	// [Detailed monitoring for Amazon ECS Managed Instances]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/detailed-monitoring-managed-instances.html
+	Monitoring ManagedInstancesMonitoringOptions
+
+	// The storage configuration for Amazon ECS Managed Instances. This defines the
+	// root volume size and type for the instances.
+	StorageConfiguration *ManagedInstancesStorageConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The updated launch template configuration for Amazon ECS Managed Instances. You
+// can modify the instance profile, network configuration, storage settings, and
+// instance requirements. Changes apply to new instances launched after the update.
+//
+// For more information, see [Store instance launch parameters in Amazon EC2 launch templates] in the Amazon EC2 User Guide.
+//
+// [Store instance launch parameters in Amazon EC2 launch templates]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html
+type InstanceLaunchTemplateUpdate struct {
+
+	// The updated Amazon Resource Name (ARN) of the instance profile. The new
+	// instance profile must have the necessary permissions for your tasks.
+	//
+	// For more information, see [Amazon ECS instance profile for Managed Instances] in the Amazon ECS Developer Guide.
+	//
+	// [Amazon ECS instance profile for Managed Instances]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/managed-instances-instance-profile.html
+	Ec2InstanceProfileArn *string
+
+	// The updated instance requirements for attribute-based instance type selection.
+	// Changes to instance requirements affect which instance types Amazon ECS selects
+	// for new instances.
+	InstanceRequirements *InstanceRequirementsRequest
+
+	// CloudWatch provides two categories of monitoring: basic monitoring and detailed
+	// monitoring. By default, your managed instance is configured for basic
+	// monitoring. You can optionally enable detailed monitoring to help you more
+	// quickly identify and act on operational issues. You can enable or turn off
+	// detailed monitoring at launch or when the managed instance is running or
+	// stopped. For more information, see [Detailed monitoring for Amazon ECS Managed Instances]in the Amazon ECS Developer Guide.
+	//
+	// [Detailed monitoring for Amazon ECS Managed Instances]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/detailed-monitoring-managed-instances.html
+	Monitoring ManagedInstancesMonitoringOptions
+
+	// The updated network configuration for Amazon ECS Managed Instances. Changes to
+	// subnets and security groups affect new instances launched after the update.
+	NetworkConfiguration *ManagedInstancesNetworkConfiguration
+
+	// The updated storage configuration for Amazon ECS Managed Instances. Changes to
+	// storage settings apply to new instances launched after the update.
+	StorageConfiguration *ManagedInstancesStorageConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// The instance requirements for attribute-based instance type selection. Instead
+// of specifying exact instance types, you define requirements such as vCPU count,
+// memory size, network performance, and accelerator specifications. Amazon ECS
+// automatically selects Amazon EC2 instance types that match these requirements,
+// providing flexibility and helping to mitigate capacity constraints.
+type InstanceRequirementsRequest struct {
+
+	// The minimum and maximum amount of memory in mebibytes (MiB) for the instance
+	// types. Amazon ECS selects instance types that have memory within this range.
+	//
+	// This member is required.
+	MemoryMiB *MemoryMiBRequest
+
+	// The minimum and maximum number of vCPUs for the instance types. Amazon ECS
+	// selects instance types that have vCPU counts within this range.
+	//
+	// This member is required.
+	VCpuCount *VCpuCountRangeRequest
+
+	// The minimum and maximum number of accelerators for the instance types. This is
+	// used when you need instances with specific numbers of GPUs or other
+	// accelerators.
+	AcceleratorCount *AcceleratorCountRequest
+
+	// The accelerator manufacturers to include. You can specify nvidia , amd ,
+	// amazon-web-services , or xilinx depending on your accelerator requirements.
+	AcceleratorManufacturers []AcceleratorManufacturer
+
+	// The specific accelerator names to include. For example, you can specify a100 ,
+	// v100 , k80 , or other specific accelerator models.
+	AcceleratorNames []AcceleratorName
+
+	// The minimum and maximum total accelerator memory in mebibytes (MiB). This is
+	// important for GPU workloads that require specific amounts of video memory.
+	AcceleratorTotalMemoryMiB *AcceleratorTotalMemoryMiBRequest
+
+	// The accelerator types to include. You can specify gpu for graphics processing
+	// units, fpga for field programmable gate arrays, or inference for machine
+	// learning inference accelerators.
+	AcceleratorTypes []AcceleratorType
+
+	// The instance types to include in the selection. When specified, Amazon ECS only
+	// considers these instance types, subject to the other requirements specified.
+	AllowedInstanceTypes []string
+
+	// Indicates whether to include bare metal instance types. Set to included to
+	// allow bare metal instances, excluded to exclude them, or required to use only
+	// bare metal instances.
+	BareMetal BareMetal
+
+	// The minimum and maximum baseline Amazon EBS bandwidth in megabits per second
+	// (Mbps). This is important for workloads with high storage I/O requirements.
+	BaselineEbsBandwidthMbps *BaselineEbsBandwidthMbpsRequest
+
+	// Indicates whether to include burstable performance instance types (T2, T3, T3a,
+	// T4g). Set to included to allow burstable instances, excluded to exclude them,
+	// or required to use only burstable instances.
+	BurstablePerformance BurstablePerformance
+
+	// The CPU manufacturers to include or exclude. You can specify intel , amd , or
+	// amazon-web-services to control which CPU types are used for your workloads.
+	CpuManufacturers []CpuManufacturer
+
+	// The instance types to exclude from selection. Use this to prevent Amazon ECS
+	// from selecting specific instance types that may not be suitable for your
+	// workloads.
+	ExcludedInstanceTypes []string
+
+	// The instance generations to include. You can specify current to use the latest
+	// generation instances, or previous to include previous generation instances for
+	// cost optimization.
+	InstanceGenerations []InstanceGeneration
+
+	// Indicates whether to include instance types with local storage. Set to included
+	// to allow local storage, excluded to exclude it, or required to use only
+	// instances with local storage.
+	LocalStorage LocalStorage
+
+	// The local storage types to include. You can specify hdd for hard disk drives,
+	// ssd for solid state drives, or both.
+	LocalStorageTypes []LocalStorageType
+
+	// The maximum price for Spot instances as a percentage of the optimal On-Demand
+	// price. This provides more precise cost control for Spot instance selection.
+	MaxSpotPriceAsPercentageOfOptimalOnDemandPrice *int32
+
+	// The minimum and maximum amount of memory per vCPU in gibibytes (GiB). This
+	// helps ensure that instance types have the appropriate memory-to-CPU ratio for
+	// your workloads.
+	MemoryGiBPerVCpu *MemoryGiBPerVCpuRequest
+
+	// The minimum and maximum network bandwidth in gigabits per second (Gbps). This
+	// is crucial for network-intensive workloads that require high throughput.
+	NetworkBandwidthGbps *NetworkBandwidthGbpsRequest
+
+	// The minimum and maximum number of network interfaces for the instance types.
+	// This is useful for workloads that require multiple network interfaces.
+	NetworkInterfaceCount *NetworkInterfaceCountRequest
+
+	// The price protection threshold for On-Demand Instances, as a percentage higher
+	// than an identified On-Demand price. The identified On-Demand price is the price
+	// of the lowest priced current generation C, M, or R instance type with your
+	// specified attributes. If no current generation C, M, or R instance type matches
+	// your attributes, then the identified price is from either the lowest priced
+	// current generation instance types or, failing that, the lowest priced previous
+	// generation instance types that match your attributes. When Amazon ECS selects
+	// instance types with your attributes, we will exclude instance types whose price
+	// exceeds your specified threshold.
+	OnDemandMaxPricePercentageOverLowestPrice *int32
+
+	// Indicates whether the instance types must support hibernation. When set to true
+	// , only instance types that support hibernation are selected.
+	RequireHibernateSupport *bool
+
+	// The maximum price for Spot instances as a percentage over the lowest priced
+	// On-Demand instance. This helps control Spot instance costs while maintaining
+	// access to capacity.
+	SpotMaxPricePercentageOverLowestPrice *int32
+
+	// The minimum and maximum total local storage in gigabytes (GB) for instance
+	// types with local storage.
+	TotalLocalStorageGB *TotalLocalStorageGBRequest
 
 	noSmithyDocumentSerde
 }
@@ -2731,6 +3670,26 @@ type KeyValuePair struct {
 	// The value of the key-value pair. For environment variables, this is the value
 	// of the environment variable.
 	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for linear deployment strategy that shifts production traffic in
+// equal percentage increments with configurable wait times between each step until
+// 100% of traffic is shifted to the new service revision. This is only valid when
+// you run CreateService or UpdateService with deploymentController set to ECS and
+// a deploymentConfiguration with a strategy set to LINEAR .
+type LinearConfiguration struct {
+
+	// The amount of time in minutes to wait between each traffic shifting step during
+	// a linear deployment. Valid values are 0 to 1440 minutes (24 hours). The default
+	// value is 6. This bake time is not applied after reaching 100 percent traffic.
+	StepBakeTimeInMinutes *int32
+
+	// The percentage of production traffic to shift in each step during a linear
+	// deployment. Valid values are multiples of 0.1 from 3.0 to 100.0. The default
+	// value is 10.0.
+	StepPercent *float64
 
 	noSmithyDocumentSerde
 }
@@ -2826,6 +3785,11 @@ type LinuxParameters struct {
 //
 // [Using service-linked roles]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html
 type LoadBalancer struct {
+
+	// The advanced settings for the load balancer used in blue/green deployments.
+	// Specify the alternate target group, listener rules, and IAM role required for
+	// traffic shifting during blue/green deployments.
+	AdvancedConfiguration *AdvancedConfiguration
 
 	// The name of the container (as it appears in a container definition) to
 	// associate with the load balancer.
@@ -3048,12 +4012,21 @@ type LogConfiguration struct {
 	// You can set a default mode for all containers in a specific Amazon Web Services
 	// Region by using the defaultLogDriverMode account setting. If you don't specify
 	// the mode option or configure the account setting, Amazon ECS will default to
-	// the blocking mode. For more information about the account setting, see [Default log driver mode] in the
-	// Amazon Elastic Container Service Developer Guide.
+	// the non-blocking mode. For more information about the account setting, see [Default log driver mode] in
+	// the Amazon Elastic Container Service Developer Guide.
+	//
+	// On June 25, 2025, Amazon ECS changed the default log driver mode from blocking
+	// to non-blocking to prioritize task availability over logging. To continue using
+	// the blocking mode after this change, do one of the following:
+	//
+	//   - Set the mode option in your container definition's logConfiguration as
+	//   blocking .
+	//
+	//   - Set the defaultLogDriverMode account setting to blocking .
 	//
 	// max-buffer-size Required: No
 	//
-	// Default value: 1m
+	// Default value: 10m
 	//
 	// When non-blocking mode is used, the max-buffer-size log option controls the
 	// size of the buffer that's used for intermediate message storage. Make sure to
@@ -3151,6 +4124,359 @@ type ManagedAgentStateChange struct {
 	noSmithyDocumentSerde
 }
 
+// The Application Auto Scaling policy created by Amazon ECS when you create an
+// Express service.
+type ManagedApplicationAutoScalingPolicy struct {
+
+	// The metric used for auto scaling decisions. The available metrics are
+	// ECSServiceAverageCPUUtilization , ECSServiceAverageMemoryUtilization , and
+	// ALBRequestCOuntPerTarget .
+	//
+	// This member is required.
+	Metric *string
+
+	// The type of Application Auto Scaling policy associated with the Express
+	// service. Valid values are TargetTrackingScaling , StepScaling , and
+	// PredictiveScaling .
+	//
+	// This member is required.
+	PolicyType *string
+
+	// The status of Application Auto Scaling policy creation.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The target value for the auto scaling metric.
+	//
+	// This member is required.
+	TargetValue float64
+
+	// The Unix timestamp for when the Application Auto Scaling policy was last
+	// updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The Amazon Resource Name (ARN) of the Application Auto Scaling policy
+	// associated with the Express service.
+	Arn *string
+
+	// Information about why the Application Auto Scaling policy is in the current
+	// status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// The auto scaling configuration created by Amazon ECS for an Express service.
+type ManagedAutoScaling struct {
+
+	// The policy used for auto scaling.
+	ApplicationAutoScalingPolicies []ManagedApplicationAutoScalingPolicy
+
+	// Represents a scalable target.
+	ScalableTarget *ManagedScalableTarget
+
+	noSmithyDocumentSerde
+}
+
+// The ACM certificate associated with the HTTPS domain created for the Express
+// service.
+type ManagedCertificate struct {
+
+	// The fully qualified domain name (FQDN) that is secured with this ACM
+	// certificate.
+	//
+	// This member is required.
+	DomainName *string
+
+	// The status of the ACM; certificate.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when the ACM certificate was last updated
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The Amazon Resource Name (ARN) of the ACM certificate.
+	Arn *string
+
+	// Information about why the ACM certificate is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// The entry point into the Express service.
+type ManagedIngressPath struct {
+
+	// The type of access to the endpoint for the Express service.
+	//
+	// This member is required.
+	AccessType AccessType
+
+	// The endpoint for access to the Express service.
+	//
+	// This member is required.
+	Endpoint *string
+
+	// The ACM certificate for the Express service's domain.
+	Certificate *ManagedCertificate
+
+	// The listeners associated with the Application Load Balancer.
+	Listener *ManagedListener
+
+	// The Application Load Balancer associated with the Express service.
+	LoadBalancer *ManagedLoadBalancer
+
+	// The security groups associated with the Application Load Balancer.
+	LoadBalancerSecurityGroups []ManagedSecurityGroup
+
+	// The listener rules for the Application Load Balancer.
+	Rule *ManagedListenerRule
+
+	// The target groups associated with the Application Load Balancer.
+	TargetGroups []ManagedTargetGroup
+
+	noSmithyDocumentSerde
+}
+
+// The network configuration for Amazon ECS Managed Instances. This specifies the
+// VPC subnets and security groups that instances use for network connectivity.
+// Amazon ECS Managed Instances support multiple network modes including awsvpc
+// (instances receive ENIs for task isolation), host (instances share network
+// namespace with tasks), and none (no external network connectivity), ensuring
+// backward compatibility for migrating workloads from Fargate or Amazon EC2.
+type ManagedInstancesNetworkConfiguration struct {
+
+	// The list of security group IDs to apply to Amazon ECS Managed Instances. These
+	// security groups control the network traffic allowed to and from the instances.
+	SecurityGroups []string
+
+	// The list of subnet IDs where Amazon ECS can launch Amazon ECS Managed
+	// Instances. Instances are distributed across the specified subnets for high
+	// availability. All subnets must be in the same VPC.
+	Subnets []string
+
+	noSmithyDocumentSerde
+}
+
+// The configuration for a Amazon ECS Managed Instances provider. Amazon ECS uses
+// this configuration to automatically launch, manage, and terminate Amazon EC2
+// instances on your behalf. Managed instances provide access to the full range of
+// Amazon EC2 instance types and features while offloading infrastructure
+// management to Amazon Web Services.
+type ManagedInstancesProvider struct {
+
+	// Defines how Amazon ECS Managed Instances optimizes the infrastastructure in
+	// your capacity provider. Configure it to turn on or off the infrastructure
+	// optimization in your capacity provider, and to control the idle or underutilized
+	// EC2 instances optimization delay.
+	InfrastructureOptimization *InfrastructureOptimization
+
+	// The Amazon Resource Name (ARN) of the infrastructure role that Amazon ECS
+	// assumes to manage instances. This role must include permissions for Amazon EC2
+	// instance lifecycle management, networking, and any additional Amazon Web
+	// Services services required for your workloads.
+	//
+	// For more information, see [Amazon ECS infrastructure IAM role] in the Amazon ECS Developer Guide.
+	//
+	// [Amazon ECS infrastructure IAM role]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/infrastructure_IAM_role.html
+	InfrastructureRoleArn *string
+
+	// The launch template that defines how Amazon ECS launches Amazon ECS Managed
+	// Instances. This includes the instance profile for your tasks, network and
+	// storage configuration, and instance requirements that determine which Amazon EC2
+	// instance types can be used.
+	//
+	// For more information, see [Store instance launch parameters in Amazon EC2 launch templates] in the Amazon EC2 User Guide.
+	//
+	// [Store instance launch parameters in Amazon EC2 launch templates]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html
+	InstanceLaunchTemplate *InstanceLaunchTemplate
+
+	// Determines whether tags from the capacity provider are automatically applied to
+	// Amazon ECS Managed Instances. This helps with cost allocation and resource
+	// management by ensuring consistent tagging across your infrastructure.
+	PropagateTags PropagateMITags
+
+	noSmithyDocumentSerde
+}
+
+// The storage configuration for Amazon ECS Managed Instances. This defines the
+// root volume configuration for the instances.
+type ManagedInstancesStorageConfiguration struct {
+
+	// The size of the tasks volume.
+	StorageSizeGiB *int32
+
+	noSmithyDocumentSerde
+}
+
+// The listeners associated with the Express service's Application Load Balancer.
+type ManagedListener struct {
+
+	// The status of the load balancer listener.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when this listener was most recently updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The Amazon Resource Name (ARN) of the load balancer listener.
+	Arn *string
+
+	// Informaion about why the load balancer listener is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// The listener rule associated with the Express service's Application Load
+// Balancer.
+type ManagedListenerRule struct {
+
+	// The status of the load balancer listener rule.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when this listener rule was most recently updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The Amazon Resource Name (ARN) of the load balancer listener rule.
+	Arn *string
+
+	// Information about why the load balancer listener rule is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// The Application Load Balancer associated with the Express service.
+type ManagedLoadBalancer struct {
+
+	// The scheme of the load balancer. By default, the scheme of the load balancer is
+	// internet-facing .
+	//
+	// This member is required.
+	Scheme *string
+
+	// The status of the load balancer.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when this load balancer was most recently updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The Amazon Resource Name (ARN) of the load balancer.
+	Arn *string
+
+	// The IDs of the security groups associated with the load balancer.
+	SecurityGroupIds []string
+
+	// Information about why the load balancer is in the current status.
+	StatusReason *string
+
+	// The IDs of the subnets associated with the load balancer.
+	SubnetIds []string
+
+	noSmithyDocumentSerde
+}
+
+// The Cloudwatch Log Group created by Amazon ECS for an Express service.
+type ManagedLogGroup struct {
+
+	// The name of the Cloudwatch Log Group associated with the Express service.
+	//
+	// This member is required.
+	LogGroupName *string
+
+	// The status of the Cloudwatch LogGroup.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when the Cloudwatch LogGroup was last updated
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The Amazon Resource Name (ARN) of the Cloudwatch Log Group associated with the
+	// Express service.
+	Arn *string
+
+	// Information about why the Cloudwatch LogGroup is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// The CloudWatch metric alarm associated with the Express service's scaling
+// policy.
+type ManagedMetricAlarm struct {
+
+	// The status of the CloudWatch metric alarm.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when the CloudWatch metric alarm was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The Amazon Resource Name (ARN) of the CloudWatch metric alarm.
+	Arn *string
+
+	// Information about why the CloudWatch metric alarm is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// Represents a scalable target.
+type ManagedScalableTarget struct {
+
+	// The maximum value to scale to in response to a scale-out activity.
+	//
+	// This member is required.
+	MaxCapacity int32
+
+	// The minimum value to scale to in response to a scale-in activity.
+	//
+	// This member is required.
+	MinCapacity int32
+
+	// The status of the scalable target.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when the target was most recently updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The ARN of the scalable target.
+	Arn *string
+
+	// Information about why the scalable target is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
 // The managed scaling settings for the Auto Scaling group capacity provider.
 //
 // When managed scaling is turned on, Amazon ECS manages the scale-in and
@@ -3181,11 +4507,6 @@ type ManagedScaling struct {
 	// When additional capacity is required, Amazon ECS will scale up the minimum
 	// scaling step size even if the actual demand is less than the minimum scaling
 	// step size.
-	//
-	// If you use a capacity provider with an Auto Scaling group configured with more
-	// than one Amazon EC2 instance type or Availability Zone, Amazon ECS will scale up
-	// by the exact minimum scaling step size value and will ignore both the maximum
-	// scaling step size as well as the capacity demand.
 	MinimumScalingStepSize *int32
 
 	// Determines whether to use managed scaling for the capacity provider.
@@ -3202,18 +4523,130 @@ type ManagedScaling struct {
 	noSmithyDocumentSerde
 }
 
+// A security group associated with the Express service.
+type ManagedSecurityGroup struct {
+
+	// The status of the security group.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when the security group was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The ARN of the security group.
+	Arn *string
+
+	// Information about why the security group is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
 // The managed storage configuration for the cluster.
 type ManagedStorageConfiguration struct {
 
-	// Specify the Key Management Service key ID for the Fargate ephemeral storage.
+	// Specify the Key Management Service key ID for Fargate ephemeral storage.
+	//
+	// When you specify a fargateEphemeralStorageKmsKeyId , Amazon Web Services Fargate
+	// uses the key to encrypt data at rest in ephemeral storage. For more information
+	// about Fargate ephemeral storage encryption, see [Customer managed keys for Amazon Web Services Fargate ephemeral storage for Amazon ECS]in the Amazon Elastic Container
+	// Service Developer Guide.
 	//
 	// The key must be a single Region key.
+	//
+	// [Customer managed keys for Amazon Web Services Fargate ephemeral storage for Amazon ECS]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-storage-encryption.html
 	FargateEphemeralStorageKmsKeyId *string
 
-	// Specify a Key Management Service key ID to encrypt the managed storage.
+	// Specify a Key Management Service key ID to encrypt Amazon ECS managed storage.
+	//
+	// When you specify a kmsKeyId , Amazon ECS uses the key to encrypt data volumes
+	// managed by Amazon ECS that are attached to tasks in the cluster. The following
+	// data volumes are managed by Amazon ECS: Amazon EBS. For more information about
+	// encryption of Amazon EBS volumes attached to Amazon ECS tasks, see [Encrypt data stored in Amazon EBS volumes for Amazon ECS]in the
+	// Amazon Elastic Container Service Developer Guide.
 	//
 	// The key must be a single Region key.
+	//
+	// [Encrypt data stored in Amazon EBS volumes for Amazon ECS]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ebs-kms-encryption.html
 	KmsKeyId *string
+
+	noSmithyDocumentSerde
+}
+
+// The target group associated with the Express service's Application Load
+// Balancer. For more information about load balancer target groups, see [CreateTargetGroup]in the
+// Elastic Load Balancing API Reference
+//
+// [CreateTargetGroup]: https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_CreateTargetGroup.html
+type ManagedTargetGroup struct {
+
+	// The destination for health checks on the targets.
+	//
+	// This member is required.
+	HealthCheckPath *string
+
+	// The port the load balancer uses when performing health checks on targets.
+	//
+	// This member is required.
+	HealthCheckPort int32
+
+	// The port on which the targets receive traffic.
+	//
+	// This member is required.
+	Port int32
+
+	// The status of the target group.
+	//
+	// This member is required.
+	Status ManagedResourceStatus
+
+	// The Unix timestamp for when the target group was last updated.
+	//
+	// This member is required.
+	UpdatedAt *time.Time
+
+	// The Amazon Resource Name (ARN) of the target group.
+	Arn *string
+
+	// Information about why the target group is in the current status.
+	StatusReason *string
+
+	noSmithyDocumentSerde
+}
+
+// The minimum and maximum amount of memory per vCPU in gibibytes (GiB). This
+// helps ensure that instance types have the appropriate memory-to-CPU ratio for
+// your workloads.
+type MemoryGiBPerVCpuRequest struct {
+
+	// The maximum amount of memory per vCPU in GiB. Instance types with a higher
+	// memory-to-vCPU ratio are excluded from selection.
+	Max *float64
+
+	// The minimum amount of memory per vCPU in GiB. Instance types with a lower
+	// memory-to-vCPU ratio are excluded from selection.
+	Min *float64
+
+	noSmithyDocumentSerde
+}
+
+// The minimum and maximum amount of memory in mebibytes (MiB) for instance type
+// selection. This ensures that selected instance types have adequate memory for
+// your workloads.
+type MemoryMiBRequest struct {
+
+	// The minimum amount of memory in MiB. Instance types with less memory than this
+	// value are excluded from selection.
+	//
+	// This member is required.
+	Min *int32
+
+	// The maximum amount of memory in MiB. Instance types with more memory than this
+	// value are excluded from selection.
+	Max *int32
 
 	noSmithyDocumentSerde
 }
@@ -3232,6 +4665,21 @@ type MountPoint struct {
 	// The name of the volume to mount. Must be a volume name referenced in the name
 	// parameter of task definition volume .
 	SourceVolume *string
+
+	noSmithyDocumentSerde
+}
+
+// The minimum and maximum network bandwidth in gigabits per second (Gbps) for
+// instance type selection. This is important for network-intensive workloads.
+type NetworkBandwidthGbpsRequest struct {
+
+	// The maximum network bandwidth in Gbps. Instance types with higher network
+	// bandwidth are excluded from selection.
+	Max *float64
+
+	// The minimum network bandwidth in Gbps. Instance types with lower network
+	// bandwidth are excluded from selection.
+	Min *float64
 
 	noSmithyDocumentSerde
 }
@@ -3338,6 +4786,22 @@ type NetworkInterface struct {
 
 	// The private IPv4 address for the network interface.
 	PrivateIpv4Address *string
+
+	noSmithyDocumentSerde
+}
+
+// The minimum and maximum number of network interfaces for instance type
+// selection. This is useful for workloads that require multiple network
+// interfaces.
+type NetworkInterfaceCountRequest struct {
+
+	// The maximum number of network interfaces. Instance types that support more
+	// network interfaces are excluded from selection.
+	Max *int32
+
+	// The minimum number of network interfaces. Instance types that support fewer
+	// network interfaces are excluded from selection.
+	Min *int32
 
 	noSmithyDocumentSerde
 }
@@ -3672,6 +5136,18 @@ type RepositoryCredentials struct {
 	noSmithyDocumentSerde
 }
 
+// The resolved configuration for a service revision, which contains the actual
+// resources your service revision uses, such as which target groups serve traffic.
+type ResolvedConfiguration struct {
+
+	// The resolved load balancer configuration for the service revision. This
+	// includes information about which target groups serve traffic and which listener
+	// rules direct traffic to them.
+	LoadBalancers []ServiceRevisionLoadBalancer
+
+	noSmithyDocumentSerde
+}
+
 // Describes the resources available for a container instance.
 type Resource struct {
 
@@ -3758,8 +5234,8 @@ type RuntimePlatform struct {
 	// The CPU architecture.
 	//
 	// You can run your Linux tasks on an ARM-based platform by setting the value to
-	// ARM64 . This option is available for tasks that run on Linux Amazon EC2 instance
-	// or Linux containers on Fargate.
+	// ARM64 . This option is available for tasks that run on Linux Amazon EC2
+	// instance, Amazon ECS Managed Instances, or Linux containers on Fargate.
 	CpuArchitecture CPUArchitecture
 
 	// The operating system.
@@ -3831,6 +5307,17 @@ type Service struct {
 	// For more information, see [Balancing an Amazon ECS service across Availability Zones] in the Amazon Elastic Container Service Developer
 	// Guide .
 	//
+	// The default behavior of AvailabilityZoneRebalancing differs between create and
+	// update requests:
+	//
+	//   - For create service requests, when no value is specified for
+	//   AvailabilityZoneRebalancing , Amazon ECS defaults the value to ENABLED .
+	//
+	//   - For update service requests, when no value is specified for
+	//   AvailabilityZoneRebalancing , Amazon ECS defaults to the existing service’s
+	//   AvailabilityZoneRebalancing value. If the service never had an
+	//   AvailabilityZoneRebalancing value set, Amazon ECS treats this as DISABLED .
+	//
 	// [Balancing an Amazon ECS service across Availability Zones]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-rebalancing.html
 	AvailabilityZoneRebalancing AvailabilityZoneRebalancing
 
@@ -3847,6 +5334,12 @@ type Service struct {
 
 	// The principal that created the service.
 	CreatedBy *string
+
+	// The ARN of the current service deployment.
+	CurrentServiceDeployment *string
+
+	// The list of the service revisions.
+	CurrentServiceRevisions []ServiceCurrentRevisionSummary
 
 	// Optional deployment parameters that control how many tasks run during the
 	// deployment and the ordering of stopping and starting tasks.
@@ -3883,8 +5376,11 @@ type Service struct {
 	Events []ServiceEvent
 
 	// The period of time, in seconds, that the Amazon ECS service scheduler ignores
-	// unhealthy Elastic Load Balancing target health checks after a task has first
-	// started.
+	// unhealthy Elastic Load Balancing, VPC Lattice, and container health checks after
+	// a task has first started.
+	//
+	// If your service has more running tasks than desired, unhealthy tasks in the
+	// grace period might be stopped to reach the desired count.
 	HealthCheckGracePeriodSeconds *int32
 
 	// The launch type the service is using. When using the DescribeServices API, this
@@ -3927,6 +5423,10 @@ type Service struct {
 	// Determines whether to propagate the tags from the task definition or the
 	// service to the task. If no value is specified, the tags aren't propagated.
 	PropagateTags PropagateTags
+
+	// Identifies whether an ECS Service is an Express Service managed by ECS, or
+	// managed by the customer. The valid values are ECS and CUSTOMER
+	ResourceManagementType ResourceManagementType
 
 	// The ARN of the IAM role that's associated with the service. It allows the
 	// Amazon ECS container agent to register container instances with an Elastic Load
@@ -4021,6 +5521,32 @@ type Service struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration for Service Connect access logging. Access logs provide detailed
+// information about requests made to your service, including request patterns,
+// response codes, and timing data for debugging and monitoring purposes.
+//
+// To enable access logs, you must also specify a logConfiguration in the
+// serviceConnectConfiguration .
+type ServiceConnectAccessLogConfiguration struct {
+
+	// The format for Service Connect access log output. Choose TEXT for
+	// human-readable logs or JSON for structured data that integrates well with log
+	// analysis tools.
+	//
+	// This member is required.
+	Format ServiceConnectAccessLoggingFormat
+
+	// Specifies whether to include query parameters in Service Connect access logs.
+	//
+	// When enabled, query parameters from HTTP requests are included in the access
+	// logs. Consider security and privacy implications when enabling this feature, as
+	// query parameters may contain sensitive information such as request IDs and
+	// tokens. By default, this parameter is DISABLED .
+	IncludeQueryParameters ServiceConnectIncludeQueryParameters
+
+	noSmithyDocumentSerde
+}
+
 // Each alias ("endpoint") is a fully-qualified name and port number that other
 // tasks ("clients") can use to connect to this service.
 //
@@ -4067,6 +5593,12 @@ type ServiceConnectClientAlias struct {
 	// [Service Connect]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-connect.html
 	DnsName *string
 
+	// The configuration for test traffic routing rules used during blue/green
+	// deployments with Amazon ECS Service Connect. This allows you to route a portion
+	// of traffic to the new service revision of your service for testing before
+	// shifting all production traffic.
+	TestTrafficRules *ServiceConnectTestTrafficRules
+
 	noSmithyDocumentSerde
 }
 
@@ -4088,6 +5620,16 @@ type ServiceConnectConfiguration struct {
 	//
 	// This member is required.
 	Enabled bool
+
+	// The configuration for Service Connect access logging. Access logs capture
+	// detailed information about requests made to your service, including request
+	// patterns, response codes, and timing data. They can be useful for debugging
+	// connectivity issues, monitoring service performance, and auditing
+	// service-to-service communication for security and compliance purposes.
+	//
+	// To enable access logs, you must also specify a logConfiguration in the
+	// serviceConnectConfiguration .
+	AccessLogConfiguration *ServiceConnectAccessLogConfiguration
 
 	// The log configuration for the container. This parameter maps to LogConfig in
 	// the docker container create command and the --log-driver option to docker run.
@@ -4220,7 +5762,7 @@ type ServiceConnectService struct {
 // of clientAliases that you can use.
 type ServiceConnectServiceResource struct {
 
-	// The Amazon Resource Name (ARN) for the namespace in Cloud Map that matches the
+	// The Amazon Resource Name (ARN) for the service in Cloud Map that matches the
 	// discovery name for this Service Connect resource. You can use this ARN in other
 	// integrations with Cloud Map. However, Service Connect can't ensure connectivity
 	// outside of Amazon ECS.
@@ -4237,6 +5779,67 @@ type ServiceConnectServiceResource struct {
 	// If the discoveryName isn't specified, the port mapping name from the task
 	// definition is used in portName.namespace .
 	DiscoveryName *string
+
+	noSmithyDocumentSerde
+}
+
+// The header matching rules for test traffic routing in Amazon ECS blue/green
+// deployments. These rules determine how incoming requests are matched based on
+// HTTP headers to route test traffic to the new service revision.
+type ServiceConnectTestTrafficHeaderMatchRules struct {
+
+	// The exact value that the HTTP header must match for the test traffic routing
+	// rule to apply. This provides precise control over which requests are routed to
+	// the new service revision during blue/green deployments.
+	//
+	// This member is required.
+	Exact *string
+
+	noSmithyDocumentSerde
+}
+
+// The HTTP header rules used to identify and route test traffic during Amazon ECS
+// blue/green deployments. These rules specify which HTTP headers to examine and
+// what values to match for routing decisions.
+//
+// For more information, see [Service Connect for Amazon ECS blue/green deployments] in the Amazon Elastic Container Service Developer
+// Guide.
+//
+// [Service Connect for Amazon ECS blue/green deployments]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-connect-blue-green.html
+type ServiceConnectTestTrafficHeaderRules struct {
+
+	// The name of the HTTP header to examine for test traffic routing. Common
+	// examples include custom headers like X-Test-Version or X-Canary-Request that
+	// can be used to identify test traffic.
+	//
+	// This member is required.
+	Name *string
+
+	// The header value matching configuration that determines how the HTTP header
+	// value is evaluated for test traffic routing decisions.
+	Value *ServiceConnectTestTrafficHeaderMatchRules
+
+	noSmithyDocumentSerde
+}
+
+// The test traffic routing configuration for Amazon ECS blue/green deployments.
+// This configuration allows you to define rules for routing specific traffic to
+// the new service revision during the deployment process, allowing for safe
+// testing before full production traffic shift.
+//
+// For more information, see [Service Connect for Amazon ECS blue/green deployments] in the Amazon Elastic Container Service Developer
+// Guide.
+//
+// [Service Connect for Amazon ECS blue/green deployments]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-connect-blue-green.html
+type ServiceConnectTestTrafficRules struct {
+
+	// The HTTP header-based routing rules that determine which requests should be
+	// routed to the new service version during blue/green deployment testing. These
+	// rules provide fine-grained control over test traffic routing based on request
+	// headers.
+	//
+	// This member is required.
+	Header *ServiceConnectTestTrafficHeaderRules
 
 	noSmithyDocumentSerde
 }
@@ -4264,6 +5867,24 @@ type ServiceConnectTlsConfiguration struct {
 	// The Amazon Resource Name (ARN) of the IAM role that's associated with the
 	// Service Connect TLS.
 	RoleArn *string
+
+	noSmithyDocumentSerde
+}
+
+// The summary of the current service revision configuration
+type ServiceCurrentRevisionSummary struct {
+
+	// The ARN of the current service revision.
+	Arn *string
+
+	// The number of pending tasks in the current service revision
+	PendingTaskCount int32
+
+	// The number of requested tasks in the current service revision
+	RequestedTaskCount int32
+
+	// The number of running tasks of the current service revision
+	RunningTaskCount int32
 
 	noSmithyDocumentSerde
 }
@@ -4297,6 +5918,60 @@ type ServiceDeployment struct {
 	// The time the service deployment finished. The format is yyyy-MM-dd
 	// HH:mm:ss.SSSSSS.
 	FinishedAt *time.Time
+
+	// The current lifecycle stage of the deployment. Possible values include:
+	//
+	//   - RECONCILE_SERVICE
+	//
+	// The reconciliation stage that only happens when you start a new service
+	//   deployment with more than 1 service revision in an ACTIVE state.
+	//
+	//   - PRE_SCALE_UP
+	//
+	// The green service revision has not started. The blue service revision is
+	//   handling 100% of the production traffic. There is no test traffic.
+	//
+	//   - SCALE_UP
+	//
+	// The stage when the green service revision scales up to 100% and launches new
+	//   tasks. The green service revision is not serving any traffic at this point.
+	//
+	//   - POST_SCALE_UP
+	//
+	// The green service revision has started. The blue service revision is handling
+	//   100% of the production traffic. There is no test traffic.
+	//
+	//   - TEST_TRAFFIC_SHIFT
+	//
+	// The blue and green service revisions are running. The blue service revision
+	//   handles 100% of the production traffic. The green service revision is migrating
+	//   from 0% to 100% of test traffic.
+	//
+	//   - POST_TEST_TRAFFIC_SHIFT
+	//
+	// The test traffic shift is complete. The green service revision handles 100% of
+	//   the test traffic.
+	//
+	//   - PRODUCTION_TRAFFIC_SHIFT
+	//
+	// Production traffic is shifting to the green service revision. The green service
+	//   revision is migrating from 0% to 100% of production traffic.
+	//
+	//   - POST_PRODUCTION_TRAFFIC_SHIFT
+	//
+	// The production traffic shift is complete.
+	//
+	//   - BAKE_TIME
+	//
+	// The stage when both blue and green service revisions are running simultaneously
+	//   after the production traffic has shifted.
+	//
+	//   - CLEAN_UP
+	//
+	// The stage when the blue service revision has completely scaled down to 0
+	//   running tasks. The green service revision is now the production service revision
+	//   after this stage.
+	LifecycleStage ServiceDeploymentLifecycleStage
 
 	// The rollback options the service deployment uses when the deployment fails.
 	Rollback *Rollback
@@ -4476,17 +6151,19 @@ type ServiceManagedEBSVolumeConfiguration struct {
 	// This member is required.
 	RoleArn *string
 
-	// Indicates whether the volume should be encrypted. If no value is specified,
-	// encryption is turned on by default. This parameter maps 1:1 with the Encrypted
-	// parameter of the [CreateVolume API]in the Amazon EC2 API Reference.
+	// Indicates whether the volume should be encrypted. If you turn on Region-level
+	// Amazon EBS encryption by default but set this value as false , the setting is
+	// overridden and the volume is encrypted with the KMS key specified for Amazon EBS
+	// encryption by default. This parameter maps 1:1 with the Encrypted parameter of
+	// the [CreateVolume API]in the Amazon EC2 API Reference.
 	//
 	// [CreateVolume API]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html
 	Encrypted *bool
 
 	// The filesystem type for the volume. For volumes created from a snapshot, you
 	// must specify the same filesystem type that the volume was using when the
-	// snapshot was created. If there is a filesystem type mismatch, the task will fail
-	// to start.
+	// snapshot was created. If there is a filesystem type mismatch, the tasks will
+	// fail to start.
 	//
 	// The available Linux filesystem types are  ext3 , ext4 , and xfs . If no value is
 	// specified, the xfs filesystem type is used by default.
@@ -4518,17 +6195,19 @@ type ServiceManagedEBSVolumeConfiguration struct {
 	Iops *int32
 
 	// The Amazon Resource Name (ARN) identifier of the Amazon Web Services Key
-	// Management Service key to use for Amazon EBS encryption. When encryption is
-	// turned on and no Amazon Web Services Key Management Service key is specified,
-	// the default Amazon Web Services managed key for Amazon EBS volumes is used. This
-	// parameter maps 1:1 with the KmsKeyId parameter of the [CreateVolume API] in the Amazon EC2 API
-	// Reference.
+	// Management Service key to use for Amazon EBS encryption. When a key is specified
+	// using this parameter, it overrides Amazon EBS default encryption or any KMS key
+	// that you specified for cluster-level managed storage encryption. This parameter
+	// maps 1:1 with the KmsKeyId parameter of the [CreateVolume API] in the Amazon EC2 API Reference.
+	// For more information about encrypting Amazon EBS volumes attached to tasks, see [Encrypt data stored in Amazon EBS volumes attached to Amazon ECS tasks]
+	// .
 	//
 	// Amazon Web Services authenticates the Amazon Web Services Key Management
 	// Service key asynchronously. Therefore, if you specify an ID, alias, or ARN that
 	// is invalid, the action can appear to complete, but eventually fails.
 	//
 	// [CreateVolume API]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html
+	// [Encrypt data stored in Amazon EBS volumes attached to Amazon ECS tasks]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ebs-kms-encryption.html
 	KmsKeyId *string
 
 	// The size of the volume in GiB. You must specify either a volume size or a
@@ -4550,8 +6229,9 @@ type ServiceManagedEBSVolumeConfiguration struct {
 	// [CreateVolume API]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html
 	SizeInGiB *int32
 
-	// The snapshot that Amazon ECS uses to create the volume. You must specify either
-	// a snapshot ID or a volume size. This parameter maps 1:1 with the SnapshotId
+	// The snapshot that Amazon ECS uses to create volumes for attachment to tasks
+	// maintained by the service. You must specify either snapshotId or sizeInGiB in
+	// your volume configuration. This parameter maps 1:1 with the SnapshotId
 	// parameter of the [CreateVolume API]in the Amazon EC2 API Reference.
 	//
 	// [CreateVolume API]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html
@@ -4572,6 +6252,14 @@ type ServiceManagedEBSVolumeConfiguration struct {
 	//
 	// [CreateVolume API]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html
 	Throughput *int32
+
+	// The rate, in MiB/s, at which data is fetched from a snapshot of an existing EBS
+	// volume to create new volumes for attachment to the tasks maintained by the
+	// service. This property can be specified only if you specify a snapshotId . For
+	// more information, see [Initialize Amazon EBS volumes]in the Amazon EBS User Guide.
+	//
+	// [Initialize Amazon EBS volumes]: https://docs.aws.amazon.com/ebs/latest/userguide/initalize-volume.html
+	VolumeInitializationRate *int32
 
 	// The volume type. This parameter maps 1:1 with the VolumeType parameter of the [CreateVolume API]
 	// in the Amazon EC2 API Reference. For more information, see [Amazon EBS volume types]in the Amazon EC2
@@ -4664,6 +6352,10 @@ type ServiceRevision struct {
 	// HH:mm:ss.SSSSS.
 	CreatedAt *time.Time
 
+	// The resources created and managed by Amazon ECS when you create an Express
+	// service for Amazon ECS.
+	EcsManagedResources *ECSManagedResources
+
 	// The amount of ephemeral storage to allocate for the deployment.
 	FargateEphemeralStorage *DeploymentEphemeralStorage
 
@@ -4684,6 +6376,10 @@ type ServiceRevision struct {
 
 	// For the Fargate launch type, the platform version the service revision uses.
 	PlatformVersion *string
+
+	// The resolved configuration for the service revision which contains the actual
+	// resources your service revision uses, such as which target groups serve traffic.
+	ResolvedConfiguration *ResolvedConfiguration
 
 	// The ARN of the service for the service revision.
 	ServiceArn *string
@@ -4720,6 +6416,22 @@ type ServiceRevision struct {
 	noSmithyDocumentSerde
 }
 
+// The resolved load balancer configuration for a service revision. This includes
+// information about which target groups serve traffic and which listener rules
+// direct traffic to them.
+type ServiceRevisionLoadBalancer struct {
+
+	// The Amazon Resource Name (ARN) of the production listener rule or listener that
+	// directs traffic to the target group associated with the service revision.
+	ProductionListenerRule *string
+
+	// The Amazon Resource Name (ARN) of the target group associated with the service
+	// revision.
+	TargetGroupArn *string
+
+	noSmithyDocumentSerde
+}
+
 // The information about the number of requested, pending, and running tasks for a
 // service revision.
 type ServiceRevisionSummary struct {
@@ -4730,8 +6442,18 @@ type ServiceRevisionSummary struct {
 	// The number of pending tasks for the service revision.
 	PendingTaskCount int32
 
+	// The percentage of production traffic that is directed to this service revision.
+	// This value represents a snapshot of the traffic distribution and may not reflect
+	// real-time changes during active deployments. Valid values are 0.0 to 100.0.
+	RequestedProductionTrafficWeight *float64
+
 	// The number of requested tasks for the service revision.
 	RequestedTaskCount int32
+
+	// The percentage of test traffic that is directed to this service revision. This
+	// value represents a snapshot of the traffic distribution and may not reflect
+	// real-time changes during active deployments. Valid values are 0.0 to 100.0.
+	RequestedTestTrafficWeight *float64
 
 	// The number of running tasks for the service revision.
 	RunningTaskCount int32
@@ -4845,7 +6567,9 @@ type SystemControl struct {
 	// | "kernel.sem" | "kernel.shmall" | "kernel.shmmax" | "kernel.shmmni" |
 	// "kernel.shm_rmid_forced" , and Sysctls that start with "fs.mqueue.*"
 	//
-	// Valid network namespace values: Sysctls that start with "net.*"
+	// Valid network namespace values: Sysctls that start with "net.*" . Only
+	// namespaced Sysctls that exist within the container starting with "net.* are
+	// accepted.
 	//
 	// All of these values are supported by Fargate.
 	Value *string
@@ -5305,7 +7029,8 @@ type TaskDefinition struct {
 	// If task is specified, all containers within the specified task share the same
 	// process namespace.
 	//
-	// If no value is specified, the default is a private namespace for each container.
+	// If no value is specified, the The default is a private namespace for each
+	// container.
 	//
 	// If the host PID mode is used, there's a heightened risk of undesired process
 	// namespace exposure.
@@ -5355,8 +7080,8 @@ type TaskDefinition struct {
 	RequiresAttributes []Attribute
 
 	// The task launch types the task definition was validated against. The valid
-	// values are EC2 , FARGATE , and EXTERNAL . For more information, see [Amazon ECS launch types] in the
-	// Amazon Elastic Container Service Developer Guide.
+	// values are MANAGED_INSTANCES , EC2 , FARGATE , and EXTERNAL . For more
+	// information, see [Amazon ECS launch types]in the Amazon Elastic Container Service Developer Guide.
 	//
 	// [Amazon ECS launch types]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_types.html
 	RequiresCompatibilities []Compatibility
@@ -5451,9 +7176,11 @@ type TaskManagedEBSVolumeConfiguration struct {
 	// This member is required.
 	RoleArn *string
 
-	// Indicates whether the volume should be encrypted. If no value is specified,
-	// encryption is turned on by default. This parameter maps 1:1 with the Encrypted
-	// parameter of the [CreateVolume API]in the Amazon EC2 API Reference.
+	// Indicates whether the volume should be encrypted. If you turn on Region-level
+	// Amazon EBS encryption by default but set this value as false , the setting is
+	// overridden and the volume is encrypted with the KMS key specified for Amazon EBS
+	// encryption by default. This parameter maps 1:1 with the Encrypted parameter of
+	// the [CreateVolume API]in the Amazon EC2 API Reference.
 	//
 	// [CreateVolume API]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html
 	Encrypted *bool
@@ -5491,17 +7218,19 @@ type TaskManagedEBSVolumeConfiguration struct {
 	Iops *int32
 
 	// The Amazon Resource Name (ARN) identifier of the Amazon Web Services Key
-	// Management Service key to use for Amazon EBS encryption. When encryption is
-	// turned on and no Amazon Web Services Key Management Service key is specified,
-	// the default Amazon Web Services managed key for Amazon EBS volumes is used. This
-	// parameter maps 1:1 with the KmsKeyId parameter of the [CreateVolume API] in the Amazon EC2 API
-	// Reference.
+	// Management Service key to use for Amazon EBS encryption. When a key is specified
+	// using this parameter, it overrides Amazon EBS default encryption or any KMS key
+	// that you specified for cluster-level managed storage encryption. This parameter
+	// maps 1:1 with the KmsKeyId parameter of the [CreateVolume API] in the Amazon EC2 API Reference.
+	// For more information about encrypting Amazon EBS volumes attached to a task, see
+	// [Encrypt data stored in Amazon EBS volumes attached to Amazon ECS tasks].
 	//
 	// Amazon Web Services authenticates the Amazon Web Services Key Management
 	// Service key asynchronously. Therefore, if you specify an ID, alias, or ARN that
 	// is invalid, the action can appear to complete, but eventually fails.
 	//
 	// [CreateVolume API]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html
+	// [Encrypt data stored in Amazon EBS volumes attached to Amazon ECS tasks]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ebs-kms-encryption.html
 	KmsKeyId *string
 
 	// The size of the volume in GiB. You must specify either a volume size or a
@@ -5550,6 +7279,14 @@ type TaskManagedEBSVolumeConfiguration struct {
 	//
 	// [CreateVolume API]: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html
 	Throughput *int32
+
+	// The rate, in MiB/s, at which data is fetched from a snapshot of an existing
+	// Amazon EBS volume to create a new volume for attachment to the task. This
+	// property can be specified only if you specify a snapshotId . For more
+	// information, see [Initialize Amazon EBS volumes]in the Amazon EBS User Guide.
+	//
+	// [Initialize Amazon EBS volumes]: https://docs.aws.amazon.com/ebs/latest/userguide/initalize-volume.html
+	VolumeInitializationRate *int32
 
 	// The volume type. This parameter maps 1:1 with the VolumeType parameter of the [CreateVolume API]
 	// in the Amazon EC2 API Reference. For more information, see [Amazon EBS volume types]in the Amazon EC2
@@ -5866,6 +7603,22 @@ type Tmpfs struct {
 	noSmithyDocumentSerde
 }
 
+// The minimum and maximum total local storage in gigabytes (GB) for instance
+// types with local storage. This is useful for workloads that require local
+// storage for temporary data or caching.
+type TotalLocalStorageGBRequest struct {
+
+	// The maximum total local storage in GB. Instance types with more local storage
+	// are excluded from selection.
+	Max *float64
+
+	// The minimum total local storage in GB. Instance types with less local storage
+	// are excluded from selection.
+	Min *float64
+
+	noSmithyDocumentSerde
+}
+
 // The ulimit settings to pass to the container.
 //
 // Amazon ECS tasks hosted on Fargate use the default resource limit values set by
@@ -5897,6 +7650,87 @@ type Ulimit struct {
 	noSmithyDocumentSerde
 }
 
+// An object that describes an Express service to be updated.
+type UpdatedExpressGatewayService struct {
+
+	// The cluster associated with the Express service that is being updated.
+	Cluster *string
+
+	// The Unix timestamp for when the Express service that is being updated was
+	// created.
+	CreatedAt *time.Time
+
+	// The ARN of the Express service that is being updated.
+	ServiceArn *string
+
+	// The name of the Express service that is being updated.
+	ServiceName *string
+
+	// The status of the Express service that is being updated.
+	Status *ExpressGatewayServiceStatus
+
+	// The configuration to which the current Express service is being updated to.
+	TargetConfiguration *ExpressGatewayServiceConfiguration
+
+	// The Unix timestamp for when the Express service that is being updated was most
+	// recently updated.
+	UpdatedAt *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// The updated configuration for a Amazon ECS Managed Instances provider. You can
+// modify the infrastructure role, instance launch template, and tag propagation
+// settings. Changes apply to new instances launched after the update.
+type UpdateManagedInstancesProviderConfiguration struct {
+
+	// The updated Amazon Resource Name (ARN) of the infrastructure role. The new role
+	// must have the necessary permissions to manage instances and access required
+	// Amazon Web Services services.
+	//
+	// For more information, see [Amazon ECS infrastructure IAM role] in the Amazon ECS Developer Guide.
+	//
+	// [Amazon ECS infrastructure IAM role]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/infrastructure_IAM_role.html
+	//
+	// This member is required.
+	InfrastructureRoleArn *string
+
+	// The updated launch template configuration. Changes to the launch template
+	// affect new instances launched after the update, while existing instances
+	// continue to use their original configuration.
+	//
+	// This member is required.
+	InstanceLaunchTemplate *InstanceLaunchTemplateUpdate
+
+	// The updated infrastructure optimization configuration. Changes to this setting
+	// affect how Amazon ECS optimizes instances going forward.
+	InfrastructureOptimization *InfrastructureOptimization
+
+	// The updated tag propagation setting. When changed, this affects only new
+	// instances launched after the update.
+	PropagateTags PropagateMITags
+
+	noSmithyDocumentSerde
+}
+
+// The minimum and maximum number of vCPUs for instance type selection. This
+// allows you to specify a range of vCPU counts that meet your workload
+// requirements.
+type VCpuCountRangeRequest struct {
+
+	// The minimum number of vCPUs. Instance types with fewer vCPUs than this value
+	// are excluded from selection.
+	//
+	// This member is required.
+	Min *int32
+
+	// The maximum number of vCPUs. Instance types with more vCPUs than this value are
+	// excluded from selection.
+	Max *int32
+
+	noSmithyDocumentSerde
+}
+
 // The Docker and Amazon ECS container agent version information about a container
 // instance.
 type VersionInfo struct {
@@ -5904,7 +7738,7 @@ type VersionInfo struct {
 	// The Git commit hash for the Amazon ECS container agent build on the [amazon-ecs-agent] GitHub
 	// repository.
 	//
-	// [amazon-ecs-agent]: https://github.com/aws/amazon-ecs-agent/commits/master
+	// [amazon-ecs-agent]: https://github.com/aws/amazon-ecs-agent
 	AgentHash *string
 
 	// The version number of the Amazon ECS container agent.

@@ -15,7 +15,7 @@ import (
 //
 // When you establish an Amazon Web Services account, the account has initial
 // monthly spend limit in a given Region. For more information on increasing your
-// monthly spend limit, see [Requesting increases to your monthly SMS, MMS, or Voice spending quota]in the AWS End User Messaging SMS User Guide.
+// monthly spend limit, see [Requesting increases to your monthly SMS, MMS, or Voice spending quota]in the End User Messaging SMS User Guide.
 //
 // [Requesting increases to your monthly SMS, MMS, or Voice spending quota]: https://docs.aws.amazon.com/sms-voice/latest/userguide/awssupport-spend-threshold.html
 func (c *Client) DescribeSpendLimits(ctx context.Context, params *DescribeSpendLimitsInput, optFns ...func(*Options)) (*DescribeSpendLimitsOutput, error) {
@@ -146,16 +146,13 @@ func (c *Client) addOperationDescribeSpendLimitsMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -98,6 +98,12 @@ type PutAccountSettingInput struct {
 	//   Fargate task. For information about the Fargate tasks maintenance, see [Amazon Web Services Fargate task maintenance]in the
 	//   Amazon ECS Developer Guide.
 	//
+	//   - fargateEventWindows - When Amazon Web Services determines that a security or
+	//   infrastructure update is needed for an Amazon ECS task hosted on Fargate, the
+	//   tasks need to be stopped and new tasks launched to replace them. Use
+	//   fargateEventWindows to use EC2 Event Windows associated with Fargate tasks to
+	//   configure time windows for task retirement.
+	//
 	//   - tagResourceAuthorization - Amazon ECS is introducing tagging authorization
 	//   for resource creation. Users must have permissions for actions that create the
 	//   resource, such as ecsCreateCluster . If tags are specified when you create a
@@ -114,6 +120,15 @@ type PutAccountSettingInput struct {
 	//   If you don't specify a delivery mode in your container definition's
 	//   logConfiguration , the mode you specify using this account setting will be
 	//   used as the default. For more information about log delivery modes, see [LogConfiguration].
+	//
+	// On June 25, 2025, Amazon ECS changed the default log driver mode from blocking
+	//   to non-blocking to prioritize task availability over logging. To continue
+	//   using the blocking mode after this change, do one of the following:
+	//
+	//   - Set the mode option in your container definition's logConfiguration as
+	//   blocking .
+	//
+	//   - Set the defaultLogDriverMode account setting to blocking .
 	//
 	//   - guardDutyActivate - The guardDutyActivate parameter is read-only in Amazon
 	//   ECS and indicates whether Amazon ECS Runtime Monitoring is enabled or disabled
@@ -154,6 +169,8 @@ type PutAccountSettingInput struct {
 	// the root user of the account unless a user or role explicitly overrides these
 	// settings. If this field is omitted, the setting is changed only for the
 	// authenticated user.
+	//
+	// In order to use this parameter, you must be the root user, or the principal.
 	//
 	// You must use the root user when you set the Fargate wait time (
 	// fargateTaskRetirementWaitPeriod ).
@@ -264,16 +281,13 @@ func (c *Client) addOperationPutAccountSettingMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

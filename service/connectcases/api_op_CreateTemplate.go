@@ -78,6 +78,11 @@ type CreateTemplateInput struct {
 	// The status of the template.
 	Status types.TemplateStatus
 
+	// Defines tag propagation configuration for resources created within a domain.
+	// Tags specified here will be automatically applied to resources being created for
+	// the specified resource type.
+	TagPropagationConfigurations []types.TagPropagationConfiguration
+
 	noSmithyDocumentSerde
 }
 
@@ -187,16 +192,13 @@ func (c *Client) addOperationCreateTemplateMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

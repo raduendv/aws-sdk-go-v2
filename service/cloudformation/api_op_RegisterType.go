@@ -56,8 +56,8 @@ func (c *Client) RegisterType(ctx context.Context, params *RegisterTypeInput, op
 
 type RegisterTypeInput struct {
 
-	// A URL to the S3 bucket containing the extension project package that contains
-	// the necessary files for the extension you want to register.
+	// A URL to the S3 bucket that contains the extension project package that
+	// contains the necessary files for the extension you want to register.
 	//
 	// For information about generating a schema handler package for the extension you
 	// want to register, see [submit]in the CloudFormation Command Line Interface (CLI) User
@@ -240,16 +240,13 @@ func (c *Client) addOperationRegisterTypeMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

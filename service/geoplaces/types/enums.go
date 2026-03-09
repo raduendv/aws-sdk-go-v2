@@ -62,8 +62,10 @@ type GeocodeAdditionalFeature string
 
 // Enum values for GeocodeAdditionalFeature
 const (
-	GeocodeAdditionalFeatureTimeZone GeocodeAdditionalFeature = "TimeZone"
-	GeocodeAdditionalFeatureAccess   GeocodeAdditionalFeature = "Access"
+	GeocodeAdditionalFeatureTimeZone           GeocodeAdditionalFeature = "TimeZone"
+	GeocodeAdditionalFeatureAccess             GeocodeAdditionalFeature = "Access"
+	GeocodeAdditionalFeatureSecondaryAddresses GeocodeAdditionalFeature = "SecondaryAddresses"
+	GeocodeAdditionalFeatureIntersections      GeocodeAdditionalFeature = "Intersections"
 )
 
 // Values returns all known values for GeocodeAdditionalFeature. Note that this
@@ -74,6 +76,8 @@ func (GeocodeAdditionalFeature) Values() []GeocodeAdditionalFeature {
 	return []GeocodeAdditionalFeature{
 		"TimeZone",
 		"Access",
+		"SecondaryAddresses",
+		"Intersections",
 	}
 }
 
@@ -130,10 +134,11 @@ type GetPlaceAdditionalFeature string
 
 // Enum values for GetPlaceAdditionalFeature
 const (
-	GetPlaceAdditionalFeatureTimeZone GetPlaceAdditionalFeature = "TimeZone"
-	GetPlaceAdditionalFeaturePhonemes GetPlaceAdditionalFeature = "Phonemes"
-	GetPlaceAdditionalFeatureAccess   GetPlaceAdditionalFeature = "Access"
-	GetPlaceAdditionalFeatureContact  GetPlaceAdditionalFeature = "Contact"
+	GetPlaceAdditionalFeatureTimeZone           GetPlaceAdditionalFeature = "TimeZone"
+	GetPlaceAdditionalFeaturePhonemes           GetPlaceAdditionalFeature = "Phonemes"
+	GetPlaceAdditionalFeatureAccess             GetPlaceAdditionalFeature = "Access"
+	GetPlaceAdditionalFeatureContact            GetPlaceAdditionalFeature = "Contact"
+	GetPlaceAdditionalFeatureSecondaryAddresses GetPlaceAdditionalFeature = "SecondaryAddresses"
 )
 
 // Values returns all known values for GetPlaceAdditionalFeature. Note that this
@@ -146,6 +151,7 @@ func (GetPlaceAdditionalFeature) Values() []GetPlaceAdditionalFeature {
 		"Phonemes",
 		"Access",
 		"Contact",
+		"SecondaryAddresses",
 	}
 }
 
@@ -175,20 +181,22 @@ type PlaceType string
 
 // Enum values for PlaceType
 const (
-	PlaceTypeCountry             PlaceType = "Country"
-	PlaceTypeRegion              PlaceType = "Region"
-	PlaceTypeSubRegion           PlaceType = "SubRegion"
-	PlaceTypeLocality            PlaceType = "Locality"
-	PlaceTypeDistrict            PlaceType = "District"
-	PlaceTypeSubDistrict         PlaceType = "SubDistrict"
-	PlaceTypePostalCode          PlaceType = "PostalCode"
-	PlaceTypeBlock               PlaceType = "Block"
-	PlaceTypeSubBlock            PlaceType = "SubBlock"
-	PlaceTypeIntersection        PlaceType = "Intersection"
-	PlaceTypeStreet              PlaceType = "Street"
-	PlaceTypePointOfInterest     PlaceType = "PointOfInterest"
-	PlaceTypePointAddress        PlaceType = "PointAddress"
-	PlaceTypeInterpolatedAddress PlaceType = "InterpolatedAddress"
+	PlaceTypeCountry                  PlaceType = "Country"
+	PlaceTypeRegion                   PlaceType = "Region"
+	PlaceTypeSubRegion                PlaceType = "SubRegion"
+	PlaceTypeLocality                 PlaceType = "Locality"
+	PlaceTypeDistrict                 PlaceType = "District"
+	PlaceTypeSubDistrict              PlaceType = "SubDistrict"
+	PlaceTypePostalCode               PlaceType = "PostalCode"
+	PlaceTypeBlock                    PlaceType = "Block"
+	PlaceTypeSubBlock                 PlaceType = "SubBlock"
+	PlaceTypeIntersection             PlaceType = "Intersection"
+	PlaceTypeStreet                   PlaceType = "Street"
+	PlaceTypePointOfInterest          PlaceType = "PointOfInterest"
+	PlaceTypePointAddress             PlaceType = "PointAddress"
+	PlaceTypeInterpolatedAddress      PlaceType = "InterpolatedAddress"
+	PlaceTypeSecondaryAddress         PlaceType = "SecondaryAddress"
+	PlaceTypeInferredSecondaryAddress PlaceType = "InferredSecondaryAddress"
 )
 
 // Values returns all known values for PlaceType. Note that this can be expanded
@@ -211,6 +219,8 @@ func (PlaceType) Values() []PlaceType {
 		"PointOfInterest",
 		"PointAddress",
 		"InterpolatedAddress",
+		"SecondaryAddress",
+		"InferredSecondaryAddress",
 	}
 }
 
@@ -319,8 +329,9 @@ type ReverseGeocodeAdditionalFeature string
 
 // Enum values for ReverseGeocodeAdditionalFeature
 const (
-	ReverseGeocodeAdditionalFeatureTimeZone ReverseGeocodeAdditionalFeature = "TimeZone"
-	ReverseGeocodeAdditionalFeatureAccess   ReverseGeocodeAdditionalFeature = "Access"
+	ReverseGeocodeAdditionalFeatureTimeZone      ReverseGeocodeAdditionalFeature = "TimeZone"
+	ReverseGeocodeAdditionalFeatureAccess        ReverseGeocodeAdditionalFeature = "Access"
+	ReverseGeocodeAdditionalFeatureIntersections ReverseGeocodeAdditionalFeature = "Intersections"
 )
 
 // Values returns all known values for ReverseGeocodeAdditionalFeature. Note that
@@ -332,6 +343,7 @@ func (ReverseGeocodeAdditionalFeature) Values() []ReverseGeocodeAdditionalFeatur
 	return []ReverseGeocodeAdditionalFeature{
 		"TimeZone",
 		"Access",
+		"Intersections",
 	}
 }
 

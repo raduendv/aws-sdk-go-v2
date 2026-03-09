@@ -50,11 +50,19 @@ type ListBillingViewsInput struct {
 	// The maximum number of billing views to retrieve. Default is 100.
 	MaxResults *int32
 
+	//  Filters the list of billing views by name. You can specify search criteria to
+	// match billing view names based on the search option provided.
+	Names []types.StringSearch
+
 	// The pagination token that is used on subsequent calls to list billing views.
 	NextToken *string
 
 	//  The list of owners of the billing view.
 	OwnerAccountId *string
+
+	//  Filters the results to include only billing views that use the specified
+	// account as a source.
+	SourceAccountId *string
 
 	noSmithyDocumentSerde
 }
@@ -163,16 +171,13 @@ func (c *Client) addOperationListBillingViewsMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

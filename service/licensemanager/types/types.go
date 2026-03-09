@@ -7,6 +7,30 @@ import (
 	"time"
 )
 
+// AND rule statement.
+type AndRuleStatement struct {
+
+	// Matching rule statements.
+	MatchingRuleStatements []MatchingRuleStatement
+
+	// Script rule statements.
+	ScriptRuleStatements []ScriptRuleStatement
+
+	noSmithyDocumentSerde
+}
+
+// Asset.
+type Asset struct {
+
+	// Amazon Resource Name (ARN) of the asset.
+	AssetArn *string
+
+	// Latest asset discovery time.
+	LatestAssetDiscoveryTime *time.Time
+
+	noSmithyDocumentSerde
+}
+
 // Describes automated discovery.
 type AutomatedDiscoveryInformation struct {
 
@@ -55,6 +79,24 @@ type ConsumptionConfiguration struct {
 
 	// Renewal frequency.
 	RenewType RenewType
+
+	noSmithyDocumentSerde
+}
+
+// Status information for cross-account discovery service.
+type CrossAccountDiscoveryServiceStatus struct {
+
+	// Status message for cross-account discovery service.
+	Message *string
+
+	noSmithyDocumentSerde
+}
+
+// Status information for cross-region discovery.
+type CrossRegionDiscoveryStatus struct {
+
+	// Map of region status messages for cross-region discovery.
+	Message map[string]RegionStatus
 
 	noSmithyDocumentSerde
 }
@@ -268,6 +310,24 @@ type GrantedLicense struct {
 	noSmithyDocumentSerde
 }
 
+// Instance rule statement.
+type InstanceRuleStatement struct {
+
+	// AND rule statement.
+	AndRuleStatement *AndRuleStatement
+
+	// Matching rule statement.
+	MatchingRuleStatement *MatchingRuleStatement
+
+	// OR rule statement.
+	OrRuleStatement *OrRuleStatement
+
+	// Script rule statement.
+	ScriptRuleStatement *ScriptRuleStatement
+
+	noSmithyDocumentSerde
+}
+
 // An inventory filter.
 type InventoryFilter struct {
 
@@ -366,6 +426,110 @@ type License struct {
 	noSmithyDocumentSerde
 }
 
+// License asset group.
+type LicenseAssetGroup struct {
+
+	// ARNs of associated license asset rulesets.
+	//
+	// This member is required.
+	AssociatedLicenseAssetRulesetARNs []string
+
+	// Amazon Resource Name (ARN) of the license asset group.
+	//
+	// This member is required.
+	LicenseAssetGroupArn *string
+
+	// License asset group name.
+	//
+	// This member is required.
+	Name *string
+
+	// License asset group status.
+	//
+	// This member is required.
+	Status LicenseAssetGroupStatus
+
+	// License asset group description.
+	Description *string
+
+	// Latest resource discovery time.
+	LatestResourceDiscoveryTime *time.Time
+
+	// Latest usage analysis time.
+	LatestUsageAnalysisTime *time.Time
+
+	// License asset group configurations.
+	LicenseAssetGroupConfigurations []LicenseAssetGroupConfiguration
+
+	// License asset group properties.
+	Properties []LicenseAssetGroupProperty
+
+	// License asset group status message.
+	StatusMessage *string
+
+	noSmithyDocumentSerde
+}
+
+// License asset group configuration.
+type LicenseAssetGroupConfiguration struct {
+
+	// License Asset Group Configuration Usage dimension.
+	UsageDimension *string
+
+	noSmithyDocumentSerde
+}
+
+// License asset group property.
+type LicenseAssetGroupProperty struct {
+
+	// Property key.
+	//
+	// This member is required.
+	Key *string
+
+	// Property value.
+	//
+	// This member is required.
+	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// License asset rule.
+type LicenseAssetRule struct {
+
+	// Rule statement.
+	//
+	// This member is required.
+	RuleStatement *RuleStatement
+
+	noSmithyDocumentSerde
+}
+
+// License asset ruleset.
+type LicenseAssetRuleset struct {
+
+	// Amazon Resource Name (ARN) of the license asset ruleset.
+	//
+	// This member is required.
+	LicenseAssetRulesetArn *string
+
+	// License asset ruleset name.
+	//
+	// This member is required.
+	Name *string
+
+	// License asset rules.
+	//
+	// This member is required.
+	Rules []LicenseAssetRule
+
+	// License asset ruleset description.
+	Description *string
+
+	noSmithyDocumentSerde
+}
+
 // A license configuration is an abstraction of a customer license agreement that
 // can be consumed and enforced by License Manager. Components include
 // specifications for the license type (licensing by instance, socket, CPU, or
@@ -403,6 +567,9 @@ type LicenseConfiguration struct {
 
 	// Dimension to use to track the license inventory.
 	LicenseCountingType LicenseCountingType
+
+	// License configuration expiry time in Unix timestamp format.
+	LicenseExpiry *int64
 
 	// License rules.
 	LicenseRules []string
@@ -446,6 +613,21 @@ type LicenseConfigurationAssociation struct {
 	noSmithyDocumentSerde
 }
 
+// License configuration rule statement.
+type LicenseConfigurationRuleStatement struct {
+
+	// AND rule statement.
+	AndRuleStatement *AndRuleStatement
+
+	// Matching rule statement.
+	MatchingRuleStatement *MatchingRuleStatement
+
+	// OR rule statement.
+	OrRuleStatement *OrRuleStatement
+
+	noSmithyDocumentSerde
+}
+
 // Details about the usage of a resource associated with a license configuration.
 type LicenseConfigurationUsage struct {
 
@@ -472,6 +654,9 @@ type LicenseConfigurationUsage struct {
 
 // Information about a license type conversion task.
 type LicenseConversionContext struct {
+
+	// Product codes referred to in the license conversion process.
+	ProductCodes []ProductCodeListItem
 
 	// The Usage operation value that corresponds to the license type you are
 	// converting your resource from. For more information about which platforms
@@ -547,6 +732,21 @@ type LicenseOperationFailure struct {
 	noSmithyDocumentSerde
 }
 
+// License rule statement.
+type LicenseRuleStatement struct {
+
+	// AND rule statement.
+	AndRuleStatement *AndRuleStatement
+
+	// Matching rule statement.
+	MatchingRuleStatement *MatchingRuleStatement
+
+	// OR rule statement.
+	OrRuleStatement *OrRuleStatement
+
+	noSmithyDocumentSerde
+}
+
 // Details for associating a license configuration with a resource.
 type LicenseSpecification struct {
 
@@ -578,6 +778,82 @@ type ManagedResourceSummary struct {
 
 	// Type of resource associated with a license.
 	ResourceType ResourceType
+
+	noSmithyDocumentSerde
+}
+
+// Matching rule statement.
+type MatchingRuleStatement struct {
+
+	// Constraint.
+	//
+	// This member is required.
+	Constraint *string
+
+	// Key to match.
+	//
+	// The following keys and are supported when the RuleStatement type is Instance :
+	//
+	//   - Platform - The name of the platform. Logical operators are EQUALS and
+	//   NOT_EQUALS .
+	//
+	//   - EC2BillingProduct - The billing product code. Logical operators are EQUALS
+	//   and NOT_EQUALS . Possible values are: windows-server-enterprise | windows-byol
+	//   | rhel | rhel-byol | rhel-high-availability | ubuntu-pro | suse-linux |
+	//   sql-server-standard | sql-server-enterprise .
+	//
+	//   - MarketPlaceProductCode - The Marketplace product code. Logical operators are
+	//   EQUALS and NOT_EQUALS .
+	//
+	//   - AMIId - The ID of the AMI. Logical operators are EQUALS and NOT_EQUALS .
+	//
+	//   - InstanceType - The instance type. Logical operators are EQUALS and
+	//   NOT_EQUALS .
+	//
+	//   - InstanceId - The ID of the instance. Logical operators are EQUALS and
+	//   NOT_EQUALS .
+	//
+	//   - HostId - The ID of the host. Logical operators are EQUALS and NOT_EQUALS .
+	//
+	//   - AccountId - The ID of the account. Logical operators are EQUALS and
+	//   NOT_EQUALS .
+	//
+	// The following keys and are supported when the RuleStatement type is License :
+	//
+	//   - LicenseArn - The ARN of a Managed Entitlement License. Logical operators are
+	//   EQUALS and NOT_EQUALS .
+	//
+	//   - ProductSKU - The productSKU of the license. Logical operators are EQUALS and
+	//   NOT_EQUALS .
+	//
+	//   - Issuer - The issuer of the license. Logical operators are EQUALS and
+	//   NOT_EQUALS .
+	//
+	//   - Beneficiary - The beneficiary of the license. Logical operators are EQUALS
+	//   and NOT_EQUALS .
+	//
+	//   - LicenseStatus - The status of the license. Logical operators are EQUALS and
+	//   NOT_EQUALS .
+	//
+	//   - HomeRegion - The home region of the license. Logical operators are EQUALS
+	//   and NOT_EQUALS .
+	//
+	// The following keys and are supported when the RuleStatement type is License
+	// Configuration :
+	//
+	//   - LicenseConfigurationArn - The ARN of a self-managed license configuration.
+	//   Logical operators are EQUALS and NOT_EQUALS .
+	//
+	//   - AccountId - The account of the license configuration. Logical operators are
+	//   EQUALS and NOT_EQUALS .
+	//
+	// This member is required.
+	KeyToMatch *string
+
+	// Value to match.
+	//
+	// This member is required.
+	ValueToMatch []string
 
 	noSmithyDocumentSerde
 }
@@ -638,6 +914,34 @@ type OrganizationConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// OR rule statement.
+type OrRuleStatement struct {
+
+	// Matching rule statements.
+	MatchingRuleStatements []MatchingRuleStatement
+
+	// Script rule statements.
+	ScriptRuleStatements []ScriptRuleStatement
+
+	noSmithyDocumentSerde
+}
+
+// A list item that contains a product code.
+type ProductCodeListItem struct {
+
+	// The product code ID
+	//
+	// This member is required.
+	ProductCodeId *string
+
+	// The product code type
+	//
+	// This member is required.
+	ProductCodeType ProductCodeType
+
+	noSmithyDocumentSerde
+}
+
 // Describes product information for a license configuration.
 type ProductInformation struct {
 
@@ -680,7 +984,8 @@ type ProductInformation struct {
 	// type is RDS :
 	//
 	//   - Engine Edition - The edition of the database engine. Logical operator is
-	//   EQUALS . Possible values are: oracle-ee | oracle-se | oracle-se1 | oracle-se2 .
+	//   EQUALS . Possible values are: oracle-ee | oracle-se | oracle-se1 | oracle-se2
+	//   | db2-se | db2-ae .
 	//
 	//   - License Pack - The license pack. Logical operator is EQUALS . Possible
 	//   values are: data guard | diagnostic pack sqlt | tuning pack sqlt | ols | olap .
@@ -741,14 +1046,31 @@ type ReceivedMetadata struct {
 	noSmithyDocumentSerde
 }
 
+// Status information for a specific region.
+type RegionStatus struct {
+
+	// Status value for the region.
+	Status *string
+
+	noSmithyDocumentSerde
+}
+
 // Details of the license configuration that this generator reports on.
 type ReportContext struct {
 
+	// Amazon Resource Names (ARNs) of the license asset groups to include in the
+	// report.
+	LicenseAssetGroupArns []string
+
 	// Amazon Resource Name (ARN) of the license configuration that this generator
 	// reports on.
-	//
-	// This member is required.
 	LicenseConfigurationArns []string
+
+	// End date for the report data collection period.
+	ReportEndDate *time.Time
+
+	// Start date for the report data collection period.
+	ReportStartDate *time.Time
 
 	noSmithyDocumentSerde
 }
@@ -814,11 +1136,26 @@ type ReportGenerator struct {
 // Details about a resource.
 type ResourceInventory struct {
 
+	// Amazon Machine Image (AMI) ID associated with the resource.
+	AmiId *string
+
+	// Dedicated Host ID where the resource is running.
+	HostId *string
+
+	// EC2 instance type of the resource.
+	InstanceType *string
+
+	// List of Marketplace product codes associated with the resource.
+	MarketplaceProductCodes []string
+
 	// Platform of the resource.
 	Platform *string
 
 	// Platform version of the resource in the inventory.
 	PlatformVersion *string
+
+	// Region where the resource is located.
+	Region *string
 
 	// Amazon Resource Name (ARN) of the resource.
 	ResourceArn *string
@@ -831,6 +1168,24 @@ type ResourceInventory struct {
 
 	// Type of resource.
 	ResourceType ResourceType
+
+	// Usage operation value that corresponds to the license type for billing purposes.
+	UsageOperation *string
+
+	noSmithyDocumentSerde
+}
+
+// Rule statement.
+type RuleStatement struct {
+
+	// Instance rule statement.
+	InstanceRuleStatement *InstanceRuleStatement
+
+	// License configuration rule statement.
+	LicenseConfigurationRuleStatement *LicenseConfigurationRuleStatement
+
+	// License rule statement.
+	LicenseRuleStatement *LicenseRuleStatement
 
 	noSmithyDocumentSerde
 }
@@ -847,13 +1202,44 @@ type S3Location struct {
 	noSmithyDocumentSerde
 }
 
-// Details about a tag for a license configuration.
+// Rule statement that uses a script to evaluate license asset conditions.
+type ScriptRuleStatement struct {
+
+	// Key name to match against in the script rule evaluation.
+	//
+	// This member is required.
+	KeyToMatch *string
+
+	// Script code used to evaluate the rule condition.
+	//
+	// This member is required.
+	Script *string
+
+	noSmithyDocumentSerde
+}
+
+// Overall service status information for License Manager.
+type ServiceStatus struct {
+
+	// Status of cross-account discovery service.
+	CrossAccountDiscovery *CrossAccountDiscoveryServiceStatus
+
+	// Status of cross-region discovery service.
+	CrossRegionDiscovery *CrossRegionDiscoveryStatus
+
+	noSmithyDocumentSerde
+}
+
+// Details about the tags for a resource. For more information about tagging
+// support in License Manager, see the [TagResource]operation.
+//
+// [TagResource]: https://docs.aws.amazon.com/license-manager/latest/APIReference/API_TagResource.html
 type Tag struct {
 
-	// Tag key.
+	// The tag key.
 	Key *string
 
-	// Tag value.
+	// The tag value.
 	Value *string
 
 	noSmithyDocumentSerde

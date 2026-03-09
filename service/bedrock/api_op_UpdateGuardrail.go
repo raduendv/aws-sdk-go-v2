@@ -82,11 +82,24 @@ type UpdateGuardrailInput struct {
 	// This member is required.
 	Name *string
 
+	// Updated configuration for Automated Reasoning policies associated with the
+	// guardrail.
+	AutomatedReasoningPolicyConfig *types.GuardrailAutomatedReasoningPolicyConfig
+
 	// The content policy to configure for the guardrail.
 	ContentPolicyConfig *types.GuardrailContentPolicyConfig
 
 	// The contextual grounding policy configuration used to update a guardrail.
 	ContextualGroundingPolicyConfig *types.GuardrailContextualGroundingPolicyConfig
+
+	// The system-defined guardrail profile that you're using with your guardrail.
+	// Guardrail profiles define the destination Amazon Web Services Regions where
+	// guardrail inference requests can be automatically routed.
+	//
+	// For more information, see the [Amazon Bedrock User Guide].
+	//
+	// [Amazon Bedrock User Guide]: https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-cross-region.html
+	CrossRegionConfig *types.GuardrailCrossRegionConfig
 
 	// A description of the guardrail.
 	Description *string
@@ -222,16 +235,13 @@ func (c *Client) addOperationUpdateGuardrailMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

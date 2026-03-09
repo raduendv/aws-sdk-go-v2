@@ -12,6 +12,10 @@ import (
 )
 
 // GetStyleDescriptor returns information about the style.
+//
+// For more information, see [Style dynamic maps] in the Amazon Location Service Developer Guide.
+//
+// [Style dynamic maps]: https://docs.aws.amazon.com/location/latest/developerguide/styling-dynamic-maps.html
 func (c *Client) GetStyleDescriptor(ctx context.Context, params *GetStyleDescriptorInput, optFns ...func(*Options)) (*GetStyleDescriptorOutput, error) {
 	if params == nil {
 		params = &GetStyleDescriptorInput{}
@@ -34,6 +38,15 @@ type GetStyleDescriptorInput struct {
 	// This member is required.
 	Style types.MapStyle
 
+	// Adjusts how building details are rendered on the map.
+	//
+	// The following building styles are currently supported:
+	//
+	//   - Buildings3D : Displays buildings as three-dimensional extrusions on the map.
+	//
+	// Buildings3D is valid only for the Standard and Monochrome map styles.
+	Buildings types.Buildings
+
 	// Sets color tone for map such as dark and light for specific map styles. It
 	// applies to only vector map styles such as Standard and Monochrome.
 	//
@@ -43,6 +56,14 @@ type GetStyleDescriptorInput struct {
 	//
 	// Valid values for ColorScheme are case sensitive.
 	ColorScheme types.ColorScheme
+
+	// Displays the shape and steepness of terrain features using elevation lines. The
+	// density value controls how densely the available contour line information is
+	// rendered on the map.
+	//
+	// This parameter is valid only for the Standard , Monochrome , and Hybrid map
+	// styles.
+	ContourDensity types.ContourDensity
 
 	// Optional: The API key to be used for authorization. Either an API key or valid
 	// SigV4 signature must be provided when making a request.
@@ -81,6 +102,32 @@ type GetStyleDescriptorInput struct {
 	//
 	//   - VNM : Vietnam's view on the Paracel Islands and Spratly Islands
 	PoliticalView *string
+
+	// Adjusts how physical terrain details are rendered on the map.
+	//
+	// The following terrain styles are currently supported:
+	//
+	//   - Hillshade : Displays the physical terrain details through shading and
+	//   highlighting of elevation change and geographic features.
+	//
+	//   - Terrain3D : Displays physical terrain details and elevations as a
+	//   three-dimensional model.
+	//
+	// Hillshade is valid only for the Standard and Monochrome map styles.
+	Terrain types.Terrain
+
+	// Displays real-time traffic information overlay on map, such as incident events
+	// and flow events.
+	//
+	// This parameter is valid only for the Standard map style.
+	Traffic types.Traffic
+
+	// Renders additional map information relevant to selected travel modes.
+	// Information for multiple travel modes can be displayed simultaneously, although
+	// this increases the overall information density rendered on the map.
+	//
+	// This parameter is valid only for the Standard map style.
+	TravelModes []types.TravelMode
 
 	noSmithyDocumentSerde
 }
@@ -195,16 +242,13 @@ func (c *Client) addOperationGetStyleDescriptorMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

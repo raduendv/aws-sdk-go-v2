@@ -42,3 +42,39 @@ func ExampleInputChannelDataSource_outputUsage() {
 }
 
 var _ *types.ProtectedQueryInputParameters
+
+func ExamplePrivacyBudgets_outputUsage() {
+	var union types.PrivacyBudgets
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.PrivacyBudgetsMemberAccessBudgets:
+		_ = v.Value // Value is []types.AccessBudget
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ []types.AccessBudget
+
+func ExampleWorkerComputeConfigurationProperties_outputUsage() {
+	var union types.WorkerComputeConfigurationProperties
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.WorkerComputeConfigurationPropertiesMemberSpark:
+		_ = v.Value // Value is map[string]string
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ map[string]string

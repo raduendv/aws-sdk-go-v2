@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// List all destination names under one Amazon Web Services account.
+// List all notification destinations.
 func (c *Client) ListDestinations(ctx context.Context, params *ListDestinationsInput, optFns ...func(*Options)) (*ListDestinationsOutput, error) {
 	if params == nil {
 		params = &ListDestinationsInput{}
@@ -137,16 +137,13 @@ func (c *Client) addOperationListDestinationsMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

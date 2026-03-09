@@ -31,6 +31,9 @@ type CreateAssessmentFrameworkInput struct {
 
 	//  The control sets that are associated with the framework.
 	//
+	// The Controls object returns a partial response when called through Framework
+	// APIs. For a complete Controls object, use GetControl .
+	//
 	// This member is required.
 	ControlSets []types.CreateAssessmentFrameworkControlSet
 
@@ -54,7 +57,7 @@ type CreateAssessmentFrameworkInput struct {
 
 type CreateAssessmentFrameworkOutput struct {
 
-	//  The name of the new framework that the CreateAssessmentFramework API returned.
+	//  The new framework object that the CreateAssessmentFramework API returned.
 	Framework *types.Framework
 
 	// Metadata pertaining to the operation's result.
@@ -151,16 +154,13 @@ func (c *Client) addOperationCreateAssessmentFrameworkMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

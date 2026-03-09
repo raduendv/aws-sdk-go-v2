@@ -48,8 +48,8 @@ type UpdateResolverConfigInput struct {
 	// This member is required.
 	AutodefinedReverseFlag types.AutodefinedReverseFlag
 
-	// Resource ID of the Amazon VPC that you want to update the Resolver
-	// configuration for.
+	// The ID of the Amazon Virtual Private Cloud VPC or a Route 53 Profile that
+	// you're configuring Resolver for.
 	//
 	// This member is required.
 	ResourceId *string
@@ -156,16 +156,13 @@ func (c *Client) addOperationUpdateResolverConfigMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

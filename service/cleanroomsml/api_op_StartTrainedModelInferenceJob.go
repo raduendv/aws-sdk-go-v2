@@ -109,6 +109,11 @@ type StartTrainedModelInferenceJobInput struct {
 	//   of aws do not count against your tags per resource limit.
 	Tags map[string]string
 
+	// The version identifier of the trained model to use for inference. This
+	// specifies which version of the trained model should be used to generate
+	// predictions on the input data.
+	TrainedModelVersionIdentifier *string
+
 	noSmithyDocumentSerde
 }
 
@@ -213,16 +218,13 @@ func (c *Client) addOperationStartTrainedModelInferenceJobMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

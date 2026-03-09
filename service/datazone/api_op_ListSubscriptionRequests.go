@@ -52,10 +52,21 @@ type ListSubscriptionRequestsInput struct {
 	// subscription requests.
 	NextToken *string
 
+	// The ID of the owning group.
+	OwningGroupId *string
+
+	// The ARN of the owning IAM principal.
+	OwningIamPrincipalArn *string
+
 	// The identifier of the project for the subscription requests.
 	OwningProjectId *string
 
+	// The ID of the owning user.
+	OwningUserId *string
+
 	// Specifies the way to sort the results of this action.
+	//
+	// Deprecated: Results are always sorted by updatedAt
 	SortBy types.SortKey
 
 	// Specifies the sort order for the results of this action.
@@ -182,16 +193,13 @@ func (c *Client) addOperationListSubscriptionRequestsMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

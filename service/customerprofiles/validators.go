@@ -110,6 +110,26 @@ func (m *validateOpCreateDomain) HandleInitialize(ctx context.Context, in middle
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateDomainLayout struct {
+}
+
+func (*validateOpCreateDomainLayout) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateDomainLayout) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateDomainLayoutInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateDomainLayoutInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateEventStream struct {
 }
 
@@ -190,6 +210,26 @@ func (m *validateOpCreateProfile) HandleInitialize(ctx context.Context, in middl
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateRecommender struct {
+}
+
+func (*validateOpCreateRecommender) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateRecommender) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateRecommenderInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateRecommenderInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateSegmentDefinition struct {
 }
 
@@ -250,6 +290,26 @@ func (m *validateOpCreateSegmentSnapshot) HandleInitialize(ctx context.Context, 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateUploadJob struct {
+}
+
+func (*validateOpCreateUploadJob) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateUploadJob) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateUploadJobInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateUploadJobInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeleteCalculatedAttributeDefinition struct {
 }
 
@@ -285,6 +345,46 @@ func (m *validateOpDeleteDomain) HandleInitialize(ctx context.Context, in middle
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDeleteDomainInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteDomainLayout struct {
+}
+
+func (*validateOpDeleteDomainLayout) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteDomainLayout) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteDomainLayoutInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteDomainLayoutInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteDomainObjectType struct {
+}
+
+func (*validateOpDeleteDomainObjectType) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteDomainObjectType) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteDomainObjectTypeInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteDomainObjectTypeInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -430,6 +530,26 @@ func (m *validateOpDeleteProfileObjectType) HandleInitialize(ctx context.Context
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpDeleteRecommender struct {
+}
+
+func (*validateOpDeleteRecommender) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteRecommender) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteRecommenderInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteRecommenderInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeleteSegmentDefinition struct {
 }
 
@@ -570,6 +690,46 @@ func (m *validateOpGetDomain) HandleInitialize(ctx context.Context, in middlewar
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetDomainLayout struct {
+}
+
+func (*validateOpGetDomainLayout) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetDomainLayout) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetDomainLayoutInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetDomainLayoutInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetDomainObjectType struct {
+}
+
+func (*validateOpGetDomainObjectType) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetDomainObjectType) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetDomainObjectTypeInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetDomainObjectTypeInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetEventStream struct {
 }
 
@@ -670,6 +830,46 @@ func (m *validateOpGetMatches) HandleInitialize(ctx context.Context, in middlewa
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetObjectTypeAttributeStatistics struct {
+}
+
+func (*validateOpGetObjectTypeAttributeStatistics) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetObjectTypeAttributeStatistics) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetObjectTypeAttributeStatisticsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetObjectTypeAttributeStatisticsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetProfileHistoryRecord struct {
+}
+
+func (*validateOpGetProfileHistoryRecord) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetProfileHistoryRecord) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetProfileHistoryRecordInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetProfileHistoryRecordInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetProfileObjectType struct {
 }
 
@@ -705,6 +905,46 @@ func (m *validateOpGetProfileObjectTypeTemplate) HandleInitialize(ctx context.Co
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpGetProfileObjectTypeTemplateInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetProfileRecommendations struct {
+}
+
+func (*validateOpGetProfileRecommendations) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetProfileRecommendations) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetProfileRecommendationsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetProfileRecommendationsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetRecommender struct {
+}
+
+func (*validateOpGetRecommender) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetRecommender) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetRecommenderInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetRecommenderInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -810,6 +1050,46 @@ func (m *validateOpGetSimilarProfiles) HandleInitialize(ctx context.Context, in 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetUploadJob struct {
+}
+
+func (*validateOpGetUploadJob) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetUploadJob) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetUploadJobInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetUploadJobInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetUploadJobPath struct {
+}
+
+func (*validateOpGetUploadJobPath) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetUploadJobPath) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetUploadJobPathInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetUploadJobPathInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetWorkflow struct {
 }
 
@@ -905,6 +1185,46 @@ func (m *validateOpListCalculatedAttributesForProfile) HandleInitialize(ctx cont
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListCalculatedAttributesForProfileInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpListDomainLayouts struct {
+}
+
+func (*validateOpListDomainLayouts) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListDomainLayouts) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListDomainLayoutsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListDomainLayoutsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpListDomainObjectTypes struct {
+}
+
+func (*validateOpListDomainObjectTypes) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListDomainObjectTypes) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListDomainObjectTypesInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListDomainObjectTypesInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1010,6 +1330,26 @@ func (m *validateOpListObjectTypeAttributes) HandleInitialize(ctx context.Contex
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpListObjectTypeAttributeValues struct {
+}
+
+func (*validateOpListObjectTypeAttributeValues) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListObjectTypeAttributeValues) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListObjectTypeAttributeValuesInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListObjectTypeAttributeValuesInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpListProfileAttributeValues struct {
 }
 
@@ -1025,6 +1365,26 @@ func (m *validateOpListProfileAttributeValues) HandleInitialize(ctx context.Cont
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListProfileAttributeValuesInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpListProfileHistoryRecords struct {
+}
+
+func (*validateOpListProfileHistoryRecords) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListProfileHistoryRecords) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListProfileHistoryRecordsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListProfileHistoryRecordsInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1065,6 +1425,26 @@ func (m *validateOpListProfileObjectTypes) HandleInitialize(ctx context.Context,
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListProfileObjectTypesInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpListRecommenders struct {
+}
+
+func (*validateOpListRecommenders) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListRecommenders) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListRecommendersInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListRecommendersInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1130,6 +1510,26 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpListUploadJobs struct {
+}
+
+func (*validateOpListUploadJobs) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListUploadJobs) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListUploadJobsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListUploadJobsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpListWorkflows struct {
 }
 
@@ -1165,6 +1565,26 @@ func (m *validateOpMergeProfiles) HandleInitialize(ctx context.Context, in middl
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpMergeProfilesInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpPutDomainObjectType struct {
+}
+
+func (*validateOpPutDomainObjectType) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpPutDomainObjectType) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*PutDomainObjectTypeInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpPutDomainObjectTypeInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1250,6 +1670,86 @@ func (m *validateOpSearchProfiles) HandleInitialize(ctx context.Context, in midd
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpStartRecommender struct {
+}
+
+func (*validateOpStartRecommender) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpStartRecommender) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*StartRecommenderInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpStartRecommenderInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpStartUploadJob struct {
+}
+
+func (*validateOpStartUploadJob) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpStartUploadJob) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*StartUploadJobInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpStartUploadJobInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpStopRecommender struct {
+}
+
+func (*validateOpStopRecommender) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpStopRecommender) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*StopRecommenderInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpStopRecommenderInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpStopUploadJob struct {
+}
+
+func (*validateOpStopUploadJob) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpStopUploadJob) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*StopUploadJobInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpStopUploadJobInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpTagResource struct {
 }
 
@@ -1330,6 +1830,26 @@ func (m *validateOpUpdateDomain) HandleInitialize(ctx context.Context, in middle
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateDomainLayout struct {
+}
+
+func (*validateOpUpdateDomainLayout) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateDomainLayout) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateDomainLayoutInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateDomainLayoutInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpUpdateEventTrigger struct {
 }
 
@@ -1370,6 +1890,26 @@ func (m *validateOpUpdateProfile) HandleInitialize(ctx context.Context, in middl
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateRecommender struct {
+}
+
+func (*validateOpUpdateRecommender) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateRecommender) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateRecommenderInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateRecommenderInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 func addOpAddProfileKeyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpAddProfileKey{}, middleware.After)
 }
@@ -1390,6 +1930,10 @@ func addOpCreateDomainValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateDomain{}, middleware.After)
 }
 
+func addOpCreateDomainLayoutValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateDomainLayout{}, middleware.After)
+}
+
 func addOpCreateEventStreamValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateEventStream{}, middleware.After)
 }
@@ -1406,6 +1950,10 @@ func addOpCreateProfileValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateProfile{}, middleware.After)
 }
 
+func addOpCreateRecommenderValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateRecommender{}, middleware.After)
+}
+
 func addOpCreateSegmentDefinitionValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateSegmentDefinition{}, middleware.After)
 }
@@ -1418,12 +1966,24 @@ func addOpCreateSegmentSnapshotValidationMiddleware(stack *middleware.Stack) err
 	return stack.Initialize.Add(&validateOpCreateSegmentSnapshot{}, middleware.After)
 }
 
+func addOpCreateUploadJobValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateUploadJob{}, middleware.After)
+}
+
 func addOpDeleteCalculatedAttributeDefinitionValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteCalculatedAttributeDefinition{}, middleware.After)
 }
 
 func addOpDeleteDomainValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteDomain{}, middleware.After)
+}
+
+func addOpDeleteDomainLayoutValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteDomainLayout{}, middleware.After)
+}
+
+func addOpDeleteDomainObjectTypeValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteDomainObjectType{}, middleware.After)
 }
 
 func addOpDeleteEventStreamValidationMiddleware(stack *middleware.Stack) error {
@@ -1454,6 +2014,10 @@ func addOpDeleteProfileObjectTypeValidationMiddleware(stack *middleware.Stack) e
 	return stack.Initialize.Add(&validateOpDeleteProfileObjectType{}, middleware.After)
 }
 
+func addOpDeleteRecommenderValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteRecommender{}, middleware.After)
+}
+
 func addOpDeleteSegmentDefinitionValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteSegmentDefinition{}, middleware.After)
 }
@@ -1482,6 +2046,14 @@ func addOpGetDomainValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetDomain{}, middleware.After)
 }
 
+func addOpGetDomainLayoutValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetDomainLayout{}, middleware.After)
+}
+
+func addOpGetDomainObjectTypeValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetDomainObjectType{}, middleware.After)
+}
+
 func addOpGetEventStreamValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetEventStream{}, middleware.After)
 }
@@ -1502,12 +2074,28 @@ func addOpGetMatchesValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetMatches{}, middleware.After)
 }
 
+func addOpGetObjectTypeAttributeStatisticsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetObjectTypeAttributeStatistics{}, middleware.After)
+}
+
+func addOpGetProfileHistoryRecordValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetProfileHistoryRecord{}, middleware.After)
+}
+
 func addOpGetProfileObjectTypeValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetProfileObjectType{}, middleware.After)
 }
 
 func addOpGetProfileObjectTypeTemplateValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetProfileObjectTypeTemplate{}, middleware.After)
+}
+
+func addOpGetProfileRecommendationsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetProfileRecommendations{}, middleware.After)
+}
+
+func addOpGetRecommenderValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetRecommender{}, middleware.After)
 }
 
 func addOpGetSegmentDefinitionValidationMiddleware(stack *middleware.Stack) error {
@@ -1530,6 +2118,14 @@ func addOpGetSimilarProfilesValidationMiddleware(stack *middleware.Stack) error 
 	return stack.Initialize.Add(&validateOpGetSimilarProfiles{}, middleware.After)
 }
 
+func addOpGetUploadJobValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetUploadJob{}, middleware.After)
+}
+
+func addOpGetUploadJobPathValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetUploadJobPath{}, middleware.After)
+}
+
 func addOpGetWorkflowValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetWorkflow{}, middleware.After)
 }
@@ -1548,6 +2144,14 @@ func addOpListCalculatedAttributeDefinitionsValidationMiddleware(stack *middlewa
 
 func addOpListCalculatedAttributesForProfileValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListCalculatedAttributesForProfile{}, middleware.After)
+}
+
+func addOpListDomainLayoutsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListDomainLayouts{}, middleware.After)
+}
+
+func addOpListDomainObjectTypesValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListDomainObjectTypes{}, middleware.After)
 }
 
 func addOpListEventStreamsValidationMiddleware(stack *middleware.Stack) error {
@@ -1570,8 +2174,16 @@ func addOpListObjectTypeAttributesValidationMiddleware(stack *middleware.Stack) 
 	return stack.Initialize.Add(&validateOpListObjectTypeAttributes{}, middleware.After)
 }
 
+func addOpListObjectTypeAttributeValuesValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListObjectTypeAttributeValues{}, middleware.After)
+}
+
 func addOpListProfileAttributeValuesValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListProfileAttributeValues{}, middleware.After)
+}
+
+func addOpListProfileHistoryRecordsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListProfileHistoryRecords{}, middleware.After)
 }
 
 func addOpListProfileObjectsValidationMiddleware(stack *middleware.Stack) error {
@@ -1580,6 +2192,10 @@ func addOpListProfileObjectsValidationMiddleware(stack *middleware.Stack) error 
 
 func addOpListProfileObjectTypesValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListProfileObjectTypes{}, middleware.After)
+}
+
+func addOpListRecommendersValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListRecommenders{}, middleware.After)
 }
 
 func addOpListRuleBasedMatchesValidationMiddleware(stack *middleware.Stack) error {
@@ -1594,12 +2210,20 @@ func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
 }
 
+func addOpListUploadJobsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListUploadJobs{}, middleware.After)
+}
+
 func addOpListWorkflowsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListWorkflows{}, middleware.After)
 }
 
 func addOpMergeProfilesValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpMergeProfiles{}, middleware.After)
+}
+
+func addOpPutDomainObjectTypeValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpPutDomainObjectType{}, middleware.After)
 }
 
 func addOpPutIntegrationValidationMiddleware(stack *middleware.Stack) error {
@@ -1618,6 +2242,22 @@ func addOpSearchProfilesValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpSearchProfiles{}, middleware.After)
 }
 
+func addOpStartRecommenderValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpStartRecommender{}, middleware.After)
+}
+
+func addOpStartUploadJobValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpStartUploadJob{}, middleware.After)
+}
+
+func addOpStopRecommenderValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpStopRecommender{}, middleware.After)
+}
+
+func addOpStopUploadJobValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpStopUploadJob{}, middleware.After)
+}
+
 func addOpTagResourceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpTagResource{}, middleware.After)
 }
@@ -1634,12 +2274,20 @@ func addOpUpdateDomainValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateDomain{}, middleware.After)
 }
 
+func addOpUpdateDomainLayoutValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateDomainLayout{}, middleware.After)
+}
+
 func addOpUpdateEventTriggerValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateEventTrigger{}, middleware.After)
 }
 
 func addOpUpdateProfileValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateProfile{}, middleware.After)
+}
+
+func addOpUpdateRecommenderValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateRecommender{}, middleware.After)
 }
 
 func validateAdditionalSearchKey(v *types.AdditionalSearchKey) error {
@@ -2086,6 +2734,93 @@ func validateDimensionList(v []types.Dimension) error {
 	for i := range v {
 		if err := validateDimension(v[i]); err != nil {
 			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateDomainObjectTypeField(v *types.DomainObjectTypeField) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DomainObjectTypeField"}
+	if v.Source == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Source"))
+	}
+	if v.Target == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Target"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateDomainObjectTypeFields(v map[string]types.DomainObjectTypeField) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DomainObjectTypeFields"}
+	for key := range v {
+		value := v[key]
+		if err := validateDomainObjectTypeField(&value); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%q]", key), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateEventParameters(v *types.EventParameters) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "EventParameters"}
+	if v.EventType == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EventType"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateEventParametersList(v []types.EventParameters) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "EventParametersList"}
+	for i := range v {
+		if err := validateEventParameters(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateEventsConfig(v *types.EventsConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "EventsConfig"}
+	if v.EventParametersList == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EventParametersList"))
+	} else if v.EventParametersList != nil {
+		if err := validateEventParametersList(v.EventParametersList); err != nil {
+			invalidParams.AddNested("EventParametersList", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -2703,6 +3438,11 @@ func validateProfileAttributes(v *types.ProfileAttributes) error {
 			invalidParams.AddNested("Attributes", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.ProfileType != nil {
+		if err := validateProfileTypeDimension(v.ProfileType); err != nil {
+			invalidParams.AddNested("ProfileType", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -2728,16 +3468,33 @@ func validateProfileDimension(v *types.ProfileDimension) error {
 	}
 }
 
+func validateProfileTypeDimension(v *types.ProfileTypeDimension) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ProfileTypeDimension"}
+	if len(v.DimensionType) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("DimensionType"))
+	}
+	if v.Values == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Values"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateRange(v *types.Range) error {
 	if v == nil {
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "Range"}
-	if v.Value == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("Value"))
-	}
-	if len(v.Unit) == 0 {
-		invalidParams.Add(smithy.NewErrParamRequired("Unit"))
+	if v.ValueRange != nil {
+		if err := validateValueRange(v.ValueRange); err != nil {
+			invalidParams.AddNested("ValueRange", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2756,6 +3513,25 @@ func validateRangeOverride(v *types.RangeOverride) error {
 	}
 	if len(v.Unit) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("Unit"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateRecommenderConfig(v *types.RecommenderConfig) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RecommenderConfig"}
+	if v.EventsConfig == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EventsConfig"))
+	} else if v.EventsConfig != nil {
+		if err := validateEventsConfig(v.EventsConfig); err != nil {
+			invalidParams.AddNested("EventsConfig", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3074,6 +3850,24 @@ func validateTriggerProperties(v *types.TriggerProperties) error {
 	}
 }
 
+func validateValueRange(v *types.ValueRange) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ValueRange"}
+	if v.Start == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Start"))
+	}
+	if v.End == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("End"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateZendeskSourceProperties(v *types.ZendeskSourceProperties) error {
 	if v == nil {
 		return nil
@@ -3223,6 +4017,36 @@ func validateOpCreateDomainInput(v *CreateDomainInput) error {
 	}
 }
 
+func validateOpCreateDomainLayoutInput(v *CreateDomainLayoutInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateDomainLayoutInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.LayoutDefinitionName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("LayoutDefinitionName"))
+	}
+	if v.Description == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Description"))
+	}
+	if v.DisplayName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DisplayName"))
+	}
+	if len(v.LayoutType) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("LayoutType"))
+	}
+	if v.Layout == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Layout"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateEventStreamInput(v *CreateEventStreamInput) error {
 	if v == nil {
 		return nil
@@ -3323,6 +4147,32 @@ func validateOpCreateProfileInput(v *CreateProfileInput) error {
 	}
 }
 
+func validateOpCreateRecommenderInput(v *CreateRecommenderInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateRecommenderInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.RecommenderName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RecommenderName"))
+	}
+	if len(v.RecommenderRecipeName) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("RecommenderRecipeName"))
+	}
+	if v.RecommenderConfig != nil {
+		if err := validateRecommenderConfig(v.RecommenderConfig); err != nil {
+			invalidParams.AddNested("RecommenderConfig", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateSegmentDefinitionInput(v *CreateSegmentDefinitionInput) error {
 	if v == nil {
 		return nil
@@ -3337,9 +4187,7 @@ func validateOpCreateSegmentDefinitionInput(v *CreateSegmentDefinitionInput) err
 	if v.DisplayName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("DisplayName"))
 	}
-	if v.SegmentGroups == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("SegmentGroups"))
-	} else if v.SegmentGroups != nil {
+	if v.SegmentGroups != nil {
 		if err := validateSegmentGroup(v.SegmentGroups); err != nil {
 			invalidParams.AddNested("SegmentGroups", err.(smithy.InvalidParamsError))
 		}
@@ -3359,9 +4207,7 @@ func validateOpCreateSegmentEstimateInput(v *CreateSegmentEstimateInput) error {
 	if v.DomainName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
 	}
-	if v.SegmentQuery == nil {
-		invalidParams.Add(smithy.NewErrParamRequired("SegmentQuery"))
-	} else if v.SegmentQuery != nil {
+	if v.SegmentQuery != nil {
 		if err := validateSegmentGroupStructure(v.SegmentQuery); err != nil {
 			invalidParams.AddNested("SegmentQuery", err.(smithy.InvalidParamsError))
 		}
@@ -3386,6 +4232,30 @@ func validateOpCreateSegmentSnapshotInput(v *CreateSegmentSnapshotInput) error {
 	}
 	if len(v.DataFormat) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("DataFormat"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpCreateUploadJobInput(v *CreateUploadJobInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateUploadJobInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.DisplayName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DisplayName"))
+	}
+	if v.Fields == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Fields"))
+	}
+	if v.UniqueKey == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("UniqueKey"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3419,6 +4289,42 @@ func validateOpDeleteDomainInput(v *DeleteDomainInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "DeleteDomainInput"}
 	if v.DomainName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteDomainLayoutInput(v *DeleteDomainLayoutInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteDomainLayoutInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.LayoutDefinitionName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("LayoutDefinitionName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteDomainObjectTypeInput(v *DeleteDomainObjectTypeInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteDomainObjectTypeInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.ObjectTypeName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ObjectTypeName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3565,6 +4471,24 @@ func validateOpDeleteProfileObjectTypeInput(v *DeleteProfileObjectTypeInput) err
 	}
 }
 
+func validateOpDeleteRecommenderInput(v *DeleteRecommenderInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteRecommenderInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.RecommenderName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RecommenderName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpDeleteSegmentDefinitionInput(v *DeleteSegmentDefinitionInput) error {
 	if v == nil {
 		return nil
@@ -3702,6 +4626,42 @@ func validateOpGetDomainInput(v *GetDomainInput) error {
 	}
 }
 
+func validateOpGetDomainLayoutInput(v *GetDomainLayoutInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetDomainLayoutInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.LayoutDefinitionName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("LayoutDefinitionName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetDomainObjectTypeInput(v *GetDomainObjectTypeInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetDomainObjectTypeInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.ObjectTypeName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ObjectTypeName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetEventStreamInput(v *GetEventStreamInput) error {
 	if v == nil {
 		return nil
@@ -3789,6 +4749,48 @@ func validateOpGetMatchesInput(v *GetMatchesInput) error {
 	}
 }
 
+func validateOpGetObjectTypeAttributeStatisticsInput(v *GetObjectTypeAttributeStatisticsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetObjectTypeAttributeStatisticsInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.ObjectTypeName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ObjectTypeName"))
+	}
+	if v.AttributeName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AttributeName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetProfileHistoryRecordInput(v *GetProfileHistoryRecordInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetProfileHistoryRecordInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.ProfileId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ProfileId"))
+	}
+	if v.Id == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetProfileObjectTypeInput(v *GetProfileObjectTypeInput) error {
 	if v == nil {
 		return nil
@@ -3814,6 +4816,45 @@ func validateOpGetProfileObjectTypeTemplateInput(v *GetProfileObjectTypeTemplate
 	invalidParams := smithy.InvalidParamsError{Context: "GetProfileObjectTypeTemplateInput"}
 	if v.TemplateId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("TemplateId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetProfileRecommendationsInput(v *GetProfileRecommendationsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetProfileRecommendationsInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.ProfileId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ProfileId"))
+	}
+	if v.RecommenderName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RecommenderName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetRecommenderInput(v *GetRecommenderInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetRecommenderInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.RecommenderName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RecommenderName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3924,6 +4965,42 @@ func validateOpGetSimilarProfilesInput(v *GetSimilarProfilesInput) error {
 	}
 }
 
+func validateOpGetUploadJobInput(v *GetUploadJobInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetUploadJobInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.JobId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("JobId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetUploadJobPathInput(v *GetUploadJobPathInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetUploadJobPathInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.JobId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("JobId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetWorkflowInput(v *GetWorkflowInput) error {
 	if v == nil {
 		return nil
@@ -4000,6 +5077,36 @@ func validateOpListCalculatedAttributesForProfileInput(v *ListCalculatedAttribut
 	}
 	if v.ProfileId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ProfileId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpListDomainLayoutsInput(v *ListDomainLayoutsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListDomainLayoutsInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpListDomainObjectTypesInput(v *ListDomainObjectTypesInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListDomainObjectTypesInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4086,6 +5193,27 @@ func validateOpListObjectTypeAttributesInput(v *ListObjectTypeAttributesInput) e
 	}
 }
 
+func validateOpListObjectTypeAttributeValuesInput(v *ListObjectTypeAttributeValuesInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListObjectTypeAttributeValuesInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.ObjectTypeName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ObjectTypeName"))
+	}
+	if v.AttributeName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AttributeName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpListProfileAttributeValuesInput(v *ListProfileAttributeValuesInput) error {
 	if v == nil {
 		return nil
@@ -4096,6 +5224,24 @@ func validateOpListProfileAttributeValuesInput(v *ListProfileAttributeValuesInpu
 	}
 	if v.AttributeName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("AttributeName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpListProfileHistoryRecordsInput(v *ListProfileHistoryRecordsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListProfileHistoryRecordsInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.ProfileId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ProfileId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4135,6 +5281,21 @@ func validateOpListProfileObjectTypesInput(v *ListProfileObjectTypesInput) error
 		return nil
 	}
 	invalidParams := smithy.InvalidParamsError{Context: "ListProfileObjectTypesInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpListRecommendersInput(v *ListRecommendersInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListRecommendersInput"}
 	if v.DomainName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
 	}
@@ -4190,6 +5351,21 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	}
 }
 
+func validateOpListUploadJobsInput(v *ListUploadJobsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListUploadJobsInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpListWorkflowsInput(v *ListWorkflowsInput) error {
 	if v == nil {
 		return nil
@@ -4218,6 +5394,31 @@ func validateOpMergeProfilesInput(v *MergeProfilesInput) error {
 	}
 	if v.ProfileIdsToBeMerged == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ProfileIdsToBeMerged"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpPutDomainObjectTypeInput(v *PutDomainObjectTypeInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "PutDomainObjectTypeInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.ObjectTypeName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ObjectTypeName"))
+	}
+	if v.Fields == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Fields"))
+	} else if v.Fields != nil {
+		if err := validateDomainObjectTypeFields(v.Fields); err != nil {
+			invalidParams.AddNested("Fields", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4314,6 +5515,78 @@ func validateOpSearchProfilesInput(v *SearchProfilesInput) error {
 	}
 }
 
+func validateOpStartRecommenderInput(v *StartRecommenderInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StartRecommenderInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.RecommenderName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RecommenderName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpStartUploadJobInput(v *StartUploadJobInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StartUploadJobInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.JobId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("JobId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpStopRecommenderInput(v *StopRecommenderInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StopRecommenderInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.RecommenderName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RecommenderName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpStopUploadJobInput(v *StopUploadJobInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "StopUploadJobInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.JobId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("JobId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpTagResourceInput(v *TagResourceInput) error {
 	if v == nil {
 		return nil
@@ -4398,6 +5671,24 @@ func validateOpUpdateDomainInput(v *UpdateDomainInput) error {
 	}
 }
 
+func validateOpUpdateDomainLayoutInput(v *UpdateDomainLayoutInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateDomainLayoutInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.LayoutDefinitionName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("LayoutDefinitionName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpUpdateEventTriggerInput(v *UpdateEventTriggerInput) error {
 	if v == nil {
 		return nil
@@ -4436,6 +5727,29 @@ func validateOpUpdateProfileInput(v *UpdateProfileInput) error {
 	}
 	if v.ProfileId == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ProfileId"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateRecommenderInput(v *UpdateRecommenderInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateRecommenderInput"}
+	if v.DomainName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("DomainName"))
+	}
+	if v.RecommenderName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RecommenderName"))
+	}
+	if v.RecommenderConfig != nil {
+		if err := validateRecommenderConfig(v.RecommenderConfig); err != nil {
+			invalidParams.AddNested("RecommenderConfig", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

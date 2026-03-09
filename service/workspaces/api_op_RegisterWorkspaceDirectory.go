@@ -48,12 +48,6 @@ type RegisterWorkspaceDirectoryInput struct {
 	// Indicates whether self-service capabilities are enabled or disabled.
 	EnableSelfService *bool
 
-	// Indicates whether Amazon WorkDocs is enabled or disabled. If you have enabled
-	// this parameter and WorkDocs is not available in the Region, you will receive an
-	// OperationNotSupportedException error. Set EnableWorkDocs to disabled, and try
-	// again.
-	EnableWorkDocs *bool
-
 	// The Amazon Resource Name (ARN) of the identity center instance.
 	IdcInstanceArn *string
 
@@ -195,16 +189,13 @@ func (c *Client) addOperationRegisterWorkspaceDirectoryMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

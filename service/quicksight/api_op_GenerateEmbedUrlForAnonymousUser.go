@@ -11,10 +11,10 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Generates an embed URL that you can use to embed an Amazon QuickSight dashboard
-// or visual in your website, without having to register any reader users. Before
-// you use this action, make sure that you have configured the dashboards and
-// permissions.
+// Generates an embed URL that you can use to embed an Amazon Quick Suite
+// dashboard or visual in your website, without having to register any reader
+// users. Before you use this action, make sure that you have configured the
+// dashboards and permissions.
 //
 // The following rules apply to the generated URL:
 //
@@ -27,15 +27,15 @@ import (
 //     session duration is 10 hours.
 //
 //   - You are charged only when the URL is used or there is interaction with
-//     Amazon QuickSight.
+//     Amazon Quick Suite.
 //
-// For more information, see [Embedded Analytics] in the Amazon QuickSight User Guide.
+// For more information, see [Embedded Analytics] in the Amazon Quick Suite User Guide.
 //
 // For more information about the high-level steps for embedding and for an
-// interactive demo of the ways you can customize embedding, visit the [Amazon QuickSight Developer Portal].
+// interactive demo of the ways you can customize embedding, visit the [Amazon Quick Suite Developer Portal].
 //
 // [Embedded Analytics]: https://docs.aws.amazon.com/quicksight/latest/user/embedded-analytics.html
-// [Amazon QuickSight Developer Portal]: https://docs.aws.amazon.com/quicksight/latest/user/quicksight-dev-portal.html
+// [Amazon Quick Suite Developer Portal]: https://docs.aws.amazon.com/quicksight/latest/user/quicksight-dev-portal.html
 // [SessionLifetimeInMinutes]: https://docs.aws.amazon.com/quicksight/latest/APIReference/API_GenerateEmbedUrlForAnonymousUser.html#QS-GenerateEmbedUrlForAnonymousUser-request-SessionLifetimeInMinutes
 func (c *Client) GenerateEmbedUrlForAnonymousUser(ctx context.Context, params *GenerateEmbedUrlForAnonymousUserInput, optFns ...func(*Options)) (*GenerateEmbedUrlForAnonymousUserOutput, error) {
 	if params == nil {
@@ -54,8 +54,8 @@ func (c *Client) GenerateEmbedUrlForAnonymousUser(ctx context.Context, params *G
 
 type GenerateEmbedUrlForAnonymousUserInput struct {
 
-	// The Amazon Resource Names (ARNs) for the Amazon QuickSight resources that the
-	// user is authorized to access during the lifetime of the session.
+	// The Amazon Resource Names (ARNs) for the Quick Sight resources that the user is
+	// authorized to access during the lifetime of the session.
 	//
 	// If you choose Dashboard embedding experience, pass the list of dashboard ARNs
 	// in the account that you want the user to be able to view.
@@ -79,15 +79,16 @@ type GenerateEmbedUrlForAnonymousUserInput struct {
 	// This member is required.
 	ExperienceConfiguration *types.AnonymousUserEmbeddingExperienceConfiguration
 
-	// The Amazon QuickSight namespace that the anonymous user virtually belongs to.
-	// If you are not using an Amazon QuickSight custom namespace, set this to default .
+	// The Amazon Quick Sight namespace that the anonymous user virtually belongs to.
+	// If you are not using an Amazon Quick Suite custom namespace, set this to default
+	// .
 	//
 	// This member is required.
 	Namespace *string
 
 	// The domains that you want to add to the allow list for access to the generated
 	// URL that is then embedded. This optional parameter overrides the static domains
-	// that are configured in the Manage QuickSight menu in the Amazon QuickSight
+	// that are configured in the Manage Quick Sight menu in the Amazon Quick Sight
 	// console. Instead, it allows only the domains that you include in this parameter.
 	// You can list up to three domains or subdomains in each API call.
 	//
@@ -100,13 +101,22 @@ type GenerateEmbedUrlForAnonymousUserInput struct {
 	// minutes range.
 	SessionLifetimeInMinutes *int64
 
-	// The session tags used for row-level security. Before you use this parameter,
-	// make sure that you have configured the relevant datasets using the
+	// Session tags are user-specified strings that identify a session in your
+	// application. You can use these tags to implement row-level security (RLS)
+	// controls. Before you use the SessionTags parameter, make sure that you have
+	// configured the relevant datasets using the
 	// DataSet$RowLevelPermissionTagConfiguration parameter so that session tags can be
 	// used to provide row-level security.
 	//
-	// These are not the tags used for the Amazon Web Services resource tagging
-	// feature. For more information, see [Using Row-Level Security (RLS) with Tags]in the Amazon QuickSight User Guide.
+	// When using session tags, you must call GenerateEmbedUrlForAnonymousUser from a
+	// secure, trusted environment. The API call passes session tags that enable
+	// server-side data redaction by using the row-level security (RLS) rules
+	// configured in your datasets. A secure, trusted environment has access controls
+	// that you implement. These controls ensure that only your server or authorized
+	// users can add or modify session tags.
+	//
+	// Besides, these are not the tags used for the Amazon Web Services resource
+	// tagging feature. For more information, see [Using Row-Level Security (RLS) with Tags]in the Amazon Quick Suite User Guide.
 	//
 	// [Using Row-Level Security (RLS) with Tags]: https://docs.aws.amazon.com/quicksight/latest/user/quicksight-dev-rls-tags.html
 	SessionTags []types.SessionTag
@@ -116,7 +126,7 @@ type GenerateEmbedUrlForAnonymousUserInput struct {
 
 type GenerateEmbedUrlForAnonymousUserOutput struct {
 
-	// The Amazon Resource Name (ARN) to use for the anonymous Amazon QuickSight user.
+	// The Amazon Resource Name (ARN) to use for the anonymous Amazon Quick Suite user.
 	//
 	// This member is required.
 	AnonymousUserArn *string
@@ -230,16 +240,13 @@ func (c *Client) addOperationGenerateEmbedUrlForAnonymousUserMiddlewares(stack *
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

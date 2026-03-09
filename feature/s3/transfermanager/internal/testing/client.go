@@ -15,6 +15,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 var etag = "myetag"
@@ -44,9 +45,15 @@ type TransferManagerLoggingClient struct {
 	RetrievedParts  []int32
 	Versions        []string
 	Etags           []string
+	ChecksumType    s3types.ChecksumType
 
 	ErrReaders []TestErrReader
-	index      int
+
+	// params for keyprefix download test
+	ListObjectsData    [][]s3types.Object
+	ContinuationTokens []string
+
+	index int
 
 	m sync.Mutex
 
@@ -213,6 +220,7 @@ func (c *TransferManagerLoggingClient) GetObject(ctx context.Context, params *s3
 	c.m.Lock()
 	defer c.m.Unlock()
 
+	c.traceOperation("GetObject", params)
 	c.GetObjectInvocations++
 
 	if params.Range != nil {
@@ -237,10 +245,40 @@ func (c *TransferManagerLoggingClient) HeadObject(ctx context.Context, params *s
 	defer c.m.Unlock()
 
 	return &s3.HeadObjectOutput{
-		PartsCount:    aws.Int32(c.PartsCount),
-		ContentLength: aws.Int64(int64(len(c.Data))),
-		ETag:          aws.String(etag),
+		PartsCount:        aws.Int32(c.PartsCount),
+		ContentLength:     aws.Int64(int64(len(c.Data))),
+		ETag:              aws.String(etag),
+		ChecksumType:      c.ChecksumType,
+		ChecksumCRC32:     aws.String("crc32"),
+		ChecksumCRC32C:    aws.String("crc32c"),
+		ChecksumCRC64NVME: aws.String("crc64nvme"),
+		ChecksumSHA1:      aws.String("sha1"),
+		ChecksumSHA256:    aws.String("sha256"),
 	}, nil
+}
+
+// ListObjectsV2 is the S3 ListObjectsV2 API
+func (c *TransferManagerLoggingClient) ListObjectsV2(ctx context.Context, params *s3.ListObjectsV2Input, optFns ...func(*s3.Options)) (*s3.ListObjectsV2Output, error) {
+	c.m.Lock()
+	defer c.m.Unlock()
+
+	c.traceOperation("ListObjectsV2", params)
+
+	var nextToken *string
+	var isTruncated bool
+	if c.index < len(c.ContinuationTokens) {
+		nextToken = aws.String(c.ContinuationTokens[c.index])
+		isTruncated = true
+	}
+
+	out := &s3.ListObjectsV2Output{
+		Contents:              c.ListObjectsData[c.index],
+		NextContinuationToken: nextToken,
+		IsTruncated:           aws.Bool(isTruncated),
+	}
+	c.index++
+
+	return out, nil
 }
 
 // NewUploadLoggingClient returns a new TransferManagerLoggingClient for upload testing.
@@ -273,18 +311,21 @@ var RangeGetObjectFn = func(c *TransferManagerLoggingClient, params *s3.GetObjec
 	start, fin := parseRange(aws.ToString(params.Range))
 	fin++
 
-	if fin >= int64(len(c.Data)) {
+	if fin > int64(len(c.Data)) {
 		fin = int64(len(c.Data))
 	}
 
 	bodyBytes := c.Data[start:fin]
 
-	return &s3.GetObjectOutput{
+	out := &s3.GetObjectOutput{
 		Body:          ioutil.NopCloser(bytes.NewReader(bodyBytes)),
-		ContentRange:  aws.String(fmt.Sprintf("bytes %d-%d/%d", start, fin-1, len(c.Data))),
 		ContentLength: aws.Int64(int64(len(bodyBytes))),
 		ETag:          aws.String(etag),
-	}, nil
+	}
+	if len(bodyBytes) != len(c.Data) {
+		out.ContentRange = aws.String(fmt.Sprintf("bytes %d-%d/%d", start, fin-1, len(c.Data)))
+	}
+	return out, nil
 }
 
 // ErrRangeGetObjectFn mocks getobject behavior of s3 client to return service error when certain number of range get is called from s3 client
@@ -303,6 +344,16 @@ var MismatchRangeGetObjectFn = func(c *TransferManagerLoggingClient, params *s3.
 	c.index++
 	if c.index > 1 {
 		return &s3.GetObjectOutput{}, fmt.Errorf("PreconditionFailed")
+	}
+	return out, err
+}
+
+// WrongRangeGetObjectFn mocks getobject behavior of s3 client to return wrong content range during ranges GET
+var WrongRangeGetObjectFn = func(c *TransferManagerLoggingClient, params *s3.GetObjectInput) (*s3.GetObjectOutput, error) {
+	out, err := RangeGetObjectFn(c, params)
+	c.index++
+	if c.index > 1 {
+		out.ContentRange = aws.String("bytes 0-1/100") // first chunk is never validated, so this resp start will always mismatch
 	}
 	return out, err
 }
@@ -348,6 +399,22 @@ var ReaderPartGetObjectFn = func(c *TransferManagerLoggingClient, params *s3.Get
 	}, nil
 }
 
+// CompositePartGetObjectFn mocks getobject behavior of s3 client to return object with composite checksum type and checksum value
+var CompositePartGetObjectFn = func(c *TransferManagerLoggingClient, params *s3.GetObjectInput) (*s3.GetObjectOutput, error) {
+	return &s3.GetObjectOutput{
+		Body:              ioutil.NopCloser(bytes.NewReader(c.Data)),
+		ContentLength:     aws.Int64(int64(len(c.Data))),
+		PartsCount:        aws.Int32(c.PartsCount),
+		ETag:              aws.String(etag),
+		ChecksumCRC32:     aws.String("crc32"),
+		ChecksumCRC32C:    aws.String("crc32c"),
+		ChecksumCRC64NVME: aws.String("crc64nvme"),
+		ChecksumSHA1:      aws.String("sha1"),
+		ChecksumSHA256:    aws.String("sha256"),
+		ChecksumType:      s3types.ChecksumTypeComposite,
+	}, nil
+}
+
 // ErrPartGetObjectFn mocks getobject behavior of s3 client to return service error when certain number of part get is called from s3 client
 var ErrPartGetObjectFn = func(c *TransferManagerLoggingClient, params *s3.GetObjectInput) (*s3.GetObjectOutput, error) {
 	out, err := PartGetObjectFn(c, params)
@@ -390,4 +457,20 @@ func (r *TestErrReader) Read(p []byte) (int, error) {
 	}
 
 	return n, nil
+}
+
+// NewUploadDirectoryClient returns a new TransferManagerLoggingClient for upload directory testing
+func NewUploadDirectoryClient(ignoredOps []string) (*TransferManagerLoggingClient, *[]interface{}) {
+	c := &TransferManagerLoggingClient{
+		ignoredOperations: ignoredOps,
+	}
+
+	return c, &c.Params
+}
+
+// NewDownloadDirectoryClient returns a new TransferManagerLoggingClient for download directory testing
+func NewDownloadDirectoryClient() (*TransferManagerLoggingClient, *[]interface{}) {
+	c := &TransferManagerLoggingClient{}
+
+	return c, &c.Params
 }

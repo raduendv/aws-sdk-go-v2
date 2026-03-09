@@ -71,6 +71,15 @@ type DescribeBackupVaultOutput struct {
 	// arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab .
 	EncryptionKeyArn *string
 
+	// The type of encryption key used for the backup vault. Valid values are
+	// CUSTOMER_MANAGED_KMS_KEY for customer-managed keys or Amazon Web
+	// Services_OWNED_KMS_KEY for Amazon Web Services-owned keys.
+	EncryptionKeyType types.EncryptionKeyType
+
+	// Information about the latest update to the MPA approval team association for
+	// this backup vault.
+	LatestMpaApprovalTeamUpdate *types.LatestMpaApprovalTeamUpdate
+
 	// The date and time when Backup Vault Lock configuration cannot be changed or
 	// deleted.
 	//
@@ -113,8 +122,23 @@ type DescribeBackupVaultOutput struct {
 	// the vault prior to Vault Lock are not affected.
 	MinRetentionDays *int64
 
+	// The ARN of the MPA approval team associated with this backup vault.
+	MpaApprovalTeamArn *string
+
+	// The ARN of the MPA session associated with this backup vault.
+	MpaSessionArn *string
+
 	// The number of recovery points that are stored in a backup vault.
+	//
+	// Recovery point count value displayed in the console can be an approximation.
+	// Use [ListRecoveryPointsByBackupVault]ListRecoveryPointsByBackupVault API to obtain the exact count.
+	//
+	// [ListRecoveryPointsByBackupVault]: https://docs.aws.amazon.com/aws-backup/latest/devguide/API_ListRecoveryPointsByBackupVault.html
 	NumberOfRecoveryPoints int64
+
+	// The ARN of the source backup vault from which this restore access backup vault
+	// was created.
+	SourceBackupVaultArn *string
 
 	// The current state of the vault.->
 	VaultState types.VaultState
@@ -216,16 +240,13 @@ func (c *Client) addOperationDescribeBackupVaultMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

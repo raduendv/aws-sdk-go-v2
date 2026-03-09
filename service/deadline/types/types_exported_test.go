@@ -216,6 +216,9 @@ func ExampleSearchFilterExpression_outputUsage() {
 	case *types.SearchFilterExpressionMemberStringFilter:
 		_ = v.Value // Value is types.StringFilterExpression
 
+	case *types.SearchFilterExpressionMemberStringListFilter:
+		_ = v.Value // Value is types.StringListFilterExpression
+
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
 
@@ -226,6 +229,7 @@ func ExampleSearchFilterExpression_outputUsage() {
 }
 
 var _ *types.SearchGroupedFilterExpressions
+var _ *types.StringListFilterExpression
 var _ *types.StringFilterExpression
 var _ *types.DateTimeFilterExpression
 var _ *types.ParameterFilterExpression
@@ -343,6 +347,9 @@ func ExampleTaskParameterValue_outputUsage() {
 	var union types.TaskParameterValue
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.TaskParameterValueMemberChunkInt:
+		_ = v.Value // Value is string
+
 	case *types.TaskParameterValueMemberFloat:
 		_ = v.Value // Value is string
 
@@ -364,6 +371,7 @@ func ExampleTaskParameterValue_outputUsage() {
 	}
 }
 
+var _ *string
 var _ *string
 var _ *string
 var _ *string

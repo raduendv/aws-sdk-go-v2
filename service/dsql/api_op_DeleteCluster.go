@@ -48,7 +48,7 @@ type DeleteClusterInput struct {
 	noSmithyDocumentSerde
 }
 
-// Output Mixin
+// The output from a deleted cluster.
 type DeleteClusterOutput struct {
 
 	// The ARN of the deleted cluster.
@@ -60,11 +60,6 @@ type DeleteClusterOutput struct {
 	//
 	// This member is required.
 	CreationTime *time.Time
-
-	// Specifies whether deletion protection was enabled on the cluster.
-	//
-	// This member is required.
-	DeletionProtectionEnabled *bool
 
 	// The ID of the deleted cluster.
 	//
@@ -173,16 +168,13 @@ func (c *Client) addOperationDeleteClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

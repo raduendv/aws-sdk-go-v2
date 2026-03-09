@@ -12,7 +12,12 @@ import (
 	"io"
 )
 
-// Gets a reference file.
+// Downloads parts of data from a reference genome and returns the reference file
+// in the same format that it was uploaded.
+//
+// For more information, see [Creating a HealthOmics reference store] in the Amazon Web Services HealthOmics User Guide.
+//
+// [Creating a HealthOmics reference store]: https://docs.aws.amazon.com/omics/latest/dev/create-reference-store.html
 func (c *Client) GetReference(ctx context.Context, params *GetReferenceInput, optFns ...func(*Options)) (*GetReferenceOutput, error) {
 	if params == nil {
 		params = &GetReferenceInput{}
@@ -153,16 +158,13 @@ func (c *Client) addOperationGetReferenceMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

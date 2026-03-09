@@ -76,7 +76,29 @@ type AccountDetail struct {
 	// This member is required.
 	AccountId *string
 
-	// The email address of the member account.
+	// The email address of the member account. The following list includes the rules
+	// for a valid email address:
+	//
+	//   - The email address must be a minimum of 6 and a maximum of 64 characters
+	//   long.
+	//
+	//   - All characters must be 7-bit ASCII characters.
+	//
+	//   - There must be one and only one @ symbol, which separates the local name
+	//   from the domain name.
+	//
+	//   - The local name can't contain any of the following characters:
+	//
+	// whitespace, " ' ( ) < > [ ] : ' , \ | % &
+	//
+	//   - The local name can't begin with a dot (.).
+	//
+	//   - The domain name can consist of only the characters [a-z], [A-Z], [0-9],
+	//   hyphen (-), or dot (.).
+	//
+	//   - The domain name can't begin or end with a dot (.) or hyphen (-).
+	//
+	//   - The domain name must contain at least one dot.
 	//
 	// This member is required.
 	Email *string
@@ -172,11 +194,49 @@ type Actor struct {
 	// This member is required.
 	Id *string
 
+	// Contains information about the process associated with the threat actor. This
+	// includes details such as process name, path, execution time, and unique
+	// identifiers that help track the actor's activities within the system.
+	Process *ActorProcess
+
 	// Contains information about the user session where the activity initiated.
 	Session *Session
 
 	// Contains information about the user credentials used by the threat actor.
 	User *User
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a process involved in a GuardDuty finding, including
+// process identification, execution details, and file information.
+type ActorProcess struct {
+
+	// The name of the process as it appears in the system.
+	//
+	// This member is required.
+	Name *string
+
+	// The full file path to the process executable on the system.
+	//
+	// This member is required.
+	Path *string
+
+	// The SHA256 hash of the process executable file, which can be used for
+	// identification and verification purposes.
+	Sha256 *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains additional information about the detected threat.
+type AdditionalInfo struct {
+
+	// The device name of the EBS volume, if applicable.
+	DeviceName *string
+
+	// The version ID of the S3 object, if applicable.
+	VersionId *string
 
 	noSmithyDocumentSerde
 }
@@ -288,6 +348,17 @@ type AutonomousSystem struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the Auto Scaling Group involved in a GuardDuty
+// finding, including unique identifiers of the Amazon EC2 instances.
+type AutoscalingAutoScalingGroup struct {
+
+	// A list of unique identifiers for the compromised Amazon EC2 instances that are
+	// part of the same Auto Scaling Group.
+	Ec2InstanceUids []string
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about the API action.
 type AwsApiCallAction struct {
 
@@ -384,6 +455,17 @@ type City struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the CloudFormation stack involved in a GuardDuty
+// finding, including unique identifiers of the Amazon EC2 instances.
+type CloudformationStack struct {
+
+	// A list of unique identifiers for the compromised Amazon EC2 instances that were
+	// created as part of the same CloudFormation stack.
+	Ec2InstanceUids []string
+
+	noSmithyDocumentSerde
+}
+
 // Contains information on the status of CloudTrail as a data source for the
 // detector.
 type CloudTrailConfigurationResult struct {
@@ -449,6 +531,13 @@ type Condition struct {
 	// Deprecated: This member has been deprecated.
 	Lte *int32
 
+	// Represents the match condition to be applied to a single field when querying
+	// for findings.
+	//
+	// The matches condition is available only for create-filter and update-filter
+	// APIs.
+	Matches []string
+
 	// Represents the not equal condition to be applied to a single field when
 	// querying for findings.
 	//
@@ -458,6 +547,13 @@ type Condition struct {
 	// Represents a not equal condition to be applied to a single field when querying
 	// for findings.
 	NotEquals []string
+
+	// Represents the not match condition to be applied to a single field when
+	// querying for findings.
+	//
+	// The not-matches condition is available only for create-filter and update-filter
+	// APIs.
+	NotMatches []string
 
 	noSmithyDocumentSerde
 }
@@ -488,6 +584,23 @@ type Container struct {
 
 	// Container volume mounts.
 	VolumeMounts []VolumeMount
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about container resources involved in a GuardDuty finding.
+// This structure provides details about containers that were identified as part of
+// suspicious or malicious activity.
+type ContainerFindingResource struct {
+
+	// The container image information, including the image name and tag used to run
+	// the container that was involved in the finding.
+	//
+	// This member is required.
+	Image *string
+
+	// The unique ID associated with the container image.
+	ImageUid *string
 
 	noSmithyDocumentSerde
 }
@@ -1013,6 +1126,10 @@ type DnsRequestAction struct {
 	// GuardDuty to generate the finding.
 	Protocol *string
 
+	// The Amazon Web Services account ID that owns the VPC through which the DNS
+	// request was made.
+	VpcOwnerAccountId *string
+
 	noSmithyDocumentSerde
 }
 
@@ -1021,6 +1138,24 @@ type DomainDetails struct {
 
 	// The domain information for the Amazon Web Services API call.
 	Domain *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about an EBS snapshot that was scanned for malware.
+type EbsSnapshot struct {
+
+	// The device name of the EBS snapshot that was scanned.
+	DeviceName *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains details about the EBS snapshot that was scanned for malware.
+type EbsSnapshotDetails struct {
+
+	// The Amazon Resource Name (ARN) of the EBS snapshot.
+	SnapshotArn *string
 
 	noSmithyDocumentSerde
 }
@@ -1077,6 +1212,26 @@ type EbsVolumesResult struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the Amazon EC2 Image involved in a GuardDuty
+// finding, including unique identifiers of the Amazon EC2 instances.
+type Ec2Image struct {
+
+	// A list of unique identifiers for the compromised Amazon EC2 instances that were
+	// launched with the same Amazon Machine Image (AMI).
+	Ec2InstanceUids []string
+
+	noSmithyDocumentSerde
+}
+
+// Contains details about the EC2 AMI that was scanned.
+type Ec2ImageDetails struct {
+
+	// The Amazon Resource Name (ARN) of the EC2 AMI.
+	ImageArn *string
+
+	noSmithyDocumentSerde
+}
+
 // Details about the potentially impacted Amazon EC2 instance resource.
 type Ec2Instance struct {
 
@@ -1117,6 +1272,20 @@ type Ec2Instance struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the Amazon EC2 launch template involved in a
+// GuardDuty finding, including unique identifiers of the Amazon EC2 instances.
+type Ec2LaunchTemplate struct {
+
+	// A list of unique identifiers for the compromised Amazon EC2 instances that
+	// share the same Amazon EC2 launch template.
+	Ec2InstanceUids []string
+
+	// Version of the EC2 launch template.
+	Version *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about the elastic network interface of the Amazon EC2
 // instance.
 type Ec2NetworkInterface struct {
@@ -1138,6 +1307,31 @@ type Ec2NetworkInterface struct {
 
 	// The VPC ID of the Amazon EC2 instance.
 	VpcId *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the Amazon EC2 VPC involved in a GuardDuty finding,
+// including unique identifiers of the Amazon EC2 instances.
+type Ec2Vpc struct {
+
+	// A list of unique identifiers for the compromised Amazon EC2 instances that were
+	// launched within the same Virtual Private Cloud (VPC).
+	Ec2InstanceUids []string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the Amazon ECS cluster involved in a GuardDuty
+// finding, including cluster identification and status.
+type EcsCluster struct {
+
+	// A list of unique identifiers for the Amazon EC2 instances that serve as
+	// container instances in the Amazon ECS cluster.
+	Ec2InstanceUids []string
+
+	// The current status of the Amazon ECS cluster.
+	Status EcsClusterStatus
 
 	noSmithyDocumentSerde
 }
@@ -1168,6 +1362,27 @@ type EcsClusterDetails struct {
 
 	// Contains information about the details of the ECS Task.
 	TaskDetails *EcsTaskDetails
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about Amazon ECS task involved in a GuardDuty finding,
+// including task definition and container identifiers.
+type EcsTask struct {
+
+	// A list of unique identifiers for the containers associated with the Amazon ECS
+	// task.
+	ContainerUids []string
+
+	// The timestamp indicating when the Amazon ECS task was created, in UTC format.
+	CreatedAt *time.Time
+
+	// The infrastructure type on which the Amazon ECS task runs.
+	LaunchType EcsLaunchType
+
+	// The ARN of task definition which describes the container and volume definitions
+	// of the Amazon ECS task.
+	TaskDefinitionArn *string
 
 	noSmithyDocumentSerde
 }
@@ -1207,6 +1422,31 @@ type EcsTaskDetails struct {
 
 	// The list of data volume definitions for the task.
 	Volumes []Volume
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the Amazon EKS cluster involved in a GuardDuty
+// finding, including cluster identification, status, and network configuration.
+type EksCluster struct {
+
+	// The Amazon Resource Name (ARN) that uniquely identifies the Amazon EKS cluster
+	// involved in the finding.
+	Arn *string
+
+	// The timestamp indicating when the Amazon EKS cluster was created, in UTC format.
+	CreatedAt *time.Time
+
+	// A list of unique identifiers for the Amazon EC2 instances that serve as worker
+	// nodes in the Amazon EKS cluster.
+	Ec2InstanceUids []string
+
+	// The current status of the Amazon EKS cluster.
+	Status ClusterStatus
+
+	// The ID of the Amazon Virtual Private Cloud (Amazon VPC) associated with the
+	// Amazon EKS cluster.
+	VpcId *string
 
 	noSmithyDocumentSerde
 }
@@ -1303,9 +1543,6 @@ type FilterCriterion struct {
 
 	// An enum value representing possible scan properties to match with given scan
 	// entries.
-	//
-	// Replace the enum value CLUSTER_NAME with EKS_CLUSTER_NAME . CLUSTER_NAME has
-	// been deprecated.
 	CriterionKey CriterionKey
 
 	// Contains information about the condition.
@@ -1338,7 +1575,13 @@ type Finding struct {
 	// This member is required.
 	Id *string
 
-	// The Region where the finding was generated.
+	// The Region where the finding was generated. For findings generated from [Global Service Events], the
+	// Region value in the finding might differ from the Region where GuardDuty
+	// identifies the potential threat. For more information, see [How GuardDuty handles Amazon Web Services CloudTrail global events]in the Amazon
+	// GuardDuty User Guide.
+	//
+	// [Global Service Events]: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-concepts.html#cloudtrail-concepts-global-service-events
+	// [How GuardDuty handles Amazon Web Services CloudTrail global events]: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_data-sources.html#cloudtrail_global
 	//
 	// This member is required.
 	Region *string
@@ -1476,7 +1719,8 @@ type FreeTrialFeatureConfigurationResult struct {
 	noSmithyDocumentSerde
 }
 
-// Contains information about the location of the remote IP address.
+// Contains information about the location of the remote IP address. By default,
+// GuardDuty returns Geolocation with Lat and Lon as 0.0 .
 type GeoLocation struct {
 
 	// The latitude information of the remote IP address.
@@ -1484,6 +1728,36 @@ type GeoLocation struct {
 
 	// The longitude information of the remote IP address.
 	Lon *float64
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the results of the malware scan.
+type GetMalwareScanResultDetails struct {
+
+	// The total number of files that failed to be scanned.
+	FailedFileCount *int64
+
+	// Status indicating whether threats were found for a completed scan.
+	ScanResultStatus ScanResultStatus
+
+	// The total number of files that were skipped during the scan.
+	SkippedFileCount *int64
+
+	// The total number of files in which threats were detected.
+	ThreatFoundFileCount *int64
+
+	// The threats that were detected during the malware scan.
+	Threats []ScanResultThreat
+
+	// The total number of bytes that were scanned.
+	TotalBytes *int64
+
+	// The total number of files that were processed during the scan.
+	TotalFileCount *int64
+
+	// The total number of unique threats that were detected during the scan.
+	UniqueThreatCount *int64
 
 	noSmithyDocumentSerde
 }
@@ -1526,6 +1800,17 @@ type IamInstanceProfile struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the IAM instance profile involved in a GuardDuty
+// finding, including unique identifiers of the Amazon EC2 instances.
+type IamInstanceProfileV2 struct {
+
+	// A list of unique identifiers for the compromised Amazon EC2 instances that
+	// share the same IAM instance profile.
+	Ec2InstanceUids []string
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about the impersonated user.
 type ImpersonatedUser struct {
 
@@ -1534,6 +1819,19 @@ type ImpersonatedUser struct {
 
 	// Information about the username that was being impersonated.
 	Username *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the incremental scan configuration.
+type IncrementalScanDetails struct {
+
+	// Amazon Resource Name (ARN) of the baseline resource used for incremental
+	// scanning. The scan will only process changes since this baseline resource was
+	// created.
+	//
+	// This member is required.
+	BaselineResourceArn *string
 
 	noSmithyDocumentSerde
 }
@@ -1623,6 +1921,24 @@ type Invitation struct {
 
 	// The status of the relationship between the inviter and invitee accounts.
 	RelationshipStatus *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains detailed information about where a threat was detected.
+type ItemDetails struct {
+
+	// Additional information about the detected threat item.
+	AdditionalInfo *AdditionalInfo
+
+	// The hash value of the infected item.
+	Hash *string
+
+	// The path where the threat was detected.
+	ItemPath *string
+
+	// Amazon Resource Name (ARN) of the resource where the threat was detected.
+	ResourceArn *string
 
 	noSmithyDocumentSerde
 }
@@ -1828,6 +2144,24 @@ type KubernetesUserDetails struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about Kubernetes workloads involved in a GuardDuty
+// finding, including pods, deployments, and other Kubernetes resources.
+type KubernetesWorkload struct {
+
+	// A list of unique identifiers for the containers that are part of the Kubernetes
+	// workload.
+	ContainerUids []string
+
+	// The types of Kubernetes resources involved in the workload.
+	KubernetesResourcesTypes KubernetesResourcesTypes
+
+	// The Kubernetes namespace in which the workload is running, providing logical
+	// isolation within the cluster.
+	Namespace *string
+
+	noSmithyDocumentSerde
+}
+
 // Details about the Kubernetes workload involved in a Kubernetes finding.
 type KubernetesWorkloadDetails struct {
 
@@ -1934,6 +2268,32 @@ type LineageObject struct {
 	noSmithyDocumentSerde
 }
 
+// Represents the criteria used to filter the malware scan entries.
+type ListMalwareScansFilterCriteria struct {
+
+	// Represents a condition that when matched will be added to the response of the
+	// operation.
+	ListMalwareScansFilterCriterion []ListMalwareScansFilterCriterion
+
+	noSmithyDocumentSerde
+}
+
+// Represents a condition that when matched will be added to the response of the
+// operation. Irrespective of using any filter criteria, an administrator account
+// can view the scan entries for all of its member accounts. However, each member
+// account can view the scan entries only for their own account.
+type ListMalwareScansFilterCriterion struct {
+
+	// Contains information about the condition.
+	FilterCondition *FilterCondition
+
+	// An enum value representing possible scan properties to match with given scan
+	// entries.
+	ListMalwareScansCriterionKey ListMalwareScansCriterionKey
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about the local IP address of the connection.
 type LocalIpDetails struct {
 
@@ -2012,6 +2372,18 @@ type MalwareProtectionDataSourceFreeTrial struct {
 	noSmithyDocumentSerde
 }
 
+// Contains finding configuration details about the malware scan.
+type MalwareProtectionFindingsScanConfiguration struct {
+
+	// Contains information about the incremental scan configuration.
+	IncrementalScanDetails *IncrementalScanDetails
+
+	// The event that triggered the malware scan.
+	TriggerType TriggerType
+
+	noSmithyDocumentSerde
+}
+
 // Information about whether the tags will be added to the S3 object after
 // scanning.
 type MalwareProtectionPlanActions struct {
@@ -2056,12 +2428,59 @@ type MalwareProtectionPlanTaggingAction struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about a particular malware scan.
+type MalwareScan struct {
+
+	// Amazon Resource Name (ARN) of the resource for the given malware scan.
+	ResourceArn *string
+
+	// The type of resource that was scanned for malware.
+	ResourceType MalwareProtectionResourceType
+
+	// The timestamp representing when the malware scan was completed.
+	ScanCompletedAt *time.Time
+
+	// A unique identifier that gets generated when you invoke the API without any
+	// error. Each malware scan has a corresponding scan ID. Using this scan ID, you
+	// can monitor the status of your malware scan.
+	ScanId *string
+
+	// An enum value representing the result of the malware scan.
+	ScanResultStatus ScanResultStatus
+
+	// The timestamp representing when the malware scan was started.
+	ScanStartedAt *time.Time
+
+	// An enum value representing the current status of the malware scan.
+	ScanStatus MalwareProtectionScanStatus
+
+	// An enum value representing the type of scan that was initiated.
+	ScanType MalwareProtectionScanType
+
+	noSmithyDocumentSerde
+}
+
 // Information about the malware scan that generated a GuardDuty finding.
 type MalwareScanDetails struct {
+
+	// The category of the malware scan.
+	ScanCategory ScanCategory
+
+	// The configuration settings used for the malware scan.
+	ScanConfiguration *MalwareProtectionFindingsScanConfiguration
+
+	// The unique identifier for the malware scan.
+	ScanId *string
+
+	// The type of malware scan performed.
+	ScanType MalwareProtectionScanType
 
 	// Information about the detected threats associated with the generated GuardDuty
 	// finding.
 	Threats []Threat
+
+	// The number of unique malware threats detected during the scan.
+	UniqueThreatCount *int32
 
 	noSmithyDocumentSerde
 }
@@ -2921,6 +3340,10 @@ type RdsDbInstanceDetails struct {
 	// finding.
 	DbInstanceIdentifier *string
 
+	// The unique ID of the database resource involved in the activity that prompted
+	// GuardDuty to generate the finding.
+	DbiResourceId *string
+
 	// The database engine of the database instance involved in the finding.
 	Engine *string
 
@@ -2996,6 +3419,31 @@ type RdsLoginAttemptAction struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the recovery point configuration for scanning backup
+// data from Amazon Web Services Backup.
+type RecoveryPoint struct {
+
+	// The name of the Amazon Web Services Backup vault that contains the name of the
+	// recovery point to be scanned.
+	//
+	// This member is required.
+	BackupVaultName *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains details about the backup recovery point.
+type RecoveryPointDetails struct {
+
+	// The name of the backup vault containing the recovery point.
+	BackupVaultName *string
+
+	// The Amazon Resource Name (ARN) of the recovery point.
+	RecoveryPointArn *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains details about the remote Amazon Web Services account that made the API
 // call.
 type RemoteAccountDetails struct {
@@ -3059,8 +3507,14 @@ type Resource struct {
 	// Details of a container.
 	ContainerDetails *Container
 
+	// Contains details about the EBS snapshot that was scanned.
+	EbsSnapshotDetails *EbsSnapshotDetails
+
 	// Contains list of scanned and skipped EBS volumes with details.
 	EbsVolumeDetails *EbsVolumeDetails
+
+	// Contains details about the EC2 image that was scanned.
+	Ec2ImageDetails *Ec2ImageDetails
 
 	// Contains information about the details of the ECS Cluster.
 	EcsClusterDetails *EcsClusterDetails
@@ -3090,6 +3544,9 @@ type Resource struct {
 	// GuardDuty finding.
 	RdsLimitlessDbDetails *RdsLimitlessDbDetails
 
+	// Contains details about the backup recovery point that was scanned.
+	RecoveryPointDetails *RecoveryPointDetails
+
 	// The type of Amazon Web Services resource.
 	ResourceType *string
 
@@ -3107,12 +3564,56 @@ type ResourceData struct {
 	// in the GuardDuty finding.
 	AccessKey *AccessKey
 
+	// Contains detailed information about the Auto Scaling Group associated with the
+	// activity that prompted GuardDuty to generate a finding.
+	AutoscalingAutoScalingGroup *AutoscalingAutoScalingGroup
+
+	// Contains detailed information about the CloudFormation stack associated with
+	// the activity that prompted GuardDuty to generate a finding.
+	CloudformationStack *CloudformationStack
+
+	// Contains detailed information about the container associated with the activity
+	// that prompted GuardDuty to generate a finding.
+	Container *ContainerFindingResource
+
+	// Contains detailed information about the EC2 Image associated with the activity
+	// that prompted GuardDuty to generate a finding.
+	Ec2Image *Ec2Image
+
 	// Contains information about the Amazon EC2 instance.
 	Ec2Instance *Ec2Instance
+
+	// Contains detailed information about the EC2 launch template associated with the
+	// activity that prompted GuardDuty to generate a finding.
+	Ec2LaunchTemplate *Ec2LaunchTemplate
 
 	// Contains information about the elastic network interface of the Amazon EC2
 	// instance.
 	Ec2NetworkInterface *Ec2NetworkInterface
+
+	// Contains detailed information about the EC2 VPC associated with the activity
+	// that prompted GuardDuty to generate a finding.
+	Ec2Vpc *Ec2Vpc
+
+	// Contains detailed information about the Amazon ECS cluster associated with the
+	// activity that prompted GuardDuty to generate a finding.
+	EcsCluster *EcsCluster
+
+	// Contains detailed information about the Amazon ECS task associated with the
+	// activity that prompted GuardDuty to generate a finding.
+	EcsTask *EcsTask
+
+	// Contains detailed information about the Amazon EKS cluster associated with the
+	// activity that prompted GuardDuty to generate a finding.
+	EksCluster *EksCluster
+
+	// Contains detailed information about the IAM instance profile associated with
+	// the activity that prompted GuardDuty to generate a finding.
+	IamInstanceProfile *IamInstanceProfileV2
+
+	// Contains detailed information about the Kubernetes workload associated with the
+	// activity that prompted GuardDuty to generate a finding.
+	KubernetesWorkload *KubernetesWorkload
 
 	// Contains information about the Amazon S3 bucket.
 	S3Bucket *S3Bucket
@@ -3459,6 +3960,25 @@ type S3ObjectDetail struct {
 	noSmithyDocumentSerde
 }
 
+// The S3 object path to initiate a scan, including bucket name, object key, and
+// optional version ID.
+type S3ObjectForSendObjectMalwareScan struct {
+
+	// The name of the S3 bucket containing the object to scan. The bucket must have
+	// GuardDuty Malware Protection enabled.
+	Bucket *string
+
+	// The key (name) of the S3 object to scan for malware. This must be the full key
+	// path of the object within the bucket.
+	Key *string
+
+	// The version ID of the S3 object to scan. If not specified, the latest version
+	// of the object is scanned.
+	VersionId *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about malware scans associated with GuardDuty Malware
 // Protection for EC2.
 type Scan struct {
@@ -3550,6 +4070,36 @@ type ScanConditionPair struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the configuration used for the malware scan.
+type ScanConfiguration struct {
+
+	// Information about the incremental scan configuration, if applicable.
+	IncrementalScanDetails *IncrementalScanDetails
+
+	// Information about the recovery point configuration used for the scan, if
+	// applicable.
+	RecoveryPoint *ScanConfigurationRecoveryPoint
+
+	// Amazon Resource Name (ARN) of the IAM role that should contain the required
+	// permissions for the scan.
+	Role *string
+
+	// Information about the entity that triggered the malware scan.
+	TriggerDetails *TriggerDetails
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the recovery point configuration used in the scan.
+type ScanConfigurationRecoveryPoint struct {
+
+	// The name of the Amazon Web Services Backup vault that contains the recovery
+	// point for the scanned.
+	BackupVaultName *string
+
+	noSmithyDocumentSerde
+}
+
 // Contains a complete view providing malware scan result details.
 type ScanDetections struct {
 
@@ -3622,6 +4172,40 @@ type ScannedItemCount struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about a resource that was scanned as part of the malware
+// scan operation.
+type ScannedResource struct {
+
+	// Information about the scanned resource.
+	ResourceDetails *ScannedResourceDetails
+
+	// The reason for the scan status of this particular resource, if applicable.
+	ScanStatusReason ScanStatusReason
+
+	// Amazon Resource Name (ARN) of the scanned resource.
+	ScannedResourceArn *string
+
+	// The status of the scanned resource.
+	ScannedResourceStatus MalwareProtectionScanStatus
+
+	// The resource type of the scanned resource.
+	ScannedResourceType MalwareProtectionResourceType
+
+	noSmithyDocumentSerde
+}
+
+// Contains additional information about a resource that was scanned.
+type ScannedResourceDetails struct {
+
+	// Contains information about the EBS snapshot that was scanned.
+	EbsSnapshot *EbsSnapshot
+
+	// Contains information about the EBS volume that was scanned.
+	EbsVolume *VolumeDetail
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about criteria used to filter resources before triggering
 // malware scan.
 type ScanResourceCriteria struct {
@@ -3642,6 +4226,28 @@ type ScanResultDetails struct {
 
 	// An enum value representing possible scan results.
 	ScanResult ScanResult
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a specific threat that was detected during the
+// malware scan.
+type ScanResultThreat struct {
+
+	// The number of instances of this threat that were detected.
+	Count *int64
+
+	// The hash value associated with the detected threat.
+	Hash *string
+
+	// Additional information about where this threat was detected.
+	ItemDetails []ItemDetails
+
+	// The name of the detected threat.
+	Name *string
+
+	// The source that detected this threat.
+	Source DetectionSource
 
 	noSmithyDocumentSerde
 }
@@ -3710,6 +4316,10 @@ type Sequence struct {
 
 	// Contains information about the actors involved in the attack sequence.
 	Actors []Actor
+
+	// Additional types of sequences that may be associated with the attack sequence
+	// finding, providing further context about the nature of the detected threat.
+	AdditionalSequenceTypes []string
 
 	// Contains information about the network endpoints that were used in the attack
 	// sequence.
@@ -3941,6 +4551,26 @@ type SortCriteria struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the configuration to be used for the malware scan.
+type StartMalwareScanConfiguration struct {
+
+	// Amazon Resource Name (ARN) of the IAM role that is used for scanning the
+	// resource.
+	//
+	// This member is required.
+	Role *string
+
+	// Contains information about the incremental scan configuration. When specified,
+	// the scan will only process changes since the baseline resource.
+	IncrementalScanDetails *IncrementalScanDetails
+
+	// Contains information about the recovery point configuration for the requested
+	// scan.
+	RecoveryPoint *RecoveryPoint
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about a tag key-value pair.
 type Tag struct {
 
@@ -3955,6 +4585,15 @@ type Tag struct {
 
 // Information about the detected threats associated with the generated finding.
 type Threat struct {
+
+	// The number of occurrences of this specific threat detected during the scan.
+	Count *int64
+
+	// The hash identifier of the detected malware threat.
+	Hash *string
+
+	// Detailed information about the detected malware threat.
+	ItemDetails []ItemDetails
 
 	// Information about the nested item path and hash of the protected resource.
 	ItemPaths []ItemPath
@@ -4033,6 +4672,9 @@ type TriggerDetails struct {
 
 	// The ID of the GuardDuty finding that triggered the malware scan.
 	GuardDutyFindingId *string
+
+	// Specifies the trigger type that started the malware scan.
+	TriggerType TriggerType
 
 	noSmithyDocumentSerde
 }

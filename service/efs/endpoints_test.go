@@ -14,12 +14,11 @@ import (
 	"testing"
 )
 
-// For region af-south-1 with FIPS disabled and DualStack disabled
+// For custom endpoint with region not set and fips disabled
 func TestEndpointCase0(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("af-south-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
+		Endpoint: ptr.String("https://example.com"),
+		UseFIPS:  ptr.Bool(false),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
@@ -30,7 +29,7 @@ func TestEndpointCase0(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.af-south-1.amazonaws.com")
+	uri, _ := url.Parse("https://example.com")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -51,1307 +50,51 @@ func TestEndpointCase0(t *testing.T) {
 	}
 }
 
-// For region af-south-1 with FIPS enabled and DualStack disabled
+// For custom endpoint with fips enabled
 func TestEndpointCase1(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("af-south-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
+		Endpoint: ptr.String("https://example.com"),
+		UseFIPS:  ptr.Bool(true),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
 	result, err := resolver.ResolveEndpoint(context.Background(), params)
 	_, _ = result, err
 
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
+	if err == nil {
+		t.Fatalf("expect error, got none")
 	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.af-south-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
+	if e, a := "Invalid Configuration: FIPS and custom endpoint are not supported", err.Error(); !strings.Contains(a, e) {
+		t.Errorf("expect %v error in %v", e, a)
 	}
 }
 
-// For region ap-east-1 with FIPS disabled and DualStack disabled
+// For custom endpoint with fips disabled and dualstack enabled
 func TestEndpointCase2(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("ap-east-1"),
+		Endpoint:     ptr.String("https://example.com"),
 		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
+		UseDualStack: ptr.Bool(true),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
 	result, err := resolver.ResolveEndpoint(context.Background(), params)
 	_, _ = result, err
 
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
+	if err == nil {
+		t.Fatalf("expect error, got none")
 	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ap-east-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
+	if e, a := "Invalid Configuration: Dualstack and custom endpoint are not supported", err.Error(); !strings.Contains(a, e) {
+		t.Errorf("expect %v error in %v", e, a)
 	}
 }
 
-// For region ap-east-1 with FIPS enabled and DualStack disabled
+// For region us-east-1 with FIPS enabled and DualStack enabled
 func TestEndpointCase3(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("ap-east-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ap-east-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-northeast-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase4(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-northeast-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ap-northeast-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-northeast-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase5(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-northeast-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ap-northeast-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-northeast-2 with FIPS disabled and DualStack disabled
-func TestEndpointCase6(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-northeast-2"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ap-northeast-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-northeast-2 with FIPS enabled and DualStack disabled
-func TestEndpointCase7(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-northeast-2"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ap-northeast-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-northeast-3 with FIPS disabled and DualStack disabled
-func TestEndpointCase8(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-northeast-3"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ap-northeast-3.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-northeast-3 with FIPS enabled and DualStack disabled
-func TestEndpointCase9(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-northeast-3"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ap-northeast-3.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-south-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase10(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-south-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ap-south-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-south-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase11(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-south-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ap-south-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-southeast-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase12(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-southeast-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ap-southeast-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-southeast-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase13(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-southeast-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ap-southeast-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-southeast-2 with FIPS disabled and DualStack disabled
-func TestEndpointCase14(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-southeast-2"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ap-southeast-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-southeast-2 with FIPS enabled and DualStack disabled
-func TestEndpointCase15(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-southeast-2"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ap-southeast-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-southeast-3 with FIPS disabled and DualStack disabled
-func TestEndpointCase16(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-southeast-3"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ap-southeast-3.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ap-southeast-3 with FIPS enabled and DualStack disabled
-func TestEndpointCase17(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ap-southeast-3"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ap-southeast-3.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ca-central-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase18(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ca-central-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.ca-central-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region ca-central-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase19(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("ca-central-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.ca-central-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-central-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase20(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-central-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.eu-central-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-central-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase21(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-central-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.eu-central-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-north-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase22(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-north-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.eu-north-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-north-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase23(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-north-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.eu-north-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-south-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase24(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-south-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.eu-south-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-south-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase25(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-south-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.eu-south-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-west-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase26(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-west-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.eu-west-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-west-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase27(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-west-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.eu-west-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-west-2 with FIPS disabled and DualStack disabled
-func TestEndpointCase28(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-west-2"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.eu-west-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-west-2 with FIPS enabled and DualStack disabled
-func TestEndpointCase29(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-west-2"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.eu-west-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-west-3 with FIPS disabled and DualStack disabled
-func TestEndpointCase30(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-west-3"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.eu-west-3.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region eu-west-3 with FIPS enabled and DualStack disabled
-func TestEndpointCase31(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("eu-west-3"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.eu-west-3.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region me-south-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase32(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("me-south-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.me-south-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region me-south-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase33(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("me-south-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.me-south-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region sa-east-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase34(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("sa-east-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.sa-east-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region sa-east-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase35(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("sa-east-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.sa-east-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-east-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase36(t *testing.T) {
-	var params = EndpointParameters{
 		Region:       ptr.String("us-east-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
+		UseFIPS:      ptr.Bool(true),
+		UseDualStack: ptr.Bool(true),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
@@ -1362,7 +105,7 @@ func TestEndpointCase36(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.us-east-1.amazonaws.com")
+	uri, _ := url.Parse("https://efs-fips.us-east-1.api.aws")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -1384,7 +127,7 @@ func TestEndpointCase36(t *testing.T) {
 }
 
 // For region us-east-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase37(t *testing.T) {
+func TestEndpointCase4(t *testing.T) {
 	var params = EndpointParameters{
 		Region:       ptr.String("us-east-1"),
 		UseFIPS:      ptr.Bool(true),
@@ -1420,267 +163,8 @@ func TestEndpointCase37(t *testing.T) {
 	}
 }
 
-// For region us-east-2 with FIPS disabled and DualStack disabled
-func TestEndpointCase38(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-east-2"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.us-east-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-east-2 with FIPS enabled and DualStack disabled
-func TestEndpointCase39(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-east-2"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.us-east-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-west-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase40(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-west-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.us-west-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-west-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase41(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-west-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.us-west-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-west-2 with FIPS disabled and DualStack disabled
-func TestEndpointCase42(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-west-2"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.us-west-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-west-2 with FIPS enabled and DualStack disabled
-func TestEndpointCase43(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-west-2"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.us-west-2.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-east-1 with FIPS enabled and DualStack enabled
-func TestEndpointCase44(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-east-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(true),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.us-east-1.api.aws")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
 // For region us-east-1 with FIPS disabled and DualStack enabled
-func TestEndpointCase45(t *testing.T) {
+func TestEndpointCase5(t *testing.T) {
 	var params = EndpointParameters{
 		Region:       ptr.String("us-east-1"),
 		UseFIPS:      ptr.Bool(false),
@@ -1695,7 +179,7 @@ func TestEndpointCase45(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.us-east-1.api.aws")
+	uri, _ := url.Parse("https://efs.us-east-1.api.aws")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -1716,10 +200,10 @@ func TestEndpointCase45(t *testing.T) {
 	}
 }
 
-// For region cn-north-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase46(t *testing.T) {
+// For region us-east-1 with FIPS disabled and DualStack disabled
+func TestEndpointCase6(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("cn-north-1"),
+		Region:       ptr.String("us-east-1"),
 		UseFIPS:      ptr.Bool(false),
 		UseDualStack: ptr.Bool(false),
 	}
@@ -1732,7 +216,7 @@ func TestEndpointCase46(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.cn-north-1.amazonaws.com.cn")
+	uri, _ := url.Parse("https://elasticfilesystem.us-east-1.amazonaws.com")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -1753,49 +237,12 @@ func TestEndpointCase46(t *testing.T) {
 	}
 }
 
-// For region cn-north-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase47(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("cn-north-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.cn-north-1.amazonaws.com.cn")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region cn-northwest-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase48(t *testing.T) {
+// For region cn-northwest-1 with FIPS enabled and DualStack enabled
+func TestEndpointCase7(t *testing.T) {
 	var params = EndpointParameters{
 		Region:       ptr.String("cn-northwest-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
+		UseFIPS:      ptr.Bool(true),
+		UseDualStack: ptr.Bool(true),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
@@ -1806,7 +253,7 @@ func TestEndpointCase48(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.cn-northwest-1.amazonaws.com.cn")
+	uri, _ := url.Parse("https://efs-fips.cn-northwest-1.api.amazonwebservices.com.cn")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -1828,7 +275,7 @@ func TestEndpointCase48(t *testing.T) {
 }
 
 // For region cn-northwest-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase49(t *testing.T) {
+func TestEndpointCase8(t *testing.T) {
 	var params = EndpointParameters{
 		Region:       ptr.String("cn-northwest-1"),
 		UseFIPS:      ptr.Bool(true),
@@ -1864,47 +311,10 @@ func TestEndpointCase49(t *testing.T) {
 	}
 }
 
-// For region cn-north-1 with FIPS enabled and DualStack enabled
-func TestEndpointCase50(t *testing.T) {
+// For region cn-northwest-1 with FIPS disabled and DualStack enabled
+func TestEndpointCase9(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("cn-north-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(true),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.cn-north-1.api.amazonwebservices.com.cn")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region cn-north-1 with FIPS disabled and DualStack enabled
-func TestEndpointCase51(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("cn-north-1"),
+		Region:       ptr.String("cn-northwest-1"),
 		UseFIPS:      ptr.Bool(false),
 		UseDualStack: ptr.Bool(true),
 	}
@@ -1917,7 +327,7 @@ func TestEndpointCase51(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.cn-north-1.api.amazonwebservices.com.cn")
+	uri, _ := url.Parse("https://efs.cn-northwest-1.api.amazonwebservices.com.cn")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -1938,10 +348,10 @@ func TestEndpointCase51(t *testing.T) {
 	}
 }
 
-// For region us-gov-east-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase52(t *testing.T) {
+// For region cn-northwest-1 with FIPS disabled and DualStack disabled
+func TestEndpointCase10(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("us-gov-east-1"),
+		Region:       ptr.String("cn-northwest-1"),
 		UseFIPS:      ptr.Bool(false),
 		UseDualStack: ptr.Bool(false),
 	}
@@ -1954,7 +364,7 @@ func TestEndpointCase52(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.us-gov-east-1.amazonaws.com")
+	uri, _ := url.Parse("https://elasticfilesystem.cn-northwest-1.amazonaws.com.cn")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -1975,10 +385,10 @@ func TestEndpointCase52(t *testing.T) {
 	}
 }
 
-// For region us-gov-east-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase53(t *testing.T) {
+// For region eusc-de-east-1 with FIPS enabled and DualStack disabled
+func TestEndpointCase11(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("us-gov-east-1"),
+		Region:       ptr.String("eusc-de-east-1"),
 		UseFIPS:      ptr.Bool(true),
 		UseDualStack: ptr.Bool(false),
 	}
@@ -1991,7 +401,7 @@ func TestEndpointCase53(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem-fips.us-gov-east-1.amazonaws.com")
+	uri, _ := url.Parse("https://elasticfilesystem-fips.eusc-de-east-1.amazonaws.eu")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -2012,10 +422,10 @@ func TestEndpointCase53(t *testing.T) {
 	}
 }
 
-// For region us-gov-west-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase54(t *testing.T) {
+// For region eusc-de-east-1 with FIPS disabled and DualStack disabled
+func TestEndpointCase12(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("us-gov-west-1"),
+		Region:       ptr.String("eusc-de-east-1"),
 		UseFIPS:      ptr.Bool(false),
 		UseDualStack: ptr.Bool(false),
 	}
@@ -2028,155 +438,7 @@ func TestEndpointCase54(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.us-gov-west-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-gov-west-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase55(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-gov-west-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.us-gov-west-1.amazonaws.com")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-gov-east-1 with FIPS enabled and DualStack enabled
-func TestEndpointCase56(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-gov-east-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(true),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem-fips.us-gov-east-1.api.aws")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-gov-east-1 with FIPS disabled and DualStack enabled
-func TestEndpointCase57(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-gov-east-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(true),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.us-gov-east-1.api.aws")
-
-	expectEndpoint := smithyendpoints.Endpoint{
-		URI:        *uri,
-		Headers:    http.Header{},
-		Properties: smithy.Properties{},
-	}
-
-	if e, a := expectEndpoint.URI, result.URI; e != a {
-		t.Errorf("expect %v URI, got %v", e, a)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
-		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
-	}
-
-	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
-		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
-	}
-}
-
-// For region us-iso-east-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase58(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-iso-east-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(false),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err != nil {
-		t.Fatalf("expect no error, got %v", err)
-	}
-
-	uri, _ := url.Parse("https://elasticfilesystem.us-iso-east-1.c2s.ic.gov")
+	uri, _ := url.Parse("https://elasticfilesystem.eusc-de-east-1.amazonaws.eu")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -2198,7 +460,7 @@ func TestEndpointCase58(t *testing.T) {
 }
 
 // For region us-iso-east-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase59(t *testing.T) {
+func TestEndpointCase13(t *testing.T) {
 	var params = EndpointParameters{
 		Region:       ptr.String("us-iso-east-1"),
 		UseFIPS:      ptr.Bool(true),
@@ -2234,50 +496,10 @@ func TestEndpointCase59(t *testing.T) {
 	}
 }
 
-// For region us-iso-east-1 with FIPS enabled and DualStack enabled
-func TestEndpointCase60(t *testing.T) {
+// For region us-iso-east-1 with FIPS disabled and DualStack disabled
+func TestEndpointCase14(t *testing.T) {
 	var params = EndpointParameters{
 		Region:       ptr.String("us-iso-east-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(true),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err == nil {
-		t.Fatalf("expect error, got none")
-	}
-	if e, a := "FIPS and DualStack are enabled, but this partition does not support one or both", err.Error(); !strings.Contains(a, e) {
-		t.Errorf("expect %v error in %v", e, a)
-	}
-}
-
-// For region us-iso-east-1 with FIPS disabled and DualStack enabled
-func TestEndpointCase61(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-iso-east-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(true),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err == nil {
-		t.Fatalf("expect error, got none")
-	}
-	if e, a := "DualStack is enabled but this partition does not support DualStack", err.Error(); !strings.Contains(a, e) {
-		t.Errorf("expect %v error in %v", e, a)
-	}
-}
-
-// For region us-isob-east-1 with FIPS disabled and DualStack disabled
-func TestEndpointCase62(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-isob-east-1"),
 		UseFIPS:      ptr.Bool(false),
 		UseDualStack: ptr.Bool(false),
 	}
@@ -2290,7 +512,7 @@ func TestEndpointCase62(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://elasticfilesystem.us-isob-east-1.sc2s.sgov.gov")
+	uri, _ := url.Parse("https://elasticfilesystem.us-iso-east-1.c2s.ic.gov")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -2312,7 +534,7 @@ func TestEndpointCase62(t *testing.T) {
 }
 
 // For region us-isob-east-1 with FIPS enabled and DualStack disabled
-func TestEndpointCase63(t *testing.T) {
+func TestEndpointCase15(t *testing.T) {
 	var params = EndpointParameters{
 		Region:       ptr.String("us-isob-east-1"),
 		UseFIPS:      ptr.Bool(true),
@@ -2348,53 +570,12 @@ func TestEndpointCase63(t *testing.T) {
 	}
 }
 
-// For region us-isob-east-1 with FIPS enabled and DualStack enabled
-func TestEndpointCase64(t *testing.T) {
+// For region us-isob-east-1 with FIPS disabled and DualStack disabled
+func TestEndpointCase16(t *testing.T) {
 	var params = EndpointParameters{
 		Region:       ptr.String("us-isob-east-1"),
-		UseFIPS:      ptr.Bool(true),
-		UseDualStack: ptr.Bool(true),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err == nil {
-		t.Fatalf("expect error, got none")
-	}
-	if e, a := "FIPS and DualStack are enabled, but this partition does not support one or both", err.Error(); !strings.Contains(a, e) {
-		t.Errorf("expect %v error in %v", e, a)
-	}
-}
-
-// For region us-isob-east-1 with FIPS disabled and DualStack enabled
-func TestEndpointCase65(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-isob-east-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(true),
-	}
-
-	resolver := NewDefaultEndpointResolverV2()
-	result, err := resolver.ResolveEndpoint(context.Background(), params)
-	_, _ = result, err
-
-	if err == nil {
-		t.Fatalf("expect error, got none")
-	}
-	if e, a := "DualStack is enabled but this partition does not support DualStack", err.Error(); !strings.Contains(a, e) {
-		t.Errorf("expect %v error in %v", e, a)
-	}
-}
-
-// For custom endpoint with region set and fips disabled and dualstack disabled
-func TestEndpointCase66(t *testing.T) {
-	var params = EndpointParameters{
-		Region:       ptr.String("us-east-1"),
 		UseFIPS:      ptr.Bool(false),
 		UseDualStack: ptr.Bool(false),
-		Endpoint:     ptr.String("https://example.com"),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
@@ -2405,7 +586,7 @@ func TestEndpointCase66(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://example.com")
+	uri, _ := url.Parse("https://elasticfilesystem.us-isob-east-1.sc2s.sgov.gov")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -2426,12 +607,12 @@ func TestEndpointCase66(t *testing.T) {
 	}
 }
 
-// For custom endpoint with region not set and fips disabled and dualstack disabled
-func TestEndpointCase67(t *testing.T) {
+// For region eu-isoe-west-1 with FIPS enabled and DualStack disabled
+func TestEndpointCase17(t *testing.T) {
 	var params = EndpointParameters{
-		UseFIPS:      ptr.Bool(false),
+		Region:       ptr.String("eu-isoe-west-1"),
+		UseFIPS:      ptr.Bool(true),
 		UseDualStack: ptr.Bool(false),
-		Endpoint:     ptr.String("https://example.com"),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
@@ -2442,7 +623,7 @@ func TestEndpointCase67(t *testing.T) {
 		t.Fatalf("expect no error, got %v", err)
 	}
 
-	uri, _ := url.Parse("https://example.com")
+	uri, _ := url.Parse("https://elasticfilesystem-fips.eu-isoe-west-1.cloud.adc-e.uk")
 
 	expectEndpoint := smithyendpoints.Endpoint{
 		URI:        *uri,
@@ -2463,50 +644,267 @@ func TestEndpointCase67(t *testing.T) {
 	}
 }
 
-// For custom endpoint with fips enabled and dualstack disabled
-func TestEndpointCase68(t *testing.T) {
+// For region eu-isoe-west-1 with FIPS disabled and DualStack disabled
+func TestEndpointCase18(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("us-east-1"),
-		UseFIPS:      ptr.Bool(true),
+		Region:       ptr.String("eu-isoe-west-1"),
+		UseFIPS:      ptr.Bool(false),
 		UseDualStack: ptr.Bool(false),
-		Endpoint:     ptr.String("https://example.com"),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
 	result, err := resolver.ResolveEndpoint(context.Background(), params)
 	_, _ = result, err
 
-	if err == nil {
-		t.Fatalf("expect error, got none")
+	if err != nil {
+		t.Fatalf("expect no error, got %v", err)
 	}
-	if e, a := "Invalid Configuration: FIPS and custom endpoint are not supported", err.Error(); !strings.Contains(a, e) {
-		t.Errorf("expect %v error in %v", e, a)
+
+	uri, _ := url.Parse("https://elasticfilesystem.eu-isoe-west-1.cloud.adc-e.uk")
+
+	expectEndpoint := smithyendpoints.Endpoint{
+		URI:        *uri,
+		Headers:    http.Header{},
+		Properties: smithy.Properties{},
+	}
+
+	if e, a := expectEndpoint.URI, result.URI; e != a {
+		t.Errorf("expect %v URI, got %v", e, a)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
+		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
+		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
 	}
 }
 
-// For custom endpoint with fips disabled and dualstack enabled
-func TestEndpointCase69(t *testing.T) {
+// For region us-isof-south-1 with FIPS enabled and DualStack disabled
+func TestEndpointCase19(t *testing.T) {
 	var params = EndpointParameters{
-		Region:       ptr.String("us-east-1"),
-		UseFIPS:      ptr.Bool(false),
-		UseDualStack: ptr.Bool(true),
-		Endpoint:     ptr.String("https://example.com"),
+		Region:       ptr.String("us-isof-south-1"),
+		UseFIPS:      ptr.Bool(true),
+		UseDualStack: ptr.Bool(false),
 	}
 
 	resolver := NewDefaultEndpointResolverV2()
 	result, err := resolver.ResolveEndpoint(context.Background(), params)
 	_, _ = result, err
 
-	if err == nil {
-		t.Fatalf("expect error, got none")
+	if err != nil {
+		t.Fatalf("expect no error, got %v", err)
 	}
-	if e, a := "Invalid Configuration: Dualstack and custom endpoint are not supported", err.Error(); !strings.Contains(a, e) {
-		t.Errorf("expect %v error in %v", e, a)
+
+	uri, _ := url.Parse("https://elasticfilesystem-fips.us-isof-south-1.csp.hci.ic.gov")
+
+	expectEndpoint := smithyendpoints.Endpoint{
+		URI:        *uri,
+		Headers:    http.Header{},
+		Properties: smithy.Properties{},
+	}
+
+	if e, a := expectEndpoint.URI, result.URI; e != a {
+		t.Errorf("expect %v URI, got %v", e, a)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
+		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
+		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
+	}
+}
+
+// For region us-isof-south-1 with FIPS disabled and DualStack disabled
+func TestEndpointCase20(t *testing.T) {
+	var params = EndpointParameters{
+		Region:       ptr.String("us-isof-south-1"),
+		UseFIPS:      ptr.Bool(false),
+		UseDualStack: ptr.Bool(false),
+	}
+
+	resolver := NewDefaultEndpointResolverV2()
+	result, err := resolver.ResolveEndpoint(context.Background(), params)
+	_, _ = result, err
+
+	if err != nil {
+		t.Fatalf("expect no error, got %v", err)
+	}
+
+	uri, _ := url.Parse("https://elasticfilesystem.us-isof-south-1.csp.hci.ic.gov")
+
+	expectEndpoint := smithyendpoints.Endpoint{
+		URI:        *uri,
+		Headers:    http.Header{},
+		Properties: smithy.Properties{},
+	}
+
+	if e, a := expectEndpoint.URI, result.URI; e != a {
+		t.Errorf("expect %v URI, got %v", e, a)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
+		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
+		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
+	}
+}
+
+// For region us-gov-west-1 with FIPS enabled and DualStack enabled
+func TestEndpointCase21(t *testing.T) {
+	var params = EndpointParameters{
+		Region:       ptr.String("us-gov-west-1"),
+		UseFIPS:      ptr.Bool(true),
+		UseDualStack: ptr.Bool(true),
+	}
+
+	resolver := NewDefaultEndpointResolverV2()
+	result, err := resolver.ResolveEndpoint(context.Background(), params)
+	_, _ = result, err
+
+	if err != nil {
+		t.Fatalf("expect no error, got %v", err)
+	}
+
+	uri, _ := url.Parse("https://efs-fips.us-gov-west-1.api.aws")
+
+	expectEndpoint := smithyendpoints.Endpoint{
+		URI:        *uri,
+		Headers:    http.Header{},
+		Properties: smithy.Properties{},
+	}
+
+	if e, a := expectEndpoint.URI, result.URI; e != a {
+		t.Errorf("expect %v URI, got %v", e, a)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
+		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
+		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
+	}
+}
+
+// For region us-gov-west-1 with FIPS enabled and DualStack disabled
+func TestEndpointCase22(t *testing.T) {
+	var params = EndpointParameters{
+		Region:       ptr.String("us-gov-west-1"),
+		UseFIPS:      ptr.Bool(true),
+		UseDualStack: ptr.Bool(false),
+	}
+
+	resolver := NewDefaultEndpointResolverV2()
+	result, err := resolver.ResolveEndpoint(context.Background(), params)
+	_, _ = result, err
+
+	if err != nil {
+		t.Fatalf("expect no error, got %v", err)
+	}
+
+	uri, _ := url.Parse("https://elasticfilesystem-fips.us-gov-west-1.amazonaws.com")
+
+	expectEndpoint := smithyendpoints.Endpoint{
+		URI:        *uri,
+		Headers:    http.Header{},
+		Properties: smithy.Properties{},
+	}
+
+	if e, a := expectEndpoint.URI, result.URI; e != a {
+		t.Errorf("expect %v URI, got %v", e, a)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
+		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
+		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
+	}
+}
+
+// For region us-gov-west-1 with FIPS disabled and DualStack enabled
+func TestEndpointCase23(t *testing.T) {
+	var params = EndpointParameters{
+		Region:       ptr.String("us-gov-west-1"),
+		UseFIPS:      ptr.Bool(false),
+		UseDualStack: ptr.Bool(true),
+	}
+
+	resolver := NewDefaultEndpointResolverV2()
+	result, err := resolver.ResolveEndpoint(context.Background(), params)
+	_, _ = result, err
+
+	if err != nil {
+		t.Fatalf("expect no error, got %v", err)
+	}
+
+	uri, _ := url.Parse("https://efs.us-gov-west-1.api.aws")
+
+	expectEndpoint := smithyendpoints.Endpoint{
+		URI:        *uri,
+		Headers:    http.Header{},
+		Properties: smithy.Properties{},
+	}
+
+	if e, a := expectEndpoint.URI, result.URI; e != a {
+		t.Errorf("expect %v URI, got %v", e, a)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
+		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
+		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
+	}
+}
+
+// For region us-gov-west-1 with FIPS disabled and DualStack disabled
+func TestEndpointCase24(t *testing.T) {
+	var params = EndpointParameters{
+		Region:       ptr.String("us-gov-west-1"),
+		UseFIPS:      ptr.Bool(false),
+		UseDualStack: ptr.Bool(false),
+	}
+
+	resolver := NewDefaultEndpointResolverV2()
+	result, err := resolver.ResolveEndpoint(context.Background(), params)
+	_, _ = result, err
+
+	if err != nil {
+		t.Fatalf("expect no error, got %v", err)
+	}
+
+	uri, _ := url.Parse("https://elasticfilesystem.us-gov-west-1.amazonaws.com")
+
+	expectEndpoint := smithyendpoints.Endpoint{
+		URI:        *uri,
+		Headers:    http.Header{},
+		Properties: smithy.Properties{},
+	}
+
+	if e, a := expectEndpoint.URI, result.URI; e != a {
+		t.Errorf("expect %v URI, got %v", e, a)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Headers, result.Headers) {
+		t.Errorf("expect headers to match\n%v != %v", expectEndpoint.Headers, result.Headers)
+	}
+
+	if !reflect.DeepEqual(expectEndpoint.Properties, result.Properties) {
+		t.Errorf("expect properties to match\n%v != %v", expectEndpoint.Properties, result.Properties)
 	}
 }
 
 // Missing region
-func TestEndpointCase70(t *testing.T) {
+func TestEndpointCase25(t *testing.T) {
 	var params = EndpointParameters{}
 
 	resolver := NewDefaultEndpointResolverV2()

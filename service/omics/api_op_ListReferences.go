@@ -11,7 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves a list of references.
+// Retrieves the metadata of one or more reference genomes in a reference store.
+//
+// For more information, see [Creating a reference store] in the Amazon Web Services HealthOmics User Guide.
+//
+// [Creating a reference store]: https://docs.aws.amazon.com/omics/latest/dev/create-reference-store.html
 func (c *Client) ListReferences(ctx context.Context, params *ListReferencesInput, optFns ...func(*Options)) (*ListReferencesOutput, error) {
 	if params == nil {
 		params = &ListReferencesInput{}
@@ -154,16 +158,13 @@ func (c *Client) addOperationListReferencesMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

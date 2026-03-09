@@ -32,8 +32,8 @@ type CreateDataProviderInput struct {
 
 	// The type of database engine for the data provider. Valid values include "aurora"
 	// , "aurora-postgresql" , "mysql" , "oracle" , "postgres" , "sqlserver" , redshift
-	// , mariadb , mongodb , db2 , db2-zos and docdb . A value of "aurora" represents
-	// Amazon Aurora MySQL-Compatible Edition.
+	// , mariadb , mongodb , db2 , db2-zos , docdb , and sybase . A value of "aurora"
+	// represents Amazon Aurora MySQL-Compatible Edition.
 	//
 	// This member is required.
 	Engine *string
@@ -51,6 +51,9 @@ type CreateDataProviderInput struct {
 
 	// One or more tags to be assigned to the data provider.
 	Tags []types.Tag
+
+	// Indicates whether the data provider is virtual.
+	Virtual *bool
 
 	noSmithyDocumentSerde
 }
@@ -154,16 +157,13 @@ func (c *Client) addOperationCreateDataProviderMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

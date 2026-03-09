@@ -14,7 +14,7 @@ import (
 
 // Returns a list of contacts.
 //
-// If statusList contains AVAILABLE, the request must include groundStation ,
+// If statusList contains AVAILABLE, the request must include  groundStation ,
 // missionprofileArn , and satelliteArn .
 func (c *Client) ListContacts(ctx context.Context, params *ListContactsInput, optFns ...func(*Options)) (*ListContactsOutput, error) {
 	if params == nil {
@@ -47,6 +47,9 @@ type ListContactsInput struct {
 	//
 	// This member is required.
 	StatusList []types.ContactStatus
+
+	// Filter for selecting contacts that use a specific ephemeris".
+	Ephemeris types.EphemerisFilter
 
 	// Name of a ground station.
 	GroundStation *string
@@ -170,16 +173,13 @@ func (c *Client) addOperationListContactsMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

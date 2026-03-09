@@ -51,6 +51,11 @@ type DescribeFirewallOutput struct {
 
 	// Detailed information about the current status of a Firewall. You can retrieve this for
 	// a firewall by calling DescribeFirewalland providing the firewall name and ARN.
+	//
+	// The firewall status indicates a combined status. It indicates whether all
+	// subnets are up-to-date with the latest firewall configurations, which is based
+	// on the sync states config values, and also whether all subnets have their
+	// endpoints fully enabled, based on their sync states attachment values.
 	FirewallStatus *types.FirewallStatus
 
 	// An optional token that you can use for optimistic locking. Network Firewall
@@ -160,16 +165,13 @@ func (c *Client) addOperationDescribeFirewallMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -307,8 +307,8 @@ type Application struct {
 	// The authentication type being used by a Amazon Q Business application.
 	IdentityType IdentityType
 
-	// The Amazon QuickSight configuration for an Amazon Q Business application that
-	// uses QuickSight as the identity provider.
+	// The Amazon Quick Suite configuration for an Amazon Q Business application that
+	// uses Quick Suite as the identity provider.
 	QuickSightConfiguration *QuickSightConfiguration
 
 	// The status of the Amazon Q Business application. The application is ready to
@@ -681,6 +681,9 @@ type BasicAuthConfiguration struct {
 type BlockedPhrasesConfiguration struct {
 
 	// A list of phrases blocked from a Amazon Q Business web experience chat.
+	//
+	// Each phrase can contain a maximum of 36 characters. The list can contain a
+	// maximum of 20 phrases.
 	BlockedPhrases []string
 
 	// The configured custom message displayed to an end user informing them that
@@ -883,6 +886,81 @@ type ChatOutputStreamMemberTextEvent struct {
 
 func (*ChatOutputStreamMemberTextEvent) isChatOutputStream() {}
 
+// Configuration details that define how Amazon Q Business generates and formats
+// responses to user queries in chat interactions. This configuration allows
+// administrators to customize response characteristics to meet specific
+// organizational needs and communication standards.
+type ChatResponseConfiguration struct {
+
+	// The Amazon Resource Name (ARN) of the chat response configuration, which
+	// uniquely identifies the resource across all Amazon Web Services services and
+	// accounts.
+	//
+	// This member is required.
+	ChatResponseConfigurationArn *string
+
+	// A unique identifier for your chat response configuration settings, used to
+	// reference and manage the configuration within the Amazon Q Business service.
+	//
+	// This member is required.
+	ChatResponseConfigurationId *string
+
+	// A human-readable name for the chat response configuration, making it easier to
+	// identify and manage multiple configurations within an organization.
+	//
+	// This member is required.
+	DisplayName *string
+
+	// The current status of the chat response configuration, indicating whether it is
+	// active, pending, or in another state that affects its availability for use in
+	// chat interactions.
+	//
+	// This member is required.
+	Status ChatResponseConfigurationStatus
+
+	// The timestamp indicating when the chat response configuration was initially
+	// created, useful for tracking the lifecycle of configuration resources.
+	CreatedAt *time.Time
+
+	// A summary of the response configuration settings, providing a concise overview
+	// of the key parameters that define how responses are generated and formatted.
+	ResponseConfigurationSummary *string
+
+	// The timestamp indicating when the chat response configuration was last
+	// modified, helping administrators track changes and maintain version awareness.
+	UpdatedAt *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Detailed information about a chat response configuration, including
+// comprehensive settings and parameters that define how Amazon Q Business
+// generates and formats responses.
+type ChatResponseConfigurationDetail struct {
+
+	// Provides information about a Amazon Q Business request error.
+	Error *ErrorDetail
+
+	// A summary of the response configuration details, providing a concise overview
+	// of the key parameters and settings that define the response generation behavior.
+	ResponseConfigurationSummary *string
+
+	// A collection of specific response configuration settings that collectively
+	// define how responses are generated, formatted, and presented to users in chat
+	// interactions.
+	ResponseConfigurations map[string]ResponseConfiguration
+
+	// The current status of the chat response configuration, indicating whether it is
+	// active, pending, or in another state that affects its availability for use.
+	Status ChatResponseConfigurationStatus
+
+	// The timestamp indicating when the detailed chat response configuration was last
+	// modified, helping administrators track changes and maintain version awareness.
+	UpdatedAt *time.Time
+
+	noSmithyDocumentSerde
+}
+
 // A configuration event activated by an end user request to select a specific
 // chat mode.
 type ConfigurationEvent struct {
@@ -1056,12 +1134,6 @@ type CustomizationConfiguration struct {
 // Configuration information required to create a custom plugin.
 type CustomPluginConfiguration struct {
 
-	// Contains either details about the S3 object containing the OpenAPI schema for
-	// the action group or the JSON or YAML-formatted payload defining the schema.
-	//
-	// This member is required.
-	ApiSchema APISchema
-
 	// The type of OpenAPI schema to use.
 	//
 	// This member is required.
@@ -1072,11 +1144,19 @@ type CustomPluginConfiguration struct {
 	// This member is required.
 	Description *string
 
+	// Contains either details about the S3 object containing the OpenAPI schema for
+	// the action group or the JSON or YAML-formatted payload defining the schema.
+	ApiSchema APISchema
+
 	noSmithyDocumentSerde
 }
 
 // Provides summary information about a data accessor.
 type DataAccessor struct {
+
+	// The authentication configuration details for the data accessor. This specifies
+	// how the ISV authenticates when accessing data through this data accessor.
+	AuthenticationDetail *DataAccessorAuthenticationDetail
 
 	// The timestamp when the data accessor was created.
 	CreatedAt *time.Time
@@ -1100,6 +1180,71 @@ type DataAccessor struct {
 
 	// The timestamp when the data accessor was last updated.
 	UpdatedAt *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// A union type that contains the specific authentication configuration based on
+// the authentication type selected.
+//
+// The following types satisfy this interface:
+//
+//	DataAccessorAuthenticationConfigurationMemberIdcTrustedTokenIssuerConfiguration
+type DataAccessorAuthenticationConfiguration interface {
+	isDataAccessorAuthenticationConfiguration()
+}
+
+// Configuration for IAM Identity Center Trusted Token Issuer (TTI) authentication
+// used when the authentication type is AWS_IAM_IDC_TTI .
+type DataAccessorAuthenticationConfigurationMemberIdcTrustedTokenIssuerConfiguration struct {
+	Value DataAccessorIdcTrustedTokenIssuerConfiguration
+
+	noSmithyDocumentSerde
+}
+
+func (*DataAccessorAuthenticationConfigurationMemberIdcTrustedTokenIssuerConfiguration) isDataAccessorAuthenticationConfiguration() {
+}
+
+// Contains the authentication configuration details for a data accessor. This
+// structure defines how the ISV authenticates when accessing data through the data
+// accessor.
+type DataAccessorAuthenticationDetail struct {
+
+	// The type of authentication to use for the data accessor. This determines how
+	// the ISV authenticates when accessing data. You can use one of two authentication
+	// types:
+	//
+	//   - AWS_IAM_IDC_TTI - Authentication using IAM Identity Center Trusted Token
+	//   Issuer (TTI). This authentication type allows the ISV to use a trusted token
+	//   issuer to generate tokens for accessing the data.
+	//
+	//   - AWS_IAM_IDC_AUTH_CODE - Authentication using IAM Identity Center
+	//   authorization code flow. This authentication type uses the standard OAuth 2.0
+	//   authorization code flow for authentication.
+	//
+	// This member is required.
+	AuthenticationType DataAccessorAuthenticationType
+
+	// The specific authentication configuration based on the authentication type.
+	AuthenticationConfiguration DataAccessorAuthenticationConfiguration
+
+	// A list of external identifiers associated with this authentication
+	// configuration. These are used to correlate the data accessor with external
+	// systems.
+	ExternalIds []string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration details for IAM Identity Center Trusted Token Issuer (TTI)
+// authentication.
+type DataAccessorIdcTrustedTokenIssuerConfiguration struct {
+
+	// The Amazon Resource Name (ARN) of the IAM Identity Center Trusted Token Issuer
+	// that will be used for authentication.
+	//
+	// This member is required.
+	IdcTrustedTokenIssuerArn *string
 
 	noSmithyDocumentSerde
 }
@@ -1217,7 +1362,14 @@ type DataSourceVpcConfiguration struct {
 // [Boosting using document attributes]: https://docs.aws.amazon.com/amazonq/latest/business-use-dg/metadata-boosting.html
 type DateAttributeBoostingConfiguration struct {
 
-	// Specifies how much a document attribute is boosted.
+	// Specifies the priority tier ranking of boosting applied to document attributes.
+	// For version 2, this parameter indicates the relative ranking between boosted
+	// fields (ONE being highest priority, TWO being second highest, etc.) and
+	// determines the order in which attributes influence document ranking in search
+	// results. For version 1, this parameter specifies the boosting intensity. For
+	// version 2, boosting intensity (VERY HIGH, HIGH, MEDIUM, LOW, NONE) are not
+	// supported. Note that in version 2, you are not allowed to boost on only one
+	// field and make this value TWO.
 	//
 	// This member is required.
 	BoostingLevel DocumentAttributeBoostingLevel
@@ -1378,6 +1530,11 @@ type DocumentAttribute struct {
 // boosted, Amazon Q Business prioritizes generating responses from content that
 // matches the boosted document attributes.
 //
+// In version 2, boosting uses numeric values (ONE, TWO) to indicate priority
+// tiers that establish clear hierarchical relationships between boosted
+// attributes. This allows for more precise control over how different attributes
+// influence search results.
+//
 // For STRING and STRING_LIST type document attributes to be used for boosting on
 // the console and the API, they must be enabled for search using the [DocumentAttributeConfiguration]object of
 // the [UpdateIndex]API. If you haven't enabled searching on these attributes, you can't boost
@@ -1401,6 +1558,9 @@ type DocumentAttributeBoostingConfiguration interface {
 }
 
 // Provides information on boosting DATE type document attributes.
+//
+// Version 2 assigns priority tiers to DATE attributes, establishing clear
+// hierarchical relationships with other boosted attributes.
 type DocumentAttributeBoostingConfigurationMemberDateConfiguration struct {
 	Value DateAttributeBoostingConfiguration
 
@@ -1411,6 +1571,10 @@ func (*DocumentAttributeBoostingConfigurationMemberDateConfiguration) isDocument
 }
 
 // Provides information on boosting NUMBER type document attributes.
+//
+// NUMBER attributes are not supported when using NativeIndexConfiguration version
+// 2, which focuses on DATE attributes for recency and STRING attributes for
+// source prioritization.
 type DocumentAttributeBoostingConfigurationMemberNumberConfiguration struct {
 	Value NumberAttributeBoostingConfiguration
 
@@ -1421,6 +1585,9 @@ func (*DocumentAttributeBoostingConfigurationMemberNumberConfiguration) isDocume
 }
 
 // Provides information on boosting STRING type document attributes.
+//
+// Version 2 assigns priority tiers to STRING attributes, establishing clear
+// hierarchical relationships with other boosted attributes.
 type DocumentAttributeBoostingConfigurationMemberStringConfiguration struct {
 	Value StringAttributeBoostingConfiguration
 
@@ -1431,6 +1598,10 @@ func (*DocumentAttributeBoostingConfigurationMemberStringConfiguration) isDocume
 }
 
 // Provides information on boosting STRING_LIST type document attributes.
+//
+// STRING_LIST attributes are not supported when using NativeIndexConfiguration
+// version 2, which focuses on DATE attributes for recency and STRING attributes
+// for source prioritization.
 type DocumentAttributeBoostingConfigurationMemberStringListConfiguration struct {
 	Value StringListAttributeBoostingConfiguration
 
@@ -1602,10 +1773,16 @@ func (*DocumentAttributeValueMemberStringValue) isDocumentAttributeValue() {}
 
 // The contents of a document.
 //
+// Documents have size limitations. The maximum file size for a document is 50 MB.
+// The maximum amount of text that can be extracted from a single document is 5 MB.
+// For more information, see [Supported document formats in Amazon Q Business].
+//
 // The following types satisfy this interface:
 //
 //	DocumentContentMemberBlob
 //	DocumentContentMemberS3
+//
+// [Supported document formats in Amazon Q Business]: https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/doc-types.html
 type DocumentContent interface {
 	isDocumentContent()
 }
@@ -1873,7 +2050,7 @@ type HookConfiguration struct {
 	// date-time.
 	InvocationCondition *DocumentAttributeCondition
 
-	// The Amazon Resource Name (ARN) of the Lambda function sduring ingestion. For
+	// The Amazon Resource Name (ARN) of the Lambda function during ingestion. For
 	// more information, see [Using Lambda functions for Amazon Q Business document enrichment].
 	//
 	// [Using Lambda functions for Amazon Q Business document enrichment]: https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/cde-lambda-operations.html
@@ -2066,6 +2243,56 @@ type InlineDocumentEnrichmentConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// A set of instructions that define how Amazon Q Business should generate and
+// format responses to user queries. This collection includes parameters for
+// controlling response characteristics such as length, audience targeting,
+// perspective, style, identity, tone, and custom instructions.
+type InstructionCollection struct {
+
+	// Allows administrators to provide specific, custom instructions that guide how
+	// Amazon Q Business should respond in particular scenarios or to certain types of
+	// queries, enabling fine-grained control over response generation.
+	CustomInstructions *string
+
+	// Provides sample responses or templates that Amazon Q Business can reference
+	// when generating responses, helping to establish consistent patterns and formats
+	// for different types of user queries.
+	Examples *string
+
+	// Defines the persona or identity that Amazon Q Business should adopt when
+	// responding to users, allowing for customization of the assistant's character,
+	// role, or representation within an organization.
+	Identity *string
+
+	// Specifies the formatting and structural style of responses, such as bullet
+	// points, paragraphs, step-by-step instructions, or other organizational formats
+	// that enhance readability and comprehension.
+	OutputStyle *string
+
+	// Determines the point of view or perspective from which Amazon Q Business
+	// generates responses, such as first-person, second-person, or third-person
+	// perspective, affecting how information is presented to users.
+	Perspective *string
+
+	// Specifies the desired length of responses generated by Amazon Q Business. This
+	// parameter allows administrators to control whether responses are concise and
+	// brief or more detailed and comprehensive.
+	ResponseLength *string
+
+	// Defines the intended audience for the responses, allowing Amazon Q Business to
+	// tailor its language, terminology, and explanations appropriately. This could
+	// range from technical experts to general users with varying levels of domain
+	// knowledge.
+	TargetAudience *string
+
+	// Controls the emotional tone and communication style of responses, such as
+	// formal, casual, technical, friendly, or professional, to align with
+	// organizational communication standards and user expectations.
+	Tone *string
+
+	noSmithyDocumentSerde
+}
+
 // Stores an Amazon Kendra index as a retriever.
 type KendraIndexConfiguration struct {
 
@@ -2219,6 +2446,28 @@ type NativeIndexConfiguration struct {
 	// attribute data types.
 	BoostingOverride map[string]DocumentAttributeBoostingConfiguration
 
+	// A read-only field that specifies the version of the NativeIndexConfiguration .
+	//
+	// Amazon Q Business introduces enhanced document retrieval capabilities in
+	// version 2 of NativeIndexConfiguration , focusing on streamlined metadata
+	// boosting that prioritizes recency and source relevance to deliver more accurate
+	// responses to your queries. Version 2 has the following differences from version
+	// 1:
+	//
+	//   - Version 2 supports a single Date field (created_at OR last_updated_at) for
+	//   recency boosting
+	//
+	//   - Version 2 supports a single String field with an ordered list of up to 5
+	//   values
+	//
+	//   - Version 2 introduces number-based boost levels (ONE, TWO) alongside the
+	//   text-based levels
+	//
+	//   - Version 2 allows specifying prioritization between Date and String fields
+	//
+	//   - Version 2 maintains backward compatibility with existing configurations
+	Version *int64
+
 	noSmithyDocumentSerde
 }
 
@@ -2230,19 +2479,29 @@ type NoAuthConfiguration struct {
 
 // Provides information on boosting NUMBER type document attributes.
 //
+// In the current boosting implementation, boosting focuses primarily on DATE
+// attributes for recency and STRING attributes for source prioritization. NUMBER
+// attributes can serve as additional boosting factors when needed, but are not
+// supported when using NativeIndexConfiguration version 2.
+//
 // For more information on how boosting document attributes work in Amazon Q
 // Business, see [Boosting using document attributes].
 //
 // [Boosting using document attributes]: https://docs.aws.amazon.com/amazonq/latest/business-use-dg/metadata-boosting.html
 type NumberAttributeBoostingConfiguration struct {
 
-	// Specifies the duration, in seconds, of a boost applies to a NUMBER type
-	// document attribute.
+	// Specifies the priority of boosted document attributes in relation to other
+	// boosted attributes. This parameter determines how strongly the attribute
+	// influences document ranking in search results. NUMBER attributes can serve as
+	// additional boosting factors when needed, but are not supported when using
+	// NativeIndexConfiguration version 2.
 	//
 	// This member is required.
 	BoostingLevel DocumentAttributeBoostingLevel
 
-	// Specifies how much a document attribute is boosted.
+	// Specifies whether higher or lower numeric values should be prioritized when
+	// boosting. Valid values are ASCENDING (higher numbers are more important) and
+	// DESCENDING (lower numbers are more important).
 	BoostingType NumberAttributeBoostingType
 
 	noSmithyDocumentSerde
@@ -2308,6 +2567,30 @@ type OrchestrationConfiguration struct {
 	//
 	// This member is required.
 	Control OrchestrationControl
+
+	noSmithyDocumentSerde
+}
+
+// Defines a condition that restricts when a permission is effective. Conditions
+// allow you to control access based on specific attributes of the request.
+type PermissionCondition struct {
+
+	// The key for the condition. This identifies the attribute that the condition
+	// applies to.
+	//
+	// This member is required.
+	ConditionKey *string
+
+	// The operator to use for the condition evaluation. This determines how the
+	// condition values are compared.
+	//
+	// This member is required.
+	ConditionOperator PermissionConditionOperator
+
+	// The values to compare against using the specified condition operator.
+	//
+	// This member is required.
+	ConditionValues []string
 
 	noSmithyDocumentSerde
 }
@@ -2518,14 +2801,14 @@ type QAppsConfiguration struct {
 	noSmithyDocumentSerde
 }
 
-// The Amazon QuickSight configuration for an Amazon Q Business application that
-// uses QuickSight as the identity provider. For more information, see [Creating an Amazon QuickSight integrated application].
+// The Amazon Quick Suite configuration for an Amazon Q Business application that
+// uses Quick Suite as the identity provider. For more information, see [Creating an Amazon Quick Suite integrated application].
 //
-// [Creating an Amazon QuickSight integrated application]: https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/create-quicksight-integrated-application.html
+// [Creating an Amazon Quick Suite integrated application]: https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/create-quicksight-integrated-application.html
 type QuickSightConfiguration struct {
 
-	// The Amazon QuickSight namespace that is used as the identity provider. For more
-	// information about QuickSight namespaces, see [Namespace operations].
+	// The Amazon Quick Suite namespace that is used as the identity provider. For
+	// more information about Quick Suite namespaces, see [Namespace operations].
 	//
 	// [Namespace operations]: https://docs.aws.amazon.com/quicksight/latest/developerguide/namespace-operations.html
 	//
@@ -2555,6 +2838,19 @@ type RelevantContent struct {
 
 	// Attributes related to the relevance score of the content.
 	ScoreAttributes *ScoreAttributes
+
+	noSmithyDocumentSerde
+}
+
+// Configuration settings to define how Amazon Q Business generates and formats
+// responses to user queries. This includes customization options for response
+// style, tone, length, and other characteristics.
+type ResponseConfiguration struct {
+
+	// A collection of instructions that guide how Amazon Q Business generates
+	// responses, including parameters for response length, target audience,
+	// perspective, output style, identity, tone, and custom instructions.
+	InstructionCollection *InstructionCollection
 
 	noSmithyDocumentSerde
 }
@@ -2758,6 +3054,25 @@ type SourceAttribution struct {
 	// The number attached to a citation in an Amazon Q Business generated response.
 	CitationNumber *int32
 
+	// The identifier of the data source from which the document was ingested. This
+	// field is not present if the document is ingested by directly calling the
+	// BatchPutDocument API (similar to checkDocumentAccess). If the document is from a
+	// file-upload data source, the datasource will be
+	// "uploaded-docs-file-stat-datasourceid".
+	DatasourceId *string
+
+	// The unique identifier of the source document used in the citation, obtained
+	// from the Amazon Q Business index during chat response generation. This ID is
+	// used as input to the GetDocumentContent API to retrieve the actual document
+	// content for user verification.
+	DocumentId *string
+
+	// The identifier of the index containing the source document's metadata and
+	// access control information. This links the citation back to the specific Amazon
+	// Q Business index where the document's searchable content and permissions are
+	// stored.
+	IndexId *string
+
 	// The content extract from the document on which the generated response is based.
 	Snippet *string
 
@@ -2832,18 +3147,32 @@ func (*SourceDetailsMemberVideoSourceDetails) isSourceDetails() {}
 // [UpdateIndex]: https://docs.aws.amazon.com/amazonq/latest/api-reference/API_UpdateIndex.html
 type StringAttributeBoostingConfiguration struct {
 
-	// Specifies how much a document attribute is boosted.
+	// Specifies the priority tier ranking of boosting applied to document attributes.
+	// For version 2, this parameter indicates the relative ranking between boosted
+	// fields (ONE being highest priority, TWO being second highest, etc.) and
+	// determines the order in which attributes influence document ranking in search
+	// results. For version 1, this parameter specifies the boosting intensity. For
+	// version 2, boosting intensity (VERY HIGH, HIGH, MEDIUM, LOW, NONE) are not
+	// supported. Note that in version 2, you are not allowed to boost on only one
+	// field and make this value TWO.
 	//
 	// This member is required.
 	BoostingLevel DocumentAttributeBoostingLevel
 
 	// Specifies specific values of a STRING type document attribute being boosted.
+	// When using NativeIndexConfiguration version 2, you can specify up to five
+	// values in order of priority.
 	AttributeValueBoosting map[string]StringAttributeValueBoostingLevel
 
 	noSmithyDocumentSerde
 }
 
 // Provides information on boosting STRING_LIST type document attributes.
+//
+// In the current boosting implementation, boosting focuses primarily on DATE
+// attributes for recency and STRING attributes for source prioritization.
+// STRING_LIST attributes can serve as additional boosting factors when needed, but
+// are not supported when using NativeIndexConfiguration version 2.
 //
 // For STRING and STRING_LIST type document attributes to be used for boosting on
 // the console and the API, they must be enabled for search using the [DocumentAttributeConfiguration]object of
@@ -2858,7 +3187,11 @@ type StringAttributeBoostingConfiguration struct {
 // [UpdateIndex]: https://docs.aws.amazon.com/amazonq/latest/api-reference/API_UpdateIndex.html
 type StringListAttributeBoostingConfiguration struct {
 
-	// Specifies how much a document attribute is boosted.
+	// Specifies the priority of boosted document attributes in relation to other
+	// boosted attributes. This parameter determines how strongly the attribute
+	// influences document ranking in search results. STRING_LIST attributes can serve
+	// as additional boosting factors when needed, but are not supported when using
+	// NativeIndexConfiguration version 2.
 	//
 	// This member is required.
 	BoostingLevel DocumentAttributeBoostingLevel
@@ -3207,20 +3540,21 @@ type UnknownUnionMember struct {
 	noSmithyDocumentSerde
 }
 
-func (*UnknownUnionMember) isAPISchema()                              {}
-func (*UnknownUnionMember) isChatInputStream()                        {}
-func (*UnknownUnionMember) isChatModeConfiguration()                  {}
-func (*UnknownUnionMember) isChatOutputStream()                       {}
-func (*UnknownUnionMember) isContentSource()                          {}
-func (*UnknownUnionMember) isCopyFromSource()                         {}
-func (*UnknownUnionMember) isDocumentAttributeBoostingConfiguration() {}
-func (*UnknownUnionMember) isDocumentAttributeValue()                 {}
-func (*UnknownUnionMember) isDocumentContent()                        {}
-func (*UnknownUnionMember) isIdentityProviderConfiguration()          {}
-func (*UnknownUnionMember) isPluginAuthConfiguration()                {}
-func (*UnknownUnionMember) isPrincipal()                              {}
-func (*UnknownUnionMember) isRetrieverConfiguration()                 {}
-func (*UnknownUnionMember) isRuleConfiguration()                      {}
-func (*UnknownUnionMember) isSourceDetails()                          {}
-func (*UnknownUnionMember) isSubscriptionPrincipal()                  {}
-func (*UnknownUnionMember) isWebExperienceAuthConfiguration()         {}
+func (*UnknownUnionMember) isAPISchema()                               {}
+func (*UnknownUnionMember) isChatInputStream()                         {}
+func (*UnknownUnionMember) isChatModeConfiguration()                   {}
+func (*UnknownUnionMember) isChatOutputStream()                        {}
+func (*UnknownUnionMember) isContentSource()                           {}
+func (*UnknownUnionMember) isCopyFromSource()                          {}
+func (*UnknownUnionMember) isDataAccessorAuthenticationConfiguration() {}
+func (*UnknownUnionMember) isDocumentAttributeBoostingConfiguration()  {}
+func (*UnknownUnionMember) isDocumentAttributeValue()                  {}
+func (*UnknownUnionMember) isDocumentContent()                         {}
+func (*UnknownUnionMember) isIdentityProviderConfiguration()           {}
+func (*UnknownUnionMember) isPluginAuthConfiguration()                 {}
+func (*UnknownUnionMember) isPrincipal()                               {}
+func (*UnknownUnionMember) isRetrieverConfiguration()                  {}
+func (*UnknownUnionMember) isRuleConfiguration()                       {}
+func (*UnknownUnionMember) isSourceDetails()                           {}
+func (*UnknownUnionMember) isSubscriptionPrincipal()                   {}
+func (*UnknownUnionMember) isWebExperienceAuthConfiguration()          {}

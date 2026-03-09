@@ -43,16 +43,16 @@ func (c *Client) SearchTrainingPlanOfferings(ctx context.Context, params *Search
 type SearchTrainingPlanOfferingsInput struct {
 
 	// The desired duration in hours for the training plan offerings.
-	//
-	// This member is required.
 	DurationHours *int64
+
+	// A filter to search for reserved capacity offerings with an end time before a
+	// specified date.
+	EndTimeBefore *time.Time
 
 	// The number of instances you want to reserve in the training plan offerings.
 	// This allows you to specify the quantity of compute resources needed for your
 	// SageMaker training jobs or SageMaker HyperPod clusters, helping you find
 	// reserved capacity offerings that match your requirements.
-	//
-	// This member is required.
 	InstanceCount *int32
 
 	// The type of instance you want to search for in the available training plan
@@ -61,12 +61,14 @@ type SearchTrainingPlanOfferingsInput struct {
 	// SageMaker HyperPod clusters. When searching for training plan offerings,
 	// specifying the instance type helps you find Reserved Instances that match your
 	// computational needs.
-	//
-	// This member is required.
 	InstanceType types.ReservedCapacityInstanceType
 
-	// The target resources (e.g., SageMaker Training Jobs, SageMaker HyperPod) to
-	// search for in the offerings.
+	// A filter to search for training plan offerings with a start time after a
+	// specified date.
+	StartTimeAfter *time.Time
+
+	// The target resources (e.g., SageMaker Training Jobs, SageMaker HyperPod,
+	// SageMaker Endpoints) to search for in the offerings.
 	//
 	// Training plans are specific to their target resource.
 	//
@@ -76,16 +78,15 @@ type SearchTrainingPlanOfferingsInput struct {
 	//   - A training plan for HyperPod clusters can be used exclusively to provide
 	//   compute resources to a cluster's instance group.
 	//
-	// This member is required.
+	//   - A training plan for SageMaker endpoints can be used exclusively to provide
+	//   compute resources to SageMaker endpoints for model deployment.
 	TargetResources []types.SageMakerResourceName
 
-	// A filter to search for reserved capacity offerings with an end time before a
-	// specified date.
-	EndTimeBefore *time.Time
+	// The number of UltraServers to search for.
+	UltraServerCount *int32
 
-	// A filter to search for training plan offerings with a start time after a
-	// specified date.
-	StartTimeAfter *time.Time
+	// The type of UltraServer to search for, such as ml.u-p6e-gb200x72.
+	UltraServerType *string
 
 	noSmithyDocumentSerde
 }
@@ -170,9 +171,6 @@ func (c *Client) addOperationSearchTrainingPlanOfferingsMiddlewares(stack *middl
 	if err = addCredentialSource(stack, options); err != nil {
 		return err
 	}
-	if err = addOpSearchTrainingPlanOfferingsValidationMiddleware(stack); err != nil {
-		return err
-	}
 	if err = stack.Initialize.Add(newServiceMetadataMiddleware_opSearchTrainingPlanOfferings(options.Region), middleware.Before); err != nil {
 		return err
 	}
@@ -191,16 +189,13 @@ func (c *Client) addOperationSearchTrainingPlanOfferingsMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -13,7 +13,6 @@ import (
 	smithyio "github.com/aws/smithy-go/io"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
@@ -21,16 +20,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpArchiveApplication struct {
 }
@@ -928,7 +918,7 @@ func awsRestjson1_deserializeOpDocumentChangeServerLifeCycleStateOutput(v **Chan
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -1589,6 +1579,15 @@ func awsRestjson1_deserializeOpDocumentCreateLaunchConfigurationTemplateOutput(v
 				sv.EnableMapAutoTagging = ptr.Bool(jtv)
 			}
 
+		case "enableParametersEncryption":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.EnableParametersEncryption = ptr.Bool(jtv)
+			}
+
 		case "largeVolumeConf":
 			if err := awsRestjson1_deserializeDocumentLaunchTemplateDiskConf(&sv.LargeVolumeConf, value); err != nil {
 				return err
@@ -1624,6 +1623,15 @@ func awsRestjson1_deserializeOpDocumentCreateLaunchConfigurationTemplateOutput(v
 					return fmt.Errorf("expected TagValue to be of type string, got %T instead", value)
 				}
 				sv.MapAutoTaggingMpeID = ptr.String(jtv)
+			}
+
+		case "parametersEncryptionKey":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ARN to be of type string, got %T instead", value)
+				}
+				sv.ParametersEncryptionKey = ptr.String(jtv)
 			}
 
 		case "postLaunchActions":
@@ -1890,6 +1898,15 @@ func awsRestjson1_deserializeOpDocumentCreateReplicationConfigurationTemplateOut
 					return fmt.Errorf("expected ARN to be of type string, got %T instead", value)
 				}
 				sv.EbsEncryptionKeyArn = ptr.String(jtv)
+			}
+
+		case "internetProtocol":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected InternetProtocol to be of type string, got %T instead", value)
+				}
+				sv.InternetProtocol = types.InternetProtocol(jtv)
 			}
 
 		case "replicationConfigurationTemplateID":
@@ -4364,7 +4381,7 @@ func awsRestjson1_deserializeOpDocumentDisconnectFromServiceOutput(v **Disconnec
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -4622,7 +4639,7 @@ func awsRestjson1_deserializeOpDocumentFinalizeCutoverOutput(v **FinalizeCutover
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -5101,6 +5118,15 @@ func awsRestjson1_deserializeOpDocumentGetReplicationConfigurationOutput(v **Get
 					return fmt.Errorf("expected ARN to be of type string, got %T instead", value)
 				}
 				sv.EbsEncryptionKeyArn = ptr.String(jtv)
+			}
+
+		case "internetProtocol":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected InternetProtocol to be of type string, got %T instead", value)
+				}
+				sv.InternetProtocol = types.InternetProtocol(jtv)
 			}
 
 		case "name":
@@ -7299,7 +7325,7 @@ func awsRestjson1_deserializeOpDocumentMarkAsArchivedOutput(v **MarkAsArchivedOu
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -7560,7 +7586,7 @@ func awsRestjson1_deserializeOpDocumentPauseReplicationOutput(v **PauseReplicati
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -8546,7 +8572,7 @@ func awsRestjson1_deserializeOpDocumentResumeReplicationOutput(v **ResumeReplica
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -8801,7 +8827,7 @@ func awsRestjson1_deserializeOpDocumentRetryDataReplicationOutput(v **RetryDataR
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -9542,7 +9568,7 @@ func awsRestjson1_deserializeOpDocumentStartReplicationOutput(v **StartReplicati
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -9961,7 +9987,7 @@ func awsRestjson1_deserializeOpDocumentStopReplicationOutput(v **StopReplication
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -11715,6 +11741,15 @@ func awsRestjson1_deserializeOpDocumentUpdateLaunchConfigurationTemplateOutput(v
 				sv.EnableMapAutoTagging = ptr.Bool(jtv)
 			}
 
+		case "enableParametersEncryption":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.EnableParametersEncryption = ptr.Bool(jtv)
+			}
+
 		case "largeVolumeConf":
 			if err := awsRestjson1_deserializeDocumentLaunchTemplateDiskConf(&sv.LargeVolumeConf, value); err != nil {
 				return err
@@ -11750,6 +11785,15 @@ func awsRestjson1_deserializeOpDocumentUpdateLaunchConfigurationTemplateOutput(v
 					return fmt.Errorf("expected TagValue to be of type string, got %T instead", value)
 				}
 				sv.MapAutoTaggingMpeID = ptr.String(jtv)
+			}
+
+		case "parametersEncryptionKey":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ARN to be of type string, got %T instead", value)
+				}
+				sv.ParametersEncryptionKey = ptr.String(jtv)
 			}
 
 		case "postLaunchActions":
@@ -12013,6 +12057,15 @@ func awsRestjson1_deserializeOpDocumentUpdateReplicationConfigurationOutput(v **
 					return fmt.Errorf("expected ARN to be of type string, got %T instead", value)
 				}
 				sv.EbsEncryptionKeyArn = ptr.String(jtv)
+			}
+
+		case "internetProtocol":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected InternetProtocol to be of type string, got %T instead", value)
+				}
+				sv.InternetProtocol = types.InternetProtocol(jtv)
 			}
 
 		case "name":
@@ -12316,6 +12369,15 @@ func awsRestjson1_deserializeOpDocumentUpdateReplicationConfigurationTemplateOut
 				sv.EbsEncryptionKeyArn = ptr.String(jtv)
 			}
 
+		case "internetProtocol":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected InternetProtocol to be of type string, got %T instead", value)
+				}
+				sv.InternetProtocol = types.InternetProtocol(jtv)
+			}
+
 		case "replicationConfigurationTemplateID":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -12617,7 +12679,7 @@ func awsRestjson1_deserializeOpDocumentUpdateSourceServerOutput(v **UpdateSource
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -12875,7 +12937,7 @@ func awsRestjson1_deserializeOpDocumentUpdateSourceServerReplicationTypeOutput(v
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}
@@ -14208,6 +14270,15 @@ func awsRestjson1_deserializeDocumentDataReplicationInfo(v **types.DataReplicati
 				return err
 			}
 
+		case "replicatorId":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ReplicatorID to be of type string, got %T instead", value)
+				}
+				sv.ReplicatorId = ptr.String(jtv)
+			}
+
 		default:
 			_, _ = key, value
 
@@ -14764,6 +14835,15 @@ func awsRestjson1_deserializeDocumentExportTask(v **types.ExportTask, value inte
 
 	for key, value := range shape {
 		switch key {
+		case "arn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ARN to be of type string, got %T instead", value)
+				}
+				sv.Arn = ptr.String(jtv)
+			}
+
 		case "creationDateTime":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -14863,6 +14943,11 @@ func awsRestjson1_deserializeDocumentExportTask(v **types.ExportTask, value inte
 
 		case "summary":
 			if err := awsRestjson1_deserializeDocumentExportTaskSummary(&sv.Summary, value); err != nil {
+				return err
+			}
+
+		case "tags":
+			if err := awsRestjson1_deserializeDocumentTagsMap(&sv.Tags, value); err != nil {
 				return err
 			}
 
@@ -15254,6 +15339,15 @@ func awsRestjson1_deserializeDocumentImportTask(v **types.ImportTask, value inte
 
 	for key, value := range shape {
 		switch key {
+		case "arn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ARN to be of type string, got %T instead", value)
+				}
+				sv.Arn = ptr.String(jtv)
+			}
+
 		case "creationDateTime":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -15331,6 +15425,11 @@ func awsRestjson1_deserializeDocumentImportTask(v **types.ImportTask, value inte
 
 		case "summary":
 			if err := awsRestjson1_deserializeDocumentImportTaskSummary(&sv.Summary, value); err != nil {
+				return err
+			}
+
+		case "tags":
+			if err := awsRestjson1_deserializeDocumentTagsMap(&sv.Tags, value); err != nil {
 				return err
 			}
 
@@ -15883,6 +15982,19 @@ func awsRestjson1_deserializeDocumentJobLogEventData(v **types.JobLogEventData, 
 
 	for key, value := range shape {
 		switch key {
+		case "attemptCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected StrictlyPositiveInteger to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.AttemptCount = ptr.Int32(int32(i64))
+			}
+
 		case "conversionServerID":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -15890,6 +16002,19 @@ func awsRestjson1_deserializeDocumentJobLogEventData(v **types.JobLogEventData, 
 					return fmt.Errorf("expected EC2InstanceID to be of type string, got %T instead", value)
 				}
 				sv.ConversionServerID = ptr.String(jtv)
+			}
+
+		case "maxAttemptsCount":
+			if value != nil {
+				jtv, ok := value.(json.Number)
+				if !ok {
+					return fmt.Errorf("expected StrictlyPositiveInteger to be json.Number, got %T instead", value)
+				}
+				i64, err := jtv.Int64()
+				if err != nil {
+					return err
+				}
+				sv.MaxAttemptsCount = ptr.Int32(int32(i64))
 			}
 
 		case "rawError":
@@ -16153,6 +16278,15 @@ func awsRestjson1_deserializeDocumentLaunchConfigurationTemplate(v **types.Launc
 				sv.EnableMapAutoTagging = ptr.Bool(jtv)
 			}
 
+		case "enableParametersEncryption":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.EnableParametersEncryption = ptr.Bool(jtv)
+			}
+
 		case "largeVolumeConf":
 			if err := awsRestjson1_deserializeDocumentLaunchTemplateDiskConf(&sv.LargeVolumeConf, value); err != nil {
 				return err
@@ -16188,6 +16322,15 @@ func awsRestjson1_deserializeDocumentLaunchConfigurationTemplate(v **types.Launc
 					return fmt.Errorf("expected TagValue to be of type string, got %T instead", value)
 				}
 				sv.MapAutoTaggingMpeID = ptr.String(jtv)
+			}
+
+		case "parametersEncryptionKey":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected ARN to be of type string, got %T instead", value)
+				}
+				sv.ParametersEncryptionKey = ptr.String(jtv)
 			}
 
 		case "postLaunchActions":
@@ -17536,6 +17679,15 @@ func awsRestjson1_deserializeDocumentReplicationConfigurationTemplate(v **types.
 				sv.EbsEncryptionKeyArn = ptr.String(jtv)
 			}
 
+		case "internetProtocol":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected InternetProtocol to be of type string, got %T instead", value)
+				}
+				sv.InternetProtocol = types.InternetProtocol(jtv)
+			}
+
 		case "replicationConfigurationTemplateID":
 			if value != nil {
 				jtv, ok := value.(string)
@@ -18095,7 +18247,7 @@ func awsRestjson1_deserializeDocumentSourceServer(v **types.SourceServer, value 
 			if value != nil {
 				jtv, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("expected BoundedString to be of type string, got %T instead", value)
+					return fmt.Errorf("expected UserProvidedId to be of type string, got %T instead", value)
 				}
 				sv.UserProvidedID = ptr.String(jtv)
 			}

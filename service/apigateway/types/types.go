@@ -385,7 +385,7 @@ type DomainName struct {
 	// The custom domain name as an API host name, for example, my-api.example.com .
 	DomainName *string
 
-	// The ARN of the domain name. Supported only for private custom domain names.
+	// The ARN of the domain name.
 	DomainNameArn *string
 
 	// The identifier for the domain name resource. Supported only for private custom
@@ -401,6 +401,9 @@ type DomainName struct {
 	// An optional text message containing detailed information about status of the
 	// DomainName migration.
 	DomainNameStatusMessage *string
+
+	//  The endpoint access mode of the DomainName.
+	EndpointAccessMode EndpointAccessMode
 
 	// The endpoint configuration of this DomainName showing the endpoint types and IP
 	// address types of the domain name.
@@ -447,8 +450,11 @@ type DomainName struct {
 	// and Endpoints for API Gateway.
 	RegionalHostedZoneId *string
 
+	// The routing mode for this domain name. The routing mode determines how API
+	// Gateway sends traffic from your custom domain name to your private APIs.
+	RoutingMode RoutingMode
+
 	// The Transport Layer Security (TLS) version + cipher suite for this DomainName.
-	// The valid values are TLS_1_0 and TLS_1_2 .
 	SecurityPolicy SecurityPolicy
 
 	// The collection of tags. Each tag element is associated with a given resource.
@@ -581,6 +587,9 @@ type Integration struct {
 	// Specifies the integration's responses.
 	IntegrationResponses map[string]IntegrationResponse
 
+	//  The ALB or NLB listener to send the request to.
+	IntegrationTarget *string
+
 	// Specifies how the method request body of an unmapped content type will be
 	// passed through the integration request to the back end without transformation. A
 	// content type is unmapped if no mapping template is defined in the integration or
@@ -614,8 +623,12 @@ type Integration struct {
 	// type value is the key in this map, and the template (as a String) is the value.
 	RequestTemplates map[string]string
 
+	//  The response transfer mode of the integration.
+	ResponseTransferMode ResponseTransferMode
+
 	// Custom timeout between 50 and 29,000 milliseconds. The default value is 29,000
-	// milliseconds or 29 seconds.
+	// milliseconds or 29 seconds. You can increase the default value to longer than 29
+	// seconds for Regional or private APIs only.
 	TimeoutInMillis int32
 
 	// Specifies the TLS configuration for an integration.
@@ -1042,6 +1055,13 @@ type RestApi struct {
 	// custom authorizer.
 	ApiKeySource ApiKeySourceType
 
+	// The ApiStatus of the RestApi.
+	ApiStatus ApiStatus
+
+	//  The status message of the RestApi. When the status message is UPDATING you can
+	// still invoke it.
+	ApiStatusMessage *string
+
 	// The list of binary media types supported by the RestApi. By default, the
 	// RestApi supports only UTF-8-encoded text payloads.
 	BinaryMediaTypes []string
@@ -1058,6 +1078,9 @@ type RestApi struct {
 	// clients use a custom domain name to invoke your API, disable the default
 	// endpoint.
 	DisableExecuteApiEndpoint bool
+
+	//  The endpoint access mode of the RestApi.
+	EndpointAccessMode EndpointAccessMode
 
 	// The endpoint configuration of this RestApi showing the endpoint types and IP
 	// address types of the API.
@@ -1083,6 +1106,9 @@ type RestApi struct {
 
 	// The API's root resource ID.
 	RootResourceId *string
+
+	//  The Transport Layer Security (TLS) version + cipher suite for this RestApi.
+	SecurityPolicy SecurityPolicy
 
 	// The collection of tags. Each tag element is associated with a given resource.
 	Tags map[string]string

@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Describes all customer managed key registrations in a Amazon QuickSight account.
+// Describes all customer managed key registrations in a Quick Sight account.
 func (c *Client) DescribeKeyRegistration(ctx context.Context, params *DescribeKeyRegistrationInput, optFns ...func(*Options)) (*DescribeKeyRegistrationOutput, error) {
 	if params == nil {
 		params = &DescribeKeyRegistrationInput{}
@@ -47,8 +47,11 @@ type DescribeKeyRegistrationOutput struct {
 	// key registration specified in the request.
 	AwsAccountId *string
 
-	// A list of RegisteredCustomerManagedKey objects in a Amazon QuickSight account.
+	// A list of RegisteredCustomerManagedKey objects in a Quick Sight account.
 	KeyRegistration []types.RegisteredCustomerManagedKey
+
+	// A list of QDataKey objects in a Quick Sight account.
+	QDataKey *types.QDataKey
 
 	// The Amazon Web Services request ID for this operation.
 	RequestId *string
@@ -150,16 +153,13 @@ func (c *Client) addOperationDescribeKeyRegistrationMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -343,6 +343,7 @@ const (
 	DimensionAz                           Dimension = "AZ"
 	DimensionInstanceType                 Dimension = "INSTANCE_TYPE"
 	DimensionLinkedAccount                Dimension = "LINKED_ACCOUNT"
+	DimensionPayerAccount                 Dimension = "PAYER_ACCOUNT"
 	DimensionLinkedAccountName            Dimension = "LINKED_ACCOUNT_NAME"
 	DimensionOperation                    Dimension = "OPERATION"
 	DimensionPurchaseType                 Dimension = "PURCHASE_TYPE"
@@ -385,6 +386,7 @@ func (Dimension) Values() []Dimension {
 		"AZ",
 		"INSTANCE_TYPE",
 		"LINKED_ACCOUNT",
+		"PAYER_ACCOUNT",
 		"LINKED_ACCOUNT_NAME",
 		"OPERATION",
 		"PURCHASE_TYPE",
@@ -639,7 +641,10 @@ type MonitorDimension string
 
 // Enum values for MonitorDimension
 const (
-	MonitorDimensionService MonitorDimension = "SERVICE"
+	MonitorDimensionService       MonitorDimension = "SERVICE"
+	MonitorDimensionLinkedAccount MonitorDimension = "LINKED_ACCOUNT"
+	MonitorDimensionTag           MonitorDimension = "TAG"
+	MonitorDimensionCostCategory  MonitorDimension = "COST_CATEGORY"
 )
 
 // Values returns all known values for MonitorDimension. Note that this can be
@@ -649,6 +654,9 @@ const (
 func (MonitorDimension) Values() []MonitorDimension {
 	return []MonitorDimension{
 		"SERVICE",
+		"LINKED_ACCOUNT",
+		"TAG",
+		"COST_CATEGORY",
 	}
 }
 
@@ -894,6 +902,7 @@ const (
 	SupportedSavingsPlansTypeComputeSp     SupportedSavingsPlansType = "COMPUTE_SP"
 	SupportedSavingsPlansTypeEc2InstanceSp SupportedSavingsPlansType = "EC2_INSTANCE_SP"
 	SupportedSavingsPlansTypeSagemakerSp   SupportedSavingsPlansType = "SAGEMAKER_SP"
+	SupportedSavingsPlansTypeDatabaseSp    SupportedSavingsPlansType = "DATABASE_SP"
 )
 
 // Values returns all known values for SupportedSavingsPlansType. Note that this
@@ -905,6 +914,7 @@ func (SupportedSavingsPlansType) Values() []SupportedSavingsPlansType {
 		"COMPUTE_SP",
 		"EC2_INSTANCE_SP",
 		"SAGEMAKER_SP",
+		"DATABASE_SP",
 	}
 }
 

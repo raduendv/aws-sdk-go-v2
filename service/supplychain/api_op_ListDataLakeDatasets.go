@@ -38,7 +38,8 @@ type ListDataLakeDatasetsInput struct {
 	// This member is required.
 	InstanceId *string
 
-	// The name space of the dataset. The available values are:
+	// The namespace of the dataset, besides the custom defined namespace, every
+	// instance comes with below pre-defined namespaces:
 	//
 	//   - asc - For information on the Amazon Web Services Supply Chain supported
 	//   datasets see [https://docs.aws.amazon.com/aws-supply-chain/latest/userguide/data-model-asc.html].
@@ -164,16 +165,13 @@ func (c *Client) addOperationListDataLakeDatasetsMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

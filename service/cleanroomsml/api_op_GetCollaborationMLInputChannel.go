@@ -103,8 +103,18 @@ type GetCollaborationMLInputChannelOutput struct {
 	// The number of records in the ML input channel.
 	NumberOfRecords *int64
 
+	// Returns the privacy budgets that control access to this Clean Rooms ML input
+	// channel. Use these budgets to monitor and limit resource consumption over
+	// specified time periods.
+	PrivacyBudgets types.PrivacyBudgets
+
 	// Details about the status of a resource.
 	StatusDetails *types.StatusDetails
+
+	// The synthetic data configuration for this ML input channel, including
+	// parameters for generating privacy-preserving synthetic data and evaluation
+	// scores for measuring the privacy of the generated data.
+	SyntheticDataConfiguration *types.SyntheticDataConfiguration
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -200,16 +210,13 @@ func (c *Client) addOperationGetCollaborationMLInputChannelMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

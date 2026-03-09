@@ -74,11 +74,35 @@ func TestCheckSnapshot_CreateAlertManagerDefinition(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateAnomalyDetector(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateAnomalyDetector(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateLoggingConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateLoggingConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CreateLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateQueryLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateQueryLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateQueryLoggingConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -134,11 +158,47 @@ func TestCheckSnapshot_DeleteAlertManagerDefinition(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteAnomalyDetector(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteAnomalyDetector(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteLoggingConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteLoggingConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteQueryLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteQueryLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteQueryLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteResourcePolicy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteResourcePolicy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteResourcePolicy")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -170,6 +230,18 @@ func TestCheckSnapshot_DeleteScraper(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DeleteScraperLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteScraperLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteScraperLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DeleteWorkspace(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteWorkspace(context.Background(), nil, func(o *Options) {
@@ -194,11 +266,47 @@ func TestCheckSnapshot_DescribeAlertManagerDefinition(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DescribeAnomalyDetector(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeAnomalyDetector(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_DescribeLoggingConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeLoggingConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeQueryLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeQueryLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeQueryLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeResourcePolicy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeResourcePolicy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeResourcePolicy")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -223,6 +331,18 @@ func TestCheckSnapshot_DescribeScraper(t *testing.T) {
 	_, err := svc.DescribeScraper(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DescribeScraper")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DescribeScraperLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeScraperLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DescribeScraperLoggingConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -259,6 +379,18 @@ func TestCheckSnapshot_GetDefaultScraperConfiguration(t *testing.T) {
 	_, err := svc.GetDefaultScraperConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetDefaultScraperConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListAnomalyDetectors(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAnomalyDetectors(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListAnomalyDetectors")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -326,6 +458,30 @@ func TestCheckSnapshot_PutAlertManagerDefinition(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_PutAnomalyDetector(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutAnomalyDetector(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_PutResourcePolicy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutResourcePolicy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutResourcePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_PutRuleGroupsNamespace(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutRuleGroupsNamespace(context.Background(), nil, func(o *Options) {
@@ -374,11 +530,35 @@ func TestCheckSnapshot_UpdateLoggingConfiguration(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateQueryLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateQueryLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateQueryLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateScraper(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateScraper(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdateScraper")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateScraperLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateScraperLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateScraperLoggingConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -421,11 +601,35 @@ func TestUpdateSnapshot_CreateAlertManagerDefinition(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateAnomalyDetector(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateAnomalyDetector(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateLoggingConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateLoggingConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CreateLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateQueryLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateQueryLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateQueryLoggingConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -481,11 +685,47 @@ func TestUpdateSnapshot_DeleteAlertManagerDefinition(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteAnomalyDetector(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteAnomalyDetector(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteLoggingConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteLoggingConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteQueryLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteQueryLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteQueryLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteResourcePolicy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteResourcePolicy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteResourcePolicy")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -517,6 +757,18 @@ func TestUpdateSnapshot_DeleteScraper(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DeleteScraperLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteScraperLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteScraperLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DeleteWorkspace(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DeleteWorkspace(context.Background(), nil, func(o *Options) {
@@ -541,11 +793,47 @@ func TestUpdateSnapshot_DescribeAlertManagerDefinition(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DescribeAnomalyDetector(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeAnomalyDetector(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_DescribeLoggingConfiguration(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.DescribeLoggingConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeQueryLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeQueryLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeQueryLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeResourcePolicy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeResourcePolicy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeResourcePolicy")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -570,6 +858,18 @@ func TestUpdateSnapshot_DescribeScraper(t *testing.T) {
 	_, err := svc.DescribeScraper(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DescribeScraper")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DescribeScraperLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DescribeScraperLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DescribeScraperLoggingConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -606,6 +906,18 @@ func TestUpdateSnapshot_GetDefaultScraperConfiguration(t *testing.T) {
 	_, err := svc.GetDefaultScraperConfiguration(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetDefaultScraperConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListAnomalyDetectors(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListAnomalyDetectors(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListAnomalyDetectors")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -673,6 +985,30 @@ func TestUpdateSnapshot_PutAlertManagerDefinition(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_PutAnomalyDetector(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutAnomalyDetector(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutAnomalyDetector")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_PutResourcePolicy(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutResourcePolicy(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutResourcePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_PutRuleGroupsNamespace(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PutRuleGroupsNamespace(context.Background(), nil, func(o *Options) {
@@ -721,11 +1057,35 @@ func TestUpdateSnapshot_UpdateLoggingConfiguration(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_UpdateQueryLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateQueryLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateQueryLoggingConfiguration")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_UpdateScraper(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateScraper(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateScraper")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateScraperLoggingConfiguration(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateScraperLoggingConfiguration(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateScraperLoggingConfiguration")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

@@ -383,6 +383,67 @@ func (m *awsAwsjson11_serializeOpDeregisterStreamConsumer) HandleSerialize(ctx c
 	return next.HandleSerialize(ctx, in)
 }
 
+type awsAwsjson11_serializeOpDescribeAccountSettings struct {
+}
+
+func (*awsAwsjson11_serializeOpDescribeAccountSettings) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson11_serializeOpDescribeAccountSettings) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*DescribeAccountSettingsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.1")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("Kinesis_20131202.DescribeAccountSettings")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson11_serializeOpDocumentDescribeAccountSettingsInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
 type awsAwsjson11_serializeOpDescribeLimits struct {
 }
 
@@ -2030,6 +2091,128 @@ func (m *awsAwsjson11_serializeOpUntagResource) HandleSerialize(ctx context.Cont
 	return next.HandleSerialize(ctx, in)
 }
 
+type awsAwsjson11_serializeOpUpdateAccountSettings struct {
+}
+
+func (*awsAwsjson11_serializeOpUpdateAccountSettings) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson11_serializeOpUpdateAccountSettings) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*UpdateAccountSettingsInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.1")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("Kinesis_20131202.UpdateAccountSettings")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson11_serializeOpDocumentUpdateAccountSettingsInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
+type awsAwsjson11_serializeOpUpdateMaxRecordSize struct {
+}
+
+func (*awsAwsjson11_serializeOpUpdateMaxRecordSize) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson11_serializeOpUpdateMaxRecordSize) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*UpdateMaxRecordSizeInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.1")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("Kinesis_20131202.UpdateMaxRecordSize")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson11_serializeOpDocumentUpdateMaxRecordSizeInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+
 type awsAwsjson11_serializeOpUpdateShardCount struct {
 }
 
@@ -2151,6 +2334,67 @@ func (m *awsAwsjson11_serializeOpUpdateStreamMode) HandleSerialize(ctx context.C
 	span.End()
 	return next.HandleSerialize(ctx, in)
 }
+
+type awsAwsjson11_serializeOpUpdateStreamWarmThroughput struct {
+}
+
+func (*awsAwsjson11_serializeOpUpdateStreamWarmThroughput) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsAwsjson11_serializeOpUpdateStreamWarmThroughput) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*UpdateStreamWarmThroughputInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	operationPath := "/"
+	if len(request.Request.URL.Path) == 0 {
+		request.Request.URL.Path = operationPath
+	} else {
+		request.Request.URL.Path = path.Join(request.Request.URL.Path, operationPath)
+		if request.Request.URL.Path != "/" && operationPath[len(operationPath)-1] == '/' {
+			request.Request.URL.Path += "/"
+		}
+	}
+	request.Request.Method = "POST"
+	httpBindingEncoder, err := httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	httpBindingEncoder.SetHeader("Content-Type").String("application/x-amz-json-1.1")
+	httpBindingEncoder.SetHeader("X-Amz-Target").String("Kinesis_20131202.UpdateStreamWarmThroughput")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsAwsjson11_serializeOpDocumentUpdateStreamWarmThroughputInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = httpBindingEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
 func awsAwsjson11_serializeDocumentMetricsNameList(v []types.MetricsName, value smithyjson.Value) error {
 	array := value.Array()
 	defer array.Close()
@@ -2159,6 +2403,18 @@ func awsAwsjson11_serializeDocumentMetricsNameList(v []types.MetricsName, value 
 		av := array.Value()
 		av.String(string(v[i]))
 	}
+	return nil
+}
+
+func awsAwsjson11_serializeDocumentMinimumThroughputBillingCommitmentInput(v *types.MinimumThroughputBillingCommitmentInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if len(v.Status) > 0 {
+		ok := object.Key("Status")
+		ok.String(string(v.Status))
+	}
+
 	return nil
 }
 
@@ -2284,6 +2540,11 @@ func awsAwsjson11_serializeOpDocumentAddTagsToStreamInput(v *AddTagsToStreamInpu
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2302,6 +2563,11 @@ func awsAwsjson11_serializeOpDocumentAddTagsToStreamInput(v *AddTagsToStreamInpu
 func awsAwsjson11_serializeOpDocumentCreateStreamInput(v *CreateStreamInput, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.MaxRecordSizeInKiB != nil {
+		ok := object.Key("MaxRecordSizeInKiB")
+		ok.Integer(*v.MaxRecordSizeInKiB)
+	}
 
 	if v.ShardCount != nil {
 		ok := object.Key("ShardCount")
@@ -2327,6 +2593,11 @@ func awsAwsjson11_serializeOpDocumentCreateStreamInput(v *CreateStreamInput, val
 		}
 	}
 
+	if v.WarmThroughputMiBps != nil {
+		ok := object.Key("WarmThroughputMiBps")
+		ok.Integer(*v.WarmThroughputMiBps)
+	}
+
 	return nil
 }
 
@@ -2342,6 +2613,11 @@ func awsAwsjson11_serializeOpDocumentDecreaseStreamRetentionPeriodInput(v *Decre
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -2361,6 +2637,11 @@ func awsAwsjson11_serializeOpDocumentDeleteResourcePolicyInput(v *DeleteResource
 		ok.String(*v.ResourceARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	return nil
 }
 
@@ -2376,6 +2657,11 @@ func awsAwsjson11_serializeOpDocumentDeleteStreamInput(v *DeleteStreamInput, val
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -2404,6 +2690,18 @@ func awsAwsjson11_serializeOpDocumentDeregisterStreamConsumerInput(v *Deregister
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
 	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeOpDocumentDescribeAccountSettingsInput(v *DescribeAccountSettingsInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
 
 	return nil
 }
@@ -2434,6 +2732,11 @@ func awsAwsjson11_serializeOpDocumentDescribeStreamConsumerInput(v *DescribeStre
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	return nil
 }
 
@@ -2456,6 +2759,11 @@ func awsAwsjson11_serializeOpDocumentDescribeStreamInput(v *DescribeStreamInput,
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2471,6 +2779,11 @@ func awsAwsjson11_serializeOpDocumentDescribeStreamSummaryInput(v *DescribeStrea
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -2497,6 +2810,11 @@ func awsAwsjson11_serializeOpDocumentDisableEnhancedMonitoringInput(v *DisableEn
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2519,6 +2837,11 @@ func awsAwsjson11_serializeOpDocumentEnableEnhancedMonitoringInput(v *EnableEnha
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -2548,6 +2871,11 @@ func awsAwsjson11_serializeOpDocumentGetRecordsInput(v *GetRecordsInput, value s
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	return nil
 }
 
@@ -2558,6 +2886,11 @@ func awsAwsjson11_serializeOpDocumentGetResourcePolicyInput(v *GetResourcePolicy
 	if v.ResourceARN != nil {
 		ok := object.Key("ResourceARN")
 		ok.String(*v.ResourceARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	return nil
@@ -2587,6 +2920,11 @@ func awsAwsjson11_serializeOpDocumentGetShardIteratorInput(v *GetShardIteratorIn
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2612,6 +2950,11 @@ func awsAwsjson11_serializeOpDocumentIncreaseStreamRetentionPeriodInput(v *Incre
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -2658,6 +3001,11 @@ func awsAwsjson11_serializeOpDocumentListShardsInput(v *ListShardsInput, value s
 		ok.Double(smithytime.FormatEpochSeconds(*v.StreamCreationTimestamp))
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2688,6 +3036,11 @@ func awsAwsjson11_serializeOpDocumentListStreamConsumersInput(v *ListStreamConsu
 	if v.StreamCreationTimestamp != nil {
 		ok := object.Key("StreamCreationTimestamp")
 		ok.Double(smithytime.FormatEpochSeconds(*v.StreamCreationTimestamp))
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	return nil
@@ -2724,6 +3077,11 @@ func awsAwsjson11_serializeOpDocumentListTagsForResourceInput(v *ListTagsForReso
 		ok.String(*v.ResourceARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	return nil
 }
 
@@ -2744,6 +3102,11 @@ func awsAwsjson11_serializeOpDocumentListTagsForStreamInput(v *ListTagsForStream
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -2771,6 +3134,11 @@ func awsAwsjson11_serializeOpDocumentMergeShardsInput(v *MergeShardsInput, value
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -2810,6 +3178,11 @@ func awsAwsjson11_serializeOpDocumentPutRecordInput(v *PutRecordInput, value smi
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2834,6 +3207,11 @@ func awsAwsjson11_serializeOpDocumentPutRecordsInput(v *PutRecordsInput, value s
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2856,6 +3234,11 @@ func awsAwsjson11_serializeOpDocumentPutResourcePolicyInput(v *PutResourcePolicy
 		ok.String(*v.ResourceARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	return nil
 }
 
@@ -2871,6 +3254,11 @@ func awsAwsjson11_serializeOpDocumentRegisterStreamConsumerInput(v *RegisterStre
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.Tags != nil {
@@ -2890,6 +3278,11 @@ func awsAwsjson11_serializeOpDocumentRemoveTagsFromStreamInput(v *RemoveTagsFrom
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -2926,6 +3319,11 @@ func awsAwsjson11_serializeOpDocumentSplitShardInput(v *SplitShardInput, value s
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2953,6 +3351,11 @@ func awsAwsjson11_serializeOpDocumentStartStreamEncryptionInput(v *StartStreamEn
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamName != nil {
 		ok := object.Key("StreamName")
 		ok.String(*v.StreamName)
@@ -2978,6 +3381,11 @@ func awsAwsjson11_serializeOpDocumentStopStreamEncryptionInput(v *StopStreamEncr
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -3009,6 +3417,11 @@ func awsAwsjson11_serializeOpDocumentSubscribeToShardInput(v *SubscribeToShardIn
 		}
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	return nil
 }
 
@@ -3019,6 +3432,11 @@ func awsAwsjson11_serializeOpDocumentTagResourceInput(v *TagResourceInput, value
 	if v.ResourceARN != nil {
 		ok := object.Key("ResourceARN")
 		ok.String(*v.ResourceARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.Tags != nil {
@@ -3040,11 +3458,52 @@ func awsAwsjson11_serializeOpDocumentUntagResourceInput(v *UntagResourceInput, v
 		ok.String(*v.ResourceARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.TagKeys != nil {
 		ok := object.Key("TagKeys")
 		if err := awsAwsjson11_serializeDocumentTagKeyList(v.TagKeys, ok); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeOpDocumentUpdateAccountSettingsInput(v *UpdateAccountSettingsInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.MinimumThroughputBillingCommitment != nil {
+		ok := object.Key("MinimumThroughputBillingCommitment")
+		if err := awsAwsjson11_serializeDocumentMinimumThroughputBillingCommitmentInput(v.MinimumThroughputBillingCommitment, ok); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeOpDocumentUpdateMaxRecordSizeInput(v *UpdateMaxRecordSizeInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.MaxRecordSizeInKiB != nil {
+		ok := object.Key("MaxRecordSizeInKiB")
+		ok.Integer(*v.MaxRecordSizeInKiB)
+	}
+
+	if v.StreamARN != nil {
+		ok := object.Key("StreamARN")
+		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	return nil
@@ -3062,6 +3521,11 @@ func awsAwsjson11_serializeOpDocumentUpdateShardCountInput(v *UpdateShardCountIn
 	if v.StreamARN != nil {
 		ok := object.Key("StreamARN")
 		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
 	}
 
 	if v.StreamName != nil {
@@ -3086,11 +3550,48 @@ func awsAwsjson11_serializeOpDocumentUpdateStreamModeInput(v *UpdateStreamModeIn
 		ok.String(*v.StreamARN)
 	}
 
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
 	if v.StreamModeDetails != nil {
 		ok := object.Key("StreamModeDetails")
 		if err := awsAwsjson11_serializeDocumentStreamModeDetails(v.StreamModeDetails, ok); err != nil {
 			return err
 		}
+	}
+
+	if v.WarmThroughputMiBps != nil {
+		ok := object.Key("WarmThroughputMiBps")
+		ok.Integer(*v.WarmThroughputMiBps)
+	}
+
+	return nil
+}
+
+func awsAwsjson11_serializeOpDocumentUpdateStreamWarmThroughputInput(v *UpdateStreamWarmThroughputInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.StreamARN != nil {
+		ok := object.Key("StreamARN")
+		ok.String(*v.StreamARN)
+	}
+
+	if v.StreamId != nil {
+		ok := object.Key("StreamId")
+		ok.String(*v.StreamId)
+	}
+
+	if v.StreamName != nil {
+		ok := object.Key("StreamName")
+		ok.String(*v.StreamName)
+	}
+
+	if v.WarmThroughputMiBps != nil {
+		ok := object.Key("WarmThroughputMiBps")
+		ok.Integer(*v.WarmThroughputMiBps)
 	}
 
 	return nil

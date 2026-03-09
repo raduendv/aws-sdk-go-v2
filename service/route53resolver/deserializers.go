@@ -13,21 +13,11 @@ import (
 	smithyio "github.com/aws/smithy-go/io"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/aws/smithy-go/ptr"
-	smithytime "github.com/aws/smithy-go/time"
 	"github.com/aws/smithy-go/tracing"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"io"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpAssociateFirewallRuleGroup struct {
 }
@@ -11223,6 +11213,15 @@ func awsAwsjson11_deserializeDocumentResolverEndpoint(v **types.ResolverEndpoint
 				sv.ResolverEndpointType = types.ResolverEndpointType(jtv)
 			}
 
+		case "RniEnhancedMetricsEnabled":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected RniEnhancedMetricsEnabled to be of type *bool, got %T instead", value)
+				}
+				sv.RniEnhancedMetricsEnabled = ptr.Bool(jtv)
+			}
+
 		case "SecurityGroupIds":
 			if err := awsAwsjson11_deserializeDocumentSecurityGroupIds(&sv.SecurityGroupIds, value); err != nil {
 				return err
@@ -11244,6 +11243,15 @@ func awsAwsjson11_deserializeDocumentResolverEndpoint(v **types.ResolverEndpoint
 					return fmt.Errorf("expected StatusMessage to be of type string, got %T instead", value)
 				}
 				sv.StatusMessage = ptr.String(jtv)
+			}
+
+		case "TargetNameServerMetricsEnabled":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected TargetNameServerMetricsEnabled to be of type *bool, got %T instead", value)
+				}
+				sv.TargetNameServerMetricsEnabled = ptr.Bool(jtv)
 			}
 
 		default:
@@ -11623,6 +11631,15 @@ func awsAwsjson11_deserializeDocumentResolverRule(v **types.ResolverRule, value 
 					return fmt.Errorf("expected CreatorRequestId to be of type string, got %T instead", value)
 				}
 				sv.CreatorRequestId = ptr.String(jtv)
+			}
+
+		case "DelegationRecord":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected DelegationRecord to be of type string, got %T instead", value)
+				}
+				sv.DelegationRecord = ptr.String(jtv)
 			}
 
 		case "DomainName":

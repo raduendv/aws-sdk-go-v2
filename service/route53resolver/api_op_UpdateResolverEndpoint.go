@@ -40,9 +40,9 @@ type UpdateResolverEndpointInput struct {
 	Name *string
 
 	//  The protocols you want to use for the endpoint. DoH-FIPS is applicable for
-	// inbound endpoints only.
+	// default inbound endpoints only.
 	//
-	// For an inbound endpoint you can apply the protocols as follows:
+	// For a default inbound endpoint you can apply the protocols as follows:
 	//
 	//   - Do53 and DoH in combination.
 	//
@@ -55,6 +55,8 @@ type UpdateResolverEndpointInput struct {
 	//   - DoH-FIPS alone.
 	//
 	//   - None, which is treated as Do53.
+	//
+	// For a delegation inbound endpoint you can use Do53 only.
 	//
 	// For an outbound endpoint you can apply the protocols as follows:
 	//
@@ -79,6 +81,29 @@ type UpdateResolverEndpointInput struct {
 	//
 	// Updating to IPV6 type isn't currently supported.
 	ResolverEndpointType types.ResolverEndpointType
+
+	// Updates whether RNI enhanced metrics are enabled for the Resolver endpoints.
+	// When set to true, one-minute granular metrics are published in CloudWatch for
+	// each RNI associated with this endpoint. When set to false, metrics are not
+	// published.
+	//
+	// Standard CloudWatch pricing and charges are applied for using the Route 53
+	// Resolver endpoint RNI enhanced metrics. For more information, see [Detailed metrics].
+	//
+	// [Detailed metrics]: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-resolver-with-cloudwatch.html
+	RniEnhancedMetricsEnabled *bool
+
+	// Updates whether target name server metrics are enabled for the outbound
+	// Resolver endpoints. When set to true, one-minute granular metrics are published
+	// in CloudWatch for each target name server associated with this endpoint. When
+	// set to false, metrics are not published. This setting is not supported for
+	// inbound Resolver endpoints.
+	//
+	// Standard CloudWatch pricing and charges are applied for using the Route 53
+	// Resolver endpoint target name server metrics. For more information, see [Detailed metrics].
+	//
+	// [Detailed metrics]: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-resolver-with-cloudwatch.html
+	TargetNameServerMetricsEnabled *bool
 
 	//  Specifies the IPv6 address when you update the Resolver endpoint from IPv4 to
 	// dual-stack. If you don't specify an IPv6 address, one will be automatically
@@ -187,16 +212,13 @@ func (c *Client) addOperationUpdateResolverEndpointMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

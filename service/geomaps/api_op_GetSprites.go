@@ -12,6 +12,10 @@ import (
 )
 
 // GetSprites returns the map's sprites.
+//
+// For more information, see [Style iconography with sprites] in the Amazon Location Service Developer Guide.
+//
+// [Style iconography with sprites]: https://docs.aws.amazon.com/location/latest/developerguide/styling-iconography-with-sprites.html
 func (c *Client) GetSprites(ctx context.Context, params *GetSpritesInput, optFns ...func(*Options)) (*GetSpritesOutput, error) {
 	if params == nil {
 		params = &GetSpritesInput{}
@@ -177,16 +181,13 @@ func (c *Client) addOperationGetSpritesMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

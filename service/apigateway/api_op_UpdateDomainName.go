@@ -81,7 +81,7 @@ type UpdateDomainNameOutput struct {
 	// The custom domain name as an API host name, for example, my-api.example.com .
 	DomainName *string
 
-	// The ARN of the domain name. Supported only for private custom domain names.
+	// The ARN of the domain name.
 	DomainNameArn *string
 
 	// The identifier for the domain name resource. Supported only for private custom
@@ -97,6 +97,9 @@ type UpdateDomainNameOutput struct {
 	// An optional text message containing detailed information about status of the
 	// DomainName migration.
 	DomainNameStatusMessage *string
+
+	//  The endpoint access mode of the DomainName.
+	EndpointAccessMode types.EndpointAccessMode
 
 	// The endpoint configuration of this DomainName showing the endpoint types and IP
 	// address types of the domain name.
@@ -143,8 +146,11 @@ type UpdateDomainNameOutput struct {
 	// and Endpoints for API Gateway.
 	RegionalHostedZoneId *string
 
+	// The routing mode for this domain name. The routing mode determines how API
+	// Gateway sends traffic from your custom domain name to your private APIs.
+	RoutingMode types.RoutingMode
+
 	// The Transport Layer Security (TLS) version + cipher suite for this DomainName.
-	// The valid values are TLS_1_0 and TLS_1_2 .
 	SecurityPolicy types.SecurityPolicy
 
 	// The collection of tags. Each tag element is associated with a given resource.
@@ -247,16 +253,13 @@ func (c *Client) addOperationUpdateDomainNameMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

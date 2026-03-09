@@ -113,6 +113,18 @@ type RestoreDBClusterFromSnapshotInput struct {
 	// Valid for: Aurora DB clusters only
 	BacktrackWindow *int64
 
+	// The number of days for which automated backups are retained. Specify a minimum
+	// value of 1 .
+	//
+	// Valid for Cluster Type: Aurora DB clusters and Multi-AZ DB clusters
+	//
+	// Default: Uses existing setting
+	//
+	// Constraints:
+	//
+	//   - Must be a value from 1 to 35.
+	BackupRetentionPeriod *int32
+
 	// Specifies whether to copy all tags from the restored DB cluster to snapshots of
 	// the restored DB cluster. The default is not to copy them.
 	//
@@ -249,9 +261,9 @@ type RestoreDBClusterFromSnapshotInput struct {
 	// version on your DB cluster past the end of standard support for that engine
 	// version. For more information, see the following sections:
 	//
-	//   - Amazon Aurora - [Using Amazon RDS Extended Support]in the Amazon Aurora User Guide
+	//   - Amazon Aurora - [Amazon RDS Extended Support with Amazon Aurora]in the Amazon Aurora User Guide
 	//
-	//   - Amazon RDS - [Using Amazon RDS Extended Support]in the Amazon RDS User Guide
+	//   - Amazon RDS - [Amazon RDS Extended Support with Amazon RDS]in the Amazon RDS User Guide
 	//
 	// Valid for Cluster Type: Aurora DB clusters and Multi-AZ DB clusters
 	//
@@ -260,7 +272,8 @@ type RestoreDBClusterFromSnapshotInput struct {
 	//
 	// Default: open-source-rds-extended-support
 	//
-	// [Using Amazon RDS Extended Support]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
+	// [Amazon RDS Extended Support with Amazon RDS]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
+	// [Amazon RDS Extended Support with Amazon Aurora]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/extended-support.html
 	EngineLifecycleSupport *string
 
 	// The DB engine mode of the DB cluster, either provisioned or serverless .
@@ -439,6 +452,28 @@ type RestoreDBClusterFromSnapshotInput struct {
 	// Valid for: Aurora DB clusters and Multi-AZ DB clusters
 	Port *int32
 
+	// The daily time range during which automated backups are created if automated
+	// backups are enabled, using the BackupRetentionPeriod parameter.
+	//
+	// The default is a 30-minute window selected at random from an 8-hour block of
+	// time for each Amazon Web Services Region. To view the time blocks available, see
+	// [Backup window]in the Amazon Aurora User Guide.
+	//
+	// Valid for Cluster Type: Aurora DB clusters and Multi-AZ DB clusters
+	//
+	// Constraints:
+	//
+	//   - Must be in the format hh24:mi-hh24:mi .
+	//
+	//   - Must be in Universal Coordinated Time (UTC).
+	//
+	//   - Must not conflict with the preferred maintenance window.
+	//
+	//   - Must be at least 30 minutes.
+	//
+	// [Backup window]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Managing.Backups.html#Aurora.Managing.Backups.BackupWindow
+	PreferredBackupWindow *string
+
 	// Specifies whether the DB cluster is publicly accessible.
 	//
 	// When the DB cluster is publicly accessible, its Domain Name System (DNS)
@@ -503,6 +538,13 @@ type RestoreDBClusterFromSnapshotInput struct {
 	//
 	// Valid for: Aurora DB clusters and Multi-AZ DB clusters
 	StorageType *string
+
+	// Tags to assign to resources associated with the DB cluster.
+	//
+	// Valid Values:
+	//
+	//   - cluster-auto-backup - The DB cluster's automated backup.
+	TagSpecifications []types.TagSpecification
 
 	// The tags to be assigned to the restored DB cluster.
 	//
@@ -636,16 +678,13 @@ func (c *Client) addOperationRestoreDBClusterFromSnapshotMiddlewares(stack *midd
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

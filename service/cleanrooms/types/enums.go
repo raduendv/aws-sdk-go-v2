@@ -2,6 +2,29 @@
 
 package types
 
+type AccessBudgetType string
+
+// Enum values for AccessBudgetType
+const (
+	AccessBudgetTypeCalendarDay   AccessBudgetType = "CALENDAR_DAY"
+	AccessBudgetTypeCalendarMonth AccessBudgetType = "CALENDAR_MONTH"
+	AccessBudgetTypeCalendarWeek  AccessBudgetType = "CALENDAR_WEEK"
+	AccessBudgetTypeLifetime      AccessBudgetType = "LIFETIME"
+)
+
+// Values returns all known values for AccessBudgetType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AccessBudgetType) Values() []AccessBudgetType {
+	return []AccessBudgetType{
+		"CALENDAR_DAY",
+		"CALENDAR_MONTH",
+		"CALENDAR_WEEK",
+		"LIFETIME",
+	}
+}
+
 type AccessDeniedExceptionReason string
 
 // Enum values for AccessDeniedExceptionReason
@@ -223,6 +246,157 @@ func (AnalyticsEngine) Values() []AnalyticsEngine {
 	}
 }
 
+type ApprovalStatus string
+
+// Enum values for ApprovalStatus
+const (
+	ApprovalStatusApproved ApprovalStatus = "APPROVED"
+	ApprovalStatusDenied   ApprovalStatus = "DENIED"
+	ApprovalStatusPending  ApprovalStatus = "PENDING"
+)
+
+// Values returns all known values for ApprovalStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ApprovalStatus) Values() []ApprovalStatus {
+	return []ApprovalStatus{
+		"APPROVED",
+		"DENIED",
+		"PENDING",
+	}
+}
+
+type AutoApprovedChangeType string
+
+// Enum values for AutoApprovedChangeType
+const (
+	AutoApprovedChangeTypeAddMember                   AutoApprovedChangeType = "ADD_MEMBER"
+	AutoApprovedChangeTypeGrantReceiveResultsAbility  AutoApprovedChangeType = "GRANT_RECEIVE_RESULTS_ABILITY"
+	AutoApprovedChangeTypeRevokeReceiveResultsAbility AutoApprovedChangeType = "REVOKE_RECEIVE_RESULTS_ABILITY"
+)
+
+// Values returns all known values for AutoApprovedChangeType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutoApprovedChangeType) Values() []AutoApprovedChangeType {
+	return []AutoApprovedChangeType{
+		"ADD_MEMBER",
+		"GRANT_RECEIVE_RESULTS_ABILITY",
+		"REVOKE_RECEIVE_RESULTS_ABILITY",
+	}
+}
+
+type AutoRefreshMode string
+
+// Enum values for AutoRefreshMode
+const (
+	AutoRefreshModeEnabled  AutoRefreshMode = "ENABLED"
+	AutoRefreshModeDisabled AutoRefreshMode = "DISABLED"
+)
+
+// Values returns all known values for AutoRefreshMode. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (AutoRefreshMode) Values() []AutoRefreshMode {
+	return []AutoRefreshMode{
+		"ENABLED",
+		"DISABLED",
+	}
+}
+
+type ChangeRequestAction string
+
+// Enum values for ChangeRequestAction
+const (
+	ChangeRequestActionApprove ChangeRequestAction = "APPROVE"
+	ChangeRequestActionDeny    ChangeRequestAction = "DENY"
+	ChangeRequestActionCancel  ChangeRequestAction = "CANCEL"
+	ChangeRequestActionCommit  ChangeRequestAction = "COMMIT"
+)
+
+// Values returns all known values for ChangeRequestAction. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ChangeRequestAction) Values() []ChangeRequestAction {
+	return []ChangeRequestAction{
+		"APPROVE",
+		"DENY",
+		"CANCEL",
+		"COMMIT",
+	}
+}
+
+type ChangeRequestStatus string
+
+// Enum values for ChangeRequestStatus
+const (
+	ChangeRequestStatusPending   ChangeRequestStatus = "PENDING"
+	ChangeRequestStatusApproved  ChangeRequestStatus = "APPROVED"
+	ChangeRequestStatusCancelled ChangeRequestStatus = "CANCELLED"
+	ChangeRequestStatusDenied    ChangeRequestStatus = "DENIED"
+	ChangeRequestStatusCommitted ChangeRequestStatus = "COMMITTED"
+)
+
+// Values returns all known values for ChangeRequestStatus. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ChangeRequestStatus) Values() []ChangeRequestStatus {
+	return []ChangeRequestStatus{
+		"PENDING",
+		"APPROVED",
+		"CANCELLED",
+		"DENIED",
+		"COMMITTED",
+	}
+}
+
+type ChangeSpecificationType string
+
+// Enum values for ChangeSpecificationType
+const (
+	ChangeSpecificationTypeMember        ChangeSpecificationType = "MEMBER"
+	ChangeSpecificationTypeCollaboration ChangeSpecificationType = "COLLABORATION"
+)
+
+// Values returns all known values for ChangeSpecificationType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ChangeSpecificationType) Values() []ChangeSpecificationType {
+	return []ChangeSpecificationType{
+		"MEMBER",
+		"COLLABORATION",
+	}
+}
+
+type ChangeType string
+
+// Enum values for ChangeType
+const (
+	ChangeTypeAddMember                   ChangeType = "ADD_MEMBER"
+	ChangeTypeGrantReceiveResultsAbility  ChangeType = "GRANT_RECEIVE_RESULTS_ABILITY"
+	ChangeTypeRevokeReceiveResultsAbility ChangeType = "REVOKE_RECEIVE_RESULTS_ABILITY"
+	ChangeTypeEditAutoApprovedChangeTypes ChangeType = "EDIT_AUTO_APPROVED_CHANGE_TYPES"
+)
+
+// Values returns all known values for ChangeType. Note that this can be expanded
+// in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ChangeType) Values() []ChangeType {
+	return []ChangeType{
+		"ADD_MEMBER",
+		"GRANT_RECEIVE_RESULTS_ABILITY",
+		"REVOKE_RECEIVE_RESULTS_ABILITY",
+		"EDIT_AUTO_APPROVED_CHANGE_TYPES",
+	}
+}
+
 type CollaborationJobLogStatus string
 
 // Enum values for CollaborationJobLogStatus
@@ -258,6 +432,87 @@ func (CollaborationQueryLogStatus) Values() []CollaborationQueryLogStatus {
 	return []CollaborationQueryLogStatus{
 		"ENABLED",
 		"DISABLED",
+	}
+}
+
+type CommercialRegion string
+
+// Enum values for CommercialRegion
+const (
+	CommercialRegionUsWest1      CommercialRegion = "us-west-1"
+	CommercialRegionUsWest2      CommercialRegion = "us-west-2"
+	CommercialRegionUsEast1      CommercialRegion = "us-east-1"
+	CommercialRegionUsEast2      CommercialRegion = "us-east-2"
+	CommercialRegionAfSouth1     CommercialRegion = "af-south-1"
+	CommercialRegionApEast1      CommercialRegion = "ap-east-1"
+	CommercialRegionApSouth2     CommercialRegion = "ap-south-2"
+	CommercialRegionApSoutheast1 CommercialRegion = "ap-southeast-1"
+	CommercialRegionApSoutheast2 CommercialRegion = "ap-southeast-2"
+	CommercialRegionApSoutheast3 CommercialRegion = "ap-southeast-3"
+	CommercialRegionApSoutheast5 CommercialRegion = "ap-southeast-5"
+	CommercialRegionApSoutheast4 CommercialRegion = "ap-southeast-4"
+	CommercialRegionApSoutheast7 CommercialRegion = "ap-southeast-7"
+	CommercialRegionApSouth1     CommercialRegion = "ap-south-1"
+	CommercialRegionApNortheast3 CommercialRegion = "ap-northeast-3"
+	CommercialRegionApNortheast1 CommercialRegion = "ap-northeast-1"
+	CommercialRegionApNortheast2 CommercialRegion = "ap-northeast-2"
+	CommercialRegionCaCentral1   CommercialRegion = "ca-central-1"
+	CommercialRegionCaWest1      CommercialRegion = "ca-west-1"
+	CommercialRegionEuSouth1     CommercialRegion = "eu-south-1"
+	CommercialRegionEuWest3      CommercialRegion = "eu-west-3"
+	CommercialRegionEuSouth2     CommercialRegion = "eu-south-2"
+	CommercialRegionEuCentral2   CommercialRegion = "eu-central-2"
+	CommercialRegionEuCentral1   CommercialRegion = "eu-central-1"
+	CommercialRegionEuNorth1     CommercialRegion = "eu-north-1"
+	CommercialRegionEuWest1      CommercialRegion = "eu-west-1"
+	CommercialRegionEuWest2      CommercialRegion = "eu-west-2"
+	CommercialRegionMeSouth1     CommercialRegion = "me-south-1"
+	CommercialRegionMeCentral1   CommercialRegion = "me-central-1"
+	CommercialRegionIlCentral1   CommercialRegion = "il-central-1"
+	CommercialRegionSaEast1      CommercialRegion = "sa-east-1"
+	CommercialRegionMxCentral1   CommercialRegion = "mx-central-1"
+	CommercialRegionApEast2      CommercialRegion = "ap-east-2"
+)
+
+// Values returns all known values for CommercialRegion. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (CommercialRegion) Values() []CommercialRegion {
+	return []CommercialRegion{
+		"us-west-1",
+		"us-west-2",
+		"us-east-1",
+		"us-east-2",
+		"af-south-1",
+		"ap-east-1",
+		"ap-south-2",
+		"ap-southeast-1",
+		"ap-southeast-2",
+		"ap-southeast-3",
+		"ap-southeast-5",
+		"ap-southeast-4",
+		"ap-southeast-7",
+		"ap-south-1",
+		"ap-northeast-3",
+		"ap-northeast-1",
+		"ap-northeast-2",
+		"ca-central-1",
+		"ca-west-1",
+		"eu-south-1",
+		"eu-west-3",
+		"eu-south-2",
+		"eu-central-2",
+		"eu-central-1",
+		"eu-north-1",
+		"eu-west-1",
+		"eu-west-2",
+		"me-south-1",
+		"me-central-1",
+		"il-central-1",
+		"sa-east-1",
+		"mx-central-1",
+		"ap-east-2",
 	}
 }
 
@@ -371,6 +626,23 @@ func (DifferentialPrivacyAggregationType) Values() []DifferentialPrivacyAggregat
 	}
 }
 
+type ErrorMessageType string
+
+// Enum values for ErrorMessageType
+const (
+	ErrorMessageTypeDetailed ErrorMessageType = "DETAILED"
+)
+
+// Values returns all known values for ErrorMessageType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ErrorMessageType) Values() []ErrorMessageType {
+	return []ErrorMessageType{
+		"DETAILED",
+	}
+}
+
 type FilterableMemberStatus string
 
 // Enum values for FilterableMemberStatus
@@ -406,6 +678,27 @@ func (IdNamespaceType) Values() []IdNamespaceType {
 	return []IdNamespaceType{
 		"SOURCE",
 		"TARGET",
+	}
+}
+
+type JobType string
+
+// Enum values for JobType
+const (
+	JobTypeBatch       JobType = "BATCH"
+	JobTypeIncremental JobType = "INCREMENTAL"
+	JobTypeDeleteOnly  JobType = "DELETE_ONLY"
+)
+
+// Values returns all known values for JobType. Note that this can be expanded in
+// the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (JobType) Values() []JobType {
+	return []JobType{
+		"BATCH",
+		"INCREMENTAL",
+		"DELETE_ONLY",
 	}
 }
 
@@ -644,6 +937,7 @@ type PrivacyBudgetType string
 // Enum values for PrivacyBudgetType
 const (
 	PrivacyBudgetTypeDifferentialPrivacy PrivacyBudgetType = "DIFFERENTIAL_PRIVACY"
+	PrivacyBudgetTypeAccessBudget        PrivacyBudgetType = "ACCESS_BUDGET"
 )
 
 // Values returns all known values for PrivacyBudgetType. Note that this can be
@@ -653,6 +947,7 @@ const (
 func (PrivacyBudgetType) Values() []PrivacyBudgetType {
 	return []PrivacyBudgetType{
 		"DIFFERENTIAL_PRIVACY",
+		"ACCESS_BUDGET",
 	}
 }
 
@@ -714,6 +1009,26 @@ const (
 func (ProtectedJobType) Values() []ProtectedJobType {
 	return []ProtectedJobType{
 		"PYSPARK",
+	}
+}
+
+type ProtectedJobWorkerComputeType string
+
+// Enum values for ProtectedJobWorkerComputeType
+const (
+	ProtectedJobWorkerComputeTypeCr1x ProtectedJobWorkerComputeType = "CR.1X"
+	ProtectedJobWorkerComputeTypeCr4x ProtectedJobWorkerComputeType = "CR.4X"
+)
+
+// Values returns all known values for ProtectedJobWorkerComputeType. Note that
+// this can be expanded in the future, and so it is only as up to date as the
+// client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (ProtectedJobWorkerComputeType) Values() []ProtectedJobWorkerComputeType {
+	return []ProtectedJobWorkerComputeType{
+		"CR.1X",
+		"CR.4X",
 	}
 }
 
@@ -976,6 +1291,106 @@ func (SelectedAnalysisMethod) Values() []SelectedAnalysisMethod {
 	return []SelectedAnalysisMethod{
 		"DIRECT_QUERY",
 		"DIRECT_JOB",
+	}
+}
+
+type SupportedS3Region string
+
+// Enum values for SupportedS3Region
+const (
+	SupportedS3RegionUsWest1      SupportedS3Region = "us-west-1"
+	SupportedS3RegionUsWest2      SupportedS3Region = "us-west-2"
+	SupportedS3RegionUsEast1      SupportedS3Region = "us-east-1"
+	SupportedS3RegionUsEast2      SupportedS3Region = "us-east-2"
+	SupportedS3RegionAfSouth1     SupportedS3Region = "af-south-1"
+	SupportedS3RegionApEast1      SupportedS3Region = "ap-east-1"
+	SupportedS3RegionApEast2      SupportedS3Region = "ap-east-2"
+	SupportedS3RegionApSouth2     SupportedS3Region = "ap-south-2"
+	SupportedS3RegionApSoutheast1 SupportedS3Region = "ap-southeast-1"
+	SupportedS3RegionApSoutheast2 SupportedS3Region = "ap-southeast-2"
+	SupportedS3RegionApSoutheast3 SupportedS3Region = "ap-southeast-3"
+	SupportedS3RegionApSoutheast5 SupportedS3Region = "ap-southeast-5"
+	SupportedS3RegionApSoutheast4 SupportedS3Region = "ap-southeast-4"
+	SupportedS3RegionApSoutheast7 SupportedS3Region = "ap-southeast-7"
+	SupportedS3RegionApSouth1     SupportedS3Region = "ap-south-1"
+	SupportedS3RegionApNortheast3 SupportedS3Region = "ap-northeast-3"
+	SupportedS3RegionApNortheast1 SupportedS3Region = "ap-northeast-1"
+	SupportedS3RegionApNortheast2 SupportedS3Region = "ap-northeast-2"
+	SupportedS3RegionCaCentral1   SupportedS3Region = "ca-central-1"
+	SupportedS3RegionCaWest1      SupportedS3Region = "ca-west-1"
+	SupportedS3RegionEuSouth1     SupportedS3Region = "eu-south-1"
+	SupportedS3RegionEuWest3      SupportedS3Region = "eu-west-3"
+	SupportedS3RegionEuSouth2     SupportedS3Region = "eu-south-2"
+	SupportedS3RegionEuCentral2   SupportedS3Region = "eu-central-2"
+	SupportedS3RegionEuCentral1   SupportedS3Region = "eu-central-1"
+	SupportedS3RegionEuNorth1     SupportedS3Region = "eu-north-1"
+	SupportedS3RegionEuWest1      SupportedS3Region = "eu-west-1"
+	SupportedS3RegionEuWest2      SupportedS3Region = "eu-west-2"
+	SupportedS3RegionMeSouth1     SupportedS3Region = "me-south-1"
+	SupportedS3RegionMeCentral1   SupportedS3Region = "me-central-1"
+	SupportedS3RegionIlCentral1   SupportedS3Region = "il-central-1"
+	SupportedS3RegionSaEast1      SupportedS3Region = "sa-east-1"
+	SupportedS3RegionMxCentral1   SupportedS3Region = "mx-central-1"
+)
+
+// Values returns all known values for SupportedS3Region. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SupportedS3Region) Values() []SupportedS3Region {
+	return []SupportedS3Region{
+		"us-west-1",
+		"us-west-2",
+		"us-east-1",
+		"us-east-2",
+		"af-south-1",
+		"ap-east-1",
+		"ap-east-2",
+		"ap-south-2",
+		"ap-southeast-1",
+		"ap-southeast-2",
+		"ap-southeast-3",
+		"ap-southeast-5",
+		"ap-southeast-4",
+		"ap-southeast-7",
+		"ap-south-1",
+		"ap-northeast-3",
+		"ap-northeast-1",
+		"ap-northeast-2",
+		"ca-central-1",
+		"ca-west-1",
+		"eu-south-1",
+		"eu-west-3",
+		"eu-south-2",
+		"eu-central-2",
+		"eu-central-1",
+		"eu-north-1",
+		"eu-west-1",
+		"eu-west-2",
+		"me-south-1",
+		"me-central-1",
+		"il-central-1",
+		"sa-east-1",
+		"mx-central-1",
+	}
+}
+
+type SyntheticDataColumnType string
+
+// Enum values for SyntheticDataColumnType
+const (
+	SyntheticDataColumnTypeCategorical SyntheticDataColumnType = "CATEGORICAL"
+	SyntheticDataColumnTypeNumerical   SyntheticDataColumnType = "NUMERICAL"
+)
+
+// Values returns all known values for SyntheticDataColumnType. Note that this can
+// be expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (SyntheticDataColumnType) Values() []SyntheticDataColumnType {
+	return []SyntheticDataColumnType{
+		"CATEGORICAL",
+		"NUMERICAL",
 	}
 }
 

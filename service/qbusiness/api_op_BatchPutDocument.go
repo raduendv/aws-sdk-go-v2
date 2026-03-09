@@ -49,6 +49,10 @@ type BatchPutDocumentInput struct {
 
 	// One or more documents to add to the index.
 	//
+	// Ensure that the name of your document doesn't contain any confidential
+	// information. Amazon Q Business returns document names in chat responses and
+	// citations when relevant.
+	//
 	// This member is required.
 	Documents []types.Document
 
@@ -168,16 +172,13 @@ func (c *Client) addOperationBatchPutDocumentMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

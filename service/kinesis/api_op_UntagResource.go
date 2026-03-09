@@ -30,15 +30,20 @@ func (c *Client) UntagResource(ctx context.Context, params *UntagResourceInput, 
 
 type UntagResourceInput struct {
 
+	// The Amazon Resource Name (ARN) of the Kinesis resource from which to remove
+	// tags.
+	//
+	// This member is required.
+	ResourceARN *string
+
 	// A list of tag key-value pairs. Existing tags of the resource whose keys are
 	// members of this list will be removed from the Kinesis resource.
 	//
 	// This member is required.
 	TagKeys []string
 
-	// The Amazon Resource Name (ARN) of the Kinesis resource from which to remove
-	// tags.
-	ResourceARN *string
+	// Not Implemented. Reserved for future use.
+	StreamId *string
 
 	noSmithyDocumentSerde
 }
@@ -46,6 +51,7 @@ type UntagResourceInput struct {
 func (in *UntagResourceInput) bindEndpointParams(p *EndpointParameters) {
 
 	p.ResourceARN = in.ResourceARN
+	p.StreamId = in.StreamId
 	p.OperationType = ptr.String("control")
 }
 
@@ -144,16 +150,13 @@ func (c *Client) addOperationUntagResourceMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

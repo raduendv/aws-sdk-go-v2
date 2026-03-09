@@ -11,9 +11,20 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// The Suggest operation finds addresses or place candidates based on incomplete
-// or misspelled queries. You then select the best query to submit based on the
-// returned results.
+// Suggest provides intelligent predictions or recommendations based on the user's
+// input or context, such as relevant places, points of interest, query terms or
+// search category. It is designed to help users find places or point of interests
+// candidates or identify a follow on query based on incomplete or misspelled
+// queries. It returns a list of possible matches or refinements that can be used
+// to formulate a more accurate query. Users can select the most appropriate
+// suggestion and use it for further searching. The API provides options for
+// filtering results by location and other attributes, and allows for additional
+// features like phonemes and timezones. The response includes refined query terms
+// and detailed place information.
+//
+// For more information, see [Suggest] in the Amazon Location Service Developer Guide.
+//
+// [Suggest]: https://docs.aws.amazon.com/location/latest/developerguide/suggest.html
 func (c *Client) Suggest(ctx context.Context, params *SuggestInput, optFns ...func(*Options)) (*SuggestOutput, error) {
 	if params == nil {
 		params = &SuggestInput{}
@@ -34,6 +45,8 @@ type SuggestInput struct {
 	// The free-form text query to match addresses against. This is usually a
 	// partially typed address from an end user in an address box or form.
 	//
+	// The fields QueryText and QueryID are mutually exclusive.
+	//
 	// This member is required.
 	QueryText *string
 
@@ -43,14 +56,14 @@ type SuggestInput struct {
 
 	// The position, in longitude and latitude, that the results should be close to.
 	// Typically, place results returned are ranked higher the closer they are to this
-	// position. Stored in [lng, lat] and in the WSG84 format.
+	// position. Stored in [lng, lat] and in the WGS 84 format.
 	//
 	// The fields BiasPosition , FilterBoundingBox , and FilterCircle are mutually
 	// exclusive.
 	BiasPosition []float64
 
 	// A structure which contains a set of inclusion/exclusion properties that results
-	// must posses in order to be returned as a result.
+	// must possess in order to be returned as a result.
 	Filter *types.SuggestFilter
 
 	// Indicates if the results will be stored. Defaults to SingleUse , if left empty.
@@ -71,6 +84,8 @@ type SuggestInput struct {
 	MaxQueryRefinements *int32
 
 	// An optional limit for the number of results returned in a single call.
+	//
+	// Default value: 20
 	MaxResults *int32
 
 	// The alpha-2 or alpha-3 character code for the political view of a country. The
@@ -85,7 +100,7 @@ type SuggestOutput struct {
 
 	// The pricing bucket for which the query is charged at.
 	//
-	// For more inforamtion on pricing, please visit [Amazon Location Service Pricing].
+	// For more information on pricing, please visit [Amazon Location Service Pricing].
 	//
 	// [Amazon Location Service Pricing]: https://aws.amazon.com/location/pricing/
 	//
@@ -192,16 +207,13 @@ func (c *Client) addOperationSuggestMiddlewares(stack *middleware.Stack, options
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

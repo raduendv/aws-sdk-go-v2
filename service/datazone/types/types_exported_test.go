@@ -7,6 +7,28 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/datazone/types"
 )
 
+func ExampleAccountSource_outputUsage() {
+	var union types.AccountSource
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.AccountSourceMemberAccounts:
+		_ = v.Value // Value is []types.AccountInfo
+
+	case *types.AccountSourceMemberCustomAccountPoolHandler:
+		_ = v.Value // Value is types.CustomAccountPoolHandler
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.CustomAccountPoolHandler
+var _ []types.AccountInfo
+
 func ExampleActionParameters_outputUsage() {
 	var union types.ActionParameters
 	// type switches can be used to check the union value
@@ -73,6 +95,9 @@ func ExampleConnectionPropertiesInput_outputUsage() {
 	var union types.ConnectionPropertiesInput
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.ConnectionPropertiesInputMemberAmazonQProperties:
+		_ = v.Value // Value is types.AmazonQPropertiesInput
+
 	case *types.ConnectionPropertiesInputMemberAthenaProperties:
 		_ = v.Value // Value is types.AthenaPropertiesInput
 
@@ -85,8 +110,14 @@ func ExampleConnectionPropertiesInput_outputUsage() {
 	case *types.ConnectionPropertiesInputMemberIamProperties:
 		_ = v.Value // Value is types.IamPropertiesInput
 
+	case *types.ConnectionPropertiesInputMemberMlflowProperties:
+		_ = v.Value // Value is types.MlflowPropertiesInput
+
 	case *types.ConnectionPropertiesInputMemberRedshiftProperties:
 		_ = v.Value // Value is types.RedshiftPropertiesInput
+
+	case *types.ConnectionPropertiesInputMemberS3Properties:
+		_ = v.Value // Value is types.S3PropertiesInput
 
 	case *types.ConnectionPropertiesInputMemberSparkEmrProperties:
 		_ = v.Value // Value is types.SparkEmrPropertiesInput
@@ -104,17 +135,23 @@ func ExampleConnectionPropertiesInput_outputUsage() {
 }
 
 var _ *types.SparkEmrPropertiesInput
+var _ *types.AmazonQPropertiesInput
 var _ *types.GluePropertiesInput
+var _ *types.S3PropertiesInput
 var _ *types.AthenaPropertiesInput
 var _ *types.IamPropertiesInput
 var _ *types.SparkGluePropertiesInput
 var _ *types.HyperPodPropertiesInput
 var _ *types.RedshiftPropertiesInput
+var _ *types.MlflowPropertiesInput
 
 func ExampleConnectionPropertiesOutput_outputUsage() {
 	var union types.ConnectionPropertiesOutput
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.ConnectionPropertiesOutputMemberAmazonQProperties:
+		_ = v.Value // Value is types.AmazonQPropertiesOutput
+
 	case *types.ConnectionPropertiesOutputMemberAthenaProperties:
 		_ = v.Value // Value is types.AthenaPropertiesOutput
 
@@ -127,8 +164,14 @@ func ExampleConnectionPropertiesOutput_outputUsage() {
 	case *types.ConnectionPropertiesOutputMemberIamProperties:
 		_ = v.Value // Value is types.IamPropertiesOutput
 
+	case *types.ConnectionPropertiesOutputMemberMlflowProperties:
+		_ = v.Value // Value is types.MlflowPropertiesOutput
+
 	case *types.ConnectionPropertiesOutputMemberRedshiftProperties:
 		_ = v.Value // Value is types.RedshiftPropertiesOutput
+
+	case *types.ConnectionPropertiesOutputMemberS3Properties:
+		_ = v.Value // Value is types.S3PropertiesOutput
 
 	case *types.ConnectionPropertiesOutputMemberSparkEmrProperties:
 		_ = v.Value // Value is types.SparkEmrPropertiesOutput
@@ -145,10 +188,13 @@ func ExampleConnectionPropertiesOutput_outputUsage() {
 	}
 }
 
+var _ *types.MlflowPropertiesOutput
+var _ *types.S3PropertiesOutput
 var _ *types.AthenaPropertiesOutput
 var _ *types.SparkGluePropertiesOutput
 var _ *types.IamPropertiesOutput
 var _ *types.RedshiftPropertiesOutput
+var _ *types.AmazonQPropertiesOutput
 var _ *types.HyperPodPropertiesOutput
 var _ *types.GluePropertiesOutput
 var _ *types.SparkEmrPropertiesOutput
@@ -157,6 +203,9 @@ func ExampleConnectionPropertiesPatch_outputUsage() {
 	var union types.ConnectionPropertiesPatch
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.ConnectionPropertiesPatchMemberAmazonQProperties:
+		_ = v.Value // Value is types.AmazonQPropertiesPatch
+
 	case *types.ConnectionPropertiesPatchMemberAthenaProperties:
 		_ = v.Value // Value is types.AthenaPropertiesPatch
 
@@ -166,8 +215,14 @@ func ExampleConnectionPropertiesPatch_outputUsage() {
 	case *types.ConnectionPropertiesPatchMemberIamProperties:
 		_ = v.Value // Value is types.IamPropertiesPatch
 
+	case *types.ConnectionPropertiesPatchMemberMlflowProperties:
+		_ = v.Value // Value is types.MlflowPropertiesPatch
+
 	case *types.ConnectionPropertiesPatchMemberRedshiftProperties:
 		_ = v.Value // Value is types.RedshiftPropertiesPatch
+
+	case *types.ConnectionPropertiesPatchMemberS3Properties:
+		_ = v.Value // Value is types.S3PropertiesPatch
 
 	case *types.ConnectionPropertiesPatchMemberSparkEmrProperties:
 		_ = v.Value // Value is types.SparkEmrPropertiesPatch
@@ -181,11 +236,14 @@ func ExampleConnectionPropertiesPatch_outputUsage() {
 	}
 }
 
+var _ *types.AmazonQPropertiesPatch
 var _ *types.SparkEmrPropertiesPatch
+var _ *types.MlflowPropertiesPatch
 var _ *types.IamPropertiesPatch
 var _ *types.RedshiftPropertiesPatch
 var _ *types.AthenaPropertiesPatch
 var _ *types.GluePropertiesPatch
+var _ *types.S3PropertiesPatch
 
 func ExampleDataSourceConfigurationInput_outputUsage() {
 	var union types.DataSourceConfigurationInput
@@ -416,6 +474,24 @@ func ExampleListingItem_outputUsage() {
 var _ *types.AssetListing
 var _ *types.DataProductListing
 
+func ExampleMatchRationaleItem_outputUsage() {
+	var union types.MatchRationaleItem
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.MatchRationaleItemMemberTextMatches:
+		_ = v.Value // Value is []types.TextMatchItem
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ []types.TextMatchItem
+
 func ExampleMember_outputUsage() {
 	var union types.Member
 	// type switches can be used to check the union value
@@ -521,6 +597,24 @@ func ExampleOwnerPropertiesOutput_outputUsage() {
 var _ *types.OwnerGroupPropertiesOutput
 var _ *types.OwnerUserPropertiesOutput
 
+func ExamplePermissions_outputUsage() {
+	var union types.Permissions
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.PermissionsMemberS3:
+		_ = v.Value // Value is []types.S3Permission
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ []types.S3Permission
+
 func ExamplePolicyGrantDetail_outputUsage() {
 	var union types.PolicyGrantDetail
 	// type switches can be used to check the union value
@@ -564,6 +658,9 @@ func ExamplePolicyGrantDetail_outputUsage() {
 	case *types.PolicyGrantDetailMemberOverrideProjectOwners:
 		_ = v.Value // Value is types.OverrideProjectOwnersPolicyGrantDetail
 
+	case *types.PolicyGrantDetailMemberUseAssetType:
+		_ = v.Value // Value is types.UseAssetTypePolicyGrantDetail
+
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
 
@@ -574,6 +671,7 @@ func ExamplePolicyGrantDetail_outputUsage() {
 }
 
 var _ *types.CreateProjectFromProjectProfilePolicyGrantDetail
+var _ *types.UseAssetTypePolicyGrantDetail
 var _ *types.CreateDomainUnitPolicyGrantDetail
 var _ *types.OverrideProjectOwnersPolicyGrantDetail
 var _ *types.CreateEnvironmentProfilePolicyGrantDetail
@@ -847,6 +945,9 @@ func ExampleRuleDetail_outputUsage() {
 	var union types.RuleDetail
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.RuleDetailMemberGlossaryTermEnforcementDetail:
+		_ = v.Value // Value is types.GlossaryTermEnforcementDetail
+
 	case *types.RuleDetailMemberMetadataFormEnforcementDetail:
 		_ = v.Value // Value is types.MetadataFormEnforcementDetail
 
@@ -860,6 +961,7 @@ func ExampleRuleDetail_outputUsage() {
 }
 
 var _ *types.MetadataFormEnforcementDetail
+var _ *types.GlossaryTermEnforcementDetail
 
 func ExampleRuleTarget_outputUsage() {
 	var union types.RuleTarget
@@ -1005,8 +1107,17 @@ func ExampleSubscribedPrincipal_outputUsage() {
 	var union types.SubscribedPrincipal
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.SubscribedPrincipalMemberGroup:
+		_ = v.Value // Value is types.SubscribedGroup
+
+	case *types.SubscribedPrincipalMemberIam:
+		_ = v.Value // Value is types.SubscribedIamPrincipal
+
 	case *types.SubscribedPrincipalMemberProject:
 		_ = v.Value // Value is types.SubscribedProject
+
+	case *types.SubscribedPrincipalMemberUser:
+		_ = v.Value // Value is types.SubscribedUser
 
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
@@ -1018,13 +1129,25 @@ func ExampleSubscribedPrincipal_outputUsage() {
 }
 
 var _ *types.SubscribedProject
+var _ *types.SubscribedGroup
+var _ *types.SubscribedUser
+var _ *types.SubscribedIamPrincipal
 
 func ExampleSubscribedPrincipalInput_outputUsage() {
 	var union types.SubscribedPrincipalInput
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.SubscribedPrincipalInputMemberGroup:
+		_ = v.Value // Value is types.SubscribedGroupInput
+
+	case *types.SubscribedPrincipalInputMemberIam:
+		_ = v.Value // Value is types.SubscribedIamPrincipalInput
+
 	case *types.SubscribedPrincipalInputMemberProject:
 		_ = v.Value // Value is types.SubscribedProjectInput
+
+	case *types.SubscribedPrincipalInputMemberUser:
+		_ = v.Value // Value is types.SubscribedUserInput
 
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
@@ -1036,6 +1159,9 @@ func ExampleSubscribedPrincipalInput_outputUsage() {
 }
 
 var _ *types.SubscribedProjectInput
+var _ *types.SubscribedUserInput
+var _ *types.SubscribedIamPrincipalInput
+var _ *types.SubscribedGroupInput
 
 func ExampleUserPolicyGrantPrincipal_outputUsage() {
 	var union types.UserPolicyGrantPrincipal

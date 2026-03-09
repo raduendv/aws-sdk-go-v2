@@ -14,8 +14,8 @@ import (
 // Adds or overwrites only the specified tags for the specified resource. When you
 // specify an existing tag key, the value is overwritten with the new value. Each
 // tag consists of a key and an optional value. Tag keys must be unique per
-// resource. For more information about tags, see [Tags]in the AWS End User Messaging
-// SMS User Guide.
+// resource. For more information about tags, see [Tags]in the End User Messaging SMS
+// User Guide.
 //
 // [Tags]: https://docs.aws.amazon.com/sms-voice/latest/userguide/phone-numbers-tags.html
 func (c *Client) TagResource(ctx context.Context, params *TagResourceInput, optFns ...func(*Options)) (*TagResourceOutput, error) {
@@ -143,16 +143,13 @@ func (c *Client) addOperationTagResourceMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

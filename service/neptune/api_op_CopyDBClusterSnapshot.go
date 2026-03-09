@@ -36,7 +36,8 @@ func (c *Client) CopyDBClusterSnapshot(ctx context.Context, params *CopyDBCluste
 type CopyDBClusterSnapshotInput struct {
 
 	// The identifier of the DB cluster snapshot to copy. This parameter is not
-	// case-sensitive.
+	// case-sensitive. If the source DB cluster snapshot is in a different region or
+	// owned by another account, specify the snapshot ARN.
 	//
 	// Constraints:
 	//
@@ -211,16 +212,13 @@ func (c *Client) addOperationCopyDBClusterSnapshotMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

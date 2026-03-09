@@ -80,6 +80,12 @@ type GetImageSetOutput struct {
 	// The image set workflow status.
 	ImageSetWorkflowStatus types.ImageSetWorkflowStatus
 
+	// The flag to determine whether the image set is primary or not.
+	IsPrimary *bool
+
+	// When the image set was last accessed.
+	LastAccessedAt *time.Time
+
 	// The error message thrown if an image set action fails.
 	Message *string
 
@@ -87,6 +93,9 @@ type GetImageSetOutput struct {
 	// specific image set version. If an image set was copied or updated using the
 	// force flag, this object will contain the forced flag.
 	Overrides *types.Overrides
+
+	// The storage tier of the image set.
+	StorageTier types.StorageTier
 
 	// The timestamp when image set properties were updated.
 	UpdatedAt *time.Time
@@ -188,16 +197,13 @@ func (c *Client) addOperationGetImageSetMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

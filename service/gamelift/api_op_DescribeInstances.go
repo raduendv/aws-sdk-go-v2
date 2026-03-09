@@ -11,9 +11,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Retrieves information about the EC2 instances in an Amazon GameLift managed
-// fleet, including instance ID, connection data, and status. You can use this
-// operation with a multi-location fleet to get location-specific instance
+//	This API works with the following fleet types: EC2
+//
+// Retrieves information about the EC2 instances in an Amazon GameLift Servers
+// managed fleet, including instance ID, connection data, and status. You can use
+// this operation with a multi-location fleet to get location-specific instance
 // information. As an alternative, use the operations [https://docs.aws.amazon.com/gamelift/latest/apireference/API_ListCompute]and [https://docs.aws.amazon.com/gamelift/latest/apireference/API_DescribeCompute] to retrieve information
 // for compute resources, including EC2 and Anywhere fleets.
 //
@@ -196,16 +198,13 @@ func (c *Client) addOperationDescribeInstancesMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

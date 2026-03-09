@@ -11,16 +11,18 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Creates an alias for a fleet. In most situations, you can use an alias ID in
 // place of a fleet ID. An alias provides a level of abstraction for a fleet that
 // is useful when redirecting player traffic from one fleet to another, such as
 // when updating your game build.
 //
-// Amazon GameLift supports two types of routing strategies for aliases: simple
-// and terminal. A simple alias points to an active fleet. A terminal alias is used
-// to display messaging or link to a URL instead of routing players to an active
-// fleet. For example, you might use a terminal alias when a game version is no
-// longer supported and you want to direct players to an upgrade site.
+// Amazon GameLift Servers supports two types of routing strategies for aliases:
+// simple and terminal. A simple alias points to an active fleet. A terminal alias
+// is used to display messaging or link to a URL instead of routing players to an
+// active fleet. For example, you might use a terminal alias when a game version is
+// no longer supported and you want to direct players to an upgrade site.
 //
 // To create a fleet alias, specify an alias name, routing strategy, and optional
 // description. Each simple alias can point to only one fleet, but a fleet can have
@@ -175,16 +177,13 @@ func (c *Client) addOperationCreateAliasMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

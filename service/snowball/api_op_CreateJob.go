@@ -126,7 +126,7 @@ type CreateJobInput struct {
 	// Photos 2016-08-11 .
 	Description *string
 
-	// Defines the device configuration for an Snowcone job.
+	// Defines the device configuration for an Snowball Edge job.
 	//
 	// For more information, see
 	// "https://docs.aws.amazon.com/snowball/latest/snowcone-guide/snow-device-types.html"
@@ -347,16 +347,13 @@ func (c *Client) addOperationCreateJobMiddlewares(stack *middleware.Stack, optio
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -13,9 +13,9 @@ import (
 
 //	This returns the onboarding status of the telemetry configuration feature for
 //
-// the organization. It can only be called by a Management Account of an AWS
-// Organization or an assigned Delegated Admin Account of AWS CloudWatch telemetry
-// config.
+// the organization. It can only be called by a Management Account of an Amazon Web
+// Services Organization or an assigned Delegated Admin Account of Amazon
+// CloudWatch telemetry config.
 func (c *Client) GetTelemetryEvaluationStatusForOrganization(ctx context.Context, params *GetTelemetryEvaluationStatusForOrganizationInput, optFns ...func(*Options)) (*GetTelemetryEvaluationStatusForOrganizationOutput, error) {
 	if params == nil {
 		params = &GetTelemetryEvaluationStatusForOrganizationInput{}
@@ -135,16 +135,13 @@ func (c *Client) addOperationGetTelemetryEvaluationStatusForOrganizationMiddlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

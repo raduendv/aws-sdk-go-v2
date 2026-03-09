@@ -12,10 +12,25 @@ import (
 
 // Attempts to cancel a job to create a one-time backup of a resource.
 //
-// This action is not supported for the following services: Amazon FSx for Windows
-// File Server, Amazon FSx for Lustre, Amazon FSx for NetApp ONTAP, Amazon FSx for
-// OpenZFS, Amazon DocumentDB (with MongoDB compatibility), Amazon RDS, Amazon
-// Aurora, and Amazon Neptune.
+// This action is not supported for the following services:
+//
+//   - Amazon Aurora
+//
+//   - Amazon DocumentDB (with MongoDB compatibility)
+//
+//   - Amazon FSx for Lustre
+//
+//   - Amazon FSx for NetApp ONTAP
+//
+//   - Amazon FSx for OpenZFS
+//
+//   - Amazon FSx for Windows File Server
+//
+//   - Amazon Neptune
+//
+//   - SAP HANA databases on Amazon EC2 instances
+//
+//   - Amazon RDS
 func (c *Client) StopBackupJob(ctx context.Context, params *StopBackupJobInput, optFns ...func(*Options)) (*StopBackupJobOutput, error) {
 	if params == nil {
 		params = &StopBackupJobInput{}
@@ -136,16 +151,13 @@ func (c *Client) addOperationStopBackupJobMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

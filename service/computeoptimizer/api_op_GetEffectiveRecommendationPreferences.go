@@ -36,8 +36,8 @@ func (c *Client) GetEffectiveRecommendationPreferences(ctx context.Context, para
 type GetEffectiveRecommendationPreferencesInput struct {
 
 	// The Amazon Resource Name (ARN) of the resource for which to confirm effective
-	// recommendation preferences. Only EC2 instance and Auto Scaling group ARNs are
-	// currently supported.
+	// recommendation preferences. Only EC2 instance and Amazon EC2 Auto Scaling group
+	// ARNs are currently supported.
 	//
 	// This member is required.
 	ResourceArn *string
@@ -208,16 +208,13 @@ func (c *Client) addOperationGetEffectiveRecommendationPreferencesMiddlewares(st
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

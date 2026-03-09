@@ -383,7 +383,7 @@
                 "Name": {
                     "target": "com.amazonaws.route53resolver#Name",
                     "traits": {
-                        "smithy.api#documentation": "<p>A name for the association that you're creating between a Resolver rule and a VPC.</p>"
+                        "smithy.api#documentation": "<p>A name for the association that you're creating between a Resolver rule and a VPC.</p>\n         <p>The name can be up to 64 characters long and can contain letters (a-z, A-Z), numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist of only numbers.</p>"
                     }
                 },
                 "VPCId": {
@@ -814,7 +814,7 @@
                 "FirewallRule": {
                     "target": "com.amazonaws.route53resolver#FirewallRule",
                     "traits": {
-                        "smithy.api#documentation": "<p>The\n\t\t\tfirewall rule that you just created. </p>"
+                        "smithy.api#documentation": "<p>The firewall rule that you just created. </p>"
                     }
                 }
             },
@@ -980,7 +980,7 @@
                 "Direction": {
                     "target": "com.amazonaws.route53resolver#ResolverEndpointDirection",
                     "traits": {
-                        "smithy.api#documentation": "<p>Specify the applicable value:</p>\n         <ul>\n            <li>\n               <p>\n                  <code>INBOUND</code>: Resolver forwards DNS queries to the DNS service for a VPC from your network</p>\n            </li>\n            <li>\n               <p>\n                  <code>OUTBOUND</code>: Resolver forwards DNS queries from the DNS service for a VPC to your network</p>\n            </li>\n         </ul>",
+                        "smithy.api#documentation": "<p>Specify the applicable value:</p>\n         <ul>\n            <li>\n               <p>\n                  <code>INBOUND</code>: Resolver forwards DNS queries to the DNS service for a VPC from your network.</p>\n            </li>\n            <li>\n               <p>\n                  <code>OUTBOUND</code>: Resolver forwards DNS queries from the DNS service for a VPC to your network.</p>\n            </li>\n            <li>\n               <p>\n                  <code>INBOUND_DELEGATION</code>: Resolver delegates queries to Route 53 private hosted zones from your network.</p>\n            </li>\n         </ul>",
                         "smithy.api#required": {}
                     }
                 },
@@ -1018,7 +1018,19 @@
                 "Protocols": {
                     "target": "com.amazonaws.route53resolver#ProtocolList",
                     "traits": {
-                        "smithy.api#documentation": "<p>\n\t\t\tThe protocols you want to use for the endpoint. DoH-FIPS is applicable for inbound endpoints only.\n\t\t</p>\n         <p>For an inbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53  and DoH-FIPS in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>DoH-FIPS alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>\n         <p>For an outbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>"
+                        "smithy.api#documentation": "<p>\n\t\t\tThe protocols you want to use for the endpoint. DoH-FIPS is applicable for default inbound endpoints only.\n\t\t</p>\n         <p>For a default inbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53  and DoH-FIPS in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>DoH-FIPS alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>\n         <p>For a delegation inbound endpoint you can use Do53 only.</p>\n         <p>For an outbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>"
+                    }
+                },
+                "RniEnhancedMetricsEnabled": {
+                    "target": "com.amazonaws.route53resolver#RniEnhancedMetricsEnabled",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies whether RNI enhanced metrics are enabled for the Resolver endpoints. \n\t\tWhen set to true, one-minute granular metrics are published in CloudWatch for each RNI associated with this endpoint. \n\t\tWhen set to false, metrics are not published. Default is false.</p>\n         <note>\n            <p>Standard CloudWatch pricing and charges are applied for using the Route 53 Resolver \n\tendpoint RNI enhanced metrics. For more information, see <a href=\"https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-resolver-with-cloudwatch.html\">Detailed metrics</a>.</p>\n         </note>"
+                    }
+                },
+                "TargetNameServerMetricsEnabled": {
+                    "target": "com.amazonaws.route53resolver#TargetNameServerMetricsEnabled",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Specifies whether target name server metrics are enabled for the outbound Resolver endpoints. \n\t\tWhen set to true, one-minute granular metrics are published in CloudWatch for each target name server associated with this endpoint. \n\t\tWhen set to false, metrics are not published. Default is false. This is not supported for inbound Resolver endpoints.</p>\n         <note>\n            <p>Standard CloudWatch pricing and charges are applied for using the Route 53 Resolver \n\tendpoint target name server metrics. For more information, see <a href=\"https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-resolver-with-cloudwatch.html\">Detailed metrics</a>.</p>\n         </note>"
                     }
                 }
             },
@@ -1182,13 +1194,13 @@
                 "Name": {
                     "target": "com.amazonaws.route53resolver#Name",
                     "traits": {
-                        "smithy.api#documentation": "<p>A friendly name that lets you easily find a rule in the Resolver dashboard in the Route 53 console.</p>"
+                        "smithy.api#documentation": "<p>A friendly name that lets you easily find a rule in the Resolver dashboard in the Route 53 console.</p>\n         <p>The name can be up to 64 characters long and can contain letters (a-z, A-Z), numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist of only numbers.</p>"
                     }
                 },
                 "RuleType": {
                     "target": "com.amazonaws.route53resolver#RuleTypeOption",
                     "traits": {
-                        "smithy.api#documentation": "<p>When you want to forward DNS queries for specified domain name to resolvers on your network, specify <code>FORWARD</code>.</p>\n         <p>When you have a forwarding rule to forward DNS queries for a domain to your network and you want Resolver to process queries for \n\t\t\ta subdomain of that domain, specify <code>SYSTEM</code>.</p>\n         <p>For example, to forward DNS queries for example.com to resolvers on your network, you create a rule and specify <code>FORWARD</code> \n\t\t\tfor <code>RuleType</code>. To then have Resolver process queries for apex.example.com, you create a rule and specify \n\t\t\t<code>SYSTEM</code> for <code>RuleType</code>.</p>\n         <p>Currently, only Resolver can create rules that have a value of <code>RECURSIVE</code> for <code>RuleType</code>.</p>",
+                        "smithy.api#documentation": "<p>When you want to forward DNS queries for specified domain name to resolvers on your network, specify <code>FORWARD</code> or <code>DELEGATE</code>.</p>\n         <p>When you have a forwarding rule to forward DNS queries for a domain to your network and you want Resolver to process queries for \n\t\t\ta subdomain of that domain, specify <code>SYSTEM</code>.</p>\n         <p>For example, to forward DNS queries for example.com to resolvers on your network, you create a rule and specify <code>FORWARD</code> \n\t\t\tfor <code>RuleType</code>. To then have Resolver process queries for apex.example.com, you create a rule and specify \n\t\t\t<code>SYSTEM</code> for <code>RuleType</code>.</p>\n         <p>Currently, only Resolver can create rules that have a value of <code>RECURSIVE</code> for <code>RuleType</code>.</p>",
                         "smithy.api#required": {}
                     }
                 },
@@ -1201,7 +1213,7 @@
                 "TargetIps": {
                     "target": "com.amazonaws.route53resolver#TargetList",
                     "traits": {
-                        "smithy.api#documentation": "<p>The IPs that you want Resolver to forward DNS queries to. You can specify either Ipv4 or Ipv6 addresses but not both in the same rule. Separate IP addresses with a space.</p>\n         <p>\n            <code>TargetIps</code> is available only when the value of <code>Rule type</code> is <code>FORWARD</code>.</p>"
+                        "smithy.api#documentation": "<p>The IPs that you want Resolver to forward DNS queries to. You can specify either Ipv4 or Ipv6 addresses but not both in the same rule. Separate IP addresses with a space.</p>\n         <p>\n            <code>TargetIps</code> is available only when the value of <code>Rule type</code> is <code>FORWARD</code>. \n\t\t\tYou should not provide TargetIps when the Rule type is <code>DELEGATE</code>.</p>\n         <note>\n            <p>when creating a DELEGATE rule, you must not provide the <code>TargetIps</code> parameter. If you provide the <code>TargetIps</code>, \n\t\t\tyou may receive an ERROR message similar to \"Delegate resolver rules need to specify a nameserver name\". \n\t\t\tThis error means you should not provide <code>TargetIps</code>.</p>\n         </note>"
                     }
                 },
                 "ResolverEndpointId": {
@@ -1214,6 +1226,12 @@
                     "target": "com.amazonaws.route53resolver#TagList",
                     "traits": {
                         "smithy.api#documentation": "<p>A list of the tag keys and values that you want to associate with the endpoint.</p>"
+                    }
+                },
+                "DelegationRecord": {
+                    "target": "com.amazonaws.route53resolver#DelegationRecord",
+                    "traits": {
+                        "smithy.api#documentation": "<p>\n\t\t\tDNS queries with the delegation records that match this domain name are forwarded to the resolvers on your \n\t\t\tnetwork.\n\t\t</p>"
                     }
                 }
             },
@@ -1241,6 +1259,15 @@
                 "smithy.api#length": {
                     "min": 1,
                     "max": 255
+                }
+            }
+        },
+        "com.amazonaws.route53resolver#DelegationRecord": {
+            "type": "string",
+            "traits": {
+                "smithy.api#length": {
+                    "min": 1,
+                    "max": 256
                 }
             }
         },
@@ -1958,6 +1985,12 @@
                     "target": "smithy.api#Unit",
                     "traits": {
                         "smithy.api#enumValue": "DNS_TUNNELING"
+                    }
+                },
+                "DICTIONARY_DGA": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "DICTIONARY_DGA"
                     }
                 }
             }
@@ -3903,6 +3936,12 @@
                     "target": "smithy.api#Unit",
                     "traits": {
                         "smithy.api#enumValue": "UPDATE_FAILED"
+                    }
+                },
+                "Isolated": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "ISOLATED"
                     }
                 }
             }
@@ -5927,7 +5966,7 @@
                 "ResourceId": {
                     "target": "com.amazonaws.route53resolver#ResourceId",
                     "traits": {
-                        "smithy.api#documentation": "<p>The ID of the Amazon Virtual Private Cloud VPC that you're configuring Resolver for.</p>"
+                        "smithy.api#documentation": "<p>The ID of the Amazon Virtual Private Cloud VPC or a Route 53 Profile that you're configuring Resolver for.</p>"
                     }
                 },
                 "OwnerId": {
@@ -6068,7 +6107,7 @@
                 "Direction": {
                     "target": "com.amazonaws.route53resolver#ResolverEndpointDirection",
                     "traits": {
-                        "smithy.api#documentation": "<p>Indicates whether the Resolver endpoint allows inbound or outbound DNS queries:</p>\n         <ul>\n            <li>\n               <p>\n                  <code>INBOUND</code>: allows DNS queries to your VPC from your network</p>\n            </li>\n            <li>\n               <p>\n                  <code>OUTBOUND</code>: allows DNS queries from your VPC to your network</p>\n            </li>\n         </ul>"
+                        "smithy.api#documentation": "<p>Indicates whether the Resolver endpoint allows inbound or outbound DNS queries:</p>\n         <ul>\n            <li>\n               <p>\n                  <code>INBOUND</code>: allows DNS queries to your VPC from your network</p>\n            </li>\n            <li>\n               <p>\n                  <code>OUTBOUND</code>: allows DNS queries from your VPC to your network</p>\n            </li>\n            <li>\n               <p>\n                  <code>INBOUND_DELEGATION</code>: Resolver delegates queries to Route 53 private hosted zones from your network.</p>\n            </li>\n         </ul>"
                     }
                 },
                 "IpAddressCount": {
@@ -6128,7 +6167,19 @@
                 "Protocols": {
                     "target": "com.amazonaws.route53resolver#ProtocolList",
                     "traits": {
-                        "smithy.api#documentation": "<p>\n\t\t\tProtocols used for the endpoint. DoH-FIPS is applicable for inbound endpoints only.\n\t\t</p>\n         <p>For an inbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53  and DoH-FIPS in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>DoH-FIPS alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>\n         <p>For an outbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>"
+                        "smithy.api#documentation": "<p>\n\t\t\tProtocols used for the endpoint. DoH-FIPS is applicable for a default inbound endpoints only.\n\t\t</p>\n         <p>For an inbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53  and DoH-FIPS in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>DoH-FIPS alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>\n         <p>For a delegation inbound endpoint you can use Do53 only.</p>\n         <p>For an outbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>"
+                    }
+                },
+                "RniEnhancedMetricsEnabled": {
+                    "target": "com.amazonaws.route53resolver#RniEnhancedMetricsEnabled",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether RNI enhanced metrics are enabled for the Resolver endpoint. \n\t\tWhen enabled, one-minute granular metrics are published in CloudWatch for each RNI associated with this endpoint. \n\t\tWhen disabled, these metrics are not published.</p>"
+                    }
+                },
+                "TargetNameServerMetricsEnabled": {
+                    "target": "com.amazonaws.route53resolver#TargetNameServerMetricsEnabled",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Indicates whether target name server metrics are enabled for the outbound Resolver endpoint. \n\t\tWhen enabled, one-minute granular metrics are published in CloudWatch for each target name server associated with this endpoint. \n\t\tWhen disabled, these metrics are not published. This feature is not supported for inbound Resolver endpoint.</p>"
                     }
                 }
             },
@@ -6149,6 +6200,12 @@
                     "target": "smithy.api#Unit",
                     "traits": {
                         "smithy.api#enumValue": "OUTBOUND"
+                    }
+                },
+                "InboundDelegation": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "INBOUND_DELEGATION"
                     }
                 }
             }
@@ -6511,13 +6568,13 @@
                 "RuleType": {
                     "target": "com.amazonaws.route53resolver#RuleTypeOption",
                     "traits": {
-                        "smithy.api#documentation": "<p>When you want to forward DNS queries for specified domain name to resolvers on your network, specify <code>FORWARD</code>.</p>\n         <p>When you have a forwarding rule to forward DNS queries for a domain to your network and you want Resolver to process queries for \n\t\t\ta subdomain of that domain, specify <code>SYSTEM</code>.</p>\n         <p>For example, to forward DNS queries for example.com to resolvers on your network, you create a rule and specify <code>FORWARD</code> \n\t\t\tfor <code>RuleType</code>. To then have Resolver process queries for apex.example.com, you create a rule and specify \n\t\t\t<code>SYSTEM</code> for <code>RuleType</code>.</p>\n         <p>Currently, only Resolver can create rules that have a value of <code>RECURSIVE</code> for <code>RuleType</code>.</p>"
+                        "smithy.api#documentation": "<p>When you want to forward DNS queries for specified domain name to resolvers on your network, specify <code>FORWARD</code> or <code>DELEGATE</code>. \n\t\t\tIf a query matches multiple Resolver rules (example.com and www.example.com), outbound DNS queries are routed using the Resolver rule that contains \n\t\t\tthe most specific domain name (www.example.com).</p>\n         <p>When you have a forwarding rule to forward DNS queries for a domain to your network and you want Resolver to process queries for \n\t\t\ta subdomain of that domain, specify <code>SYSTEM</code>.</p>\n         <p>For example, to forward DNS queries for example.com to resolvers on your network, you create a rule and specify <code>FORWARD</code> \n\t\t\tfor <code>RuleType</code>. To then have Resolver process queries for apex.example.com, you create a rule and specify \n\t\t\t<code>SYSTEM</code> for <code>RuleType</code>.</p>\n         <p>Currently, only Resolver can create rules that have a value of <code>RECURSIVE</code> for <code>RuleType</code>.</p>"
                     }
                 },
                 "Name": {
                     "target": "com.amazonaws.route53resolver#Name",
                     "traits": {
-                        "smithy.api#documentation": "<p>The name for the Resolver rule, which you specified when you created the Resolver rule.</p>"
+                        "smithy.api#documentation": "<p>The name for the Resolver rule, which you specified when you created the Resolver rule.</p>\n         <p>The name can be up to 64 characters long and can contain letters (a-z, A-Z), numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist of only numbers.</p>"
                     }
                 },
                 "TargetIps": {
@@ -6555,6 +6612,12 @@
                     "traits": {
                         "smithy.api#documentation": "<p>The date and time that the Resolver rule was last updated, in Unix time format and Coordinated Universal Time (UTC).</p>"
                     }
+                },
+                "DelegationRecord": {
+                    "target": "com.amazonaws.route53resolver#DelegationRecord",
+                    "traits": {
+                        "smithy.api#documentation": "<p>\n\t\t\tDNS queries with delegation records that point to this domain name are forwarded to resolvers on your network.\n\t\t</p>"
+                    }
                 }
             },
             "traits": {
@@ -6579,7 +6642,7 @@
                 "Name": {
                     "target": "com.amazonaws.route53resolver#Name",
                     "traits": {
-                        "smithy.api#documentation": "<p>The name of an association between a Resolver rule and a VPC.</p>"
+                        "smithy.api#documentation": "<p>The name of an association between a Resolver rule and a VPC.</p>\n         <p>The name can be up to 64 characters long and can contain letters (a-z, A-Z), numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist of only numbers.</p>"
                     }
                 },
                 "VPCId": {
@@ -6652,7 +6715,7 @@
                 "Name": {
                     "target": "com.amazonaws.route53resolver#Name",
                     "traits": {
-                        "smithy.api#documentation": "<p>The new name for the Resolver rule. The name that you specify appears in the Resolver dashboard in the Route 53 console. </p>"
+                        "smithy.api#documentation": "<p>The new name for the Resolver rule. The name that you specify appears in the Resolver dashboard in the Route 53 console. </p>\n         <p>The name can be up to 64 characters long and can contain letters (a-z, A-Z), numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist of only numbers.</p>"
                     }
                 },
                 "TargetIps": {
@@ -6805,6 +6868,9 @@
                     "max": 40
                 }
             }
+        },
+        "com.amazonaws.route53resolver#RniEnhancedMetricsEnabled": {
+            "type": "boolean"
         },
         "com.amazonaws.route53resolver#Route53Resolver": {
             "type": "service",
@@ -7036,27 +7102,27 @@
                             "builtIn": "AWS::Region",
                             "required": false,
                             "documentation": "The AWS region used to dispatch the request.",
-                            "type": "String"
+                            "type": "string"
                         },
                         "UseDualStack": {
                             "builtIn": "AWS::UseDualStack",
                             "required": true,
                             "default": false,
                             "documentation": "When true, use the dual-stack endpoint. If the configured endpoint does not support dual-stack, dispatching the request MAY return an error.",
-                            "type": "Boolean"
+                            "type": "boolean"
                         },
                         "UseFIPS": {
                             "builtIn": "AWS::UseFIPS",
                             "required": true,
                             "default": false,
                             "documentation": "When true, send this request to the FIPS-compliant regional endpoint. If the configured endpoint does not have a FIPS compliant endpoint, dispatching the request will return an error.",
-                            "type": "Boolean"
+                            "type": "boolean"
                         },
                         "Endpoint": {
                             "builtIn": "SDK::Endpoint",
                             "required": false,
                             "documentation": "Override the endpoint used to send this request",
-                            "type": "String"
+                            "type": "string"
                         }
                     },
                     "rules": [
@@ -7865,17 +7931,6 @@
                             }
                         },
                         {
-                            "documentation": "For region us-iso-east-1 with FIPS enabled and DualStack enabled",
-                            "expect": {
-                                "error": "FIPS and DualStack are enabled, but this partition does not support one or both"
-                            },
-                            "params": {
-                                "Region": "us-iso-east-1",
-                                "UseFIPS": true,
-                                "UseDualStack": true
-                            }
-                        },
-                        {
                             "documentation": "For region us-iso-east-1 with FIPS enabled and DualStack disabled",
                             "expect": {
                                 "endpoint": {
@@ -7889,28 +7944,6 @@
                             }
                         },
                         {
-                            "documentation": "For region us-iso-east-1 with FIPS disabled and DualStack enabled",
-                            "expect": {
-                                "error": "DualStack is enabled but this partition does not support DualStack"
-                            },
-                            "params": {
-                                "Region": "us-iso-east-1",
-                                "UseFIPS": false,
-                                "UseDualStack": true
-                            }
-                        },
-                        {
-                            "documentation": "For region us-isob-east-1 with FIPS enabled and DualStack enabled",
-                            "expect": {
-                                "error": "FIPS and DualStack are enabled, but this partition does not support one or both"
-                            },
-                            "params": {
-                                "Region": "us-isob-east-1",
-                                "UseFIPS": true,
-                                "UseDualStack": true
-                            }
-                        },
-                        {
                             "documentation": "For region us-isob-east-1 with FIPS enabled and DualStack disabled",
                             "expect": {
                                 "endpoint": {
@@ -7921,17 +7954,6 @@
                                 "Region": "us-isob-east-1",
                                 "UseFIPS": true,
                                 "UseDualStack": false
-                            }
-                        },
-                        {
-                            "documentation": "For region us-isob-east-1 with FIPS disabled and DualStack enabled",
-                            "expect": {
-                                "error": "DualStack is enabled but this partition does not support DualStack"
-                            },
-                            "params": {
-                                "Region": "us-isob-east-1",
-                                "UseFIPS": false,
-                                "UseDualStack": true
                             }
                         },
                         {
@@ -8028,6 +8050,12 @@
                     "target": "smithy.api#Unit",
                     "traits": {
                         "smithy.api#enumValue": "RECURSIVE"
+                    }
+                },
+                "Delegate": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "DELEGATE"
                     }
                 }
             }
@@ -8314,6 +8342,9 @@
                     "min": 1
                 }
             }
+        },
+        "com.amazonaws.route53resolver#TargetNameServerMetricsEnabled": {
+            "type": "boolean"
         },
         "com.amazonaws.route53resolver#ThrottlingException": {
             "type": "structure",
@@ -8942,7 +8973,7 @@
                 "ResourceId": {
                     "target": "com.amazonaws.route53resolver#ResourceId",
                     "traits": {
-                        "smithy.api#documentation": "<p>Resource ID of the Amazon VPC that you want to update the Resolver configuration for.</p>",
+                        "smithy.api#documentation": "<p>The ID of the Amazon Virtual Private Cloud VPC or a Route 53 Profile that you're configuring Resolver for.</p>",
                         "smithy.api#required": {}
                     }
                 },
@@ -9103,7 +9134,19 @@
                 "Protocols": {
                     "target": "com.amazonaws.route53resolver#ProtocolList",
                     "traits": {
-                        "smithy.api#documentation": "<p>\n\t\t\tThe protocols you want to use for the endpoint. DoH-FIPS is applicable for inbound endpoints only.\n\t\t</p>\n         <p>For an inbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53  and DoH-FIPS in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>DoH-FIPS alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>\n         <p>For an outbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>\n         <important>\n            <p> You can't change the protocol of an inbound endpoint directly from only Do53 to only DoH, or DoH-FIPS.\n\t\t\tThis is to prevent a sudden disruption to incoming traffic that\n\t\t\trelies on Do53. To change the protocol from Do53 to DoH, or DoH-FIPS, you must\n\t\t\tfirst enable both Do53 and DoH, or Do53 and DoH-FIPS, to make sure that all incoming traffic\n\t\t\thas transferred to using the DoH protocol, or DoH-FIPS, and then remove the\n\t\t\tDo53.</p>\n         </important>"
+                        "smithy.api#documentation": "<p>\n\t\t\tThe protocols you want to use for the endpoint. DoH-FIPS is applicable for default inbound endpoints only.\n\t\t</p>\n         <p>For a default inbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53  and DoH-FIPS in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>DoH-FIPS alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>\n         <p>For a delegation inbound endpoint you can use Do53 only.</p>\n         <p>For an outbound endpoint you can apply the protocols as follows:</p>\n         <ul>\n            <li>\n               <p> Do53  and DoH in combination.</p>\n            </li>\n            <li>\n               <p>Do53 alone.</p>\n            </li>\n            <li>\n               <p>DoH alone.</p>\n            </li>\n            <li>\n               <p>None, which is treated as Do53.</p>\n            </li>\n         </ul>\n         <important>\n            <p> You can't change the protocol of an inbound endpoint directly from only Do53 to only DoH, or DoH-FIPS.\n\t\t\tThis is to prevent a sudden disruption to incoming traffic that\n\t\t\trelies on Do53. To change the protocol from Do53 to DoH, or DoH-FIPS, you must\n\t\t\tfirst enable both Do53 and DoH, or Do53 and DoH-FIPS, to make sure that all incoming traffic\n\t\t\thas transferred to using the DoH protocol, or DoH-FIPS, and then remove the\n\t\t\tDo53.</p>\n         </important>"
+                    }
+                },
+                "RniEnhancedMetricsEnabled": {
+                    "target": "com.amazonaws.route53resolver#RniEnhancedMetricsEnabled",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Updates whether RNI enhanced metrics are enabled for the Resolver endpoints. \n\t\tWhen set to true, one-minute granular metrics are published in CloudWatch for each RNI associated with this endpoint. \n\t\tWhen set to false, metrics are not published.</p>\n         <note>\n            <p>Standard CloudWatch pricing and charges are applied for using the Route 53 Resolver \n\tendpoint RNI enhanced metrics. For more information, see <a href=\"https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-resolver-with-cloudwatch.html\">Detailed metrics</a>.</p>\n         </note>"
+                    }
+                },
+                "TargetNameServerMetricsEnabled": {
+                    "target": "com.amazonaws.route53resolver#TargetNameServerMetricsEnabled",
+                    "traits": {
+                        "smithy.api#documentation": "<p>Updates whether target name server metrics are enabled for the outbound Resolver endpoints. \n\t\tWhen set to true, one-minute granular metrics are published in CloudWatch for each target name server associated with this endpoint. \n\t\tWhen set to false, metrics are not published. This setting is not supported for inbound Resolver endpoints.</p>\n         <note>\n            <p>Standard CloudWatch pricing and charges are applied for using the Route 53 Resolver \n\tendpoint target name server metrics. For more information, see <a href=\"https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/monitoring-resolver-with-cloudwatch.html\">Detailed metrics</a>.</p>\n         </note>"
                     }
                 }
             },

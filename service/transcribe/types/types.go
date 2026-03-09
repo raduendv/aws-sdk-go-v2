@@ -443,6 +443,21 @@ type ClinicalNoteGenerationSettings struct {
 	//
 	//   - GIRPP: Provides summaries based on the patients progress toward goals.
 	//   Examples of sections include Goal, Intervention, Response, Progress, and Plan.
+	//
+	//   - BIRP: Focuses on the patient's behavioral patterns and responses. Examples
+	//   of sections include Behavior, Intervention, Response, and Plan.
+	//
+	//   - SIRP: Emphasizes the situational context of therapy. Examples of sections
+	//   include Situation, Intervention, Response, and Plan.
+	//
+	//   - DAP: Provides a simplified format for clinical documentation. Examples of
+	//   sections include Data, Assessment, and Plan.
+	//
+	//   - BEHAVIORAL_SOAP: Behavioral health focused documentation format. Examples
+	//   of sections include Subjective, Objective, Assessment, and Plan.
+	//
+	//   - PHYSICAL_SOAP: Physical health focused documentation format. Examples of
+	//   sections include Subjective, Objective, Assessment, and Plan.
 	NoteTemplate MedicalScribeNoteTemplate
 
 	noSmithyDocumentSerde
@@ -819,6 +834,16 @@ type MedicalScribeChannelDefinition struct {
 	noSmithyDocumentSerde
 }
 
+// The MedicalScribeContext object that contains contextual information used to
+// generate customized clinical notes.
+type MedicalScribeContext struct {
+
+	// Contains patient-specific information.
+	PatientContext *MedicalScribePatientContext
+
+	noSmithyDocumentSerde
+}
+
 // Provides detailed information about a Medical Scribe job.
 //
 // To view the status of the specified Medical Scribe job, check the
@@ -884,6 +909,10 @@ type MedicalScribeJob struct {
 	// [Media formats]: https://docs.aws.amazon.com/transcribe/latest/dg/how-input.html#how-input-audio
 	Media *Media
 
+	// Indicates whether the MedicalScribeContext object was provided when the Medical
+	// Scribe job was started.
+	MedicalScribeContextProvided *bool
+
 	// The name of the Medical Scribe job. Job names are case sensitive and must be
 	// unique within an Amazon Web Services account.
 	MedicalScribeJobName *string
@@ -918,7 +947,7 @@ type MedicalScribeJob struct {
 	StartTime *time.Time
 
 	// Adds one or more custom tags, each in the form of a key:value pair, to the
-	// Medica Scribe job.
+	// Medical Scribe job.
 	//
 	// To learn more about using tags with Amazon Transcribe, refer to [Tagging resources].
 	//
@@ -990,6 +1019,17 @@ type MedicalScribeOutput struct {
 	//
 	// This member is required.
 	TranscriptFileUri *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains patient-specific information used to customize the clinical note
+// generation.
+type MedicalScribePatientContext struct {
+
+	// The patient's preferred pronouns that the user wants to provide as a context
+	// for clinical note generation.
+	Pronouns Pronouns
 
 	noSmithyDocumentSerde
 }

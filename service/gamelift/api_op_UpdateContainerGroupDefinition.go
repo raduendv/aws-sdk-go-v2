@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: Container
+//
 // Updates properties in an existing container group definition. This operation
 // doesn't replace the definition. Instead, it creates a new version of the
 // definition and saves it separately. You can access all versions that you choose
@@ -82,13 +84,13 @@ type UpdateContainerGroupDefinitionInput struct {
 	// The platform that all containers in the group use. Containers in a group must
 	// run on the same operating system.
 	//
-	// Amazon Linux 2 (AL2) will reach end of support on 6/30/2025. See more details
+	// Amazon Linux 2 (AL2) will reach end of support on 6/30/2026. See more details
 	// in the [Amazon Linux 2 FAQs]. For game servers that are hosted on AL2 and use server SDK version 4.x
-	// for Amazon GameLift, first update the game server build to server SDK 5.x, and
-	// then deploy to AL2023 instances. See [Migrate to server SDK version 5.]
+	// for Amazon GameLift Servers, first update the game server build to server SDK
+	// 5.x, and then deploy to AL2023 instances. See [Migrate to server SDK version 5.]
 	//
 	// [Migrate to server SDK version 5.]: https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-serversdk5-migration.html
-	// [Amazon Linux 2 FAQs]: https://aws.amazon.com/amazon-linux-2/faqs/
+	// [Amazon Linux 2 FAQs]: http://aws.amazon.com/amazon-linux-2/faqs/
 	OperatingSystem types.ContainerOperatingSystem
 
 	// The container group definition version to update. The new version starts with
@@ -218,16 +220,13 @@ func (c *Client) addOperationUpdateContainerGroupDefinitionMiddlewares(stack *mi
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

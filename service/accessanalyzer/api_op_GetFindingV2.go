@@ -103,7 +103,8 @@ type GetFindingV2Output struct {
 
 	// The type of the finding. For external access analyzers, the type is
 	// ExternalAccess . For unused access analyzers, the type can be UnusedIAMRole ,
-	// UnusedIAMUserAccessKey , UnusedIAMUserPassword , or UnusedPermission .
+	// UnusedIAMUserAccessKey , UnusedIAMUserPassword , or UnusedPermission . For
+	// internal access analyzers, the type is InternalAccess .
 	FindingType types.FindingType
 
 	// A token used for pagination of results returned.
@@ -206,16 +207,13 @@ func (c *Client) addOperationGetFindingV2Middlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

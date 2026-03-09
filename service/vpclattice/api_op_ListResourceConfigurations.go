@@ -29,13 +29,16 @@ func (c *Client) ListResourceConfigurations(ctx context.Context, params *ListRes
 
 type ListResourceConfigurationsInput struct {
 
+	//  The domain verification ID.
+	DomainVerificationIdentifier *string
+
 	// The maximum page size.
 	MaxResults *int32
 
 	// A pagination token for the next page of results.
 	NextToken *string
 
-	// The ID of the group resource configuration.
+	// The ID of the resource configuration of type Group .
 	ResourceConfigurationGroupIdentifier *string
 
 	// The ID of the resource gateway for the resource configuration.
@@ -144,16 +147,13 @@ func (c *Client) addOperationListResourceConfigurationsMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

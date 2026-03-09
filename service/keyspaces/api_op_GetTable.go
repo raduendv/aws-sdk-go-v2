@@ -71,6 +71,9 @@ type GetTableOutput struct {
 	//   - throughputMode:PROVISIONED
 	CapacitySpecification *types.CapacitySpecificationSummary
 
+	// The CDC stream settings of the table.
+	CdcSpecification *types.CdcSpecificationSummary
+
 	//  The client-side timestamps setting of the table.
 	ClientSideTimestamps *types.ClientSideTimestamps
 
@@ -85,6 +88,9 @@ type GetTableOutput struct {
 
 	// The encryption settings of the specified table.
 	EncryptionSpecification *types.EncryptionSpecification
+
+	// The Amazon Resource Name (ARN) of the stream.
+	LatestStreamArn *string
 
 	// The point-in-time recovery status of the specified table.
 	PointInTimeRecovery *types.PointInTimeRecoverySummary
@@ -101,6 +107,10 @@ type GetTableOutput struct {
 
 	// The custom Time to Live settings of the specified table.
 	Ttl *types.TimeToLive
+
+	// The warm throughput settings for the table, including the current status and
+	// configured read and write capacity units.
+	WarmThroughputSpecification *types.WarmThroughputSpecificationSummary
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -196,16 +206,13 @@ func (c *Client) addOperationGetTableMiddlewares(stack *middleware.Stack, option
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

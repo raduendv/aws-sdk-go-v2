@@ -42,6 +42,9 @@ type UpdateSpaceInput struct {
 	// unanswered questions into AWS support tickets.
 	RoleArn *string
 
+	//
+	SupportedEmailDomains *types.SupportedEmailDomainsParameters
+
 	// The pricing tier of this private re:Post.
 	Tier types.TierLevel
 
@@ -143,16 +146,13 @@ func (c *Client) addOperationUpdateSpaceMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

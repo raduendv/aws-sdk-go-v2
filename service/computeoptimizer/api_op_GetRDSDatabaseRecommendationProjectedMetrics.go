@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Returns the projected metrics of Amazon RDS recommendations.
+// Returns the projected metrics of Aurora and RDS database recommendations.
 func (c *Client) GetRDSDatabaseRecommendationProjectedMetrics(ctx context.Context, params *GetRDSDatabaseRecommendationProjectedMetricsInput, optFns ...func(*Options)) (*GetRDSDatabaseRecommendationProjectedMetricsOutput, error) {
 	if params == nil {
 		params = &GetRDSDatabaseRecommendationProjectedMetricsInput{}
@@ -40,7 +40,7 @@ type GetRDSDatabaseRecommendationProjectedMetricsInput struct {
 	// This member is required.
 	Period int32
 
-	//  The ARN that identifies the Amazon RDS.
+	//  The ARN that identifies the Amazon Aurora or RDS database.
 	//
 	// The following is the format of the ARN:
 	//
@@ -165,16 +165,13 @@ func (c *Client) addOperationGetRDSDatabaseRecommendationProjectedMetricsMiddlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

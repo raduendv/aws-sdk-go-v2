@@ -30,6 +30,10 @@ func (c *Client) ListOrganizationAdminAccounts(ctx context.Context, params *List
 
 type ListOrganizationAdminAccountsInput struct {
 
+	// The feature where the delegated administrator account is listed. Defaults to
+	// Security Hub if not specified.
+	Feature types.SecurityHubFeature
+
 	// The maximum number of items to return in the response.
 	MaxResults *int32
 
@@ -46,6 +50,10 @@ type ListOrganizationAdminAccountsOutput struct {
 
 	// The list of Security Hub administrator accounts.
 	AdminAccounts []types.AdminAccount
+
+	// The feature where the delegated administrator account is listed. Defaults to
+	// Security Hub CSPM if not specified.
+	Feature types.SecurityHubFeature
 
 	// The pagination token to use to request the next page of results.
 	NextToken *string
@@ -141,16 +149,13 @@ func (c *Client) addOperationListOrganizationAdminAccountsMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

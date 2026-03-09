@@ -52,7 +52,13 @@ type DescribeCampaignInput struct {
 
 type DescribeCampaignOutput struct {
 
+	// The latestCampaignUpdate field is only returned when the campaign has had at
+	// least one UpdateCampaign call.
+	//
 	// The properties of the campaign.
+	//
+	// The latestCampaignUpdate field is only returned when the campaign has had at
+	// least one UpdateCampaign call.
 	Campaign *types.Campaign
 
 	// Metadata pertaining to the operation's result.
@@ -149,16 +155,13 @@ func (c *Client) addOperationDescribeCampaignMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

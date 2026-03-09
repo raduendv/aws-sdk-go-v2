@@ -62,6 +62,18 @@ func testSnapshot(stack *middleware.Stack, operation string) error {
 	}
 	return snapshotOK{}
 }
+func TestCheckSnapshot_AcceptDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AcceptDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AcceptDelegationRequest")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_AddClientIDToOpenIDConnectProvider(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.AddClientIDToOpenIDConnectProvider(context.Background(), nil, func(o *Options) {
@@ -91,6 +103,18 @@ func TestCheckSnapshot_AddUserToGroup(t *testing.T) {
 	_, err := svc.AddUserToGroup(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "AddUserToGroup")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_AssociateDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AssociateDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "AssociateDelegationRequest")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -163,6 +187,18 @@ func TestCheckSnapshot_CreateAccountAlias(t *testing.T) {
 	_, err := svc.CreateAccountAlias(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "CreateAccountAlias")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_CreateDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateDelegationRequest")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -662,6 +698,18 @@ func TestCheckSnapshot_DisableOrganizationsRootSessions(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DisableOutboundWebIdentityFederation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DisableOutboundWebIdentityFederation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DisableOutboundWebIdentityFederation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_EnableMFADevice(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.EnableMFADevice(context.Background(), nil, func(o *Options) {
@@ -691,6 +739,18 @@ func TestCheckSnapshot_EnableOrganizationsRootSessions(t *testing.T) {
 	_, err := svc.EnableOrganizationsRootSessions(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "EnableOrganizationsRootSessions")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_EnableOutboundWebIdentityFederation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.EnableOutboundWebIdentityFederation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "EnableOutboundWebIdentityFederation")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -818,6 +878,18 @@ func TestCheckSnapshot_GetCredentialReport(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetDelegationRequest")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetGroup(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetGroup(context.Background(), nil, func(o *Options) {
@@ -835,6 +907,18 @@ func TestCheckSnapshot_GetGroupPolicy(t *testing.T) {
 	_, err := svc.GetGroupPolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetGroupPolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetHumanReadableSummary(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetHumanReadableSummary(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetHumanReadableSummary")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -895,6 +979,18 @@ func TestCheckSnapshot_GetOrganizationsAccessReport(t *testing.T) {
 	_, err := svc.GetOrganizationsAccessReport(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetOrganizationsAccessReport")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetOutboundWebIdentityFederationInfo(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetOutboundWebIdentityFederationInfo(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetOutboundWebIdentityFederationInfo")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1099,6 +1195,18 @@ func TestCheckSnapshot_ListAttachedUserPolicies(t *testing.T) {
 	_, err := svc.ListAttachedUserPolicies(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ListAttachedUserPolicies")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_ListDelegationRequests(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListDelegationRequests(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "ListDelegationRequests")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1526,6 +1634,18 @@ func TestCheckSnapshot_PutUserPolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_RejectDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RejectDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "RejectDelegationRequest")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_RemoveClientIDFromOpenIDConnectProvider(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.RemoveClientIDFromOpenIDConnectProvider(context.Background(), nil, func(o *Options) {
@@ -1579,6 +1699,18 @@ func TestCheckSnapshot_ResyncMFADevice(t *testing.T) {
 	_, err := svc.ResyncMFADevice(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "ResyncMFADevice")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_SendDelegationToken(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.SendDelegationToken(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "SendDelegationToken")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1862,6 +1994,18 @@ func TestCheckSnapshot_UpdateAssumeRolePolicy(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_UpdateDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateDelegationRequest")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_UpdateGroup(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.UpdateGroup(context.Background(), nil, func(o *Options) {
@@ -2029,6 +2173,18 @@ func TestCheckSnapshot_UploadSSHPublicKey(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func TestUpdateSnapshot_AcceptDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AcceptDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AcceptDelegationRequest")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_AddClientIDToOpenIDConnectProvider(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.AddClientIDToOpenIDConnectProvider(context.Background(), nil, func(o *Options) {
@@ -2058,6 +2214,18 @@ func TestUpdateSnapshot_AddUserToGroup(t *testing.T) {
 	_, err := svc.AddUserToGroup(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "AddUserToGroup")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_AssociateDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.AssociateDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "AssociateDelegationRequest")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2130,6 +2298,18 @@ func TestUpdateSnapshot_CreateAccountAlias(t *testing.T) {
 	_, err := svc.CreateAccountAlias(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "CreateAccountAlias")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_CreateDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateDelegationRequest")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2629,6 +2809,18 @@ func TestUpdateSnapshot_DisableOrganizationsRootSessions(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DisableOutboundWebIdentityFederation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DisableOutboundWebIdentityFederation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DisableOutboundWebIdentityFederation")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_EnableMFADevice(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.EnableMFADevice(context.Background(), nil, func(o *Options) {
@@ -2658,6 +2850,18 @@ func TestUpdateSnapshot_EnableOrganizationsRootSessions(t *testing.T) {
 	_, err := svc.EnableOrganizationsRootSessions(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "EnableOrganizationsRootSessions")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_EnableOutboundWebIdentityFederation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.EnableOutboundWebIdentityFederation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "EnableOutboundWebIdentityFederation")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2785,6 +2989,18 @@ func TestUpdateSnapshot_GetCredentialReport(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetDelegationRequest")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetGroup(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetGroup(context.Background(), nil, func(o *Options) {
@@ -2802,6 +3018,18 @@ func TestUpdateSnapshot_GetGroupPolicy(t *testing.T) {
 	_, err := svc.GetGroupPolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetGroupPolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetHumanReadableSummary(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetHumanReadableSummary(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetHumanReadableSummary")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2862,6 +3090,18 @@ func TestUpdateSnapshot_GetOrganizationsAccessReport(t *testing.T) {
 	_, err := svc.GetOrganizationsAccessReport(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetOrganizationsAccessReport")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetOutboundWebIdentityFederationInfo(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetOutboundWebIdentityFederationInfo(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetOutboundWebIdentityFederationInfo")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -3066,6 +3306,18 @@ func TestUpdateSnapshot_ListAttachedUserPolicies(t *testing.T) {
 	_, err := svc.ListAttachedUserPolicies(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ListAttachedUserPolicies")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_ListDelegationRequests(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.ListDelegationRequests(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "ListDelegationRequests")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -3493,6 +3745,18 @@ func TestUpdateSnapshot_PutUserPolicy(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_RejectDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.RejectDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "RejectDelegationRequest")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_RemoveClientIDFromOpenIDConnectProvider(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.RemoveClientIDFromOpenIDConnectProvider(context.Background(), nil, func(o *Options) {
@@ -3546,6 +3810,18 @@ func TestUpdateSnapshot_ResyncMFADevice(t *testing.T) {
 	_, err := svc.ResyncMFADevice(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "ResyncMFADevice")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_SendDelegationToken(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.SendDelegationToken(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "SendDelegationToken")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -3822,6 +4098,18 @@ func TestUpdateSnapshot_UpdateAssumeRolePolicy(t *testing.T) {
 	_, err := svc.UpdateAssumeRolePolicy(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateAssumeRolePolicy")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateDelegationRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateDelegationRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateDelegationRequest")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

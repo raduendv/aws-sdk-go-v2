@@ -8,6 +8,27 @@ import (
 	"time"
 )
 
+// Specifies the configuration for integrating with Customer Profiles. This
+// configuration enables Entity Resolution to send matched output directly to
+// Customer Profiles instead of Amazon S3, creating a unified customer view by
+// automatically updating customer profiles based on match clusters.
+type CustomerProfilesIntegrationConfig struct {
+
+	// The Amazon Resource Name (ARN) of the Customer Profiles domain where the
+	// matched output will be sent.
+	//
+	// This member is required.
+	DomainArn *string
+
+	// The Amazon Resource Name (ARN) of the Customer Profiles object type that
+	// defines the structure for the matched customer data.
+	//
+	// This member is required.
+	ObjectTypeArn *string
+
+	noSmithyDocumentSerde
+}
+
 // The deleted unique ID.
 type DeletedUniqueId struct {
 
@@ -19,15 +40,22 @@ type DeletedUniqueId struct {
 	noSmithyDocumentSerde
 }
 
-// The Delete Unique Id error.
+// The error information provided when the delete unique ID operation doesn't
+// complete.
 type DeleteUniqueIdError struct {
 
-	//  The error type for the batch delete unique ID operation.
+	//  The error type for the delete unique ID operation.
+	//
+	// The SERVICE_ERROR value indicates that an internal service-side problem
+	// occurred during the deletion operation.
+	//
+	// The VALIDATION_ERROR value indicates that the deletion operation couldn't
+	// complete because of invalid input parameters or data.
 	//
 	// This member is required.
 	ErrorType DeleteUniqueIdErrorType
 
-	// The unique ID that could not be deleted.
+	// The unique ID that couldn't be deleted.
 	//
 	// This member is required.
 	UniqueId *string
@@ -44,13 +72,77 @@ type ErrorDetails struct {
 	noSmithyDocumentSerde
 }
 
+// The record that didn't generate a Match ID.
+type FailedRecord struct {
+
+	//  The error message for the record that didn't generate a Match ID.
+	//
+	// This member is required.
+	ErrorMessage *string
+
+	//  The input source ARN of the record that didn't generate a Match ID.
+	//
+	// This member is required.
+	InputSourceARN *string
+
+	//  The unique ID of the record that didn't generate a Match ID.
+	//
+	// This member is required.
+	UniqueId *string
+
+	noSmithyDocumentSerde
+}
+
+// Incremental run configuration for an ID mapping workflow.
+type IdMappingIncrementalRunConfig struct {
+
+	//  The incremental run type for an ID mapping workflow.
+	//
+	// It takes only one value: ON_DEMAND . This setting runs the ID mapping workflow
+	// when it's manually triggered through the StartIdMappingJob API.
+	IncrementalRunType IdMappingIncrementalRunType
+
+	noSmithyDocumentSerde
+}
+
 // An object that contains metrics about an ID mapping job, including counts of
 // input records, processed records, and mapped records between source and target
 // identifiers.
 type IdMappingJobMetrics struct {
 
+	// The number of records processed that were marked for deletion in the input file
+	// using the DELETE schema mapping field. These are the records to be removed from
+	// the ID mapping table.
+	DeleteRecordsProcessed *int32
+
 	// The total number of records that were input for processing.
 	InputRecords *int32
+
+	//  The number of mapped records removed.
+	MappedRecordsRemoved *int32
+
+	//  The number of source records removed due to ID mapping.
+	MappedSourceRecordsRemoved *int32
+
+	//  The number of mapped target records removed.
+	MappedTargetRecordsRemoved *int32
+
+	//  The number of new mapped records.
+	NewMappedRecords *int32
+
+	//  The number of new source records mapped.
+	NewMappedSourceRecords *int32
+
+	//  The number of new mapped target records.
+	NewMappedTargetRecords *int32
+
+	// The number of new unique records processed in the current job run, after
+	// removing duplicates. This metric excludes deletion-related records. Duplicates
+	// are determined by the field marked as UNIQUE_ID in your schema mapping. Records
+	// sharing the same value in this field are considered duplicates. For example, if
+	// your current run processes five new records with the same UNIQUE_ID value, they
+	// would count as one new unique record in this metric.
+	NewUniqueRecordsLoaded *int32
 
 	// The total number of records that did not get processed.
 	RecordsNotProcessed *int32
@@ -67,18 +159,18 @@ type IdMappingJobMetrics struct {
 	// The total number of records that were processed.
 	TotalRecordsProcessed *int32
 
-	// The number of records remaining after loading and aggregating duplicate
-	// records. Duplicates are determined by the field marked as UNIQUE_ID in your
-	// schema mapping - records sharing the same value in this field are considered
-	// duplicates. For example, if you specified "customer_id" as a UNIQUE_ID field and
-	// had three records with the same customer_id value, they would count as one
-	// unique record in this metric.
+	// The number of de-duplicated processed records across all runs, excluding
+	// deletion-related records. Duplicates are determined by the field marked as
+	// UNIQUE_ID in your schema mapping. Records sharing the same value in this field
+	// are considered duplicates. For example, if you specified "customer_id" as a
+	// UNIQUE_ID field and had three records with the same customer_id value, they
+	// would count as one unique record in this metric.
 	UniqueRecordsLoaded *int32
 
 	noSmithyDocumentSerde
 }
 
-// An object containing KMSArn , OutputS3Path , and RoleARN .
+// An object containing KMSArn , outputS3Path , and roleARN .
 type IdMappingJobOutputSource struct {
 
 	// The S3 path to which Entity Resolution will write the output table.
@@ -108,15 +200,15 @@ type IdMappingRuleBasedProperties struct {
 	// The comparison type. You can either choose ONE_TO_ONE or MANY_TO_MANY as the
 	// attributeMatchingModel .
 	//
-	// If you choose MANY_TO_MANY , the system can match attributes across the
-	// sub-types of an attribute type. For example, if the value of the Email field of
-	// Profile A matches the value of the BusinessEmail field of Profile B, the two
-	// profiles are matched on the Email attribute type.
-	//
 	// If you choose ONE_TO_ONE , the system can only match attributes if the sub-types
 	// are an exact match. For example, for the Email attribute type, the system will
 	// only consider it a match if the value of the Email field of Profile A matches
 	// the value of the Email field of Profile B.
+	//
+	// If you choose MANY_TO_MANY , the system can match attributes across the
+	// sub-types of an attribute type. For example, if the value of the Email field of
+	// Profile A matches the value of the BusinessEmail field of Profile B, the two
+	// profiles are matched on the Email attribute type.
 	//
 	// This member is required.
 	AttributeMatchingModel AttributeMatchingModel
@@ -165,7 +257,7 @@ type IdMappingTechniques struct {
 	noSmithyDocumentSerde
 }
 
-// An object containing InputSourceARN , SchemaName , and Type .
+// An object containing inputSourceARN , schemaName , and type .
 type IdMappingWorkflowInputSource struct {
 
 	// An Glue table Amazon Resource Name (ARN) or a matching workflow ARN for the
@@ -243,8 +335,8 @@ type IdNamespaceIdMappingWorkflowMetadata struct {
 	noSmithyDocumentSerde
 }
 
-// An object containing IdMappingType , ProviderProperties , and
-// RuleBasedProperties .
+// An object containing idMappingType , providerProperties , and
+// ruleBasedProperties .
 type IdNamespaceIdMappingWorkflowProperties struct {
 
 	// The type of ID mapping.
@@ -263,7 +355,7 @@ type IdNamespaceIdMappingWorkflowProperties struct {
 	noSmithyDocumentSerde
 }
 
-// An object containing InputSourceARN and SchemaName .
+// An object containing inputSourceARN and schemaName .
 type IdNamespaceInputSource struct {
 
 	// An Glue table Amazon Resource Name (ARN) or a matching workflow ARN for the
@@ -322,17 +414,24 @@ type IdNamespaceSummary struct {
 	noSmithyDocumentSerde
 }
 
-// An object which defines an incremental run type and has only incrementalRunType
-// as a field.
+// Optional. An object that defines the incremental run type. This object contains
+// only the incrementalRunType field, which appears as "Automatic" in the console.
+//
+// For workflows where resolutionType is ML_MATCHING or PROVIDER , incremental
+// processing is not supported.
 type IncrementalRunConfig struct {
 
-	// The type of incremental run. It takes only one value: IMMEDIATE .
+	// The type of incremental run. The only valid value is IMMEDIATE . This appears as
+	// "Automatic" in the console.
+	//
+	// For workflows where resolutionType is ML_MATCHING or PROVIDER , incremental
+	// processing is not supported.
 	IncrementalRunType IncrementalRunType
 
 	noSmithyDocumentSerde
 }
 
-// An object containing InputSourceARN , SchemaName , and ApplyNormalization .
+// An object containing inputSourceARN , schemaName , and applyNormalization .
 type InputSource struct {
 
 	// An Glue table Amazon Resource Name (ARN) for the input source table.
@@ -367,9 +466,14 @@ type IntermediateSourceConfiguration struct {
 	noSmithyDocumentSerde
 }
 
-// An object containing InputRecords , TotalRecordsProcessed , MatchIDs , and
-// RecordsNotProcessed .
+// An object containing inputRecords , totalRecordsProcessed , matchIDs , and
+// recordsNotProcessed .
 type JobMetrics struct {
+
+	// The number of records processed that were marked for deletion ( DELETE = True)
+	// in the input file. This metric tracks records flagged for removal during the job
+	// execution.
+	DeleteRecordsProcessed *int32
 
 	// The total number of input records.
 	InputRecords *int32
@@ -386,7 +490,7 @@ type JobMetrics struct {
 	noSmithyDocumentSerde
 }
 
-// An object containing KMSArn , OutputS3Path , and RoleArn .
+// An object containing KMSArn , outputS3Path , and roleArn .
 type JobOutputSource struct {
 
 	// The S3 path to which Entity Resolution will write the output table.
@@ -408,7 +512,7 @@ type JobOutputSource struct {
 	noSmithyDocumentSerde
 }
 
-// An object containing the JobId , Status , StartTime , and EndTime of a job.
+// An object containing the jobId , status , startTime , and endTime of a job.
 type JobSummary struct {
 
 	// The ID of the job.
@@ -432,8 +536,45 @@ type JobSummary struct {
 	noSmithyDocumentSerde
 }
 
+// The matched record.
+type MatchedRecord struct {
+
+	//  The input source ARN of the matched record.
+	//
+	// This member is required.
+	InputSourceARN *string
+
+	//  The record ID of the matched record.
+	//
+	// This member is required.
+	RecordId *string
+
+	noSmithyDocumentSerde
+}
+
+// The match group.
+type MatchGroup struct {
+
+	//  The match ID.
+	//
+	// This member is required.
+	MatchId *string
+
+	//  The match rule of the match group.
+	//
+	// This member is required.
+	MatchRule *string
+
+	//  The matched records.
+	//
+	// This member is required.
+	Records []MatchedRecord
+
+	noSmithyDocumentSerde
+}
+
 // A list of MatchingWorkflowSummary objects, each of which contain the fields
-// WorkflowName , WorkflowArn , CreatedAt , UpdatedAt .
+// workflowName , workflowArn , resolutionType , createdAt , updatedAt .
 type MatchingWorkflowSummary struct {
 
 	// The timestamp of when the workflow was created.
@@ -466,7 +607,7 @@ type MatchingWorkflowSummary struct {
 	noSmithyDocumentSerde
 }
 
-// An object containing ProviderConfiguration and ProviderServiceArn .
+// An object containing providerConfiguration and providerServiceArn .
 type NamespaceProviderProperties struct {
 
 	// The Amazon Resource Name (ARN) of the provider service.
@@ -489,15 +630,15 @@ type NamespaceRuleBasedProperties struct {
 	// The comparison type. You can either choose ONE_TO_ONE or MANY_TO_MANY as the
 	// attributeMatchingModel .
 	//
-	// If you choose MANY_TO_MANY , the system can match attributes across the
-	// sub-types of an attribute type. For example, if the value of the Email field of
-	// Profile A matches the value of BusinessEmail field of Profile B, the two
-	// profiles are matched on the Email attribute type.
-	//
 	// If you choose ONE_TO_ONE , the system can only match attributes if the sub-types
 	// are an exact match. For example, for the Email attribute type, the system will
 	// only consider it a match if the value of the Email field of Profile A matches
 	// the value of the Email field of Profile B.
+	//
+	// If you choose MANY_TO_MANY , the system can match attributes across the
+	// sub-types of an attribute type. For example, if the value of the Email field of
+	// Profile A matches the value of BusinessEmail field of Profile B, the two
+	// profiles are matched on the Email attribute type.
 	AttributeMatchingModel AttributeMatchingModel
 
 	//  The type of matching record that is allowed to be used in an ID mapping
@@ -549,20 +690,24 @@ type OutputSource struct {
 	// This member is required.
 	Output []OutputAttribute
 
-	// The S3 path to which Entity Resolution will write the output table.
-	//
-	// This member is required.
-	OutputS3Path *string
-
 	// Normalizes the attributes defined in the schema in the input data. For example,
 	// if an attribute has an AttributeType of PHONE_NUMBER , and the data in the input
 	// table is in a format of 1234567890, Entity Resolution will normalize this field
 	// in the output to (123)-456-7890.
 	ApplyNormalization *bool
 
+	// Specifies the Customer Profiles integration configuration for sending matched
+	// output directly to Customer Profiles. When configured, Entity Resolution
+	// automatically creates and updates customer profiles based on match clusters,
+	// eliminating the need for manual Amazon S3 integration setup.
+	CustomerProfilesIntegrationConfig *CustomerProfilesIntegrationConfig
+
 	// Customer KMS ARN for encryption at rest. If not provided, system will use an
 	// Entity Resolution managed KMS key.
 	KMSArn *string
+
+	// The S3 path to which Entity Resolution will write the output table.
+	OutputS3Path *string
 
 	noSmithyDocumentSerde
 }
@@ -738,11 +883,37 @@ type ProviderServiceSummary struct {
 	noSmithyDocumentSerde
 }
 
+// The record.
+type Record struct {
+
+	//  The input source ARN of the record.
+	//
+	// This member is required.
+	InputSourceARN *string
+
+	//  The record's attribute map.
+	//
+	// This member is required.
+	RecordAttributeMap map[string]string
+
+	//  The unique ID of the record.
+	//
+	// This member is required.
+	UniqueId *string
+
+	noSmithyDocumentSerde
+}
+
 // An object which defines the resolutionType and the ruleBasedProperties .
 type ResolutionTechniques struct {
 
-	// The type of matching. There are three types of matching: RULE_MATCHING ,
-	// ML_MATCHING , and PROVIDER .
+	// The type of matching workflow to create. Specify one of the following types:
+	//
+	//   - RULE_MATCHING : Match records using configurable rule-based criteria
+	//
+	//   - ML_MATCHING : Match records using machine learning models
+	//
+	//   - PROVIDER : Match records using a third-party matching provider
 	//
 	// This member is required.
 	ResolutionType ResolutionType
@@ -750,14 +921,17 @@ type ResolutionTechniques struct {
 	// The properties of the provider service.
 	ProviderProperties *ProviderProperties
 
-	// An object which defines the list of matching rules to run and has a field Rules
+	// An object which defines the list of matching rules to run and has a field rules
 	// , which is a list of rule objects.
 	RuleBasedProperties *RuleBasedProperties
+
+	// An object containing the rules for a matching workflow.
+	RuleConditionProperties *RuleConditionProperties
 
 	noSmithyDocumentSerde
 }
 
-// An object containing RuleName , and MatchingKeys .
+// An object containing the ruleName and matchingKeys .
 type Rule struct {
 
 	// A list of MatchingKeys . The MatchingKeys must have been defined in the
@@ -776,22 +950,21 @@ type Rule struct {
 }
 
 // An object which defines the list of matching rules to run in a matching
-// workflow. RuleBasedProperties contain a Rules field, which is a list of rule
-// objects.
+// workflow.
 type RuleBasedProperties struct {
 
-	// The comparison type. You can either choose ONE_TO_ONE or MANY_TO_MANY as the
+	// The comparison type. You can choose ONE_TO_ONE or MANY_TO_MANY as the
 	// attributeMatchingModel .
-	//
-	// If you choose MANY_TO_MANY , the system can match attributes across the
-	// sub-types of an attribute type. For example, if the value of the Email field of
-	// Profile A and the value of BusinessEmail field of Profile B matches, the two
-	// profiles are matched on the Email attribute type.
 	//
 	// If you choose ONE_TO_ONE , the system can only match attributes if the sub-types
 	// are an exact match. For example, for the Email attribute type, the system will
 	// only consider it a match if the value of the Email field of Profile A matches
 	// the value of the Email field of Profile B.
+	//
+	// If you choose MANY_TO_MANY , the system can match attributes across the
+	// sub-types of an attribute type. For example, if the value of the Email field of
+	// Profile A and the value of BusinessEmail field of Profile B matches, the two
+	// profiles are matched on the Email attribute type.
 	//
 	// This member is required.
 	AttributeMatchingModel AttributeMatchingModel
@@ -808,6 +981,48 @@ type RuleBasedProperties struct {
 	//
 	// If you choose INDEXING , the process indexes the data without generating IDs.
 	MatchPurpose MatchPurpose
+
+	noSmithyDocumentSerde
+}
+
+// An object that defines the ruleCondition and the ruleName to use in a matching
+// workflow.
+type RuleCondition struct {
+
+	// A statement that specifies the conditions for a matching rule.
+	//
+	// If your data is accurate, use an Exact matching function: Exact or
+	// ExactManyToMany .
+	//
+	// If your data has variations in spelling or pronunciation, use a Fuzzy matching
+	// function: Cosine , Levenshtein , or Soundex .
+	//
+	// Use operators if you want to combine ( AND ), separate ( OR ), or group matching
+	// functions (...) .
+	//
+	// For example: (Cosine(a, 10) AND Exact(b, true)) OR ExactManyToMany(c, d)
+	//
+	// This member is required.
+	Condition *string
+
+	// A name for the matching rule.
+	//
+	// For example: Rule1
+	//
+	// This member is required.
+	RuleName *string
+
+	noSmithyDocumentSerde
+}
+
+// The properties of a rule condition that provides the ability to use more
+// complex syntax.
+type RuleConditionProperties struct {
+
+	//  A list of rule objects, each of which have fields ruleName and condition .
+	//
+	// This member is required.
+	Rules []RuleCondition
 
 	noSmithyDocumentSerde
 }
@@ -883,7 +1098,8 @@ type SchemaInputAttribute struct {
 	noSmithyDocumentSerde
 }
 
-// An object containing SchemaName , SchemaArn , CreatedAt , and UpdatedAt .
+// An object containing schemaName , schemaArn , createdAt , updatedAt , and
+// hasWorkflows .
 type SchemaMappingSummary struct {
 
 	// The timestamp of when the SchemaMapping was created.

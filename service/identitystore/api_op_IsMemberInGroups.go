@@ -14,10 +14,10 @@ import (
 // Checks the user's membership in all requested groups and returns if the member
 // exists in all queried groups.
 //
-// If you have administrator access to a member account, you can use this API from
-// the member account. Read about [member accounts]in the Organizations User Guide.
+// If you have access to a member account, you can use this API operation from the
+// member account. For more information, see [Limiting access to the identity store from member accounts]in the IAM Identity Center User Guide.
 //
-// [member accounts]: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html
+// [Limiting access to the identity store from member accounts]: https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-accounts.html#limiting-access-from-member-accounts
 func (c *Client) IsMemberInGroups(ctx context.Context, params *IsMemberInGroupsInput, optFns ...func(*Options)) (*IsMemberInGroupsOutput, error) {
 	if params == nil {
 		params = &IsMemberInGroupsInput{}
@@ -154,16 +154,13 @@ func (c *Client) addOperationIsMemberInGroupsMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

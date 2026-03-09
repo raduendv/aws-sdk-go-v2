@@ -81,7 +81,8 @@ type GeneratePinDataInput struct {
 	GenerationKeyIdentifier *string
 
 	// The PIN encoding format for pin data generation as specified in ISO 9564.
-	// Amazon Web Services Payment Cryptography supports ISO_Format_0 and ISO_Format_3 .
+	// Amazon Web Services Payment Cryptography supports ISO_Format_0 , ISO_Format_3
+	// and ISO_Format_4 .
 	//
 	// The ISO_Format_0 PIN block format is equivalent to the ANSI X9.8, VISA-1, and
 	// ECI-1 PIN block formats. It is similar to a VISA-4 PIN block format. It supports
@@ -90,20 +91,20 @@ type GeneratePinDataInput struct {
 	// The ISO_Format_3 PIN block format is the same as ISO_Format_0 except that the
 	// fill digits are random values from 10 to 15.
 	//
-	// This member is required.
-	PinBlockFormat types.PinBlockFormatForPinData
-
-	// The Primary Account Number (PAN), a unique identifier for a payment credit or
-	// debit card that associates the card with a specific account holder.
+	// The ISO_Format_4 PIN block format is the only one supporting AES encryption.
 	//
 	// This member is required.
-	PrimaryAccountNumber *string
+	PinBlockFormat types.PinBlockFormatForPinData
 
 	// Parameter information of a WrappedKeyBlock for encryption key exchange.
 	EncryptionWrappedKey *types.WrappedKey
 
 	// The length of PIN under generation.
 	PinDataLength *int32
+
+	// The Primary Account Number (PAN), a unique identifier for a payment credit or
+	// debit card that associates the card with a specific account holder.
+	PrimaryAccountNumber *string
 
 	noSmithyDocumentSerde
 }
@@ -251,16 +252,13 @@ func (c *Client) addOperationGeneratePinDataMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

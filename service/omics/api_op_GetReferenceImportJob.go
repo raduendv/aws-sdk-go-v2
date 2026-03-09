@@ -14,7 +14,8 @@ import (
 	"time"
 )
 
-// Gets information about a reference import job.
+// Monitors the status of a reference import job. This operation can be called
+// after calling the StartReferenceImportJob operation.
 func (c *Client) GetReferenceImportJob(ctx context.Context, params *GetReferenceImportJobInput, optFns ...func(*Options)) (*GetReferenceImportJobOutput, error) {
 	if params == nil {
 		params = &GetReferenceImportJobInput{}
@@ -180,16 +181,13 @@ func (c *Client) addOperationGetReferenceImportJobMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

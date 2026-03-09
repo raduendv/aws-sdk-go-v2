@@ -13,6 +13,10 @@ import (
 // Decommissions a landing zone. This API call starts an asynchronous operation
 // that deletes Amazon Web Services Control Tower resources deployed in accounts
 // managed by Amazon Web Services Control Tower.
+//
+// Decommissioning a landing zone is a process with significant consequences, and
+// it cannot be undone. We strongly recommend that you perform this decommissioning
+// process only if you intend to stop using your landing zone.
 func (c *Client) DeleteLandingZone(ctx context.Context, params *DeleteLandingZoneInput, optFns ...func(*Options)) (*DeleteLandingZoneOutput, error) {
 	if params == nil {
 		params = &DeleteLandingZoneInput{}
@@ -141,16 +145,13 @@ func (c *Client) addOperationDeleteLandingZoneMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

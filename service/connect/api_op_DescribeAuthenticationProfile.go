@@ -12,7 +12,7 @@ import (
 )
 
 // This API is in preview release for Amazon Connect and is subject to change. To
-// request access to this API, contact Amazon Web ServicesSupport.
+// request access to this API, contact Amazon Web Services Support.
 //
 // Describes the target authentication profile.
 func (c *Client) DescribeAuthenticationProfile(ctx context.Context, params *DescribeAuthenticationProfileInput, optFns ...func(*Options)) (*DescribeAuthenticationProfileOutput, error) {
@@ -147,16 +147,13 @@ func (c *Client) addOperationDescribeAuthenticationProfileMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

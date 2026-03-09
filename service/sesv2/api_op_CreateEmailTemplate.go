@@ -50,6 +50,10 @@ type CreateEmailTemplateInput struct {
 	// This member is required.
 	TemplateName *string
 
+	// An array of objects that define the tags (keys and values) to associate with
+	// the email template.
+	Tags []types.Tag
+
 	noSmithyDocumentSerde
 }
 
@@ -150,16 +154,13 @@ func (c *Client) addOperationCreateEmailTemplateMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

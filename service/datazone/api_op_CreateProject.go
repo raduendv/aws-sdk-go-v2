@@ -53,6 +53,9 @@ type CreateProjectInput struct {
 	// The ID of the project profile.
 	ProjectProfileId *string
 
+	// The resource tags of the project.
+	ResourceTags map[string]string
+
 	// The user parameters of the project.
 	UserParameters []types.EnvironmentConfigurationUserParameter
 
@@ -108,6 +111,9 @@ type CreateProjectOutput struct {
 
 	// The status of the Amazon DataZone project that was created.
 	ProjectStatus types.ProjectStatus
+
+	// The resource tags of the project.
+	ResourceTags []types.ResourceTag
 
 	// The user parameters of the project.
 	UserParameters []types.EnvironmentConfigurationUserParameter
@@ -206,16 +212,13 @@ func (c *Client) addOperationCreateProjectMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

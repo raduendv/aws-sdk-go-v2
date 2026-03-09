@@ -157,6 +157,21 @@ type CreateClusterInput struct {
 	// Availability Zones after the cluster is created.
 	AvailabilityZoneRelocation *bool
 
+	// The name of the Glue data catalog that will be associated with the cluster
+	// enabled with Amazon Redshift federated permissions.
+	//
+	// Constraints:
+	//
+	//   - Must contain at least one lowercase letter.
+	//
+	//   - Can only contain lowercase letters (a-z), numbers (0-9), underscores (_),
+	//   and hyphens (-).
+	//
+	// Pattern: ^[a-z0-9_-]*[a-z]+[a-z0-9_-]*$
+	//
+	// Example: my-catalog_01
+	CatalogName *string
+
 	// The name of the parameter group to be associated with this cluster.
 	//
 	// Default: The default Amazon Redshift cluster parameter group. For information
@@ -258,6 +273,12 @@ type CreateClusterInput struct {
 	//
 	// [Enhanced VPC Routing]: https://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html
 	EnhancedVpcRouting *bool
+
+	// If true , allocates additional compute resources for running automatic
+	// optimization operations.
+	//
+	// Default: false
+	ExtraComputeForAutomaticOptimization *bool
 
 	// Specifies the name of the HSM client certificate the Amazon Redshift cluster
 	// uses to retrieve the data encryption keys stored in an HSM.
@@ -506,16 +527,13 @@ func (c *Client) addOperationCreateClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

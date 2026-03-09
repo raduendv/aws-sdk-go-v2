@@ -1,3 +1,207 @@
+# v1.52.1 (2026-02-10)
+
+* No change notes available for this release.
+
+# v1.52.0 (2026-01-23)
+
+* **Feature**: Added api for deleting data export configuration for a domain
+
+# v1.51.0 (2026-01-16)
+
+* **Feature**: This release adds support for numeric filtering and complex free-text searches cases for the Search and SearchListings APIs.
+
+# v1.50.0 (2026-01-13)
+
+* **Feature**: Adds support for IAM role subscriptions to Glue table listings via CreateSubscriptionRequest API. Also adds owningIamPrincipalArn filter to List APIs and subscriptionGrantCreationMode parameter to subscription target APIs for controlling grant creation behavior.
+
+# v1.49.3 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.2 (2025-12-09)
+
+* No change notes available for this release.
+
+# v1.49.1 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.0 (2025-12-02)
+
+* **Feature**: Amazon DataZone now supports exporting Catalog datasets as Amazon S3 tables, and provides automatic business glossary term suggestions for data assets.
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.48.2 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.48.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.48.0 (2025-11-19)
+
+* **Feature**: Amazon DataZone now supports business metadata (readme and metadata forms) at the individual attribute (column) level, a new rule type for glossary terms, and the ability to update the owner of the root domain unit.
+
+# v1.47.0 (2025-11-14)
+
+* **Feature**: Adds support for granting read and write access to Amazon S3 general purpose buckets using CreateSubscriptionRequest and AcceptSubscriptionRequest APIs. Also adds search filters for SSOUser and SSOGroup to ListSubscriptions APIs and deprecates "sortBy" parameter for ListSubscriptions APIs.
+
+# v1.46.2 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.46.1 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.46.0 (2025-11-10)
+
+* **Feature**: Remove trackingServerName from DataZone Connection MLflowProperties
+
+# v1.45.0 (2025-11-05)
+
+* **Feature**: Added support for Project Resource Tags
+
+# v1.44.2 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.44.1 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.44.0 (2025-10-24)
+
+* **Feature**: This release adds support for MLflow connections Creation in DataZone
+
+# v1.43.2 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.43.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.43.0 (2025-10-14)
+
+* **Feature**: Support creating scoped and trustedIdentityPropagation enabled connections.
+
+# v1.42.0 (2025-09-30)
+
+* **Feature**: This release adds support for creation of EMR on EKS Connections in Amazon DataZone.
+
+# v1.41.3 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.41.2 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.41.1 (2025-09-19)
+
+* No change notes available for this release.
+
+# v1.41.0 (2025-09-11)
+
+* **Feature**: adding IAM principal id to IAM user profile details
+
+# v1.40.1 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.40.0 (2025-09-09)
+
+* **Feature**: Adds support for custom blueprints
+
+# v1.39.3 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.39.2 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.39.1 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.39.0 (2025-08-25)
+
+* **Feature**: Releasing the following features - Asset classification that lets users use restricted terms for classifying assets if they have the right permissions. Also adding a new enum value "Moving" to project status.
+
+# v1.38.1 (2025-08-21)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.38.0 (2025-08-20)
+
+* **Feature**: This release supports policy grant identifier for cloud formation integration
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.37.0 (2025-08-13)
+
+* **Feature**: Adds support for account pools and project profile account decoupling
+
+# v1.36.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.35.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.34.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.34.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.33.0 (2025-07-24)
+
+* **Feature**: This release adds support for 1) highlighting relevant text in returned results for Search and SearchListings APIs and 2) returning aggregated counts of values for specified attributes for SearchListings API.
+
+# v1.32.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.32.0 (2025-07-15)
+
+* **Feature**: Removing restriction of environment profile identifier as required field, S3 feature release
+
+# v1.31.0 (2025-07-01)
+
+* **Feature**: Add support for the new optional domain-unit-id parameter in the UpdateProject API.
+
+# v1.30.3 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.30.2 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.30.1 (2025-06-06)
+
+* No change notes available for this release.
+
+# v1.30.0 (2025-05-05)
+
+* **Feature**: This release adds a new authorization policy to control the usage of custom AssetType when creating an Asset. Customer can now add new grant(s) of policyType USE_ASSET_TYPE for custom AssetTypes to apply authorization policy to projects members and domain unit owners.
+
 # v1.29.1 (2025-04-03)
 
 * No change notes available for this release.

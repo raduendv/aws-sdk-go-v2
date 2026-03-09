@@ -12,10 +12,10 @@ import (
 )
 
 // Retrieves a list that describes one or more specified Directory Config objects
-// for AppStream 2.0, if the names for these objects are provided. Otherwise, all
-// Directory Config objects in the account are described. These objects include the
-// configuration information required to join fleets and image builders to
-// Microsoft Active Directory domains.
+// for WorkSpaces Applications, if the names for these objects are provided.
+// Otherwise, all Directory Config objects in the account are described. These
+// objects include the configuration information required to join fleets and image
+// builders to Microsoft Active Directory domains.
 //
 // Although the response syntax in this topic includes the account password, this
 // password is not returned in the actual response.
@@ -151,16 +151,13 @@ func (c *Client) addOperationDescribeDirectoryConfigsMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

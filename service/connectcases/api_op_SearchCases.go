@@ -45,8 +45,8 @@ type SearchCasesInput struct {
 	// A list of filter objects.
 	Filter types.CaseFilter
 
-	// The maximum number of cases to return. The current maximum supported value is
-	// 25. This is also the default value when no other value is provided.
+	// The maximum number of cases to return. When no value is provided, 25 is the
+	// default.
 	MaxResults *int32
 
 	// The token for the next set of results. Use the value returned in the previous
@@ -74,6 +74,9 @@ type SearchCasesOutput struct {
 	// The token for the next set of results. This is null if there are no more
 	// results to return.
 	NextToken *string
+
+	// The total number of cases that matched the search criteria.
+	TotalCount int64
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -169,16 +172,13 @@ func (c *Client) addOperationSearchCasesMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -186,8 +186,8 @@ func (c *Client) addOperationSearchCasesMiddlewares(stack *middleware.Stack, opt
 
 // SearchCasesPaginatorOptions is the paginator options for SearchCases
 type SearchCasesPaginatorOptions struct {
-	// The maximum number of cases to return. The current maximum supported value is
-	// 25. This is also the default value when no other value is provided.
+	// The maximum number of cases to return. When no value is provided, 25 is the
+	// default.
 	Limit int32
 
 	// Set to true if pagination should stop if the service returns a pagination token

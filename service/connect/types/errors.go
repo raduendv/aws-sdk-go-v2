@@ -114,8 +114,7 @@ func (e *ContactFlowNotPublishedException) ErrorCode() string {
 }
 func (e *ContactFlowNotPublishedException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
-// The contact with the specified ID is not active or does not exist. Applies to
-// Voice calls only, not to Chat or Task contacts.
+// The contact with the specified ID does not exist.
 type ContactNotFoundException struct {
 	Message *string
 
@@ -245,6 +244,35 @@ func (e *InternalServiceException) ErrorCode() string {
 }
 func (e *InternalServiceException) ErrorFault() smithy.ErrorFault { return smithy.FaultServer }
 
+// This exception occurs when an API request is made to a non-active region in an
+// Amazon Connect instance configured with Amazon Connect Global Resiliency. For
+// example, if the active region is US West (Oregon) and a request is made to US
+// East (N. Virginia), the exception will be returned.
+type InvalidActiveRegionException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	noSmithyDocumentSerde
+}
+
+func (e *InvalidActiveRegionException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *InvalidActiveRegionException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *InvalidActiveRegionException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "InvalidActiveRegionException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *InvalidActiveRegionException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
+
 // The flow is not valid.
 type InvalidContactFlowException struct {
 	Message *string
@@ -354,6 +382,34 @@ func (e *InvalidRequestException) ErrorCode() string {
 	return *e.ErrorCodeOverride
 }
 func (e *InvalidRequestException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
+
+// The test is not valid.
+type InvalidTestCaseException struct {
+	Message *string
+
+	ErrorCodeOverride *string
+
+	Problems []ProblemDetail
+
+	noSmithyDocumentSerde
+}
+
+func (e *InvalidTestCaseException) Error() string {
+	return fmt.Sprintf("%s: %s", e.ErrorCode(), e.ErrorMessage())
+}
+func (e *InvalidTestCaseException) ErrorMessage() string {
+	if e.Message == nil {
+		return ""
+	}
+	return *e.Message
+}
+func (e *InvalidTestCaseException) ErrorCode() string {
+	if e == nil || e.ErrorCodeOverride == nil {
+		return "InvalidTestCaseException"
+	}
+	return *e.ErrorCodeOverride
+}
+func (e *InvalidTestCaseException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
 // The allowed limit for the resource has been exceeded.
 type LimitExceededException struct {
@@ -518,7 +574,10 @@ func (e *ResourceConflictException) ErrorCode() string {
 }
 func (e *ResourceConflictException) ErrorFault() smithy.ErrorFault { return smithy.FaultClient }
 
-// That resource is already in use. Please try another.
+// That resource is already in use (for example, you're trying to add a record
+// with the same name as an existing record). If you are trying to delete a
+// resource (for example, DeleteHoursOfOperation or DeletePredefinedAttribute),
+// remove its reference from related resources and then try again.
 type ResourceInUseException struct {
 	Message *string
 

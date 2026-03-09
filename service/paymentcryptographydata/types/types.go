@@ -76,6 +76,53 @@ type AmexCardSecurityCodeVersion2 struct {
 	noSmithyDocumentSerde
 }
 
+// Parameter information for generating a random key for KEK validation to perform
+// node-to-node initialization.
+//
+// The following types satisfy this interface:
+//
+//	As2805KekValidationTypeMemberKekValidationRequest
+//	As2805KekValidationTypeMemberKekValidationResponse
+type As2805KekValidationType interface {
+	isAs2805KekValidationType()
+}
+
+// Parameter information for generating a KEK validation request during
+// node-to-node initialization.
+type As2805KekValidationTypeMemberKekValidationRequest struct {
+	Value KekValidationRequest
+
+	noSmithyDocumentSerde
+}
+
+func (*As2805KekValidationTypeMemberKekValidationRequest) isAs2805KekValidationType() {}
+
+// Parameter information for generating a KEK validation response during
+// node-to-node initialization.
+type As2805KekValidationTypeMemberKekValidationResponse struct {
+	Value KekValidationResponse
+
+	noSmithyDocumentSerde
+}
+
+func (*As2805KekValidationTypeMemberKekValidationResponse) isAs2805KekValidationType() {}
+
+// Parameter information to use a PEK derived using AS2805.
+type As2805PekDerivationAttributes struct {
+
+	// The system trace audit number for the transaction.
+	//
+	// This member is required.
+	SystemTraceAuditNumber *string
+
+	// The transaction amount for the transaction.
+	//
+	// This member is required.
+	TransactionAmount *string
+
+	noSmithyDocumentSerde
+}
+
 // Parameters for plaintext encryption using asymmetric keys.
 type AsymmetricEncryptionAttributes struct {
 
@@ -466,6 +513,31 @@ type DerivationMethodAttributesMemberVisa struct {
 }
 
 func (*DerivationMethodAttributesMemberVisa) isDerivationMethodAttributes() {}
+
+// The shared information used when deriving a key using ECDH.
+//
+// The following types satisfy this interface:
+//
+//	DiffieHellmanDerivationDataMemberSharedInformation
+type DiffieHellmanDerivationData interface {
+	isDiffieHellmanDerivationData()
+}
+
+// A string containing information that binds the ECDH derived key to the two
+// parties involved or to the context of the key.
+//
+// It may include details like identities of the two parties deriving the key,
+// context of the operation, session IDs, and optionally a nonce. It must not
+// contain zero bytes. It is not recommended to reuse shared information for
+// multiple ECDH key derivations, as it could result in derived key material being
+// the same across different derivations.
+type DiffieHellmanDerivationDataMemberSharedInformation struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*DiffieHellmanDerivationDataMemberSharedInformation) isDiffieHellmanDerivationData() {}
 
 // Parameters that are required to generate or verify dCVC (Dynamic Card
 // Verification Code).
@@ -970,6 +1042,98 @@ type Ibm3624RandomPin struct {
 	noSmithyDocumentSerde
 }
 
+// Parameter information of a TR31KeyBlock wrapped using an ECDH derived key.
+type IncomingDiffieHellmanTr31KeyBlock struct {
+
+	// The keyArn of the certificate that signed the client's PublicKeyCertificate .
+	//
+	// This member is required.
+	CertificateAuthorityPublicKeyIdentifier *string
+
+	// The shared information used when deriving a key using ECDH.
+	//
+	// This member is required.
+	DerivationData DiffieHellmanDerivationData
+
+	// The key algorithm of the derived ECDH key.
+	//
+	// This member is required.
+	DeriveKeyAlgorithm SymmetricKeyAlgorithm
+
+	// The key derivation function to use for deriving a key using ECDH.
+	//
+	// This member is required.
+	KeyDerivationFunction KeyDerivationFunction
+
+	// The hash type to use for deriving a key using ECDH.
+	//
+	// This member is required.
+	KeyDerivationHashAlgorithm KeyDerivationHashAlgorithm
+
+	// The keyARN of the asymmetric ECC key pair.
+	//
+	// This member is required.
+	PrivateKeyIdentifier *string
+
+	// The client's public key certificate in PEM format (base64 encoded) to use for
+	// ECDH key derivation.
+	//
+	// This member is required.
+	PublicKeyCertificate *string
+
+	// The WrappedKeyBlock containing the transaction key wrapped using an ECDH
+	// dervied key.
+	//
+	// This member is required.
+	WrappedKeyBlock *string
+
+	noSmithyDocumentSerde
+}
+
+// Parameter information of the incoming WrappedKeyBlock containing the
+// transaction key.
+//
+// The following types satisfy this interface:
+//
+//	IncomingKeyMaterialMemberDiffieHellmanTr31KeyBlock
+type IncomingKeyMaterial interface {
+	isIncomingKeyMaterial()
+}
+
+// Parameter information of the TR31WrappedKeyBlock containing the transaction key
+// wrapped using an ECDH dervied key.
+type IncomingKeyMaterialMemberDiffieHellmanTr31KeyBlock struct {
+	Value IncomingDiffieHellmanTr31KeyBlock
+
+	noSmithyDocumentSerde
+}
+
+func (*IncomingKeyMaterialMemberDiffieHellmanTr31KeyBlock) isIncomingKeyMaterial() {}
+
+// Parameter information for generating a KEK validation request during
+// node-to-node initialization.
+type KekValidationRequest struct {
+
+	// The key derivation algorithm to use for generating a KEK validation request.
+	//
+	// This member is required.
+	DeriveKeyAlgorithm SymmetricKeyAlgorithm
+
+	noSmithyDocumentSerde
+}
+
+// Parameter information for generating a KEK validation response during
+// node-to-node initialization.
+type KekValidationResponse struct {
+
+	// The random key for generating a KEK validation response.
+	//
+	// This member is required.
+	RandomKeySend *string
+
+	noSmithyDocumentSerde
+}
+
 // Parameters required for DUKPT MAC generation and verification.
 type MacAlgorithmDukpt struct {
 
@@ -1119,6 +1283,38 @@ type MasterCardAttributes struct {
 	//
 	// This member is required.
 	PrimaryAccountNumber *string
+
+	noSmithyDocumentSerde
+}
+
+// Parameter information of the outgoing TR31WrappedKeyBlock containing the
+// transaction key.
+//
+// The following types satisfy this interface:
+//
+//	OutgoingKeyMaterialMemberTr31KeyBlock
+type OutgoingKeyMaterial interface {
+	isOutgoingKeyMaterial()
+}
+
+// Parameter information of the TR31WrappedKeyBlock containing the transaction key
+// wrapped using a KEK.
+type OutgoingKeyMaterialMemberTr31KeyBlock struct {
+	Value OutgoingTr31KeyBlock
+
+	noSmithyDocumentSerde
+}
+
+func (*OutgoingKeyMaterialMemberTr31KeyBlock) isOutgoingKeyMaterial() {}
+
+// Parameter information of the TR31WrappedKeyBlock containing the transaction key
+// wrapped using a KEK.
+type OutgoingTr31KeyBlock struct {
+
+	// The keyARN of the KEK used to wrap the transaction key.
+	//
+	// This member is required.
+	WrappingKeyIdentifier *string
 
 	noSmithyDocumentSerde
 }
@@ -1513,6 +1709,7 @@ type SymmetricEncryptionAttributes struct {
 //
 // The following types satisfy this interface:
 //
+//	TranslationIsoFormatsMemberAs2805Format0
 //	TranslationIsoFormatsMemberIsoFormat0
 //	TranslationIsoFormatsMemberIsoFormat1
 //	TranslationIsoFormatsMemberIsoFormat3
@@ -1521,7 +1718,16 @@ type TranslationIsoFormats interface {
 	isTranslationIsoFormats()
 }
 
-// Parameters that are required for ISO9564 PIN format 0 tranlation.
+// Parameters that are required for AS2805 PIN format 0 translation.
+type TranslationIsoFormatsMemberAs2805Format0 struct {
+	Value TranslationPinDataAs2805Format0
+
+	noSmithyDocumentSerde
+}
+
+func (*TranslationIsoFormatsMemberAs2805Format0) isTranslationIsoFormats() {}
+
+// Parameters that are required for ISO9564 PIN format 0 translation.
 type TranslationIsoFormatsMemberIsoFormat0 struct {
 	Value TranslationPinDataIsoFormat034
 
@@ -1530,7 +1736,7 @@ type TranslationIsoFormatsMemberIsoFormat0 struct {
 
 func (*TranslationIsoFormatsMemberIsoFormat0) isTranslationIsoFormats() {}
 
-// Parameters that are required for ISO9564 PIN format 1 tranlation.
+// Parameters that are required for ISO9564 PIN format 1 translation.
 type TranslationIsoFormatsMemberIsoFormat1 struct {
 	Value TranslationPinDataIsoFormat1
 
@@ -1539,7 +1745,7 @@ type TranslationIsoFormatsMemberIsoFormat1 struct {
 
 func (*TranslationIsoFormatsMemberIsoFormat1) isTranslationIsoFormats() {}
 
-// Parameters that are required for ISO9564 PIN format 3 tranlation.
+// Parameters that are required for ISO9564 PIN format 3 translation.
 type TranslationIsoFormatsMemberIsoFormat3 struct {
 	Value TranslationPinDataIsoFormat034
 
@@ -1548,7 +1754,7 @@ type TranslationIsoFormatsMemberIsoFormat3 struct {
 
 func (*TranslationIsoFormatsMemberIsoFormat3) isTranslationIsoFormats() {}
 
-// Parameters that are required for ISO9564 PIN format 4 tranlation.
+// Parameters that are required for ISO9564 PIN format 4 translation.
 type TranslationIsoFormatsMemberIsoFormat4 struct {
 	Value TranslationPinDataIsoFormat034
 
@@ -1557,8 +1763,22 @@ type TranslationIsoFormatsMemberIsoFormat4 struct {
 
 func (*TranslationIsoFormatsMemberIsoFormat4) isTranslationIsoFormats() {}
 
-// Parameters that are required for tranlation between ISO9564 PIN format 0,3,4
-// tranlation.
+// Parameters that are required for translation between AS2805 PIN format 0
+// translation.
+type TranslationPinDataAs2805Format0 struct {
+
+	// The Primary Account Number (PAN) of the cardholder. A PAN is a unique
+	// identifier for a payment credit or debit card and associates the card to a
+	// specific account holder.
+	//
+	// This member is required.
+	PrimaryAccountNumber *string
+
+	noSmithyDocumentSerde
+}
+
+// Parameters that are required for translation between ISO9564 PIN format 0,3,4
+// translation.
 type TranslationPinDataIsoFormat034 struct {
 
 	// The Primary Account Number (PAN) of the cardholder. A PAN is a unique
@@ -1571,7 +1791,7 @@ type TranslationPinDataIsoFormat034 struct {
 	noSmithyDocumentSerde
 }
 
-// Parameters that are required for ISO9564 PIN format 1 tranlation.
+// Parameters that are required for ISO9564 PIN format 1 translation.
 type TranslationPinDataIsoFormat1 struct {
 	noSmithyDocumentSerde
 }
@@ -1752,6 +1972,34 @@ type WrappedKeyMaterialMemberTr31KeyBlock struct {
 
 func (*WrappedKeyMaterialMemberTr31KeyBlock) isWrappedKeyMaterial() {}
 
+// The parameter information of the outgoing wrapped key block.
+type WrappedWorkingKey struct {
+
+	// The key check value (KCV) of the key contained within the outgoing
+	// TR31WrappedKeyBlock.
+	//
+	// The KCV is used to check if all parties holding a given key have the same key
+	// or to detect that a key has changed. For more information on KCV, see [KCV]in the
+	// Amazon Web Services Payment Cryptography User Guide.
+	//
+	// [KCV]: https://docs.aws.amazon.com/payment-cryptography/latest/userguide/terminology.html#terms.kcv
+	//
+	// This member is required.
+	KeyCheckValue *string
+
+	// The wrapped key block of the outgoing transaction key.
+	//
+	// This member is required.
+	WrappedKeyMaterial *string
+
+	// The key block format of the wrapped key.
+	//
+	// This member is required.
+	WrappedKeyMaterialFormat WrappedKeyMaterialFormat
+
+	noSmithyDocumentSerde
+}
+
 type noSmithyDocumentSerde = smithydocument.NoSerde
 
 // UnknownUnionMember is returned when a union member is returned over the wire,
@@ -1763,12 +2011,16 @@ type UnknownUnionMember struct {
 	noSmithyDocumentSerde
 }
 
+func (*UnknownUnionMember) isAs2805KekValidationType()        {}
 func (*UnknownUnionMember) isCardGenerationAttributes()       {}
 func (*UnknownUnionMember) isCardVerificationAttributes()     {}
 func (*UnknownUnionMember) isCryptogramAuthResponse()         {}
 func (*UnknownUnionMember) isDerivationMethodAttributes()     {}
+func (*UnknownUnionMember) isDiffieHellmanDerivationData()    {}
 func (*UnknownUnionMember) isEncryptionDecryptionAttributes() {}
+func (*UnknownUnionMember) isIncomingKeyMaterial()            {}
 func (*UnknownUnionMember) isMacAttributes()                  {}
+func (*UnknownUnionMember) isOutgoingKeyMaterial()            {}
 func (*UnknownUnionMember) isPinData()                        {}
 func (*UnknownUnionMember) isPinGenerationAttributes()        {}
 func (*UnknownUnionMember) isPinVerificationAttributes()      {}

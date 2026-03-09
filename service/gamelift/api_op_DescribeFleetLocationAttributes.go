@@ -11,6 +11,8 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Container
+//
 // Retrieves information on a fleet's remote locations, including life-cycle
 // status and any suspended fleet activity.
 //
@@ -32,12 +34,12 @@ import (
 //
 // # Learn more
 //
-// [Setting up Amazon GameLift fleets]
+// [Setting up Amazon GameLift Servers fleets]
 //
-// [Amazon GameLift service locations]for managed hosting
+// [Amazon GameLift Servers service locations]for managed hosting
 //
-// [Amazon GameLift service locations]: https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-regions.html
-// [Setting up Amazon GameLift fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
+// [Amazon GameLift Servers service locations]: https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-regions.html
+// [Setting up Amazon GameLift Servers fleets]: https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html
 func (c *Client) DescribeFleetLocationAttributes(ctx context.Context, params *DescribeFleetLocationAttributesInput, optFns ...func(*Options)) (*DescribeFleetLocationAttributesOutput, error) {
 	if params == nil {
 		params = &DescribeFleetLocationAttributesInput{}
@@ -79,7 +81,7 @@ type DescribeFleetLocationAttributesInput struct {
 
 type DescribeFleetLocationAttributesOutput struct {
 
-	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift fleet
+	// The Amazon Resource Name ([ARN] ) that is assigned to a Amazon GameLift Servers fleet
 	// resource and uniquely identifies it. ARNs are unique across all Regions. Format
 	// is arn:aws:gamelift:::fleet/fleet-a1234567-b8c9-0d1e-2fa3-b45c6d7e8912 .
 	//
@@ -191,16 +193,13 @@ func (c *Client) addOperationDescribeFleetLocationAttributesMiddlewares(stack *m
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

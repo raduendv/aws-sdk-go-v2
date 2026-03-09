@@ -123,6 +123,20 @@ type PutEmailIdentityDkimSigningAttributesOutput struct {
 	// [Easy DKIM]: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/easy-dkim.html
 	DkimTokens []string
 
+	// The hosted zone where Amazon SES publishes the DKIM public key TXT records for
+	// this email identity. This value indicates the DNS zone that customers must
+	// reference when configuring their CNAME records for DKIM authentication.
+	//
+	// When configuring DKIM for your domain, create CNAME records in your DNS that
+	// point to the selectors in this hosted zone. For example:
+	//
+	//     selector1._domainkey.yourdomain.com CNAME selector1.
+	//
+	//     selector2._domainkey.yourdomain.com CNAME selector2.
+	//
+	//     selector3._domainkey.yourdomain.com CNAME selector3.
+	SigningHostedZone *string
+
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
 
@@ -217,16 +231,13 @@ func (c *Client) addOperationPutEmailIdentityDkimSigningAttributesMiddlewares(st
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

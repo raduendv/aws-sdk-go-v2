@@ -19,16 +19,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpActivateGateway struct {
 }
@@ -12504,7 +12495,7 @@ func awsAwsjson11_deserializeDocumentFileShareClientList(v *[]string, value inte
 		if value != nil {
 			jtv, ok := value.(string)
 			if !ok {
-				return fmt.Errorf("expected IPV4AddressCIDR to be of type string, got %T instead", value)
+				return fmt.Errorf("expected Ipv4OrIpv6AddressCIDR to be of type string, got %T instead", value)
 			}
 			col = jtv
 		}

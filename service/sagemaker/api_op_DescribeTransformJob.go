@@ -146,10 +146,9 @@ type DescribeTransformJobOutput struct {
 	// invocation.
 	ModelClientConfig *types.ModelClientConfig
 
-	// Indicates when the transform job has been
-	//
-	// completed, or has stopped or failed. You are billed for the time interval
-	// between this time and the value of TransformStartTime .
+	// Indicates when the transform job has been completed, or has stopped or failed.
+	// You are billed for the time interval between this time and the value of
+	// TransformStartTime .
 	TransformEndTime *time.Time
 
 	// Identifies the Amazon S3 location where you want Amazon SageMaker to save the
@@ -254,16 +253,13 @@ func (c *Client) addOperationDescribeTransformJobMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
@@ -295,7 +291,7 @@ type TransformJobCompletedOrStoppedWaiterOptions struct {
 
 	// MaxDelay is the maximum amount of time to delay between retries. If unset or
 	// set to zero, TransformJobCompletedOrStoppedWaiter will use default max delay of
-	// 120 seconds. Note that MaxDelay must resolve to value greater than or equal to
+	// 3600 seconds. Note that MaxDelay must resolve to value greater than or equal to
 	// the MinDelay.
 	MaxDelay time.Duration
 
@@ -327,7 +323,7 @@ type TransformJobCompletedOrStoppedWaiter struct {
 func NewTransformJobCompletedOrStoppedWaiter(client DescribeTransformJobAPIClient, optFns ...func(*TransformJobCompletedOrStoppedWaiterOptions)) *TransformJobCompletedOrStoppedWaiter {
 	options := TransformJobCompletedOrStoppedWaiterOptions{}
 	options.MinDelay = 60 * time.Second
-	options.MaxDelay = 120 * time.Second
+	options.MaxDelay = 3600 * time.Second
 	options.Retryable = transformJobCompletedOrStoppedStateRetryable
 
 	for _, fn := range optFns {
@@ -362,7 +358,7 @@ func (w *TransformJobCompletedOrStoppedWaiter) WaitForOutput(ctx context.Context
 	}
 
 	if options.MaxDelay <= 0 {
-		options.MaxDelay = 120 * time.Second
+		options.MaxDelay = 3600 * time.Second
 	}
 
 	if options.MinDelay > options.MaxDelay {

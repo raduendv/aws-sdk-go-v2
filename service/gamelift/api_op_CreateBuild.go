@@ -11,29 +11,32 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Creates a new Amazon GameLift build resource for your game server binary files.
-// Combine game server binaries into a zip file for use with Amazon GameLift.
+//	This API works with the following fleet types: EC2, Anywhere
 //
-// When setting up a new game build for Amazon GameLift, we recommend using the
-// CLI command [upload-build]. This helper command combines two tasks: (1) it uploads your build
-// files from a file directory to an Amazon GameLift Amazon S3 location, and (2) it
-// creates a new build resource.
+// Creates a new Amazon GameLift Servers build resource for your game server
+// binary files. Combine game server binaries into a zip file for use with Amazon
+// GameLift Servers.
+//
+// When setting up a new game build for Amazon GameLift Servers, we recommend
+// using the CLI command [upload-build]. This helper command combines two tasks: (1) it uploads
+// your build files from a file directory to an Amazon GameLift Servers Amazon S3
+// location, and (2) it creates a new build resource.
 //
 // You can use the CreateBuild operation in the following scenarios:
 //
 //   - Create a new game build with build files that are in an Amazon S3 location
 //     under an Amazon Web Services account that you control. To use this option, you
-//     give Amazon GameLift access to the Amazon S3 bucket. With permissions in place,
-//     specify a build name, operating system, and the Amazon S3 storage location of
-//     your game build.
+//     give Amazon GameLift Servers access to the Amazon S3 bucket. With permissions in
+//     place, specify a build name, operating system, and the Amazon S3 storage
+//     location of your game build.
 //
-//   - Upload your build files to a Amazon GameLift Amazon S3 location. To use
-//     this option, specify a build name and operating system. This operation creates a
-//     new build resource and also returns an Amazon S3 location with temporary access
-//     credentials. Use the credentials to manually upload your build files to the
-//     specified Amazon S3 location. For more information, see [Uploading Objects]in the Amazon S3
-//     Developer Guide. After you upload build files to the Amazon GameLift Amazon S3
-//     location, you can't update them.
+//   - Upload your build files to a Amazon GameLift Servers Amazon S3 location. To
+//     use this option, specify a build name and operating system. This operation
+//     creates a new build resource and also returns an Amazon S3 location with
+//     temporary access credentials. Use the credentials to manually upload your build
+//     files to the specified Amazon S3 location. For more information, see [Uploading Objects]in the
+//     Amazon S3 Developer Guide. After you upload build files to the Amazon GameLift
+//     Servers Amazon S3 location, you can't update them.
 //
 // If successful, this operation creates a new build resource with a unique build
 // ID and places it in INITIALIZED status. A build must be in READY status before
@@ -79,18 +82,23 @@ type CreateBuildInput struct {
 	// system. You must specify a valid operating system in this request. There is no
 	// default value. You can't change a build's operating system later.
 	//
-	// Amazon Linux 2 (AL2) will reach end of support on 6/30/2025. See more details
+	// Amazon Linux 2 (AL2) will reach end of support on 6/30/2026. See more details
 	// in the [Amazon Linux 2 FAQs]. For game servers that are hosted on AL2 and use server SDK version 4.x
-	// for Amazon GameLift, first update the game server build to server SDK 5.x, and
-	// then deploy to AL2023 instances. See [Migrate to server SDK version 5.]
+	// for Amazon GameLift Servers, first update the game server build to server SDK
+	// 5.x, and then deploy to AL2023 instances. See [Migrate to server SDK version 5.]
+	//
+	// Windows Server 2016 will reach end of support on 1/12/2027. For game servers
+	// that are hosted on Windows Server 2016 and use server SDK version 4.x for Amazon
+	// GameLift Servers, first update the game server build to server SDK 5.x, and then
+	// deploy to Windows Server 2022 instances. See [Migrate to server SDK version 5.]
 	//
 	// [Migrate to server SDK version 5.]: https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-serversdk5-migration.html
-	// [Amazon Linux 2 FAQs]: https://aws.amazon.com/amazon-linux-2/faqs/
+	// [Amazon Linux 2 FAQs]: http://aws.amazon.com/amazon-linux-2/faqs/
 	OperatingSystem types.OperatingSystem
 
 	// A server SDK version you used when integrating your game server build with
-	// Amazon GameLift. For more information see [Integrate games with custom game servers]. By default Amazon GameLift sets
-	// this value to 4.0.2 .
+	// Amazon GameLift Servers. For more information see [Integrate games with custom game servers]. By default Amazon GameLift
+	// Servers sets this value to 4.0.2 .
 	//
 	// [Integrate games with custom game servers]: https://docs.aws.amazon.com/gamelift/latest/developerguide/integration-custom-intro.html
 	ServerSdkVersion *string
@@ -99,11 +107,11 @@ type CreateBuildInput struct {
 	// parameter only when creating a build with files stored in an Amazon S3 bucket
 	// that you own. The storage location must specify an Amazon S3 bucket name and
 	// key. The location must also specify a role ARN that you set up to allow Amazon
-	// GameLift to access your Amazon S3 bucket. The S3 bucket and your new build must
-	// be in the same Region.
+	// GameLift Servers to access your Amazon S3 bucket. The S3 bucket and your new
+	// build must be in the same Region.
 	//
 	// If a StorageLocation is specified, the size of your file can be found in your
-	// Amazon S3 bucket. Amazon GameLift will report a SizeOnDisk of 0.
+	// Amazon S3 bucket. Amazon GameLift Servers will report a SizeOnDisk of 0.
 	StorageLocation *types.S3Location
 
 	// A list of labels to assign to the new build resource. Tags are developer
@@ -137,8 +145,8 @@ type CreateBuildOutput struct {
 
 	// This element is returned only when the operation is called without a storage
 	// location. It contains credentials to use when you are uploading a build file to
-	// an Amazon S3 bucket that is owned by Amazon GameLift. Credentials have a limited
-	// life span. To refresh these credentials, call [RequestUploadCredentials].
+	// an Amazon S3 bucket that is owned by Amazon GameLift Servers. Credentials have a
+	// limited life span. To refresh these credentials, call [RequestUploadCredentials].
 	//
 	// [RequestUploadCredentials]: https://docs.aws.amazon.com/gamelift/latest/apireference/API_RequestUploadCredentials.html
 	UploadCredentials *types.AwsCredentials
@@ -237,16 +245,13 @@ func (c *Client) addOperationCreateBuildMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

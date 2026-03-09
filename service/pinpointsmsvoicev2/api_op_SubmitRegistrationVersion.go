@@ -34,10 +34,20 @@ type SubmitRegistrationVersionInput struct {
 	// This member is required.
 	RegistrationId *string
 
+	// Set to true to request AWS review of the registration. When enabled, AWS will
+	// perform additional validation and review of the registration submission before
+	// processing.
+	AwsReview bool
+
 	noSmithyDocumentSerde
 }
 
 type SubmitRegistrationVersionOutput struct {
+
+	// Indicates whether AWS review was requested for this registration submission.
+	//
+	// This member is required.
+	AwsReview bool
 
 	// The Amazon Resource Name (ARN) for the registration.
 	//
@@ -179,16 +189,13 @@ func (c *Client) addOperationSubmitRegistrationVersionMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -10,7 +10,17 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Deletes a sequence store.
+// Deletes a sequence store and returns a response with no body if the operation
+// is successful. You can only delete a sequence store when it does not contain any
+// read sets.
+//
+// Use the BatchDeleteReadSet API operation to ensure that all read sets in the
+// sequence store are deleted. When a sequence store is deleted, all tags
+// associated with the store are also deleted.
+//
+// For more information, see [Deleting HealthOmics reference and sequence stores] in the Amazon Web Services HealthOmics User Guide.
+//
+// [Deleting HealthOmics reference and sequence stores]: https://docs.aws.amazon.com/omics/latest/dev/deleting-reference-and-sequence-stores.html
 func (c *Client) DeleteSequenceStore(ctx context.Context, params *DeleteSequenceStoreInput, optFns ...func(*Options)) (*DeleteSequenceStoreOutput, error) {
 	if params == nil {
 		params = &DeleteSequenceStoreInput{}
@@ -134,16 +144,13 @@ func (c *Client) addOperationDeleteSequenceStoreMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

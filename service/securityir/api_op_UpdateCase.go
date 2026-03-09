@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Grants permission to update an existing case.
+// Updates an existing case.
 func (c *Client) UpdateCase(ctx context.Context, params *UpdateCaseInput, optFns ...func(*Options)) (*UpdateCaseOutput, error) {
 	if params == nil {
 		params = &UpdateCaseInput{}
@@ -39,6 +39,9 @@ type UpdateCaseInput struct {
 	// field.
 	ActualIncidentStartDate *time.Time
 
+	// Update the case request with case metadata
+	CaseMetadata []types.CaseMetadataEntry
+
 	// Optional element for UpdateCase to provide content for the description field.
 	Description *string
 
@@ -47,9 +50,19 @@ type UpdateCaseInput struct {
 	EngagementType types.EngagementType
 
 	// Optional element for UpdateCase to provide content to add accounts impacted.
+	//
+	// AWS account ID's may appear less than 12 characters and need to be
+	// zero-prepended. An example would be 123123123 which is nine digits, and with
+	// zero-prepend would be 000123123123 . Not zero-prepending to 12 digits could
+	// result in errors.
 	ImpactedAccountsToAdd []string
 
 	// Optional element for UpdateCase to provide content to add accounts impacted.
+	//
+	// AWS account ID's may appear less than 12 characters and need to be
+	// zero-prepended. An example would be 123123123 which is nine digits, and with
+	// zero-prepend would be 000123123123 . Not zero-prepending to 12 digits could
+	// result in errors.
 	ImpactedAccountsToDelete []string
 
 	// Optional element for UpdateCase to provide content to add regions impacted.
@@ -185,16 +198,13 @@ func (c *Client) addOperationUpdateCaseMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

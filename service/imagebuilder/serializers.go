@@ -281,6 +281,11 @@ func awsRestjson1_serializeOpDocumentCreateComponentInput(v *CreateComponentInpu
 		ok.String(*v.Description)
 	}
 
+	if v.DryRun {
+		ok := object.Key("dryRun")
+		ok.Boolean(v.DryRun)
+	}
+
 	if v.KmsKeyId != nil {
 		ok := object.Key("kmsKeyId")
 		ok.String(*v.KmsKeyId)
@@ -714,6 +719,13 @@ func awsRestjson1_serializeOpDocumentCreateImageInput(v *CreateImageInput, value
 		ok.String(*v.InfrastructureConfigurationArn)
 	}
 
+	if v.LoggingConfiguration != nil {
+		ok := object.Key("loggingConfiguration")
+		if err := awsRestjson1_serializeDocumentImageLoggingConfiguration(v.LoggingConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Tags != nil {
 		ok := object.Key("tags")
 		if err := awsRestjson1_serializeDocumentTagMap(v.Tags, ok); err != nil {
@@ -858,6 +870,13 @@ func awsRestjson1_serializeOpDocumentCreateImagePipelineInput(v *CreateImagePipe
 		ok.String(*v.InfrastructureConfigurationArn)
 	}
 
+	if v.LoggingConfiguration != nil {
+		ok := object.Key("loggingConfiguration")
+		if err := awsRestjson1_serializeDocumentPipelineLoggingConfiguration(v.LoggingConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Name != nil {
 		ok := object.Key("name")
 		ok.String(*v.Name)
@@ -968,6 +987,13 @@ func awsRestjson1_serializeOpDocumentCreateImageRecipeInput(v *CreateImageRecipe
 	if v.AdditionalInstanceConfiguration != nil {
 		ok := object.Key("additionalInstanceConfiguration")
 		if err := awsRestjson1_serializeDocumentAdditionalInstanceConfiguration(v.AdditionalInstanceConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.AmiTags != nil {
+		ok := object.Key("amiTags")
+		if err := awsRestjson1_serializeDocumentTagMap(v.AmiTags, ok); err != nil {
 			return err
 		}
 	}
@@ -1409,6 +1435,11 @@ func awsRestjson1_serializeOpDocumentCreateWorkflowInput(v *CreateWorkflowInput,
 	if v.Description != nil {
 		ok := object.Key("description")
 		ok.String(*v.Description)
+	}
+
+	if v.DryRun {
+		ok := object.Key("dryRun")
+		ok.Boolean(v.DryRun)
 	}
 
 	if v.KmsKeyId != nil {
@@ -2035,6 +2066,116 @@ func awsRestjson1_serializeOpHttpBindingsDeleteWorkflowInput(v *DeleteWorkflowIn
 
 	if v.WorkflowBuildVersionArn != nil {
 		encoder.SetQuery("workflowBuildVersionArn").String(*v.WorkflowBuildVersionArn)
+	}
+
+	return nil
+}
+
+type awsRestjson1_serializeOpDistributeImage struct {
+}
+
+func (*awsRestjson1_serializeOpDistributeImage) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpDistributeImage) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*DistributeImageInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/DistributeImage")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "PUT"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentDistributeImageInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsDistributeImageInput(v *DistributeImageInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentDistributeImageInput(v *DistributeImageInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ClientToken != nil {
+		ok := object.Key("clientToken")
+		ok.String(*v.ClientToken)
+	}
+
+	if v.DistributionConfigurationArn != nil {
+		ok := object.Key("distributionConfigurationArn")
+		ok.String(*v.DistributionConfigurationArn)
+	}
+
+	if v.ExecutionRole != nil {
+		ok := object.Key("executionRole")
+		ok.String(*v.ExecutionRole)
+	}
+
+	if v.LoggingConfiguration != nil {
+		ok := object.Key("loggingConfiguration")
+		if err := awsRestjson1_serializeDocumentImageLoggingConfiguration(v.LoggingConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
+	if v.SourceImage != nil {
+		ok := object.Key("sourceImage")
+		ok.String(*v.SourceImage)
+	}
+
+	if v.Tags != nil {
+		ok := object.Key("tags")
+		if err := awsRestjson1_serializeDocumentTagMap(v.Tags, ok); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -3418,6 +3559,13 @@ func awsRestjson1_serializeOpDocumentImportDiskImageInput(v *ImportDiskImageInpu
 		ok.String(*v.InfrastructureConfigurationArn)
 	}
 
+	if v.LoggingConfiguration != nil {
+		ok := object.Key("loggingConfiguration")
+		if err := awsRestjson1_serializeDocumentImageLoggingConfiguration(v.LoggingConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Name != nil {
 		ok := object.Key("name")
 		ok.String(*v.Name)
@@ -3534,6 +3682,13 @@ func awsRestjson1_serializeOpDocumentImportVmImageInput(v *ImportVmImageInput, v
 	if v.Description != nil {
 		ok := object.Key("description")
 		ok.String(*v.Description)
+	}
+
+	if v.LoggingConfiguration != nil {
+		ok := object.Key("loggingConfiguration")
+		if err := awsRestjson1_serializeDocumentImageLoggingConfiguration(v.LoggingConfiguration, ok); err != nil {
+			return err
+		}
 	}
 
 	if v.Name != nil {
@@ -5973,6 +6128,92 @@ func awsRestjson1_serializeOpDocumentPutImageRecipePolicyInput(v *PutImageRecipe
 	return nil
 }
 
+type awsRestjson1_serializeOpRetryImage struct {
+}
+
+func (*awsRestjson1_serializeOpRetryImage) ID() string {
+	return "OperationSerializer"
+}
+
+func (m *awsRestjson1_serializeOpRetryImage) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	_, span := tracing.StartSpan(ctx, "OperationSerializer")
+	endTimer := startMetricTimer(ctx, "client.call.serialization_duration")
+	defer endTimer()
+	defer span.End()
+	request, ok := in.Request.(*smithyhttp.Request)
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown transport type %T", in.Request)}
+	}
+
+	input, ok := in.Parameters.(*RetryImageInput)
+	_ = input
+	if !ok {
+		return out, metadata, &smithy.SerializationError{Err: fmt.Errorf("unknown input parameters type %T", in.Parameters)}
+	}
+
+	opPath, opQuery := httpbinding.SplitURI("/RetryImage")
+	request.URL.Path = smithyhttp.JoinPath(request.URL.Path, opPath)
+	request.URL.RawQuery = smithyhttp.JoinRawQuery(request.URL.RawQuery, opQuery)
+	request.Method = "PUT"
+	var restEncoder *httpbinding.Encoder
+	if request.URL.RawPath == "" {
+		restEncoder, err = httpbinding.NewEncoder(request.URL.Path, request.URL.RawQuery, request.Header)
+	} else {
+		request.URL.RawPath = smithyhttp.JoinPath(request.URL.RawPath, opPath)
+		restEncoder, err = httpbinding.NewEncoderWithRawPath(request.URL.Path, request.URL.RawPath, request.URL.RawQuery, request.Header)
+	}
+
+	if err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	restEncoder.SetHeader("Content-Type").String("application/json")
+
+	jsonEncoder := smithyjson.NewEncoder()
+	if err := awsRestjson1_serializeOpDocumentRetryImageInput(input, jsonEncoder.Value); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request, err = request.SetStream(bytes.NewReader(jsonEncoder.Bytes())); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+
+	if request.Request, err = restEncoder.Encode(request.Request); err != nil {
+		return out, metadata, &smithy.SerializationError{Err: err}
+	}
+	in.Request = request
+
+	endTimer()
+	span.End()
+	return next.HandleSerialize(ctx, in)
+}
+func awsRestjson1_serializeOpHttpBindingsRetryImageInput(v *RetryImageInput, encoder *httpbinding.Encoder) error {
+	if v == nil {
+		return fmt.Errorf("unsupported serialization of nil %T", v)
+	}
+
+	return nil
+}
+
+func awsRestjson1_serializeOpDocumentRetryImageInput(v *RetryImageInput, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ClientToken != nil {
+		ok := object.Key("clientToken")
+		ok.String(*v.ClientToken)
+	}
+
+	if v.ImageBuildVersionArn != nil {
+		ok := object.Key("imageBuildVersionArn")
+		ok.String(*v.ImageBuildVersionArn)
+	}
+
+	return nil
+}
+
 type awsRestjson1_serializeOpSendWorkflowStepAction struct {
 }
 
@@ -6155,6 +6396,13 @@ func awsRestjson1_serializeOpDocumentStartImagePipelineExecutionInput(v *StartIm
 	if v.ImagePipelineArn != nil {
 		ok := object.Key("imagePipelineArn")
 		ok.String(*v.ImagePipelineArn)
+	}
+
+	if v.Tags != nil {
+		ok := object.Key("tags")
+		if err := awsRestjson1_serializeDocumentTagMap(v.Tags, ok); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -6680,6 +6928,13 @@ func awsRestjson1_serializeOpDocumentUpdateImagePipelineInput(v *UpdateImagePipe
 		ok.String(*v.InfrastructureConfigurationArn)
 	}
 
+	if v.LoggingConfiguration != nil {
+		ok := object.Key("loggingConfiguration")
+		if err := awsRestjson1_serializeDocumentPipelineLoggingConfiguration(v.LoggingConfiguration, ok); err != nil {
+			return err
+		}
+	}
+
 	if v.Schedule != nil {
 		ok := object.Key("schedule")
 		if err := awsRestjson1_serializeDocumentSchedule(v.Schedule, ok); err != nil {
@@ -7053,6 +7308,18 @@ func awsRestjson1_serializeDocumentAmiDistributionConfiguration(v *types.AmiDist
 	return nil
 }
 
+func awsRestjson1_serializeDocumentAutoDisablePolicy(v *types.AutoDisablePolicy, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.FailureCount != nil {
+		ok := object.Key("failureCount")
+		ok.Integer(*v.FailureCount)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentComponentConfiguration(v *types.ComponentConfiguration, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -7417,6 +7684,18 @@ func awsRestjson1_serializeDocumentFilterValues(v []string, value smithyjson.Val
 		av := array.Value()
 		av.String(v[i])
 	}
+	return nil
+}
+
+func awsRestjson1_serializeDocumentImageLoggingConfiguration(v *types.ImageLoggingConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.LogGroupName != nil {
+		ok := object.Key("logGroupName")
+		ok.String(*v.LogGroupName)
+	}
+
 	return nil
 }
 
@@ -7954,6 +8233,23 @@ func awsRestjson1_serializeDocumentOsVersionList(v []string, value smithyjson.Va
 	return nil
 }
 
+func awsRestjson1_serializeDocumentPipelineLoggingConfiguration(v *types.PipelineLoggingConfiguration, value smithyjson.Value) error {
+	object := value.Object()
+	defer object.Close()
+
+	if v.ImageLogGroupName != nil {
+		ok := object.Key("imageLogGroupName")
+		ok.String(*v.ImageLogGroupName)
+	}
+
+	if v.PipelineLogGroupName != nil {
+		ok := object.Key("pipelineLogGroupName")
+		ok.String(*v.PipelineLogGroupName)
+	}
+
+	return nil
+}
+
 func awsRestjson1_serializeDocumentPlacement(v *types.Placement, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
@@ -8087,6 +8383,13 @@ func awsRestjson1_serializeDocumentS3Logs(v *types.S3Logs, value smithyjson.Valu
 func awsRestjson1_serializeDocumentSchedule(v *types.Schedule, value smithyjson.Value) error {
 	object := value.Object()
 	defer object.Close()
+
+	if v.AutoDisablePolicy != nil {
+		ok := object.Key("autoDisablePolicy")
+		if err := awsRestjson1_serializeDocumentAutoDisablePolicy(v.AutoDisablePolicy, ok); err != nil {
+			return err
+		}
+	}
 
 	if len(v.PipelineExecutionStartCondition) > 0 {
 		ok := object.Key("pipelineExecutionStartCondition")

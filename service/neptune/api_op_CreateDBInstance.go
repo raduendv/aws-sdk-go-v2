@@ -260,9 +260,18 @@ type CreateDBInstanceInput struct {
 	// Valid Values: 0 - 15
 	PromotionTier *int32
 
-	// This flag should no longer be used.
+	// Indicates whether the DB instance is publicly accessible.
 	//
-	// Deprecated: This member has been deprecated.
+	// When the DB instance is publicly accessible and you connect from outside of the
+	// DB instance's virtual private cloud (VPC), its Domain Name System (DNS) endpoint
+	// resolves to the public IP address. When you connect from within the same VPC as
+	// the DB instance, the endpoint resolves to the private IP address. Access to the
+	// DB instance is ultimately controlled by the security group it uses. That public
+	// access isn't permitted if the security group assigned to the DB cluster doesn't
+	// permit it.
+	//
+	// When the DB instance isn't publicly accessible, it is an internal DB instance
+	// with a DNS name that resolves to a private IP address.
 	PubliclyAccessible *bool
 
 	// Specifies whether the DB instance is encrypted.
@@ -273,9 +282,7 @@ type CreateDBInstanceInput struct {
 	// Default: false
 	StorageEncrypted *bool
 
-	// Specifies the storage type to be associated with the DB instance.
-	//
-	// Not applicable. Storage is managed by the DB Cluster.
+	// Not applicable. In Neptune the storage type is managed at the DB Cluster level.
 	StorageType *string
 
 	// The tags to assign to the new instance.
@@ -403,16 +410,13 @@ func (c *Client) addOperationCreateDBInstanceMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

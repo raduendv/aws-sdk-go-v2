@@ -38,6 +38,7 @@ type GetDataQualityRuleRecommendationRunInput struct {
 	noSmithyDocumentSerde
 }
 
+// The response for the Data Quality rule recommendation run.
 type GetDataQualityRuleRecommendationRunOutput struct {
 
 	// The date and time when this run was completed.
@@ -182,16 +183,13 @@ func (c *Client) addOperationGetDataQualityRuleRecommendationRunMiddlewares(stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

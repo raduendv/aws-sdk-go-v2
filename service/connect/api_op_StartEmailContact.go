@@ -31,7 +31,7 @@ func (c *Client) StartEmailContact(ctx context.Context, params *StartEmailContac
 
 type StartEmailContactInput struct {
 
-	// The email address associated with the instance.
+	// The email address associated with the Amazon Connect instance.
 	//
 	// This member is required.
 	DestinationEmailAddress *string
@@ -54,7 +54,7 @@ type StartEmailContactInput struct {
 	// This member is required.
 	InstanceId *string
 
-	// The addtional recipients address of the email.
+	// The additional recipients address of the email.
 	AdditionalRecipients *types.InboundAdditionalRecipients
 
 	// List of S3 presigned URLs of email attachments and their file name.
@@ -223,16 +223,13 @@ func (c *Client) addOperationStartEmailContactMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

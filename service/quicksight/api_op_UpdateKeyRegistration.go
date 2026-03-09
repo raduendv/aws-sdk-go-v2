@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Updates a customer managed key in a Amazon QuickSight account.
+// Updates a customer managed key in a Quick Sight account.
 func (c *Client) UpdateKeyRegistration(ctx context.Context, params *UpdateKeyRegistrationInput, optFns ...func(*Options)) (*UpdateKeyRegistrationOutput, error) {
 	if params == nil {
 		params = &UpdateKeyRegistrationInput{}
@@ -35,8 +35,8 @@ type UpdateKeyRegistrationInput struct {
 	// This member is required.
 	AwsAccountId *string
 
-	// A list of RegisteredCustomerManagedKey objects to be updated to the Amazon
-	// QuickSight account.
+	// A list of RegisteredCustomerManagedKey objects to be updated to the Quick Sight
+	// account.
 	//
 	// This member is required.
 	KeyRegistration []types.RegisteredCustomerManagedKey
@@ -149,16 +149,13 @@ func (c *Client) addOperationUpdateKeyRegistrationMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

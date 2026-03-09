@@ -41,6 +41,9 @@ func ExampleDataProviderSettings_outputUsage() {
 	case *types.DataProviderSettingsMemberRedshiftSettings:
 		_ = v.Value // Value is types.RedshiftDataProviderSettings
 
+	case *types.DataProviderSettingsMemberSybaseAseSettings:
+		_ = v.Value // Value is types.SybaseAseDataProviderSettings
+
 	case *types.UnknownUnionMember:
 		fmt.Println("unknown tag:", v.Tag)
 
@@ -57,6 +60,7 @@ var _ *types.MariaDbDataProviderSettings
 var _ *types.PostgreSqlDataProviderSettings
 var _ *types.MongoDbDataProviderSettings
 var _ *types.MicrosoftSqlServerDataProviderSettings
+var _ *types.SybaseAseDataProviderSettings
 var _ *types.IbmDb2zOsDataProviderSettings
 var _ *types.RedshiftDataProviderSettings
 var _ *types.MySqlDataProviderSettings
@@ -78,3 +82,21 @@ func ExampleErrorDetails_outputUsage() {
 }
 
 var _ *types.DefaultErrorDetails
+
+func ExampleMetadataModelProperties_outputUsage() {
+	var union types.MetadataModelProperties
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.MetadataModelPropertiesMemberStatementProperties:
+		_ = v.Value // Value is types.StatementProperties
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.StatementProperties

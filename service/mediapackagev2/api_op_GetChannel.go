@@ -12,8 +12,7 @@ import (
 	"time"
 )
 
-// Retrieves the specified channel that's configured in AWS Elemental
-// MediaPackage, including the origin endpoints that are associated with it.
+// Retrieves the specified channel that's configured in AWS Elemental MediaPackage.
 func (c *Client) GetChannel(ctx context.Context, params *GetChannelInput, optFns ...func(*Options)) (*GetChannelOutput, error) {
 	if params == nil {
 		params = &GetChannelInput{}
@@ -210,16 +209,13 @@ func (c *Client) addOperationGetChannelMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

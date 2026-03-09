@@ -43,6 +43,10 @@ type UpdateManagedThingInput struct {
 	// A report of the capabilities for the managed thing.
 	CapabilityReport *types.CapabilityReport
 
+	// The updated capability schemas that define the functionality and features
+	// supported by the managed thing.
+	CapabilitySchemas []types.CapabilitySchemaItem
+
 	// The classification of the managed thing such as light bulb or thermostat.
 	Classification *string
 
@@ -67,6 +71,10 @@ type UpdateManagedThingInput struct {
 
 	// The serial number of the device.
 	SerialNumber *string
+
+	// The Wi-Fi Simple Setup configuration for the managed thing, which defines
+	// provisioning capabilities and timeout settings.
+	WiFiSimpleSetupConfiguration *types.WiFiSimpleSetupConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -166,16 +174,13 @@ func (c *Client) addOperationUpdateManagedThingMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

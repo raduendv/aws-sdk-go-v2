@@ -11,8 +11,6 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// This API is in preview release for Amazon Connect and is subject to change.
-//
 // Creates hours of operation.
 func (c *Client) CreateHoursOfOperation(ctx context.Context, params *CreateHoursOfOperationInput, optFns ...func(*Options)) (*CreateHoursOfOperationOutput, error) {
 	if params == nil {
@@ -57,6 +55,14 @@ type CreateHoursOfOperationInput struct {
 
 	// The description of the hours of operation.
 	Description *string
+
+	// Configuration for parent hours of operations. Eg: ResourceArn.
+	//
+	// For more information about parent hours of operations, see [Link overrides from different hours of operation] in the
+	// Administrator Guide.
+	//
+	// [Link overrides from different hours of operation]: https://docs.aws.amazon.com/https:/docs.aws.amazon.com/connect/latest/adminguide/hours-of-operation-overrides.html
+	ParentHoursOfOperationConfigs []types.ParentHoursOfOperationConfig
 
 	// The tags used to organize, track, or control access for this resource. For
 	// example, { "Tags": {"key1":"value1", "key2":"value2"} }.
@@ -167,16 +173,13 @@ func (c *Client) addOperationCreateHoursOfOperationMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

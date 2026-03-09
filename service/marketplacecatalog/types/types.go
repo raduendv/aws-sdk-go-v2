@@ -152,6 +152,11 @@ type Change struct {
 
 	// Alternative field that accepts a JSON value instead of a string for ChangeType
 	// details. You can use either Details or DetailsDocument , but not both.
+	//
+	// To download the "DetailsDocument" shapes, see the [Python] and [Java] shapes on GitHub.
+	//
+	// [Java]: https://github.com/awslabs/aws-marketplace-catalog-api-shapes-for-java/tree/main
+	// [Python]: https://github.com/awslabs/aws-marketplace-catalog-api-shapes-for-python
 	DetailsDocument document.Interface
 
 	// The tags associated with the change.
@@ -215,6 +220,11 @@ type ChangeSummary struct {
 
 	// The JSON value of the details specific to the change type of the requested
 	// change.
+	//
+	// To download the "DetailsDocument" shapes, see the [Python] and [Java] shapes on GitHub.
+	//
+	// [Java]: https://github.com/awslabs/aws-marketplace-catalog-api-shapes-for-java/tree/main
+	// [Python]: https://github.com/awslabs/aws-marketplace-catalog-api-shapes-for-python
 	DetailsDocument document.Interface
 
 	// The entity to be changed.
@@ -507,8 +517,14 @@ type EntitySummary struct {
 	// (2018-02-27T13:45:22Z).
 	LastModifiedDate *string
 
+	// A summary of a machine learning product.
+	MachineLearningProductSummary *MachineLearningProductSummary
+
 	// The name for the entity. This value is not unique. It is defined by the seller.
 	Name *string
+
+	// An object that contains summary information about the offer set.
+	OfferSetSummary *OfferSetSummary
 
 	// An object that contains summary information about the offer.
 	OfferSummary *OfferSummary
@@ -535,7 +551,9 @@ type EntitySummary struct {
 //	EntityTypeFiltersMemberAmiProductFilters
 //	EntityTypeFiltersMemberContainerProductFilters
 //	EntityTypeFiltersMemberDataProductFilters
+//	EntityTypeFiltersMemberMachineLearningProductFilters
 //	EntityTypeFiltersMemberOfferFilters
+//	EntityTypeFiltersMemberOfferSetFilters
 //	EntityTypeFiltersMemberResaleAuthorizationFilters
 //	EntityTypeFiltersMemberSaaSProductFilters
 type EntityTypeFilters interface {
@@ -569,6 +587,17 @@ type EntityTypeFiltersMemberDataProductFilters struct {
 
 func (*EntityTypeFiltersMemberDataProductFilters) isEntityTypeFilters() {}
 
+// The filters that you can use with the ListEntities operation to filter machine
+// learning products. You can filter by EntityId , astModifiedDate , ProductTitle ,
+// and Visibility .
+type EntityTypeFiltersMemberMachineLearningProductFilters struct {
+	Value MachineLearningProductFilters
+
+	noSmithyDocumentSerde
+}
+
+func (*EntityTypeFiltersMemberMachineLearningProductFilters) isEntityTypeFilters() {}
+
 // A filter for offers.
 type EntityTypeFiltersMemberOfferFilters struct {
 	Value OfferFilters
@@ -577,6 +606,15 @@ type EntityTypeFiltersMemberOfferFilters struct {
 }
 
 func (*EntityTypeFiltersMemberOfferFilters) isEntityTypeFilters() {}
+
+// A filter for offer sets.
+type EntityTypeFiltersMemberOfferSetFilters struct {
+	Value OfferSetFilters
+
+	noSmithyDocumentSerde
+}
+
+func (*EntityTypeFiltersMemberOfferSetFilters) isEntityTypeFilters() {}
 
 // A filter for Resale Authorizations.
 type EntityTypeFiltersMemberResaleAuthorizationFilters struct {
@@ -603,6 +641,8 @@ func (*EntityTypeFiltersMemberSaaSProductFilters) isEntityTypeFilters() {}
 //	EntityTypeSortMemberAmiProductSort
 //	EntityTypeSortMemberContainerProductSort
 //	EntityTypeSortMemberDataProductSort
+//	EntityTypeSortMemberMachineLearningProductSort
+//	EntityTypeSortMemberOfferSetSort
 //	EntityTypeSortMemberOfferSort
 //	EntityTypeSortMemberResaleAuthorizationSort
 //	EntityTypeSortMemberSaaSProductSort
@@ -636,6 +676,24 @@ type EntityTypeSortMemberDataProductSort struct {
 }
 
 func (*EntityTypeSortMemberDataProductSort) isEntityTypeSort() {}
+
+// The sort options for machine learning products.
+type EntityTypeSortMemberMachineLearningProductSort struct {
+	Value MachineLearningProductSort
+
+	noSmithyDocumentSerde
+}
+
+func (*EntityTypeSortMemberMachineLearningProductSort) isEntityTypeSort() {}
+
+// A sort for offer sets.
+type EntityTypeSortMemberOfferSetSort struct {
+	Value OfferSetSort
+
+	noSmithyDocumentSerde
+}
+
+func (*EntityTypeSortMemberOfferSetSort) isEntityTypeSort() {}
 
 // A sort for offers.
 type EntityTypeSortMemberOfferSort struct {
@@ -714,6 +772,111 @@ type Filter struct {
 	noSmithyDocumentSerde
 }
 
+// The filter for machine learning product entity IDs.
+type MachineLearningProductEntityIdFilter struct {
+
+	// A list of entity IDs to filter by. The operation returns machine learning
+	// products with entity IDs that match the values in this list.
+	ValueList []string
+
+	noSmithyDocumentSerde
+}
+
+// The filters that you can use with the ListEntities operation to filter machine
+// learning products. You can filter by EntityId , astModifiedDate , ProductTitle ,
+// and Visibility .
+type MachineLearningProductFilters struct {
+
+	// Filter machine learning products by their entity IDs.
+	EntityId *MachineLearningProductEntityIdFilter
+
+	// Filter machine learning products by their last modified date.
+	LastModifiedDate *MachineLearningProductLastModifiedDateFilter
+
+	// Filter machine learning products by their product titles.
+	ProductTitle *MachineLearningProductTitleFilter
+
+	// Filter machine learning products by their visibility status.
+	Visibility *MachineLearningProductVisibilityFilter
+
+	noSmithyDocumentSerde
+}
+
+// The filter for machine learning product last modified date.
+type MachineLearningProductLastModifiedDateFilter struct {
+
+	// A date range to filter by. The operation returns machine learning products with
+	// last modified dates that fall within this range.
+	DateRange *MachineLearningProductLastModifiedDateFilterDateRange
+
+	noSmithyDocumentSerde
+}
+
+// A date range for filtering machine learning products by their last modified
+// date.
+type MachineLearningProductLastModifiedDateFilterDateRange struct {
+
+	// The start date (inclusive) of the date range. The operation returns machine
+	// learning products with last modified dates on or after this date.
+	AfterValue *string
+
+	// The end date (inclusive) of the date range. The operation returns machine
+	// learning products with last modified dates on or before this date.
+	BeforeValue *string
+
+	noSmithyDocumentSerde
+}
+
+// The sort options for machine learning products.
+type MachineLearningProductSort struct {
+
+	// The field to sort by. Valid values: EntityId , LastModifiedDate , ProductTitle ,
+	// and Visibility .
+	SortBy MachineLearningProductSortBy
+
+	// The sort order. Valid values are ASC (ascending) and DESC (descending).
+	SortOrder SortOrder
+
+	noSmithyDocumentSerde
+}
+
+// A summary of a machine learning product.
+type MachineLearningProductSummary struct {
+
+	// The title of the machine learning product.
+	ProductTitle *string
+
+	// The visibility status of the machine learning product. Valid values are Limited
+	// , Public , Restricted , and Draft .
+	Visibility MachineLearningProductVisibilityString
+
+	noSmithyDocumentSerde
+}
+
+// The filter for machine learning product titles.
+type MachineLearningProductTitleFilter struct {
+
+	// A list of product titles to filter by. The operation returns machine learning
+	// products with titles that exactly match the values in this list.
+	ValueList []string
+
+	// A wildcard value to filter product titles. The operation returns machine
+	// learning products with titles that match this wildcard pattern.
+	WildCardValue *string
+
+	noSmithyDocumentSerde
+}
+
+// The filter for machine learning product visibility status.
+type MachineLearningProductVisibilityFilter struct {
+
+	// A list of visibility values to filter by. The operation returns machine
+	// learning products with visibility status that match the values in this list.
+	ValueList []MachineLearningProductVisibilityString
+
+	noSmithyDocumentSerde
+}
+
 // Allows filtering on the AvailabilityEndDate of an offer.
 type OfferAvailabilityEndDateFilter struct {
 
@@ -773,6 +936,9 @@ type OfferFilters struct {
 
 	// Allows filtering on the Name of an offer.
 	Name *OfferNameFilter
+
+	// Allows filtering on the OfferSetId of an offer.
+	OfferSetId *OfferSetIdFilter
 
 	// Allows filtering on the ProductId of an offer.
 	ProductId *OfferProductIdFilter
@@ -870,6 +1036,165 @@ type OfferResaleAuthorizationIdFilter struct {
 	noSmithyDocumentSerde
 }
 
+// Allows filtering on the AssociatedOfferIds of an offer set.
+type OfferSetAssociatedOfferIdsFilter struct {
+
+	// Allows filtering on the AssociatedOfferIds of an offer set with list input.
+	ValueList []string
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the entity id of an offer set.
+type OfferSetEntityIdFilter struct {
+
+	// Allows filtering on entity id of an offer set with list input.
+	ValueList []string
+
+	noSmithyDocumentSerde
+}
+
+// Object containing all the filter fields for offer sets entity. Client can add a
+// maximum of 8 filters in a single ListEntities request.
+type OfferSetFilters struct {
+
+	// Allows filtering on the AssociatedOfferIds of an offer set.
+	AssociatedOfferIds *OfferSetAssociatedOfferIdsFilter
+
+	// Allows filtering on EntityId of an offer set.
+	EntityId *OfferSetEntityIdFilter
+
+	// Allows filtering on the LastModifiedDate of an offer set.
+	LastModifiedDate *OfferSetLastModifiedDateFilter
+
+	// Allows filtering on the Name of an offer set.
+	Name *OfferSetNameFilter
+
+	// Allows filtering on the ReleaseDate of an offer set.
+	ReleaseDate *OfferSetReleaseDateFilter
+
+	// Allows filtering on the SolutionId of an offer set.
+	SolutionId *OfferSetSolutionIdFilter
+
+	// Allows filtering on the State of an offer set.
+	State *OfferSetStateFilter
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the OfferSetId of an offer.
+type OfferSetIdFilter struct {
+
+	// Allows filtering on the OfferSetId of an offer.
+	ValueList []string
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the LastModifiedDate of an offer set.
+type OfferSetLastModifiedDateFilter struct {
+
+	// Allows filtering on the LastModifiedDate of an offer set with date range as
+	// input.
+	DateRange *OfferSetLastModifiedDateFilterDateRange
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the LastModifiedDate of an offer set with date range as
+// input.
+type OfferSetLastModifiedDateFilterDateRange struct {
+
+	// Allows filtering on the LastModifiedDate of an offer set after a date.
+	AfterValue *string
+
+	// Allows filtering on the LastModifiedDate of an offer set before a date.
+	BeforeValue *string
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the Name of an offer set.
+type OfferSetNameFilter struct {
+
+	// Allows filtering on the Name of an offer set with list input.
+	ValueList []string
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the ReleaseDate of an offer set.
+type OfferSetReleaseDateFilter struct {
+
+	// Allows filtering on the ReleaseDate of an offer set with date range as input.
+	DateRange *OfferSetReleaseDateFilterDateRange
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the ReleaseDate of an offer set with date range as input.
+type OfferSetReleaseDateFilterDateRange struct {
+
+	// Allows filtering on the ReleaseDate of offer set after a date.
+	AfterValue *string
+
+	// Allows filtering on the ReleaseDate of offer set before a date.
+	BeforeValue *string
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the SolutionId of an offer set.
+type OfferSetSolutionIdFilter struct {
+
+	// Allows filtering on the SolutionId of an offer set with list input.
+	ValueList []string
+
+	noSmithyDocumentSerde
+}
+
+// Allows to sort offer sets.
+type OfferSetSort struct {
+
+	// Allows to sort offer sets.
+	SortBy OfferSetSortBy
+
+	// Allows to sort offer sets.
+	SortOrder SortOrder
+
+	noSmithyDocumentSerde
+}
+
+// Allows filtering on the State of an offer set.
+type OfferSetStateFilter struct {
+
+	// Allows filtering on the State of an offer set with list input.
+	ValueList []OfferSetStateString
+
+	noSmithyDocumentSerde
+}
+
+// Summarized information about an offer set.
+type OfferSetSummary struct {
+
+	// The list of offer IDs associated with the offer set.
+	AssociatedOfferIds []string
+
+	// The name of the offer set.
+	Name *string
+
+	// The release date of the offer set.
+	ReleaseDate *string
+
+	// The solution ID associated with the offer set.
+	SolutionId *string
+
+	// The state of the offer set.
+	State OfferSetStateString
+
+	noSmithyDocumentSerde
+}
+
 // Allows to sort offers.
 type OfferSort struct {
 
@@ -902,6 +1227,9 @@ type OfferSummary struct {
 
 	// The name of the offer.
 	Name *string
+
+	// The offer set ID of the offer.
+	OfferSetId *string
 
 	// The product ID of the offer.
 	ProductId *string

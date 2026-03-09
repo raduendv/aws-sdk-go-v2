@@ -13,11 +13,11 @@ import (
 
 // Deletes an Amazon EKS cluster control plane.
 //
-// If you have active services in your cluster that are associated with a load
-// balancer, you must delete those services before deleting the cluster so that the
-// load balancers are deleted properly. Otherwise, you can have orphaned resources
-// in your VPC that prevent you from being able to delete the VPC. For more
-// information, see [Deleting a cluster]in the Amazon EKS User Guide.
+// If you have active services and ingress resources in your cluster that are
+// associated with a load balancer, you must delete those services before deleting
+// the cluster so that the load balancers are deleted properly. Otherwise, you can
+// have orphaned resources in your VPC that prevent you from being able to delete
+// the VPC. For more information, see [Deleting a cluster]in the Amazon EKS User Guide.
 //
 // If you have managed node groups or Fargate profiles attached to the cluster,
 // you must delete them first. For more information, see DeleteNodgroup and
@@ -148,16 +148,13 @@ func (c *Client) addOperationDeleteClusterMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

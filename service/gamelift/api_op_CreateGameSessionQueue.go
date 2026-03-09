@@ -11,17 +11,19 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Creates a placement queue that processes requests for new game sessions. A
 // queue uses FleetIQ algorithms to locate the best available placement locations
 // for a new game session, and then prompts the game server process to start a new
 // game session.
 //
 // A game session queue is configured with a set of destinations (Amazon GameLift
-// fleets or aliases) that determine where the queue can place new game sessions.
-// These destinations can span multiple Amazon Web Services Regions, can use
-// different instance types, and can include both Spot and On-Demand fleets. If the
-// queue includes multi-location fleets, the queue can place game sessions in any
-// of a fleet's remote locations.
+// Servers fleets or aliases) that determine where the queue can place new game
+// sessions. These destinations can span multiple Amazon Web Services Regions, can
+// use different instance types, and can include both Spot and On-Demand fleets. If
+// the queue includes multi-location fleets, the queue can place game sessions in
+// any of a fleet's remote locations.
 //
 // You can configure a queue to determine how it selects the best available
 // placement for a new game session. Queues can prioritize placement decisions
@@ -132,8 +134,8 @@ type CreateGameSessionQueueInput struct {
 
 	// A set of policies that enforce a sliding cap on player latency when processing
 	// game sessions placement requests. Use multiple policies to gradually relax the
-	// cap over time if Amazon GameLift can't make a placement. Policies are evaluated
-	// in order starting with the lowest maximum latency value.
+	// cap over time if Amazon GameLift Servers can't make a placement. Policies are
+	// evaluated in order starting with the lowest maximum latency value.
 	PlayerLatencyPolicies []types.PlayerLatencyPolicy
 
 	// Custom settings to use when prioritizing destinations and locations for game
@@ -154,6 +156,8 @@ type CreateGameSessionQueueInput struct {
 	// in the queue. When a request exceeds this time, the game session placement
 	// changes to a TIMED_OUT status. If you don't specify a request timeout, the
 	// queue uses a default value.
+	//
+	// The minimum value is 10 and the maximum value is 600.
 	TimeoutInSeconds *int32
 
 	noSmithyDocumentSerde
@@ -258,16 +262,13 @@ func (c *Client) addOperationCreateGameSessionQueueMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

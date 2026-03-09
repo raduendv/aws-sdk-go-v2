@@ -10,7 +10,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Resets an enabled control.
+// Resets an enabled control. Does not work for controls implemented with SCPs.
 func (c *Client) ResetEnabledControl(ctx context.Context, params *ResetEnabledControlInput, optFns ...func(*Options)) (*ResetEnabledControlOutput, error) {
 	if params == nil {
 		params = &ResetEnabledControlInput{}
@@ -137,16 +137,13 @@ func (c *Client) addOperationResetEnabledControlMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

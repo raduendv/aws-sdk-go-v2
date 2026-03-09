@@ -28,6 +28,27 @@ type AttachmentItem struct {
 	noSmithyDocumentSerde
 }
 
+// The attendee information, including attendee ID and join token.
+type Attendee struct {
+
+	// The Amazon Chime SDK attendee ID.
+	AttendeeId *string
+
+	// The join token used by the Amazon Chime SDK attendee.
+	JoinToken *string
+
+	noSmithyDocumentSerde
+}
+
+// Has audio-specific configurations as the operating parameter for Echo Reduction.
+type AudioFeatures struct {
+
+	// Makes echo reduction available to clients who connect to the meeting.
+	EchoReduction MeetingFeatureStatus
+
+	noSmithyDocumentSerde
+}
+
 // Connection credentials.
 type ConnectionCredentials struct {
 
@@ -94,14 +115,35 @@ type Item struct {
 	noSmithyDocumentSerde
 }
 
+// The configuration settings of the features available to a meeting.
+type MeetingFeaturesConfiguration struct {
+
+	// The configuration settings for the audio features available to a meeting.
+	Audio *AudioFeatures
+
+	noSmithyDocumentSerde
+}
+
 // Contains metadata related to a message.
 type MessageMetadata struct {
 
 	// The identifier of the message that contains the metadata information.
 	MessageId *string
 
+	// The status of Message Processing for the message.
+	MessageProcessingStatus MessageProcessingStatus
+
 	// The list of receipt information for a message for different recipients.
 	Receipts []Receipt
+
+	noSmithyDocumentSerde
+}
+
+// Contains metadata for chat messages.
+type MessageProcessingMetadata struct {
+
+	// The status of Message Processing for the message.
+	MessageProcessingStatus MessageProcessingStatus
 
 	noSmithyDocumentSerde
 }
@@ -195,6 +237,53 @@ type ViewContent struct {
 
 	// The view template representing the structure of the view.
 	Template *string
+
+	noSmithyDocumentSerde
+}
+
+// Creates the participant’s WebRTC connection data required for the client
+// application (mobile or web) to connect to the call.
+type WebRTCConnection struct {
+
+	// The attendee information, including attendee ID and join token.
+	Attendee *Attendee
+
+	// A meeting created using the Amazon Chime SDK.
+	Meeting *WebRTCMeeting
+
+	noSmithyDocumentSerde
+}
+
+// A set of endpoints used by clients to connect to the media service group for an
+// Amazon Chime SDK meeting.
+type WebRTCMediaPlacement struct {
+
+	// The audio fallback URL.
+	AudioFallbackUrl *string
+
+	// The audio host URL.
+	AudioHostUrl *string
+
+	// The event ingestion URL to which you send client meeting events.
+	EventIngestionUrl *string
+
+	// The signaling URL.
+	SignalingUrl *string
+
+	noSmithyDocumentSerde
+}
+
+// A meeting created using the Amazon Chime SDK.
+type WebRTCMeeting struct {
+
+	// The media placement for the meeting.
+	MediaPlacement *WebRTCMediaPlacement
+
+	// The configuration settings of the features available to a meeting.
+	MeetingFeatures *MeetingFeaturesConfiguration
+
+	// The Amazon Chime SDK meeting ID.
+	MeetingId *string
 
 	noSmithyDocumentSerde
 }

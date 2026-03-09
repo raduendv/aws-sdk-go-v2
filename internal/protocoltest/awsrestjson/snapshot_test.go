@@ -158,6 +158,42 @@ func TestCheckSnapshot_DocumentTypeAsPayload(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_DuplexStream(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DuplexStream(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DuplexStream")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DuplexStreamWithDistinctStreams(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DuplexStreamWithDistinctStreams(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DuplexStreamWithDistinctStreams")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DuplexStreamWithInitialMessages(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DuplexStreamWithInitialMessages(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DuplexStreamWithInitialMessages")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_EmptyInputAndEmptyOutput(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.EmptyInputAndEmptyOutput(context.Background(), nil, func(o *Options) {
@@ -242,6 +278,18 @@ func TestCheckSnapshot_HttpChecksumRequired(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_HttpEmptyPrefixHeaders(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.HttpEmptyPrefixHeaders(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "HttpEmptyPrefixHeaders")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_HttpEnumPayload(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.HttpEnumPayload(context.Background(), nil, func(o *Options) {
@@ -319,6 +367,18 @@ func TestCheckSnapshot_HttpPrefixHeadersInResponse(t *testing.T) {
 	_, err := svc.HttpPrefixHeadersInResponse(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "HttpPrefixHeadersInResponse")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_HttpQueryParamsOnlyOperation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.HttpQueryParamsOnlyOperation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "HttpQueryParamsOnlyOperation")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -427,6 +487,30 @@ func TestCheckSnapshot_InputAndOutputWithHeaders(t *testing.T) {
 	_, err := svc.InputAndOutputWithHeaders(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "InputAndOutputWithHeaders")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_InputStream(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.InputStream(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "InputStream")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_InputStreamWithInitialRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.InputStreamWithInitialRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "InputStreamWithInitialRequest")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1022,6 +1106,30 @@ func TestCheckSnapshot_OperationWithNestedStructure(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_OutputStream(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.OutputStream(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "OutputStream")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_OutputStreamWithInitialResponse(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.OutputStreamWithInitialResponse(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "OutputStreamWithInitialResponse")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_PostPlayerAction(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.PostPlayerAction(context.Background(), nil, func(o *Options) {
@@ -1405,6 +1513,42 @@ func TestUpdateSnapshot_DocumentTypeAsPayload(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_DuplexStream(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DuplexStream(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DuplexStream")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DuplexStreamWithDistinctStreams(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DuplexStreamWithDistinctStreams(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DuplexStreamWithDistinctStreams")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DuplexStreamWithInitialMessages(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DuplexStreamWithInitialMessages(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DuplexStreamWithInitialMessages")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_EmptyInputAndEmptyOutput(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.EmptyInputAndEmptyOutput(context.Background(), nil, func(o *Options) {
@@ -1489,6 +1633,18 @@ func TestUpdateSnapshot_HttpChecksumRequired(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_HttpEmptyPrefixHeaders(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.HttpEmptyPrefixHeaders(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "HttpEmptyPrefixHeaders")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_HttpEnumPayload(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.HttpEnumPayload(context.Background(), nil, func(o *Options) {
@@ -1566,6 +1722,18 @@ func TestUpdateSnapshot_HttpPrefixHeadersInResponse(t *testing.T) {
 	_, err := svc.HttpPrefixHeadersInResponse(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "HttpPrefixHeadersInResponse")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_HttpQueryParamsOnlyOperation(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.HttpQueryParamsOnlyOperation(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "HttpQueryParamsOnlyOperation")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1674,6 +1842,30 @@ func TestUpdateSnapshot_InputAndOutputWithHeaders(t *testing.T) {
 	_, err := svc.InputAndOutputWithHeaders(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "InputAndOutputWithHeaders")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_InputStream(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.InputStream(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "InputStream")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_InputStreamWithInitialRequest(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.InputStreamWithInitialRequest(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "InputStreamWithInitialRequest")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -2262,6 +2454,30 @@ func TestUpdateSnapshot_OperationWithNestedStructure(t *testing.T) {
 	_, err := svc.OperationWithNestedStructure(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "OperationWithNestedStructure")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_OutputStream(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.OutputStream(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "OutputStream")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_OutputStreamWithInitialResponse(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.OutputStreamWithInitialResponse(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "OutputStreamWithInitialResponse")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

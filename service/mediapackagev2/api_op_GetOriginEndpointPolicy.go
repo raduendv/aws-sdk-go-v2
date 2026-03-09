@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	awsmiddleware "github.com/aws/aws-sdk-go-v2/aws/middleware"
+	"github.com/aws/aws-sdk-go-v2/service/mediapackagev2/types"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
@@ -78,6 +79,14 @@ type GetOriginEndpointPolicyOutput struct {
 	//
 	// This member is required.
 	Policy *string
+
+	// The settings for using authorization headers between the MediaPackage endpoint
+	// and your CDN.
+	//
+	// For information about CDN authorization, see [CDN authorization in Elemental MediaPackage] in the MediaPackage user guide.
+	//
+	// [CDN authorization in Elemental MediaPackage]: https://docs.aws.amazon.com/mediapackage/latest/userguide/cdn-auth.html
+	CdnAuthConfiguration *types.CdnAuthConfiguration
 
 	// Metadata pertaining to the operation's result.
 	ResultMetadata middleware.Metadata
@@ -173,16 +182,13 @@ func (c *Client) addOperationGetOriginEndpointPolicyMiddlewares(stack *middlewar
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

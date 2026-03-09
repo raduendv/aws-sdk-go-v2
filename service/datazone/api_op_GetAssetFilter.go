@@ -13,6 +13,15 @@ import (
 )
 
 // Gets an asset filter.
+//
+// Prerequisites:
+//
+//   - Domain ( --domain-identifier ), asset ( --asset-identifier ), and filter (
+//     --identifier ) must all exist.
+//
+//   - The asset filter should not have been deleted.
+//
+//   - The asset must still exist (since the filter is linked to it).
 func (c *Client) GetAssetFilter(ctx context.Context, params *GetAssetFilterInput, optFns ...func(*Options)) (*GetAssetFilterOutput, error) {
 	if params == nil {
 		params = &GetAssetFilterInput{}
@@ -188,16 +197,13 @@ func (c *Client) addOperationGetAssetFilterMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

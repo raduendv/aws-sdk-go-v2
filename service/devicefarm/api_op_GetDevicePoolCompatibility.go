@@ -41,6 +41,9 @@ type GetDevicePoolCompatibilityInput struct {
 	// An object that contains information about the settings for a run.
 	Configuration *types.ScheduleRunConfiguration
 
+	// The ARN of the project for which you want to check device pool compatibility.
+	ProjectArn *string
+
 	// Information about the uploaded test to be run against the device pool.
 	Test *types.ScheduleRunTest
 
@@ -183,16 +186,13 @@ func (c *Client) addOperationGetDevicePoolCompatibilityMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -35,8 +35,8 @@ type UpdateThemeInput struct {
 	// This member is required.
 	AwsAccountId *string
 
-	// The theme ID, defined by Amazon QuickSight, that a custom theme inherits from.
-	// All themes initially inherit from a default Amazon QuickSight theme.
+	// The theme ID, defined by Amazon Quick Sight, that a custom theme inherits from.
+	// All themes initially inherit from a default Quick Sight theme.
 	//
 	// This member is required.
 	BaseThemeId *string
@@ -174,16 +174,13 @@ func (c *Client) addOperationUpdateThemeMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -12,6 +12,8 @@ import (
 )
 
 // Get the status of a template sync.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) GetTemplateSyncStatus(ctx context.Context, params *GetTemplateSyncStatusInput, optFns ...func(*Options)) (*GetTemplateSyncStatusOutput, error) {
 	if params == nil {
 		params = &GetTemplateSyncStatusInput{}
@@ -152,16 +154,13 @@ func (c *Client) addOperationGetTemplateSyncStatusMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

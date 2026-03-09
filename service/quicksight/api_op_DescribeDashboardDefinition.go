@@ -64,7 +64,7 @@ type DescribeDashboardDefinitionOutput struct {
 	// Options for publishing the dashboard:
 	//
 	//   - AvailabilityStatus for AdHocFilteringOption - This status can be either
-	//   ENABLED or DISABLED . When this is set to DISABLED , Amazon QuickSight
+	//   ENABLED or DISABLED . When this is set to DISABLED , Amazon Quick Sight
 	//   disables the left filter pane on the published dashboard, which can be used for
 	//   ad hoc (one-time) filtering. This option is ENABLED by default.
 	//
@@ -74,6 +74,19 @@ type DescribeDashboardDefinitionOutput struct {
 	//
 	//   - VisibilityState for SheetControlsOption - This visibility state can be
 	//   either COLLAPSED or EXPANDED . This option is COLLAPSED by default.
+	//
+	//   - AvailabilityStatus for QuickSuiteActionsOption - This status can be either
+	//   ENABLED or DISABLED . Features related to Actions in Amazon Quick Suite on
+	//   dashboards are disabled when this is set to DISABLED . This option is DISABLED
+	//   by default.
+	//
+	//   - AvailabilityStatus for ExecutiveSummaryOption - This status can be either
+	//   ENABLED or DISABLED . The option to build an executive summary is disabled
+	//   when this is set to DISABLED . This option is ENABLED by default.
+	//
+	//   - AvailabilityStatus for DataStoriesSharingOption - This status can be either
+	//   ENABLED or DISABLED . The option to share a data story is disabled when this
+	//   is set to DISABLED . This option is ENABLED by default.
 	DashboardPublishOptions *types.DashboardPublishOptions
 
 	// The definition of a dashboard.
@@ -208,16 +221,13 @@ func (c *Client) addOperationDescribeDashboardDefinitionMiddlewares(stack *middl
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

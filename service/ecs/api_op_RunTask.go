@@ -28,7 +28,7 @@ import (
 // manually on specific container instances.
 //
 // You can attach Amazon EBS volumes to Amazon ECS tasks by configuring the volume
-// when creating or updating a service. For more infomation, see [Amazon EBS volumes]in the Amazon
+// when creating or updating a service. For more information, see [Amazon EBS volumes]in the Amazon
 // Elastic Container Service Developer Guide.
 //
 // The Amazon ECS API follows an eventual consistency model. This is because of
@@ -63,8 +63,14 @@ import (
 //
 //   - Run RunTask with the clientToken and the original set of parameters
 //
+// If you get a ClientException error, the RunTask could not be processed because
+// you use managed scaling and there is a capacity error because the quota of tasks
+// in the PROVISIONING per cluster has been reached. For information about the
+// service quotas, see [Amazon ECS service quotas].
+//
 // [Scheduling Tasks]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/scheduling_tasks.html
 // [Amazon EBS volumes]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ebs-volumes.html#ebs-volume-types
+// [Amazon ECS service quotas]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-quotas.html
 func (c *Client) RunTask(ctx context.Context, params *RunTaskInput, optFns ...func(*Options)) (*RunTaskOutput, error) {
 	if params == nil {
 		params = &RunTaskInput{}
@@ -108,6 +114,10 @@ type RunTaskInput struct {
 	TaskDefinition *string
 
 	// The capacity provider strategy to use for the task.
+	//
+	// If you want to use Amazon ECS Managed Instances, you must use the
+	// capacityProviderStrategy request parameter and omit the launchType request
+	// parameter.
 	//
 	// If a capacityProviderStrategy is specified, the launchType parameter must be
 	// omitted. If no capacityProviderStrategy or launchType is specified, the
@@ -158,6 +168,10 @@ type RunTaskInput struct {
 
 	// The infrastructure to run your standalone task on. For more information, see [Amazon ECS launch types]
 	// in the Amazon Elastic Container Service Developer Guide.
+	//
+	// If you want to use Amazon ECS Managed Instances, you must use the
+	// capacityProviderStrategy request parameter and omit the launchType request
+	// parameter.
 	//
 	// The FARGATE launch type runs your tasks on Fargate On-Demand infrastructure.
 	//
@@ -274,7 +288,7 @@ type RunTaskInput struct {
 	Tags []types.Tag
 
 	// The details of the volume that was configuredAtLaunch . You can configure the
-	// size, volumeType, IOPS, throughput, snapshot and encryption in in [TaskManagedEBSVolumeConfiguration]. The name of
+	// size, volumeType, IOPS, throughput, snapshot and encryption in [TaskManagedEBSVolumeConfiguration]. The name of
 	// the volume must match the name from the task definition.
 	//
 	// [TaskManagedEBSVolumeConfiguration]: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_TaskManagedEBSVolumeConfiguration.html
@@ -395,16 +409,13 @@ func (c *Client) addOperationRunTaskMiddlewares(stack *middleware.Stack, options
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

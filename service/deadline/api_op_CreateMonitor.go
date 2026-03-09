@@ -41,14 +41,14 @@ type CreateMonitorInput struct {
 	// This member is required.
 	DisplayName *string
 
-	// The Amazon Resource Name (ARN) of the IAM Identity Center instance that
-	// authenticates monitor users.
+	// The Amazon Resource Name of the IAM Identity Center instance that authenticates
+	// monitor users.
 	//
 	// This member is required.
 	IdentityCenterInstanceArn *string
 
-	// The Amazon Resource Name (ARN) of the IAM role that the monitor uses to connect
-	// to Deadline Cloud. Every user that signs in to the monitor using IAM Identity
+	// The Amazon Resource Name of the IAM role that the monitor uses to connect to
+	// Deadline Cloud. Every user that signs in to the monitor using IAM Identity
 	// Center uses this role to access Deadline Cloud resources.
 	//
 	// This member is required.
@@ -63,12 +63,17 @@ type CreateMonitorInput struct {
 	// The unique token which the server uses to recognize retries of the same request.
 	ClientToken *string
 
+	// The tags to add to your monitor. Each tag consists of a tag key and a tag
+	// value. Tag keys and values are both required, but tag values can be empty
+	// strings.
+	Tags map[string]string
+
 	noSmithyDocumentSerde
 }
 
 type CreateMonitorOutput struct {
 
-	// The Amazon Resource Name (ARN) that IAM Identity Center assigns to the monitor.
+	// The Amazon Resource Name that IAM Identity Center assigns to the monitor.
 	//
 	// This member is required.
 	IdentityCenterApplicationArn *string
@@ -178,16 +183,13 @@ func (c *Client) addOperationCreateMonitorMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

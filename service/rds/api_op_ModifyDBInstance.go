@@ -42,6 +42,11 @@ type ModifyDBInstanceInput struct {
 	// This member is required.
 	DBInstanceIdentifier *string
 
+	// A list of additional storage volumes to modify or delete for the DB instance.
+	// You can create up to 3 additional storage volumes. Additional storage volumes
+	// are supported for RDS for Oracle and RDS for SQL Server DB instances only.
+	AdditionalStorageVolumes []types.ModifyAdditionalStorageVolume
+
 	// The new amount of storage in gibibytes (GiB) to allocate for the DB instance.
 	//
 	// For RDS for Db2, MariaDB, RDS for MySQL, RDS for Oracle, and RDS for
@@ -310,11 +315,9 @@ type ModifyDBInstanceInput struct {
 	DBSecurityGroups []string
 
 	// The new DB subnet group for the DB instance. You can use this parameter to move
-	// your DB instance to a different VPC.
-	//
-	// If your DB instance isn't in a VPC, you can also use this parameter to move
-	// your DB instance into a VPC. For more information, see [Working with a DB instance in a VPC]in the Amazon RDS User
-	// Guide.
+	// your DB instance to a different VPC. If your DB instance isn't in a VPC, you can
+	// also use this parameter to move your DB instance into a VPC. For more
+	// information, see [Working with a DB instance in a VPC]in the Amazon RDS User Guide.
 	//
 	// Changing the subnet group causes an outage during the change. The change is
 	// applied during the next maintenance window, unless you enable ApplyImmediately .
@@ -404,8 +407,6 @@ type ModifyDBInstanceInput struct {
 	// Constraints:
 	//
 	//   - Must be in the distinguished name format.
-	//
-	//   - Can't be longer than 64 characters.
 	//
 	// Example: OU=mymanagedADtestOU,DC=mymanagedADtest,DC=mymanagedAD,DC=mydomain
 	DomainOu *string
@@ -591,6 +592,19 @@ type ModifyDBInstanceInput struct {
 	//
 	// [Password management with Amazon Web Services Secrets Manager]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-secrets-manager.html
 	ManageMasterUserPassword *bool
+
+	// Specifies the authentication type for the master user. With IAM master user
+	// authentication, you can change the master DB user to use IAM database
+	// authentication.
+	//
+	// You can specify one of the following values:
+	//
+	//   - password - Use standard database authentication with a password.
+	//
+	//   - iam-db-auth - Use IAM database authentication for the master user.
+	//
+	// This option is only valid for RDS for PostgreSQL and Aurora PostgreSQL engines.
+	MasterUserAuthenticationType types.MasterUserAuthenticationType
 
 	// The new password for the master user.
 	//
@@ -905,21 +919,35 @@ type ModifyDBInstanceInput struct {
 	// of the value of the ApplyImmediately parameter.
 	PubliclyAccessible *bool
 
-	// A value that sets the open mode of a replica database to either mounted or
-	// read-only.
+	// The open mode of a replica database.
 	//
-	// Currently, this parameter is only supported for Oracle DB instances.
+	// This parameter is only supported for Db2 DB instances and Oracle DB instances.
 	//
-	// Mounted DB replicas are included in Oracle Enterprise Edition. The main use
-	// case for mounted replicas is cross-Region disaster recovery. The primary
-	// database doesn't use Active Data Guard to transmit information to the mounted
-	// replica. Because it doesn't accept user connections, a mounted replica can't
-	// serve a read-only workload. For more information, see [Working with Oracle Read Replicas for Amazon RDS]in the Amazon RDS User
-	// Guide.
+	// Db2 Standby DB replicas are included in Db2 Advanced Edition (AE) and Db2
+	// Standard Edition (SE). The main use case for standby replicas is cross-Region
+	// disaster recovery. Because it doesn't accept user connections, a standby replica
+	// can't serve a read-only workload.
 	//
-	// This setting doesn't apply to RDS Custom DB instances.
+	// You can create a combination of standby and read-only DB replicas for the same
+	// primary DB instance. For more information, see [Working with replicas for Amazon RDS for Db2]in the Amazon RDS User Guide.
 	//
-	// [Working with Oracle Read Replicas for Amazon RDS]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/oracle-read-replicas.html
+	// To create standby DB replicas for RDS for Db2, set this parameter to mounted .
+	//
+	// Oracle Mounted DB replicas are included in Oracle Database Enterprise Edition.
+	// The main use case for mounted replicas is cross-Region disaster recovery. The
+	// primary database doesn't use Active Data Guard to transmit information to the
+	// mounted replica. Because it doesn't accept user connections, a mounted replica
+	// can't serve a read-only workload.
+	//
+	// You can create a combination of mounted and read-only DB replicas for the same
+	// primary DB instance. For more information, see [Working with read replicas for Amazon RDS for Oracle]in the Amazon RDS User Guide.
+	//
+	// For RDS Custom, you must specify this parameter and set it to mounted . The
+	// value won't be set by default. After replica creation, you can manage the open
+	// mode manually.
+	//
+	// [Working with replicas for Amazon RDS for Db2]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/db2-replication.html
+	// [Working with read replicas for Amazon RDS for Oracle]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/oracle-read-replicas.html
 	ReplicaMode types.ReplicaMode
 
 	// The number of minutes to pause the automation. When the time period ends, RDS
@@ -981,6 +1009,13 @@ type ModifyDBInstanceInput struct {
 	//
 	// Default: io1 , if the Iops parameter is specified. Otherwise, gp2 .
 	StorageType *string
+
+	// Tags to assign to resources associated with the DB instance.
+	//
+	// Valid Values:
+	//
+	//   - auto-backup - The DB instance's automated backup.
+	TagSpecifications []types.TagSpecification
 
 	// The ARN from the key store with which to associate the instance for TDE
 	// encryption.
@@ -1122,16 +1157,13 @@ func (c *Client) addOperationModifyDBInstanceMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

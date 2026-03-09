@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// Gets information about a workflow run group.
+// Gets information about a run group and returns its metadata.
 func (c *Client) GetRunGroup(ctx context.Context, params *GetRunGroupInput, optFns ...func(*Options)) (*GetRunGroupOutput, error) {
 	if params == nil {
 		params = &GetRunGroupInput{}
@@ -163,16 +163,13 @@ func (c *Client) addOperationGetRunGroupMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

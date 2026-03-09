@@ -19,16 +19,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestjson1_deserializeOpCancelJobRun struct {
 }
@@ -2584,6 +2575,16 @@ func awsRestjson1_deserializeDocumentApplication(v **types.Application, value in
 				}
 			}
 
+		case "diskEncryptionConfiguration":
+			if err := awsRestjson1_deserializeDocumentDiskEncryptionConfiguration(&sv.DiskEncryptionConfiguration, value); err != nil {
+				return err
+			}
+
+		case "identityCenterConfiguration":
+			if err := awsRestjson1_deserializeDocumentIdentityCenterConfiguration(&sv.IdentityCenterConfiguration, value); err != nil {
+				return err
+			}
+
 		case "imageConfiguration":
 			if err := awsRestjson1_deserializeDocumentImageConfiguration(&sv.ImageConfiguration, value); err != nil {
 				return err
@@ -2596,6 +2597,11 @@ func awsRestjson1_deserializeDocumentApplication(v **types.Application, value in
 
 		case "interactiveConfiguration":
 			if err := awsRestjson1_deserializeDocumentInteractiveConfiguration(&sv.InteractiveConfiguration, value); err != nil {
+				return err
+			}
+
+		case "jobLevelCostAllocationConfiguration":
+			if err := awsRestjson1_deserializeDocumentJobLevelCostAllocationConfiguration(&sv.JobLevelCostAllocationConfiguration, value); err != nil {
 				return err
 			}
 
@@ -3149,6 +3155,11 @@ func awsRestjson1_deserializeDocumentConfigurationOverrides(v **types.Configurat
 				return err
 			}
 
+		case "diskEncryptionConfiguration":
+			if err := awsRestjson1_deserializeDocumentDiskEncryptionConfiguration(&sv.DiskEncryptionConfiguration, value); err != nil {
+				return err
+			}
+
 		case "monitoringConfiguration":
 			if err := awsRestjson1_deserializeDocumentMonitoringConfiguration(&sv.MonitoringConfiguration, value); err != nil {
 				return err
@@ -3200,6 +3211,87 @@ func awsRestjson1_deserializeDocumentConflictException(v **types.ConflictExcepti
 		}
 	}
 	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentDiskEncryptionConfiguration(v **types.DiskEncryptionConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.DiskEncryptionConfiguration
+	if *v == nil {
+		sv = &types.DiskEncryptionConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "encryptionContext":
+			if err := awsRestjson1_deserializeDocumentEncryptionContext(&sv.EncryptionContext, value); err != nil {
+				return err
+			}
+
+		case "encryptionKeyArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected EncryptionKeyArn to be of type string, got %T instead", value)
+				}
+				sv.EncryptionKeyArn = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentEncryptionContext(v *map[string]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var mv map[string]string
+	if *v == nil {
+		mv = map[string]string{}
+	} else {
+		mv = *v
+	}
+
+	for key, value := range shape {
+		var parsedVal string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected EncryptionContextValue to be of type string, got %T instead", value)
+			}
+			parsedVal = jtv
+		}
+		mv[key] = parsedVal
+
+	}
+	*v = mv
 	return nil
 }
 
@@ -3286,6 +3378,64 @@ func awsRestjson1_deserializeDocumentHive(v **types.Hive, value interface{}) err
 					return fmt.Errorf("expected Query to be of type string, got %T instead", value)
 				}
 				sv.Query = ptr.String(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentIdentityCenterConfiguration(v **types.IdentityCenterConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.IdentityCenterConfiguration
+	if *v == nil {
+		sv = &types.IdentityCenterConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "identityCenterApplicationArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected IdentityCenterApplicationArn to be of type string, got %T instead", value)
+				}
+				sv.IdentityCenterApplicationArn = ptr.String(jtv)
+			}
+
+		case "identityCenterInstanceArn":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected IdentityCenterInstanceArn to be of type string, got %T instead", value)
+				}
+				sv.IdentityCenterInstanceArn = ptr.String(jtv)
+			}
+
+		case "userBackgroundSessionsEnabled":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.UserBackgroundSessionsEnabled = ptr.Bool(jtv)
 			}
 
 		default:
@@ -3569,6 +3719,46 @@ loop:
 	return nil
 }
 
+func awsRestjson1_deserializeDocumentJobLevelCostAllocationConfiguration(v **types.JobLevelCostAllocationConfiguration, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.JobLevelCostAllocationConfiguration
+	if *v == nil {
+		sv = &types.JobLevelCostAllocationConfiguration{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "enabled":
+			if value != nil {
+				jtv, ok := value.(bool)
+				if !ok {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", value)
+				}
+				sv.Enabled = ptr.Bool(jtv)
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestjson1_deserializeDocumentJobRun(v **types.JobRun, value interface{}) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3703,6 +3893,11 @@ func awsRestjson1_deserializeDocumentJobRun(v **types.JobRun, value interface{})
 					return fmt.Errorf("expected Date to be a JSON Number, got %T instead", value)
 
 				}
+			}
+
+		case "executionIamPolicy":
+			if err := awsRestjson1_deserializeDocumentJobRunExecutionIamPolicy(&sv.ExecutionIamPolicy, value); err != nil {
+				return err
 			}
 
 		case "executionRole":
@@ -4087,6 +4282,51 @@ func awsRestjson1_deserializeDocumentJobRunAttemptSummary(v **types.JobRunAttemp
 					return fmt.Errorf("expected Date to be a JSON Number, got %T instead", value)
 
 				}
+			}
+
+		default:
+			_, _ = key, value
+
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentJobRunExecutionIamPolicy(v **types.JobRunExecutionIamPolicy, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var sv *types.JobRunExecutionIamPolicy
+	if *v == nil {
+		sv = &types.JobRunExecutionIamPolicy{}
+	} else {
+		sv = *v
+	}
+
+	for key, value := range shape {
+		switch key {
+		case "policy":
+			if value != nil {
+				jtv, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("expected PolicyDocument to be of type string, got %T instead", value)
+				}
+				sv.Policy = ptr.String(jtv)
+			}
+
+		case "policyArns":
+			if err := awsRestjson1_deserializeDocumentPolicyArnList(&sv.PolicyArns, value); err != nil {
+				return err
 			}
 
 		default:
@@ -4605,6 +4845,42 @@ func awsRestjson1_deserializeDocumentNetworkConfiguration(v **types.NetworkConfi
 		}
 	}
 	*v = sv
+	return nil
+}
+
+func awsRestjson1_deserializeDocumentPolicyArnList(v *[]string, value interface{}) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	if value == nil {
+		return nil
+	}
+
+	shape, ok := value.([]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected JSON type %v", value)
+	}
+
+	var cv []string
+	if *v == nil {
+		cv = []string{}
+	} else {
+		cv = *v
+	}
+
+	for _, value := range shape {
+		var col string
+		if value != nil {
+			jtv, ok := value.(string)
+			if !ok {
+				return fmt.Errorf("expected Arn to be of type string, got %T instead", value)
+			}
+			col = jtv
+		}
+		cv = append(cv, col)
+
+	}
+	*v = cv
 	return nil
 }
 

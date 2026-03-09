@@ -51,14 +51,18 @@ type CreatePricingRuleInput struct {
 	// third-party providers selling services via Amazon Web Services Marketplace.
 	BillingEntity *string
 
-	//  The token that's needed to support idempotency. Idempotency isn't currently
-	// supported, but will be implemented in a future update.
+	// A unique, case-sensitive identifier that you specify to ensure idempotency of
+	// the request. Idempotency ensures that an API request completes no more than one
+	// time. With an idempotent request, if the original request completes
+	// successfully, any subsequent retries complete successfully without performing
+	// any further actions.
 	ClientToken *string
 
 	//  The pricing rule description.
 	Description *string
 
-	//  A percentage modifier that's applied on the public pricing rates.
+	// A percentage modifier that's applied on the public pricing rates. Your entry
+	// will be rounded to the nearest 2 decimal places.
 	ModifierPercentage *float64
 
 	//  Operation is the specific Amazon Web Services action covered by this line
@@ -193,16 +197,13 @@ func (c *Client) addOperationCreatePricingRuleMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

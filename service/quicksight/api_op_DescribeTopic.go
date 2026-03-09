@@ -48,6 +48,9 @@ type DescribeTopicOutput struct {
 	// The Amazon Resource Name (ARN) of the topic.
 	Arn *string
 
+	// Custom instructions for the topic.
+	CustomInstructions *types.CustomInstructions
+
 	// The Amazon Web Services request ID for this operation.
 	RequestId *string
 
@@ -155,16 +158,13 @@ func (c *Client) addOperationDescribeTopicMiddlewares(stack *middleware.Stack, o
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

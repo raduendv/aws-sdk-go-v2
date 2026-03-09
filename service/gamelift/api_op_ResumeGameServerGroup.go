@@ -11,9 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-//	This operation is used with the Amazon GameLift FleetIQ solution and game
-//
-// server groups.
+//	This API works with the following fleet types: EC2 (FleetIQ)
 //
 // Reinstates activity on a game server group after it has been suspended. A game
 // server group might be suspended by the SuspendGameServerGroupoperation, or it might be suspended
@@ -28,9 +26,9 @@ import (
 //
 // # Learn more
 //
-// [Amazon GameLift FleetIQ Guide]
+// [Amazon GameLift Servers FleetIQ Guide]
 //
-// [Amazon GameLift FleetIQ Guide]: https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html
+// [Amazon GameLift Servers FleetIQ Guide]: https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html
 func (c *Client) ResumeGameServerGroup(ctx context.Context, params *ResumeGameServerGroupInput, optFns ...func(*Options)) (*ResumeGameServerGroupOutput, error) {
 	if params == nil {
 		params = &ResumeGameServerGroupInput{}
@@ -161,16 +159,13 @@ func (c *Client) addOperationResumeGameServerGroupMiddlewares(stack *middleware.
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

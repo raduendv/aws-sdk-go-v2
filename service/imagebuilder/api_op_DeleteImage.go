@@ -52,7 +52,8 @@ type DeleteImageInput struct {
 
 type DeleteImageOutput struct {
 
-	// The ARN of the Image Builder image resource that this request deleted.
+	// The Amazon Resource Name (ARN) of the Image Builder image resource that this
+	// request deleted.
 	ImageBuildVersionArn *string
 
 	// The request ID that uniquely identifies this request.
@@ -152,16 +153,13 @@ func (c *Client) addOperationDeleteImageMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

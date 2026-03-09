@@ -310,6 +310,46 @@ func (m *validateOpCreateMultiRegionEndpoint) HandleInitialize(ctx context.Conte
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateTenant struct {
+}
+
+func (*validateOpCreateTenant) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateTenant) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateTenantInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateTenantInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpCreateTenantResourceAssociation struct {
+}
+
+func (*validateOpCreateTenantResourceAssociation) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateTenantResourceAssociation) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateTenantResourceAssociationInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateTenantResourceAssociationInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeleteConfigurationSetEventDestination struct {
 }
 
@@ -525,6 +565,46 @@ func (m *validateOpDeleteSuppressedDestination) HandleInitialize(ctx context.Con
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDeleteSuppressedDestinationInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteTenant struct {
+}
+
+func (*validateOpDeleteTenant) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteTenant) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteTenantInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteTenantInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteTenantResourceAssociation struct {
+}
+
+func (*validateOpDeleteTenantResourceAssociation) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteTenantResourceAssociation) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteTenantResourceAssociationInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteTenantResourceAssociationInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -750,6 +830,26 @@ func (m *validateOpGetDomainStatisticsReport) HandleInitialize(ctx context.Conte
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetEmailAddressInsights struct {
+}
+
+func (*validateOpGetEmailAddressInsights) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetEmailAddressInsights) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetEmailAddressInsightsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetEmailAddressInsightsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetEmailIdentity struct {
 }
 
@@ -890,6 +990,26 @@ func (m *validateOpGetMultiRegionEndpoint) HandleInitialize(ctx context.Context,
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetReputationEntity struct {
+}
+
+func (*validateOpGetReputationEntity) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetReputationEntity) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetReputationEntityInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetReputationEntityInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetSuppressedDestination struct {
 }
 
@@ -905,6 +1025,26 @@ func (m *validateOpGetSuppressedDestination) HandleInitialize(ctx context.Contex
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpGetSuppressedDestinationInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetTenant struct {
+}
+
+func (*validateOpGetTenant) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetTenant) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetTenantInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetTenantInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -950,6 +1090,26 @@ func (m *validateOpListDomainDeliverabilityCampaigns) HandleInitialize(ctx conte
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpListResourceTenants struct {
+}
+
+func (*validateOpListResourceTenants) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListResourceTenants) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListResourceTenantsInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListResourceTenantsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpListTagsForResource struct {
 }
 
@@ -970,6 +1130,26 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpListTenantResources struct {
+}
+
+func (*validateOpListTenantResources) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpListTenantResources) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*ListTenantResourcesInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpListTenantResourcesInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpPutAccountDetails struct {
 }
 
@@ -985,6 +1165,26 @@ func (m *validateOpPutAccountDetails) HandleInitialize(ctx context.Context, in m
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpPutAccountDetailsInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpPutAccountSuppressionAttributes struct {
+}
+
+func (*validateOpPutAccountSuppressionAttributes) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpPutAccountSuppressionAttributes) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*PutAccountSuppressionAttributesInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpPutAccountSuppressionAttributesInput(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1590,6 +1790,46 @@ func (m *validateOpUpdateEmailTemplate) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateReputationEntityCustomerManagedStatus struct {
+}
+
+func (*validateOpUpdateReputationEntityCustomerManagedStatus) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateReputationEntityCustomerManagedStatus) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateReputationEntityCustomerManagedStatusInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateReputationEntityCustomerManagedStatusInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpUpdateReputationEntityPolicy struct {
+}
+
+func (*validateOpUpdateReputationEntityPolicy) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateReputationEntityPolicy) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateReputationEntityPolicyInput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateReputationEntityPolicyInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 func addOpBatchGetMetricDataValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpBatchGetMetricData{}, middleware.After)
 }
@@ -1650,6 +1890,14 @@ func addOpCreateMultiRegionEndpointValidationMiddleware(stack *middleware.Stack)
 	return stack.Initialize.Add(&validateOpCreateMultiRegionEndpoint{}, middleware.After)
 }
 
+func addOpCreateTenantValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateTenant{}, middleware.After)
+}
+
+func addOpCreateTenantResourceAssociationValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateTenantResourceAssociation{}, middleware.After)
+}
+
 func addOpDeleteConfigurationSetEventDestinationValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteConfigurationSetEventDestination{}, middleware.After)
 }
@@ -1692,6 +1940,14 @@ func addOpDeleteMultiRegionEndpointValidationMiddleware(stack *middleware.Stack)
 
 func addOpDeleteSuppressedDestinationValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteSuppressedDestination{}, middleware.After)
+}
+
+func addOpDeleteTenantValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteTenant{}, middleware.After)
+}
+
+func addOpDeleteTenantResourceAssociationValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteTenantResourceAssociation{}, middleware.After)
 }
 
 func addOpGetBlacklistReportsValidationMiddleware(stack *middleware.Stack) error {
@@ -1738,6 +1994,10 @@ func addOpGetDomainStatisticsReportValidationMiddleware(stack *middleware.Stack)
 	return stack.Initialize.Add(&validateOpGetDomainStatisticsReport{}, middleware.After)
 }
 
+func addOpGetEmailAddressInsightsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetEmailAddressInsights{}, middleware.After)
+}
+
 func addOpGetEmailIdentityValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetEmailIdentity{}, middleware.After)
 }
@@ -1766,8 +2026,16 @@ func addOpGetMultiRegionEndpointValidationMiddleware(stack *middleware.Stack) er
 	return stack.Initialize.Add(&validateOpGetMultiRegionEndpoint{}, middleware.After)
 }
 
+func addOpGetReputationEntityValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetReputationEntity{}, middleware.After)
+}
+
 func addOpGetSuppressedDestinationValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetSuppressedDestination{}, middleware.After)
+}
+
+func addOpGetTenantValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetTenant{}, middleware.After)
 }
 
 func addOpListContactsValidationMiddleware(stack *middleware.Stack) error {
@@ -1778,12 +2046,24 @@ func addOpListDomainDeliverabilityCampaignsValidationMiddleware(stack *middlewar
 	return stack.Initialize.Add(&validateOpListDomainDeliverabilityCampaigns{}, middleware.After)
 }
 
+func addOpListResourceTenantsValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListResourceTenants{}, middleware.After)
+}
+
 func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
 }
 
+func addOpListTenantResourcesValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpListTenantResources{}, middleware.After)
+}
+
 func addOpPutAccountDetailsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpPutAccountDetails{}, middleware.After)
+}
+
+func addOpPutAccountSuppressionAttributesValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpPutAccountSuppressionAttributes{}, middleware.After)
 }
 
 func addOpPutAccountVdmAttributesValidationMiddleware(stack *middleware.Stack) error {
@@ -1904,6 +2184,14 @@ func addOpUpdateEmailIdentityPolicyValidationMiddleware(stack *middleware.Stack)
 
 func addOpUpdateEmailTemplateValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateEmailTemplate{}, middleware.After)
+}
+
+func addOpUpdateReputationEntityCustomerManagedStatusValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateReputationEntityCustomerManagedStatus{}, middleware.After)
+}
+
+func addOpUpdateReputationEntityPolicyValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateReputationEntityPolicy{}, middleware.After)
 }
 
 func validateAttachment(v *types.Attachment) error {
@@ -2572,6 +2860,41 @@ func validateSnsDestination(v *types.SnsDestination) error {
 	}
 }
 
+func validateSuppressionConditionThreshold(v *types.SuppressionConditionThreshold) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SuppressionConditionThreshold"}
+	if len(v.ConditionThresholdEnabled) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ConditionThresholdEnabled"))
+	}
+	if v.OverallConfidenceThreshold != nil {
+		if err := validateSuppressionConfidenceThreshold(v.OverallConfidenceThreshold); err != nil {
+			invalidParams.AddNested("OverallConfidenceThreshold", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateSuppressionConfidenceThreshold(v *types.SuppressionConfidenceThreshold) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SuppressionConfidenceThreshold"}
+	if len(v.ConfidenceVerdictThreshold) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ConfidenceVerdictThreshold"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateSuppressionListDestination(v *types.SuppressionListDestination) error {
 	if v == nil {
 		return nil
@@ -2579,6 +2902,61 @@ func validateSuppressionListDestination(v *types.SuppressionListDestination) err
 	invalidParams := smithy.InvalidParamsError{Context: "SuppressionListDestination"}
 	if len(v.SuppressionListImportAction) == 0 {
 		invalidParams.Add(smithy.NewErrParamRequired("SuppressionListImportAction"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateSuppressionOptions(v *types.SuppressionOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SuppressionOptions"}
+	if v.ValidationOptions != nil {
+		if err := validateSuppressionValidationOptions(v.ValidationOptions); err != nil {
+			invalidParams.AddNested("ValidationOptions", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateSuppressionValidationAttributes(v *types.SuppressionValidationAttributes) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SuppressionValidationAttributes"}
+	if v.ConditionThreshold == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConditionThreshold"))
+	} else if v.ConditionThreshold != nil {
+		if err := validateSuppressionConditionThreshold(v.ConditionThreshold); err != nil {
+			invalidParams.AddNested("ConditionThreshold", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateSuppressionValidationOptions(v *types.SuppressionValidationOptions) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "SuppressionValidationOptions"}
+	if v.ConditionThreshold == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConditionThreshold"))
+	} else if v.ConditionThreshold != nil {
+		if err := validateSuppressionConditionThreshold(v.ConditionThreshold); err != nil {
+			invalidParams.AddNested("ConditionThreshold", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2824,6 +3202,11 @@ func validateOpCreateConfigurationSetInput(v *CreateConfigurationSetInput) error
 			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
 		}
 	}
+	if v.SuppressionOptions != nil {
+		if err := validateSuppressionOptions(v.SuppressionOptions); err != nil {
+			invalidParams.AddNested("SuppressionOptions", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -2895,6 +3278,11 @@ func validateOpCreateCustomVerificationEmailTemplateInput(v *CreateCustomVerific
 	}
 	if v.TemplateContent == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("TemplateContent"))
+	}
+	if v.Tags != nil {
+		if err := validateTagList(v.Tags); err != nil {
+			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
+		}
 	}
 	if v.SuccessRedirectionURL == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("SuccessRedirectionURL"))
@@ -3008,6 +3396,11 @@ func validateOpCreateEmailTemplateInput(v *CreateEmailTemplateInput) error {
 	if v.TemplateContent == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("TemplateContent"))
 	}
+	if v.Tags != nil {
+		if err := validateTagList(v.Tags); err != nil {
+			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
+		}
+	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	} else {
@@ -3086,6 +3479,44 @@ func validateOpCreateMultiRegionEndpointInput(v *CreateMultiRegionEndpointInput)
 		if err := validateTagList(v.Tags); err != nil {
 			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpCreateTenantInput(v *CreateTenantInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateTenantInput"}
+	if v.TenantName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TenantName"))
+	}
+	if v.Tags != nil {
+		if err := validateTagList(v.Tags); err != nil {
+			invalidParams.AddNested("Tags", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpCreateTenantResourceAssociationInput(v *CreateTenantResourceAssociationInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateTenantResourceAssociationInput"}
+	if v.TenantName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TenantName"))
+	}
+	if v.ResourceArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3268,6 +3699,39 @@ func validateOpDeleteSuppressedDestinationInput(v *DeleteSuppressedDestinationIn
 	}
 }
 
+func validateOpDeleteTenantInput(v *DeleteTenantInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteTenantInput"}
+	if v.TenantName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TenantName"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteTenantResourceAssociationInput(v *DeleteTenantResourceAssociationInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteTenantResourceAssociationInput"}
+	if v.TenantName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TenantName"))
+	}
+	if v.ResourceArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetBlacklistReportsInput(v *GetBlacklistReportsInput) error {
 	if v == nil {
 		return nil
@@ -3442,6 +3906,21 @@ func validateOpGetDomainStatisticsReportInput(v *GetDomainStatisticsReportInput)
 	}
 }
 
+func validateOpGetEmailAddressInsightsInput(v *GetEmailAddressInsightsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetEmailAddressInsightsInput"}
+	if v.EmailAddress == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EmailAddress"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetEmailIdentityInput(v *GetEmailIdentityInput) error {
 	if v == nil {
 		return nil
@@ -3547,6 +4026,24 @@ func validateOpGetMultiRegionEndpointInput(v *GetMultiRegionEndpointInput) error
 	}
 }
 
+func validateOpGetReputationEntityInput(v *GetReputationEntityInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetReputationEntityInput"}
+	if v.ReputationEntityReference == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReputationEntityReference"))
+	}
+	if len(v.ReputationEntityType) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ReputationEntityType"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetSuppressedDestinationInput(v *GetSuppressedDestinationInput) error {
 	if v == nil {
 		return nil
@@ -3554,6 +4051,21 @@ func validateOpGetSuppressedDestinationInput(v *GetSuppressedDestinationInput) e
 	invalidParams := smithy.InvalidParamsError{Context: "GetSuppressedDestinationInput"}
 	if v.EmailAddress == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("EmailAddress"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetTenantInput(v *GetTenantInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetTenantInput"}
+	if v.TenantName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TenantName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3598,6 +4110,21 @@ func validateOpListDomainDeliverabilityCampaignsInput(v *ListDomainDeliverabilit
 	}
 }
 
+func validateOpListResourceTenantsInput(v *ListResourceTenantsInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListResourceTenantsInput"}
+	if v.ResourceArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	if v == nil {
 		return nil
@@ -3605,6 +4132,21 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ListTagsForResourceInput"}
 	if v.ResourceArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpListTenantResourcesInput(v *ListTenantResourcesInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ListTenantResourcesInput"}
+	if v.TenantName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("TenantName"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3623,6 +4165,23 @@ func validateOpPutAccountDetailsInput(v *PutAccountDetailsInput) error {
 	}
 	if v.WebsiteURL == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("WebsiteURL"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpPutAccountSuppressionAttributesInput(v *PutAccountSuppressionAttributesInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "PutAccountSuppressionAttributesInput"}
+	if v.ValidationAttributes != nil {
+		if err := validateSuppressionValidationAttributes(v.ValidationAttributes); err != nil {
+			invalidParams.AddNested("ValidationAttributes", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -3717,6 +4276,11 @@ func validateOpPutConfigurationSetSuppressionOptionsInput(v *PutConfigurationSet
 	invalidParams := smithy.InvalidParamsError{Context: "PutConfigurationSetSuppressionOptionsInput"}
 	if v.ConfigurationSetName == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ConfigurationSetName"))
+	}
+	if v.ValidationOptions != nil {
+		if err := validateSuppressionValidationOptions(v.ValidationOptions); err != nil {
+			invalidParams.AddNested("ValidationOptions", err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4182,6 +4746,48 @@ func validateOpUpdateEmailTemplateInput(v *UpdateEmailTemplateInput) error {
 	}
 	if v.TemplateContent == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("TemplateContent"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateReputationEntityCustomerManagedStatusInput(v *UpdateReputationEntityCustomerManagedStatusInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateReputationEntityCustomerManagedStatusInput"}
+	if len(v.ReputationEntityType) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ReputationEntityType"))
+	}
+	if v.ReputationEntityReference == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReputationEntityReference"))
+	}
+	if len(v.SendingStatus) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("SendingStatus"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateReputationEntityPolicyInput(v *UpdateReputationEntityPolicyInput) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateReputationEntityPolicyInput"}
+	if len(v.ReputationEntityType) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("ReputationEntityType"))
+	}
+	if v.ReputationEntityReference == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReputationEntityReference"))
+	}
+	if v.ReputationEntityPolicy == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ReputationEntityPolicy"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

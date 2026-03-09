@@ -47,6 +47,9 @@ type CreateFieldInput struct {
 	// This member is required.
 	Type types.FieldType
 
+	// Union of field attributes.
+	Attributes types.FieldAttributes
+
 	// The description of the field.
 	Description *string
 
@@ -159,16 +162,13 @@ func (c *Client) addOperationCreateFieldMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

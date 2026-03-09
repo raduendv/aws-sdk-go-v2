@@ -74,7 +74,9 @@ type ListAccessKeysInput struct {
 	noSmithyDocumentSerde
 }
 
-// Contains the response to a successful ListAccessKeys request.
+// Contains the response to a successful [ListAccessKeys] request.
+//
+// [ListAccessKeys]: https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListAccessKeys.html
 type ListAccessKeysOutput struct {
 
 	// A list of objects containing metadata about the access keys.
@@ -185,16 +187,13 @@ func (c *Client) addOperationListAccessKeysMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

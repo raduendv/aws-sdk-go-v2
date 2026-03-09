@@ -45,7 +45,9 @@ type UpdateSignalingChannelInput struct {
 	CurrentVersion *string
 
 	// The structure containing the configuration for the SINGLE_MASTER type of the
-	// signaling channel that you want to update.
+	// signaling channel that you want to update. This parameter and the channel
+	// message's time-to-live are required for channels with the SINGLE_MASTER channel
+	// type.
 	SingleMasterConfiguration *types.SingleMasterConfiguration
 
 	noSmithyDocumentSerde
@@ -146,16 +148,13 @@ func (c *Client) addOperationUpdateSignalingChannelMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -39,7 +39,7 @@ type CreateResolverRuleInput struct {
 	CreatorRequestId *string
 
 	// When you want to forward DNS queries for specified domain name to resolvers on
-	// your network, specify FORWARD .
+	// your network, specify FORWARD or DELEGATE .
 	//
 	// When you have a forwarding rule to forward DNS queries for a domain to your
 	// network and you want Resolver to process queries for a subdomain of that domain,
@@ -56,6 +56,10 @@ type CreateResolverRuleInput struct {
 	// This member is required.
 	RuleType types.RuleTypeOption
 
+	//  DNS queries with the delegation records that match this domain name are
+	// forwarded to the resolvers on your network.
+	DelegationRecord *string
+
 	// DNS queries for this domain name are forwarded to the IP addresses that you
 	// specify in TargetIps . If a query matches multiple Resolver rules (example.com
 	// and www.example.com), outbound DNS queries are routed using the Resolver rule
@@ -64,6 +68,10 @@ type CreateResolverRuleInput struct {
 
 	// A friendly name that lets you easily find a rule in the Resolver dashboard in
 	// the Route 53 console.
+	//
+	// The name can be up to 64 characters long and can contain letters (a-z, A-Z),
+	// numbers (0-9), hyphens (-), underscores (_), and spaces. The name cannot consist
+	// of only numbers.
 	Name *string
 
 	// The ID of the outbound Resolver endpoint that you want to use to route DNS
@@ -77,7 +85,13 @@ type CreateResolverRuleInput struct {
 	// either Ipv4 or Ipv6 addresses but not both in the same rule. Separate IP
 	// addresses with a space.
 	//
-	// TargetIps is available only when the value of Rule type is FORWARD .
+	// TargetIps is available only when the value of Rule type is FORWARD . You should
+	// not provide TargetIps when the Rule type is DELEGATE .
+	//
+	// when creating a DELEGATE rule, you must not provide the TargetIps parameter. If
+	// you provide the TargetIps , you may receive an ERROR message similar to
+	// "Delegate resolver rules need to specify a nameserver name". This error means
+	// you should not provide TargetIps .
 	TargetIps []types.TargetAddress
 
 	noSmithyDocumentSerde
@@ -183,16 +197,13 @@ func (c *Client) addOperationCreateResolverRuleMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

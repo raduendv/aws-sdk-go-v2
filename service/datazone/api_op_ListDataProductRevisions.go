@@ -12,6 +12,14 @@ import (
 )
 
 // Lists data product revisions.
+//
+// Prerequisites:
+//
+//   - The data product ID must exist within the domain.
+//
+//   - User must have view permissions on the data product.
+//
+//   - The domain must be in a valid and accessible state.
 func (c *Client) ListDataProductRevisions(ctx context.Context, params *ListDataProductRevisionsInput, optFns ...func(*Options)) (*ListDataProductRevisionsOutput, error) {
 	if params == nil {
 		params = &ListDataProductRevisionsInput{}
@@ -166,16 +174,13 @@ func (c *Client) addOperationListDataProductRevisionsMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -50,7 +50,8 @@ type CreateUsageLimitInput struct {
 	// duration or data size. If FeatureType is spectrum , then LimitType must be
 	// data-scanned . If FeatureType is concurrency-scaling , then LimitType must be
 	// time . If FeatureType is cross-region-datasharing , then LimitType must be
-	// data-scanned .
+	// data-scanned . If FeatureType is extra-compute-for-automatic-optimization , then
+	// LimitType must be time .
 	//
 	// This member is required.
 	LimitType types.UsageLimitLimitType
@@ -200,16 +201,13 @@ func (c *Client) addOperationCreateUsageLimitMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

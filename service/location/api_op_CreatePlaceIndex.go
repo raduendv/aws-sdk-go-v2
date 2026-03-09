@@ -12,6 +12,25 @@ import (
 	"time"
 )
 
+// This operation is no longer current and may be deprecated in the future. We
+// recommend you upgrade to the Places API V2 unless you require Grab data.
+//
+//   - CreatePlaceIndex is part of a previous Amazon Location Service Places API
+//     (version 1) which has been superseded by a more intuitive, powerful, and
+//     complete API (version 2).
+//
+//   - The Places API version 2 has a simplified interface that can be used
+//     without creating or managing place index resources.
+//
+//   - If you are using an Amazon Web Services SDK or the Amazon Web Services CLI,
+//     note that the Places API version 2 is found under geo-places or geo_places ,
+//     not under location .
+//
+//   - Since Grab is not yet fully supported in Places API version 2, we recommend
+//     you continue using API version 1 when using Grab.
+//
+//   - Start your version 2 API journey with the Places V2 API Referenceor the Developer Guide.
+//
 // Creates a place index resource in your Amazon Web Services account. Use a place
 // index resource to geocode addresses and other text queries by using the
 // SearchPlaceIndexForText operation, and reverse geocode coordinates by using the
@@ -57,18 +76,18 @@ type CreatePlaceIndexInput struct {
 	//   interest, see [HERE details on goecoding coverage].
 	//
 	// If you specify HERE Technologies ( Here ) as the data provider, you may not [store results]for
-	//   locations in Japan. For more information, see the [Amazon Web Services Service Terms]for Amazon Location Service.
+	//   locations in Japan. For more information, see the [Amazon Web Services service terms]for Amazon Location Service.
 	//
-	// For additional information , see [Data providers] on the Amazon Location Service Developer
-	// Guide.
+	// For additional information , see [Data providers] on the Amazon Location Service developer
+	// guide.
 	//
-	// [Amazon Web Services Service Terms]: http://aws.amazon.com/service-terms/
-	// [Esri]: https://docs.aws.amazon.com/location/latest/developerguide/esri.html
+	// [Esri]: https://docs.aws.amazon.com/location/previous/developerguide/esri.html
 	// [Esri details on geocoding coverage]: https://developers.arcgis.com/rest/geocode/api-reference/geocode-coverage.htm
-	// [HERE Technologies]: https://docs.aws.amazon.com/location/latest/developerguide/HERE.html
-	// [GrabMaps]: https://docs.aws.amazon.com/location/latest/developerguide/grab.html
-	// [Data providers]: https://docs.aws.amazon.com/location/latest/developerguide/what-is-data-provider.html
-	// [GrabMaps countries and areas covered]: https://docs.aws.amazon.com/location/latest/developerguide/grab.html#grab-coverage-area
+	// [Amazon Web Services service terms]: http://aws.amazon.com/service-terms/
+	// [HERE Technologies]: https://docs.aws.amazon.com/location/previous/developerguide/HERE.html
+	// [GrabMaps]: https://docs.aws.amazon.com/location/previous/developerguide/grab.html
+	// [Data providers]: https://docs.aws.amazon.com/location/previous/developerguide/what-is-data-provider.html
+	// [GrabMaps countries and areas covered]: https://docs.aws.amazon.com/location/previous/developerguide/grab.html#grab-coverage-area
 	// [store results]: https://docs.aws.amazon.com/location-places/latest/APIReference/API_DataSourceConfiguration.html
 	// [HERE details on goecoding coverage]: https://developer.here.com/documentation/geocoder/dev_guide/topics/coverage-geocoder.html
 	//
@@ -245,16 +264,13 @@ func (c *Client) addOperationCreatePlaceIndexMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

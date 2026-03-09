@@ -10,11 +10,13 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
+//	This API works with the following fleet types: EC2, Anywhere, Container
+//
 // Attempts to retrieve a fleet ID that is associated with an alias. Specify a
 // unique alias identifier.
 //
-// If the alias has a SIMPLE routing strategy, Amazon GameLift returns a fleet ID.
-// If the alias has a TERMINAL routing strategy, the result is a
+// If the alias has a SIMPLE routing strategy, Amazon GameLift Servers returns a
+// fleet ID. If the alias has a TERMINAL routing strategy, the result is a
 // TerminalRoutingStrategyException .
 //
 // # Related actions
@@ -153,16 +155,13 @@ func (c *Client) addOperationResolveAliasMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

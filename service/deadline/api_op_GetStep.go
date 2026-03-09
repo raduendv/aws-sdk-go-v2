@@ -118,6 +118,9 @@ type GetStepOutput struct {
 	// The task status with which the job started.
 	TargetTaskRunStatus types.StepTargetTaskRunStatus
 
+	// The total number of times tasks from the step failed and were retried.
+	TaskFailureRetryCount *int32
+
 	// The date and time the resource was updated.
 	UpdatedAt *time.Time
 
@@ -221,16 +224,13 @@ func (c *Client) addOperationGetStepMiddlewares(stack *middleware.Stack, options
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

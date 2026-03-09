@@ -30,6 +30,11 @@ func (c *Client) GetRemainingFreeTrialDays(ctx context.Context, params *GetRemai
 
 type GetRemainingFreeTrialDaysInput struct {
 
+	// A list of account identifiers of the GuardDuty member account.
+	//
+	// This member is required.
+	AccountIds []string
+
 	// The unique ID of the detector of the GuardDuty member account.
 	//
 	// To find the detectorId in the current Region, see the Settings page in the
@@ -39,9 +44,6 @@ type GetRemainingFreeTrialDaysInput struct {
 	//
 	// This member is required.
 	DetectorId *string
-
-	// A list of account identifiers of the GuardDuty member account.
-	AccountIds []string
 
 	noSmithyDocumentSerde
 }
@@ -150,16 +152,13 @@ func (c *Client) addOperationGetRemainingFreeTrialDaysMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

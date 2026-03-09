@@ -11,15 +11,15 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Creates a template either from a TemplateDefinition or from an existing Amazon
-// QuickSight analysis or template. You can use the resulting template to create
+// Creates a template either from a TemplateDefinition or from an existing Quick
+// Sight analysis or template. You can use the resulting template to create
 // additional dashboards, templates, or analyses.
 //
-// A template is an entity in Amazon QuickSight that encapsulates the metadata
-// required to create an analysis and that you can use to create s dashboard. A
-// template adds a layer of abstraction by using placeholders to replace the
-// dataset associated with the analysis. You can use templates to create dashboards
-// by replacing dataset placeholders with datasets that follow the same schema that
+// A template is an entity in Quick Sight that encapsulates the metadata required
+// to create an analysis and that you can use to create s dashboard. A template
+// adds a layer of abstraction by using placeholders to replace the dataset
+// associated with the analysis. You can use templates to create dashboards by
+// replacing dataset placeholders with datasets that follow the same schema that
 // was used to create the source analysis and template.
 func (c *Client) CreateTemplate(ctx context.Context, params *CreateTemplateInput, optFns ...func(*Options)) (*CreateTemplateOutput, error) {
 	if params == nil {
@@ -39,7 +39,7 @@ func (c *Client) CreateTemplate(ctx context.Context, params *CreateTemplateInput
 type CreateTemplateInput struct {
 
 	// The ID for the Amazon Web Services account that the group is in. You use the ID
-	// for the Amazon Web Services account that contains your Amazon QuickSight
+	// for the Amazon Web Services account that contains your Amazon Quick Sight
 	// account.
 	//
 	// This member is required.
@@ -72,7 +72,7 @@ type CreateTemplateInput struct {
 	// require an Amazon Resource Name (ARN). For SourceTemplate , specify the ARN of
 	// the source template. For SourceAnalysis , specify the ARN of the source
 	// analysis. The SourceTemplate ARN can contain any Amazon Web Services account
-	// and any Amazon QuickSight-supported Amazon Web Services Region.
+	// and any Quick Sight-supported Amazon Web Services Region.
 	//
 	// Use the DataSetReferences entity within SourceTemplate or SourceAnalysis to
 	// list the replacement datasets for the placeholders listed in the original. The
@@ -214,16 +214,13 @@ func (c *Client) addOperationCreateTemplateMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

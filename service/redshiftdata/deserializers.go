@@ -20,16 +20,7 @@ import (
 	"io"
 	"math"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsAwsjson11_deserializeOpBatchExecuteStatement struct {
 }
@@ -140,6 +131,9 @@ func awsAwsjson11_deserializeOpErrorBatchExecuteStatement(response *smithyhttp.R
 
 	case strings.EqualFold("InternalServerException", errorCode):
 		return awsAwsjson11_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
 
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsAwsjson11_deserializeErrorValidationException(response, errorBody)
@@ -257,6 +251,9 @@ func awsAwsjson11_deserializeOpErrorCancelStatement(response *smithyhttp.Respons
 
 	case strings.EqualFold("InternalServerException", errorCode):
 		return awsAwsjson11_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("QueryTimeoutException", errorCode):
+		return awsAwsjson11_deserializeErrorQueryTimeoutException(response, errorBody)
 
 	case strings.EqualFold("ResourceNotFoundException", errorCode):
 		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
@@ -498,6 +495,9 @@ func awsAwsjson11_deserializeOpErrorDescribeTable(response *smithyhttp.Response,
 	case strings.EqualFold("QueryTimeoutException", errorCode):
 		return awsAwsjson11_deserializeErrorQueryTimeoutException(response, errorBody)
 
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
+
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsAwsjson11_deserializeErrorValidationException(response, errorBody)
 
@@ -620,6 +620,9 @@ func awsAwsjson11_deserializeOpErrorExecuteStatement(response *smithyhttp.Respon
 
 	case strings.EqualFold("InternalServerException", errorCode):
 		return awsAwsjson11_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
 
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsAwsjson11_deserializeErrorValidationException(response, errorBody)
@@ -975,6 +978,9 @@ func awsAwsjson11_deserializeOpErrorListDatabases(response *smithyhttp.Response,
 	case strings.EqualFold("QueryTimeoutException", errorCode):
 		return awsAwsjson11_deserializeErrorQueryTimeoutException(response, errorBody)
 
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
+
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsAwsjson11_deserializeErrorValidationException(response, errorBody)
 
@@ -1095,6 +1101,9 @@ func awsAwsjson11_deserializeOpErrorListSchemas(response *smithyhttp.Response, m
 	case strings.EqualFold("QueryTimeoutException", errorCode):
 		return awsAwsjson11_deserializeErrorQueryTimeoutException(response, errorBody)
 
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
+
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsAwsjson11_deserializeErrorValidationException(response, errorBody)
 
@@ -1208,6 +1217,9 @@ func awsAwsjson11_deserializeOpErrorListStatements(response *smithyhttp.Response
 	switch {
 	case strings.EqualFold("InternalServerException", errorCode):
 		return awsAwsjson11_deserializeErrorInternalServerException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
 
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsAwsjson11_deserializeErrorValidationException(response, errorBody)
@@ -1328,6 +1340,9 @@ func awsAwsjson11_deserializeOpErrorListTables(response *smithyhttp.Response, me
 
 	case strings.EqualFold("QueryTimeoutException", errorCode):
 		return awsAwsjson11_deserializeErrorQueryTimeoutException(response, errorBody)
+
+	case strings.EqualFold("ResourceNotFoundException", errorCode):
+		return awsAwsjson11_deserializeErrorResourceNotFoundException(response, errorBody)
 
 	case strings.EqualFold("ValidationException", errorCode):
 		return awsAwsjson11_deserializeErrorValidationException(response, errorBody)

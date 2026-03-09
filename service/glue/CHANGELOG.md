@@ -1,3 +1,221 @@
+# v1.137.0 (2026-02-05)
+
+* **Feature**: This release adds the capability to easily create custom AWS Glue connections to data sources with REST APIs.
+
+# v1.136.1 (2026-01-12)
+
+* No change notes available for this release.
+
+# v1.136.0 (2026-01-09)
+
+* **Feature**: Adding MaterializedViews task run APIs
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.135.3 (2025-12-09)
+
+* No change notes available for this release.
+
+# v1.135.2 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.135.1 (2025-12-02)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.135.0 (2025-12-01)
+
+* **Feature**: feature: Glue: Add support for Iceberg materialized view in Glue Data Catalog, including updated CreateTable API to support materialized views and new APIs for managing data refresh for materialized views.
+feature: Glue: Add support for Iceberg table encryption keys and struct field defaults.
+
+# v1.134.1 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.134.0 (2025-11-20)
+
+* **Feature**: Added FunctionType parameter to Glue GetuserDefinedFunctions.
+
+# v1.133.1 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.133.0 (2025-11-17)
+
+* **Feature**: Amazon Glue Releasing 2 the new API ListIntegrationResourceProperties and DeleteIntegrationResourceProperty along with minor improvement on existing API(s).
+
+# v1.132.3 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.132.2 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.132.1 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.132.0 (2025-10-30)
+
+* **Feature**: This release adds the capability to enable User Background Sessions for customers running Trusted Identity Propagation enabled Interactive Sessions on AWS Glue.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.131.2 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.131.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.131.0 (2025-10-10)
+
+* **Feature**: Addition of AuditContext in GetTable/GetTables Request
+
+# v1.130.0 (2025-10-06)
+
+* **Feature**: Adds labeling for DataQualityRuleResult for GetDataQualityResult and PublishDataQualityResult APIs
+
+# v1.129.1 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.129.0 (2025-09-25)
+
+* **Feature**: Update GetConnection(s) API to return KmsKeyArn & Add 63 missing connection types
+
+# v1.128.4 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.128.3 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.128.2 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.128.1 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.128.0 (2025-08-28)
+
+* **Feature**: Adding support to fetch TargetDatabase field during GetDatabases with AttributesToGet
+
+# v1.127.1 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.127.0 (2025-08-21)
+
+* **Feature**: Added support for preprocessing queries in Data Quality operations through new DataQualityGlueTable structure.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.126.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.126.0 (2025-08-15)
+
+* **Feature**: AWS Glue Zero ETL now supports On-demand snapshot load
+
+# v1.125.0 (2025-08-14)
+
+* **Feature**: AWS Glue now supports Trusted Identity Propagation.
+
+# v1.124.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.123.0 (2025-08-07)
+
+* **Feature**: AWS Glue Data Catalog now supports Iceberg Optimization settings at the Catalog level, and supports new options to control the optimization job run rate.
+
+# v1.122.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.121.0 (2025-07-31)
+
+* **Feature**: Added support for Route node, S3 Iceberg sources/targets, catalog Iceberg sources, DynamoDB ELT connector, AutoDataQuality evaluation, enhanced PII detection with redaction, Kinesis fan-out support, and new R-series worker types.
+
+# v1.120.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.120.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.119.0 (2025-07-23)
+
+* **Feature**: AWS Glue now supports dynamic session policies for job executions. This feature allows you to specify custom, fine-grained permissions for each job run without creating multiple IAM roles.
+
+# v1.118.1 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.118.0 (2025-07-16.2)
+
+* **Feature**: AWS Glue now supports schema, partition and sort management of Apache Iceberg tables using Glue SDK
+
+# v1.117.0 (2025-06-30)
+
+* **Feature**: releasing source processing properties to support source properties for ODB integrations
+
+# v1.116.0 (2025-06-27)
+
+* **Feature**: AWS Glue now supports schema, partition and sort management of Apache Iceberg tables using Glue SDK
+
+# v1.115.0 (2025-06-23)
+
+* **Feature**: AWS Glue now supports sort and z-order strategy for managed automated compaction for Iceberg tables in addition to binpack.
+
+# v1.114.0 (2025-06-20)
+
+* **Feature**: AWS Glue Data Quality now provides aggregated metrics in evaluation results when publishAggregatedMetrics with row-level results are enabled. These metrics include summary statistics showing total counts of processed, passed, and failed rows and rules in a single view.
+
+# v1.113.3 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.113.2 (2025-06-11)
+
+* No change notes available for this release.
+
+# v1.113.1 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.113.0 (2025-05-22)
+
+* **Feature**: This release supports additional ConversionSpec parameter as part of IntegrationPartition Structure in CreateIntegrationTableProperty API. This parameter is referred to apply appropriate column transformation for columns that are used for timestamp based partitioning
+
+# v1.112.0 (2025-05-20)
+
+* **Feature**: Enhanced AWS Glue ListConnectionTypes API Model with additional metadata fields.
+
+# v1.111.0 (2025-05-16)
+
+* **Feature**: Changes include (1) Excel as S3 Source type and XML and Tableau's Hyper as S3 Sink types, (2) targeted number of partitions parameter in S3 sinks and (3) new compression types in CSV/JSON and Parquet S3 sinks.
+
+# v1.110.0 (2025-05-08)
+
+* **Feature**: This new release supports customizable RefreshInterval for all Saas ZETL integrations from 15 minutes to 6 days.
+
 # v1.109.2 (2025-04-23)
 
 * No change notes available for this release.

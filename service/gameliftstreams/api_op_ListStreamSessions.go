@@ -36,8 +36,9 @@ func (c *Client) ListStreamSessions(ctx context.Context, params *ListStreamSessi
 type ListStreamSessionsInput struct {
 
 	// The unique identifier of a Amazon GameLift Streams stream group to retrieve the
-	// stream session for. You can use either the stream group ID or the Amazon
-	// Resource Name (ARN).
+	// stream session for. You can use either the stream group ID or the [Amazon Resource Name (ARN)].
+	//
+	// [Amazon Resource Name (ARN)]: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	//
 	// This member is required.
 	Identifier *string
@@ -47,12 +48,12 @@ type ListStreamSessionsInput struct {
 	//
 	// Exported files can be in one of the following states:
 	//
-	//   - SUCCEEDED: The exported files are successfully stored in S3 bucket.
+	//   - SUCCEEDED : The exported files are successfully stored in an S3 bucket.
 	//
-	//   - FAILED: The session ended but Amazon GameLift Streams couldn't collect and
-	//   upload the to S3.
+	//   - FAILED : The session ended but Amazon GameLift Streams couldn't collect and
+	//   upload the files to S3.
 	//
-	//   - PENDING: Either the stream session is still in progress, or uploading the
+	//   - PENDING : Either the stream session is still in progress, or uploading the
 	//   exported files to the S3 bucket is in progress.
 	ExportFilesStatus types.ExportFilesStatus
 
@@ -178,16 +179,13 @@ func (c *Client) addOperationListStreamSessionsMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

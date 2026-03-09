@@ -51,6 +51,12 @@ type CreateSubscriptionRequestInput struct {
 	// This member is required.
 	SubscribedPrincipals []types.SubscribedPrincipalInput
 
+	// The asset permissions of the subscription request.
+	AssetPermissions []types.AssetPermission
+
+	// The asset scopes of the subscription request.
+	AssetScopes []types.AcceptedAssetScope
+
 	// A unique, case-sensitive identifier that is provided to ensure the idempotency
 	// of the request.
 	ClientToken *string
@@ -221,16 +227,13 @@ func (c *Client) addOperationCreateSubscriptionRequestMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

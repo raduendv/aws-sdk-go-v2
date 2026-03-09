@@ -48,6 +48,11 @@ type UpdateDataAccessorInput struct {
 	// This member is required.
 	DataAccessorId *string
 
+	// The updated authentication configuration details for the data accessor. This
+	// specifies how the ISV will authenticate when accessing data through this data
+	// accessor.
+	AuthenticationDetail *types.DataAccessorAuthenticationDetail
+
 	// The updated friendly name for the data accessor.
 	DisplayName *string
 
@@ -149,16 +154,13 @@ func (c *Client) addOperationUpdateDataAccessorMiddlewares(stack *middleware.Sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

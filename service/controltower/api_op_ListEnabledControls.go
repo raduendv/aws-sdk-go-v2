@@ -37,6 +37,10 @@ type ListEnabledControlsInput struct {
 	// of control operations to view.
 	Filter *types.EnabledControlFilter
 
+	// A boolean value that determines whether to include enabled controls from child
+	// organizational units in the response.
+	IncludeChildren bool
+
 	// How many results to return per API call.
 	MaxResults *int32
 
@@ -156,16 +160,13 @@ func (c *Client) addOperationListEnabledControlsMiddlewares(stack *middleware.St
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -84,7 +84,16 @@ type CreateComponentInput struct {
 	// Describes the contents of the component.
 	Description *string
 
-	// The ID of the KMS key that is used to encrypt this component.
+	// Validates the required permissions for the operation and the request
+	// parameters, without actually making the request, and provides an error response.
+	// Upon a successful request, the error response is DryRunOperationException .
+	DryRun bool
+
+	// The Amazon Resource Name (ARN) that uniquely identifies the KMS key used to
+	// encrypt this component. This can be either the Key ARN or the Alias ARN. For
+	// more information, see [Key identifiers (KeyId)]in the Key Management Service Developer Guide.
+	//
+	// [Key identifiers (KeyId)]: https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id-key-ARN
 	KmsKeyId *string
 
 	// The operating system (OS) version supported by the component. If the OS
@@ -114,6 +123,9 @@ type CreateComponentOutput struct {
 
 	// The Amazon Resource Name (ARN) of the component that the request created.
 	ComponentBuildVersionArn *string
+
+	// The resource ARNs with different wildcard variations of semantic versioning.
+	LatestVersionReferences *types.LatestVersionReferences
 
 	// The request ID that uniquely identifies this request.
 	RequestId *string
@@ -215,16 +227,13 @@ func (c *Client) addOperationCreateComponentMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

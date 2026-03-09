@@ -1,13 +1,10 @@
 ListDirectoryBuckets
 	Initialize stack step
-		spanInitializeStart
 		RegisterServiceMetadata
 		legacyEndpointContextSetter
 		S3Shared:ARNLookup
 		SetLogger
-		spanInitializeEnd
 	Serialize stack step
-		spanBuildRequestStart
 		putBucketContext
 		setOperationInput
 		ResolveEndpoint
@@ -25,11 +22,12 @@ ListDirectoryBuckets
 		UserAgent
 		AddTimeOffsetMiddleware
 		RecursionDetection
-		spanBuildRequestEnd
 	Finalize stack step
 		DisableAcceptEncodingGzip
 		spanRetryLoop
+		InterceptBeforeRetryLoop
 		Retry
+		InterceptAttempt
 		RetryMetricsHeader
 		ResolveAuthScheme
 		GetIdentity

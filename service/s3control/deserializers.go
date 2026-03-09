@@ -22,16 +22,7 @@ import (
 	"io/ioutil"
 	"strconv"
 	"strings"
-	"time"
 )
-
-func deserializeS3Expires(v string) (*time.Time, error) {
-	t, err := smithytime.ParseHTTPDate(v)
-	if err != nil {
-		return nil, nil
-	}
-	return &t, nil
-}
 
 type awsRestxml_deserializeOpAssociateAccessGrantsIdentityCenter struct {
 }
@@ -4930,6 +4921,32 @@ func awsRestxml_deserializeOpDocumentGetAccessPointOutput(v **GetAccessPointOutp
 					return err
 				}
 				sv.CreationDate = ptr.Time(t)
+			}
+
+		case strings.EqualFold("DataSourceId", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.DataSourceId = ptr.String(xtv)
+			}
+
+		case strings.EqualFold("DataSourceType", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.DataSourceType = ptr.String(xtv)
 			}
 
 		case strings.EqualFold("Endpoints", t.Name.Local):
@@ -13632,6 +13649,32 @@ func awsRestxml_deserializeDocumentAccessPoint(v **types.AccessPoint, decoder sm
 				sv.BucketAccountId = ptr.String(xtv)
 			}
 
+		case strings.EqualFold("DataSourceId", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.DataSourceId = ptr.String(xtv)
+			}
+
+		case strings.EqualFold("DataSourceType", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.DataSourceType = ptr.String(xtv)
+			}
+
 		case strings.EqualFold("Name", t.Name.Local):
 			val, err := decoder.Value()
 			if err != nil {
@@ -13786,6 +13829,12 @@ func awsRestxml_deserializeDocumentAccountLevel(v **types.AccountLevel, decoder 
 				return err
 			}
 
+		case strings.EqualFold("AdvancedPerformanceMetrics", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentAdvancedPerformanceMetrics(&sv.AdvancedPerformanceMetrics, nodeDecoder); err != nil {
+				return err
+			}
+
 		case strings.EqualFold("BucketLevel", t.Name.Local):
 			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentBucketLevel(&sv.BucketLevel, nodeDecoder); err != nil {
@@ -13929,6 +13978,58 @@ func awsRestxml_deserializeDocumentAdvancedDataProtectionMetrics(v **types.Advan
 	var sv *types.AdvancedDataProtectionMetrics
 	if *v == nil {
 		sv = &types.AdvancedDataProtectionMetrics{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("IsEnabled", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv, err := strconv.ParseBool(string(val))
+				if err != nil {
+					return fmt.Errorf("expected IsEnabled to be of type *bool, got %T instead", val)
+				}
+				sv.IsEnabled = xtv
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentAdvancedPerformanceMetrics(v **types.AdvancedPerformanceMetrics, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.AdvancedPerformanceMetrics
+	if *v == nil {
+		sv = &types.AdvancedPerformanceMetrics{}
 	} else {
 		sv = *v
 	}
@@ -14488,6 +14589,12 @@ func awsRestxml_deserializeDocumentBucketLevel(v **types.BucketLevel, decoder sm
 		case strings.EqualFold("AdvancedDataProtectionMetrics", t.Name.Local):
 			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentAdvancedDataProtectionMetrics(&sv.AdvancedDataProtectionMetrics, nodeDecoder); err != nil {
+				return err
+			}
+
+		case strings.EqualFold("AdvancedPerformanceMetrics", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentAdvancedPerformanceMetrics(&sv.AdvancedPerformanceMetrics, nodeDecoder); err != nil {
 				return err
 			}
 
@@ -15103,6 +15210,55 @@ func awsRestxml_deserializeDocumentDetailedStatusCodesMetrics(v **types.Detailed
 					return fmt.Errorf("expected IsEnabled to be of type *bool, got %T instead", val)
 				}
 				sv.IsEnabled = xtv
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentDSSEKMSFilter(v **types.DSSEKMSFilter, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.DSSEKMSFilter
+	if *v == nil {
+		sv = &types.DSSEKMSFilter{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("KmsKeyArn", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.KmsKeyArn = ptr.String(xtv)
 			}
 
 		default:
@@ -16612,6 +16768,12 @@ func awsRestxml_deserializeDocumentJobManifestGeneratorFilter(v **types.JobManif
 				return err
 			}
 
+		case strings.EqualFold("MatchAnyObjectEncryption", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentObjectEncryptionFilterList(&sv.MatchAnyObjectEncryption, nodeDecoder); err != nil {
+				return err
+			}
+
 		case strings.EqualFold("MatchAnyStorageClass", t.Name.Local):
 			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentStorageClassList(&sv.MatchAnyStorageClass, nodeDecoder); err != nil {
@@ -16830,6 +16992,12 @@ func awsRestxml_deserializeDocumentJobOperation(v **types.JobOperation, decoder 
 				return err
 			}
 
+		case strings.EqualFold("S3ComputeObjectChecksum", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentS3ComputeObjectChecksumOperation(&sv.S3ComputeObjectChecksum, nodeDecoder); err != nil {
+				return err
+			}
+
 		case strings.EqualFold("S3DeleteObjectTagging", t.Name.Local):
 			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentS3DeleteObjectTaggingOperation(&sv.S3DeleteObjectTagging, nodeDecoder); err != nil {
@@ -16875,6 +17043,12 @@ func awsRestxml_deserializeDocumentJobOperation(v **types.JobOperation, decoder 
 		case strings.EqualFold("S3ReplicateObject", t.Name.Local):
 			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentS3ReplicateObjectOperation(&sv.S3ReplicateObject, nodeDecoder); err != nil {
+				return err
+			}
+
+		case strings.EqualFold("S3UpdateObjectEncryption", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentS3UpdateObjectEncryptionOperation(&sv.S3UpdateObjectEncryption, nodeDecoder); err != nil {
 				return err
 			}
 
@@ -17034,6 +17208,19 @@ func awsRestxml_deserializeDocumentJobReport(v **types.JobReport, decoder smithy
 					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", val)
 				}
 				sv.Enabled = xtv
+			}
+
+		case strings.EqualFold("ExpectedBucketOwner", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.ExpectedBucketOwner = ptr.String(xtv)
 			}
 
 		case strings.EqualFold("Format", t.Name.Local):
@@ -19632,6 +19819,236 @@ func awsRestxml_deserializeDocumentNotFoundException(v **types.NotFoundException
 	return nil
 }
 
+func awsRestxml_deserializeDocumentNotSSEFilter(v **types.NotSSEFilter, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.NotSSEFilter
+	if *v == nil {
+		sv = &types.NotSSEFilter{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentObjectEncryption(v **types.ObjectEncryption, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.ObjectEncryption
+	if *v == nil {
+		sv = &types.ObjectEncryption{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("SSE-KMS", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentS3UpdateObjectEncryptionSSEKMS(&sv.SSEKMS, nodeDecoder); err != nil {
+				return err
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentObjectEncryptionFilter(v *types.ObjectEncryptionFilter, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var uv types.ObjectEncryptionFilter
+	var memberFound bool
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		if memberFound {
+			if err = decoder.Decoder.Skip(); err != nil {
+				return err
+			}
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("DSSE-KMS", t.Name.Local):
+			var mv types.DSSEKMSFilter
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			destAddr := &mv
+			if err := awsRestxml_deserializeDocumentDSSEKMSFilter(&destAddr, nodeDecoder); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.ObjectEncryptionFilterMemberDSSEKMS{Value: mv}
+			memberFound = true
+
+		case strings.EqualFold("NOT-SSE", t.Name.Local):
+			var mv types.NotSSEFilter
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			destAddr := &mv
+			if err := awsRestxml_deserializeDocumentNotSSEFilter(&destAddr, nodeDecoder); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.ObjectEncryptionFilterMemberNOTSSE{Value: mv}
+			memberFound = true
+
+		case strings.EqualFold("SSE-C", t.Name.Local):
+			var mv types.SSECFilter
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			destAddr := &mv
+			if err := awsRestxml_deserializeDocumentSSECFilter(&destAddr, nodeDecoder); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.ObjectEncryptionFilterMemberSSEC{Value: mv}
+			memberFound = true
+
+		case strings.EqualFold("SSE-KMS", t.Name.Local):
+			var mv types.SSEKMSFilter
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			destAddr := &mv
+			if err := awsRestxml_deserializeDocumentSSEKMSFilter(&destAddr, nodeDecoder); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.ObjectEncryptionFilterMemberSSEKMS{Value: mv}
+			memberFound = true
+
+		case strings.EqualFold("SSE-S3", t.Name.Local):
+			var mv types.SSES3Filter
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			destAddr := &mv
+			if err := awsRestxml_deserializeDocumentSSES3Filter(&destAddr, nodeDecoder); err != nil {
+				return err
+			}
+			mv = *destAddr
+			uv = &types.ObjectEncryptionFilterMemberSSES3{Value: mv}
+			memberFound = true
+
+		default:
+			uv = &types.UnknownUnionMember{Tag: t.Name.Local}
+			memberFound = true
+
+		}
+		decoder = originalDecoder
+	}
+	*v = uv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentObjectEncryptionFilterList(v *[]types.ObjectEncryptionFilter, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv []types.ObjectEncryptionFilter
+	if *v == nil {
+		sv = make([]types.ObjectEncryptionFilter, 0)
+	} else {
+		sv = *v
+	}
+
+	originalDecoder := decoder
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		switch {
+		case strings.EqualFold("ObjectEncryption", t.Name.Local):
+			var col types.ObjectEncryptionFilter
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentObjectEncryptionFilter(&col, nodeDecoder); err != nil {
+				return err
+			}
+			sv = append(sv, col)
+
+		default:
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentObjectEncryptionFilterListUnwrapped(v *[]types.ObjectEncryptionFilter, decoder smithyxml.NodeDecoder) error {
+	var sv []types.ObjectEncryptionFilter
+	if *v == nil {
+		sv = make([]types.ObjectEncryptionFilter, 0)
+	} else {
+		sv = *v
+	}
+
+	switch {
+	default:
+		var mv types.ObjectEncryptionFilter
+		t := decoder.StartEl
+		_ = t
+		nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+		if err := awsRestxml_deserializeDocumentObjectEncryptionFilter(&mv, nodeDecoder); err != nil {
+			return err
+		}
+		sv = append(sv, mv)
+	}
+	*v = sv
+	return nil
+}
 func awsRestxml_deserializeDocumentObjectLambdaAccessPoint(v **types.ObjectLambdaAccessPoint, decoder smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -22088,6 +22505,68 @@ func awsRestxml_deserializeDocumentS3BucketDestination(v **types.S3BucketDestina
 	return nil
 }
 
+func awsRestxml_deserializeDocumentS3ComputeObjectChecksumOperation(v **types.S3ComputeObjectChecksumOperation, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.S3ComputeObjectChecksumOperation
+	if *v == nil {
+		sv = &types.S3ComputeObjectChecksumOperation{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("ChecksumAlgorithm", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.ChecksumAlgorithm = types.ComputeObjectChecksumAlgorithm(xtv)
+			}
+
+		case strings.EqualFold("ChecksumType", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.ChecksumType = types.ComputeObjectChecksumType(xtv)
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestxml_deserializeDocumentS3CopyObjectOperation(v **types.S3CopyObjectOperation, decoder smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -23604,6 +24083,113 @@ func awsRestxml_deserializeDocumentS3TagSetUnwrapped(v *[]types.S3Tag, decoder s
 	*v = sv
 	return nil
 }
+func awsRestxml_deserializeDocumentS3UpdateObjectEncryptionOperation(v **types.S3UpdateObjectEncryptionOperation, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.S3UpdateObjectEncryptionOperation
+	if *v == nil {
+		sv = &types.S3UpdateObjectEncryptionOperation{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("ObjectEncryption", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentObjectEncryption(&sv.ObjectEncryption, nodeDecoder); err != nil {
+				return err
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentS3UpdateObjectEncryptionSSEKMS(v **types.S3UpdateObjectEncryptionSSEKMS, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.S3UpdateObjectEncryptionSSEKMS
+	if *v == nil {
+		sv = &types.S3UpdateObjectEncryptionSSEKMS{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("BucketKeyEnabled", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv, err := strconv.ParseBool(string(val))
+				if err != nil {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", val)
+				}
+				sv.BucketKeyEnabled = ptr.Bool(xtv)
+			}
+
+		case strings.EqualFold("KMSKeyArn", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.KMSKeyArn = ptr.String(xtv)
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestxml_deserializeDocumentS3UserMetadata(v *map[string]string, decoder smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -23961,6 +24547,42 @@ func awsRestxml_deserializeDocumentSourceSelectionCriteria(v **types.SourceSelec
 	return nil
 }
 
+func awsRestxml_deserializeDocumentSSECFilter(v **types.SSECFilter, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.SSECFilter
+	if *v == nil {
+		sv = &types.SSECFilter{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestxml_deserializeDocumentSSEKMS(v **types.SSEKMS, decoder smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -24108,6 +24730,71 @@ func awsRestxml_deserializeDocumentSSEKMSEncryption(v **types.SSEKMSEncryption, 
 	return nil
 }
 
+func awsRestxml_deserializeDocumentSSEKMSFilter(v **types.SSEKMSFilter, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.SSEKMSFilter
+	if *v == nil {
+		sv = &types.SSEKMSFilter{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("BucketKeyEnabled", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv, err := strconv.ParseBool(string(val))
+				if err != nil {
+					return fmt.Errorf("expected Boolean to be of type *bool, got %T instead", val)
+				}
+				sv.BucketKeyEnabled = ptr.Bool(xtv)
+			}
+
+		case strings.EqualFold("KmsKeyArn", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.KmsKeyArn = ptr.String(xtv)
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
 func awsRestxml_deserializeDocumentSSES3(v **types.SSES3, decoder smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -24151,6 +24838,42 @@ func awsRestxml_deserializeDocumentSSES3Encryption(v **types.SSES3Encryption, de
 	var sv *types.SSES3Encryption
 	if *v == nil {
 		sv = &types.SSES3Encryption{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentSSES3Filter(v **types.SSES3Filter, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.SSES3Filter
+	if *v == nil {
+		sv = &types.SSES3Filter{}
 	} else {
 		sv = *v
 	}
@@ -24355,6 +25078,12 @@ func awsRestxml_deserializeDocumentStorageLensConfiguration(v **types.StorageLen
 				return err
 			}
 
+		case strings.EqualFold("ExpandedPrefixesDataExport", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentStorageLensExpandedPrefixesDataExport(&sv.ExpandedPrefixesDataExport, nodeDecoder); err != nil {
+				return err
+			}
+
 		case strings.EqualFold("Id", t.Name.Local):
 			val, err := decoder.Value()
 			if err != nil {
@@ -24388,6 +25117,19 @@ func awsRestxml_deserializeDocumentStorageLensConfiguration(v **types.StorageLen
 					return fmt.Errorf("expected IsEnabled to be of type *bool, got %T instead", val)
 				}
 				sv.IsEnabled = xtv
+			}
+
+		case strings.EqualFold("PrefixDelimiter", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv := string(val)
+				sv.PrefixDelimiter = ptr.String(xtv)
 			}
 
 		case strings.EqualFold("StorageLensArn", t.Name.Local):
@@ -24519,6 +25261,12 @@ func awsRestxml_deserializeDocumentStorageLensDataExport(v **types.StorageLensDa
 				return err
 			}
 
+		case strings.EqualFold("StorageLensTableDestination", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentStorageLensTableDestination(&sv.StorageLensTableDestination, nodeDecoder); err != nil {
+				return err
+			}
+
 		default:
 			// Do nothing and ignore the unexpected tag element
 			err = decoder.Decoder.Skip()
@@ -24564,6 +25312,54 @@ func awsRestxml_deserializeDocumentStorageLensDataExportEncryption(v **types.Sto
 		case strings.EqualFold("SSE-S3", t.Name.Local):
 			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentSSES3(&sv.SSES3, nodeDecoder); err != nil {
+				return err
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentStorageLensExpandedPrefixesDataExport(v **types.StorageLensExpandedPrefixesDataExport, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.StorageLensExpandedPrefixesDataExport
+	if *v == nil {
+		sv = &types.StorageLensExpandedPrefixesDataExport{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("S3BucketDestination", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentS3BucketDestination(&sv.S3BucketDestination, nodeDecoder); err != nil {
+				return err
+			}
+
+		case strings.EqualFold("StorageLensTableDestination", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentStorageLensTableDestination(&sv.StorageLensTableDestination, nodeDecoder); err != nil {
 				return err
 			}
 
@@ -25161,6 +25957,64 @@ func awsRestxml_deserializeDocumentStorageLensGroupOrOperator(v **types.StorageL
 			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentMatchObjectSize(&sv.MatchObjectSize, nodeDecoder); err != nil {
 				return err
+			}
+
+		default:
+			// Do nothing and ignore the unexpected tag element
+			err = decoder.Decoder.Skip()
+			if err != nil {
+				return err
+			}
+
+		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentStorageLensTableDestination(v **types.StorageLensTableDestination, decoder smithyxml.NodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv *types.StorageLensTableDestination
+	if *v == nil {
+		sv = &types.StorageLensTableDestination{}
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		originalDecoder := decoder
+		decoder = smithyxml.WrapNodeDecoder(originalDecoder.Decoder, t)
+		switch {
+		case strings.EqualFold("Encryption", t.Name.Local):
+			nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentStorageLensDataExportEncryption(&sv.Encryption, nodeDecoder); err != nil {
+				return err
+			}
+
+		case strings.EqualFold("IsEnabled", t.Name.Local):
+			val, err := decoder.Value()
+			if err != nil {
+				return err
+			}
+			if val == nil {
+				break
+			}
+			{
+				xtv, err := strconv.ParseBool(string(val))
+				if err != nil {
+					return fmt.Errorf("expected IsEnabled to be of type *bool, got %T instead", val)
+				}
+				sv.IsEnabled = xtv
 			}
 
 		default:

@@ -11,7 +11,15 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Search nearby a specified location.
+// SearchNearby queries for points of interest within a radius from a central
+// coordinates, returning place results with optional filters such as categories,
+// business chains, food types and more. The API returns details such as a place
+// name, address, phone, category, food type, contact, opening hours. Also, the API
+// can return phonemes, time zones and more based on requested parameters.
+//
+// For more information, see [Search Nearby] in the Amazon Location Service Developer Guide.
+//
+// [Search Nearby]: https://docs.aws.amazon.com/location/latest/developerguide/search-nearby.html
 func (c *Client) SearchNearby(ctx context.Context, params *SearchNearbyInput, optFns ...func(*Options)) (*SearchNearbyOutput, error) {
 	if params == nil {
 		params = &SearchNearbyInput{}
@@ -29,9 +37,9 @@ func (c *Client) SearchNearby(ctx context.Context, params *SearchNearbyInput, op
 
 type SearchNearbyInput struct {
 
-	// The position, in [lng, lat] for which you are querying nearby resultsfor.
-	// Results closer to the position will be ranked higher then results further away
-	// from the position
+	// The position in World Geodetic System (WGS 84) format: [longitude, latitude]
+	// for which you are querying nearby results for. Results closer to the position
+	// will be ranked higher then results further away from the position
 	//
 	// This member is required.
 	QueryPosition []float64
@@ -41,10 +49,17 @@ type SearchNearbyInput struct {
 	AdditionalFeatures []types.SearchNearbyAdditionalFeature
 
 	// A structure which contains a set of inclusion/exclusion properties that results
-	// must posses in order to be returned as a result.
+	// must possess in order to be returned as a result.
 	Filter *types.SearchNearbyFilter
 
 	// Indicates if the results will be stored. Defaults to SingleUse , if left empty.
+	//
+	// Storing the response of an SearchNearby query is required to comply with
+	// service terms, but charged at a higher cost per request. Please review the [user agreement]and [service pricing structure]
+	// to determine the correct setting for your use case.
+	//
+	// [service pricing structure]: https://aws.amazon.com/location/pricing/
+	// [user agreement]: https://aws.amazon.com/location/sla/
 	IntendedUse types.SearchNearbyIntendedUse
 
 	// Optional: The API key to be used for authorization. Either an API key or valid
@@ -59,6 +74,8 @@ type SearchNearbyInput struct {
 	Language *string
 
 	// An optional limit for the number of results returned in a single call.
+	//
+	// Default value: 20
 	MaxResults *int32
 
 	// If nextToken is returned, there are more results available. The value of
@@ -72,6 +89,8 @@ type SearchNearbyInput struct {
 
 	// The maximum distance in meters from the QueryPosition from which a result will
 	// be returned.
+	//
+	// The fields QueryText , and QueryID are mutually exclusive.
 	QueryRadius *int64
 
 	noSmithyDocumentSerde
@@ -81,7 +100,7 @@ type SearchNearbyOutput struct {
 
 	// The pricing bucket for which the query is charged at.
 	//
-	// For more inforamtion on pricing, please visit [Amazon Location Service Pricing].
+	// For more information on pricing, please visit [Amazon Location Service Pricing].
 	//
 	// [Amazon Location Service Pricing]: https://aws.amazon.com/location/pricing/
 	//
@@ -189,16 +208,13 @@ func (c *Client) addOperationSearchNearbyMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

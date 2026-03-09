@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// List all of the associations and statuses for a managed thing by its owner.
+// Listing all managed things with provision for filters.
 func (c *Client) ListManagedThings(ctx context.Context, params *ListManagedThingsInput, optFns ...func(*Options)) (*ListManagedThingsOutput, error) {
 	if params == nil {
 		params = &ListManagedThingsInput{}
@@ -29,7 +29,16 @@ func (c *Client) ListManagedThings(ctx context.Context, params *ListManagedThing
 
 type ListManagedThingsInput struct {
 
+	// Filter managed things by the connector destination ID they are associated with.
+	ConnectorDestinationIdFilter *string
+
+	// Filter managed things by the connector device ID they are associated with. When
+	// specified, only managed things with this connector device ID will be returned.
+	ConnectorDeviceIdFilter *string
+
 	// Filter on a connector policy id for a managed thing.
+	//
+	// Deprecated: ConnectorPolicyIdFilter is deprecated
 	ConnectorPolicyIdFilter *string
 
 	// Filter on a credential locker for a managed thing.
@@ -47,7 +56,9 @@ type ListManagedThingsInput struct {
 	// Filter on a parent controller id for a managed thing.
 	ParentControllerIdentifierFilter *string
 
-	// Filter on the status of the device.
+	// Filter on the status of the device. For more information, see [Device Provisioning].
+	//
+	// [Device Provisioning]: https://docs.aws.amazon.com/iot-mi/latest/devguide/device-provisioning.html
 	ProvisioningStatusFilter types.ProvisioningStatus
 
 	// Filter on the type of device used. This will be the Amazon Web Services hub
@@ -159,16 +170,13 @@ func (c *Client) addOperationListManagedThingsMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

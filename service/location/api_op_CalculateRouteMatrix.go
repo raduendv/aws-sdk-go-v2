@@ -12,7 +12,26 @@ import (
 	"time"
 )
 
-// [Calculates a route matrix] given the following required parameters: DeparturePositions and
+// This operation is no longer current and may be deprecated in the future. We
+// recommend you upgrade to the V2 CalculateRouteMatrixCalculateRouteMatrix unless you require Grab data.
+//
+//   - This version of CalculateRouteMatrix is part of a previous Amazon Location
+//     Service Routes API (version 1) which has been superseded by a more intuitive,
+//     powerful, and complete API (version 2).
+//
+//   - The version 2 CalculateRouteMatrix operation gives better results for matrix
+//     routing calculations.
+//
+//   - If you are using an Amazon Web Services SDK or the Amazon Web Services CLI,
+//     note that the Routes API version 2 is found under geo-routes or geo_routes ,
+//     not under location .
+//
+//   - Since Grab is not yet fully supported in Routes API version 2, we recommend
+//     you continue using API version 1 when using Grab.
+//
+//   - Start your version 2 API journey with the Routes V2 API Referenceor the Developer Guide.
+//
+// [Calculates a route matrix]given the following required parameters: DeparturePositions and
 // DestinationPositions . CalculateRouteMatrix calculates routes and returns the
 // travel time and travel distance from each departure position to each destination
 // position in the request. For example, given departure positions A and B, and
@@ -43,9 +62,9 @@ import (
 //     This also lets you specify additional route preferences in CarModeOptions if
 //     traveling by Car , or TruckModeOptions if traveling by Truck .
 //
-// [Specifying a departure time]: https://docs.aws.amazon.com/location/latest/developerguide/departure-time.html
-// [Specifying a travel mode]: https://docs.aws.amazon.com/location/latest/developerguide/travel-mode.html
-// [Calculates a route matrix]: https://docs.aws.amazon.com/location/latest/developerguide/calculate-route-matrix.html
+// [Specifying a departure time]: https://docs.aws.amazon.com/location/previous/developerguide/departure-time.html
+// [Specifying a travel mode]: https://docs.aws.amazon.com/location/previous/developerguide/travel-mode.html
+// [Calculates a route matrix]: https://docs.aws.amazon.com/location/previous/developerguide/calculate-route-matrix.html
 // [create a route calculator resource]: https://docs.aws.amazon.com/location-routes/latest/APIReference/API_CreateRouteCalculator.html
 func (c *Client) CalculateRouteMatrix(ctx context.Context, params *CalculateRouteMatrixInput, optFns ...func(*Options)) (*CalculateRouteMatrixOutput, error) {
 	if params == nil {
@@ -84,9 +103,9 @@ type CalculateRouteMatrixInput struct {
 	//
 	// Valid Values: [-180 to 180,-90 to 90]
 	//
-	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/latest/developerguide/snap-to-nearby-road.html
+	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/previous/developerguide/snap-to-nearby-road.html
 	// [WGS 84]: https://earth-info.nga.mil/GandG/wgs84/index.html
-	// [Position restrictions]: https://docs.aws.amazon.com/location/latest/developerguide/calculate-route-matrix.html#matrix-routing-position-limits
+	// [Position restrictions]: https://docs.aws.amazon.com/location/previous/developerguide/calculate-route-matrix.html#matrix-routing-position-limits
 	//
 	// This member is required.
 	DeparturePositions [][]float64
@@ -105,9 +124,9 @@ type CalculateRouteMatrixInput struct {
 	//
 	// Valid Values: [-180 to 180,-90 to 90]
 	//
-	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/latest/developerguide/snap-to-nearby-road.html
+	// [moves the position to the nearest road]: https://docs.aws.amazon.com/location/previous/developerguide/snap-to-nearby-road.html
 	// [WGS 84]: https://earth-info.nga.mil/GandG/wgs84/index.html
-	// [Position restrictions]: https://docs.aws.amazon.com/location/latest/developerguide/calculate-route-matrix.html#matrix-routing-position-limits
+	// [Position restrictions]: https://docs.aws.amazon.com/location/previous/developerguide/calculate-route-matrix.html#matrix-routing-position-limits
 	//
 	// This member is required.
 	DestinationPositions [][]float64
@@ -148,7 +167,7 @@ type CalculateRouteMatrixInput struct {
 
 	// The optional [API key] to authorize the request.
 	//
-	// [API key]: https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html
+	// [API key]: https://docs.aws.amazon.com/location/previous/developerguide/using-apikeys.html
 	Key *string
 
 	// Specifies the mode of transport when calculating a route. Used in estimating
@@ -170,7 +189,7 @@ type CalculateRouteMatrixInput struct {
 	//
 	// Default Value: Car
 	//
-	// [GrabMaps]: https://docs.aws.amazon.com/location/latest/developerguide/grab.html
+	// [GrabMaps]: https://docs.aws.amazon.com/location/previous/developerguide/grab.html
 	TravelMode types.TravelMode
 
 	// Specifies route preferences when traveling by Truck , such as avoiding routes
@@ -307,16 +326,13 @@ func (c *Client) addOperationCalculateRouteMatrixMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

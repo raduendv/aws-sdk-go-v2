@@ -17,7 +17,10 @@ import (
 // use this operation.
 //
 // If you choose SSE-KMS encryption you must grant the S3 Tables maintenance
-// principal access to your KMS key. For more information, see Permissions requirements for S3 Tables SSE-KMS encryption
+// principal access to your KMS key. For more information, see [Permissions requirements for S3 Tables SSE-KMS encryption]in the Amazon
+// Simple Storage Service User Guide.
+//
+// [Permissions requirements for S3 Tables SSE-KMS encryption]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-kms-permissions.html
 func (c *Client) PutTableBucketEncryption(ctx context.Context, params *PutTableBucketEncryptionInput, optFns ...func(*Options)) (*PutTableBucketEncryptionOutput, error) {
 	if params == nil {
 		params = &PutTableBucketEncryptionInput{}
@@ -143,16 +146,13 @@ func (c *Client) addOperationPutTableBucketEncryptionMiddlewares(stack *middlewa
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

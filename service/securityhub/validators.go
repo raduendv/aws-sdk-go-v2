@@ -250,6 +250,26 @@ func (m *validateOpBatchUpdateFindings) HandleInitialize(ctx context.Context, in
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpBatchUpdateFindingsV2 struct {
+}
+
+func (*validateOpBatchUpdateFindingsV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpBatchUpdateFindingsV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*BatchUpdateFindingsV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpBatchUpdateFindingsV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpBatchUpdateStandardsControlAssociations struct {
 }
 
@@ -290,6 +310,26 @@ func (m *validateOpCreateActionTarget) HandleInitialize(ctx context.Context, in 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateAggregatorV2 struct {
+}
+
+func (*validateOpCreateAggregatorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateAggregatorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateAggregatorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateAggregatorV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateAutomationRule struct {
 }
 
@@ -310,6 +350,26 @@ func (m *validateOpCreateAutomationRule) HandleInitialize(ctx context.Context, i
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateAutomationRuleV2 struct {
+}
+
+func (*validateOpCreateAutomationRuleV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateAutomationRuleV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateAutomationRuleV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateAutomationRuleV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpCreateConfigurationPolicy struct {
 }
 
@@ -325,6 +385,26 @@ func (m *validateOpCreateConfigurationPolicy) HandleInitialize(ctx context.Conte
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpCreateConfigurationPolicyInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpCreateConnectorV2 struct {
+}
+
+func (*validateOpCreateConnectorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateConnectorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateConnectorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateConnectorV2Input(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -390,6 +470,26 @@ func (m *validateOpCreateMembers) HandleInitialize(ctx context.Context, in middl
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpCreateTicketV2 struct {
+}
+
+func (*validateOpCreateTicketV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpCreateTicketV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*CreateTicketV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpCreateTicketV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeclineInvitations struct {
 }
 
@@ -430,6 +530,46 @@ func (m *validateOpDeleteActionTarget) HandleInitialize(ctx context.Context, in 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpDeleteAggregatorV2 struct {
+}
+
+func (*validateOpDeleteAggregatorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteAggregatorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteAggregatorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteAggregatorV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteAutomationRuleV2 struct {
+}
+
+func (*validateOpDeleteAutomationRuleV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteAutomationRuleV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteAutomationRuleV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteAutomationRuleV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpDeleteConfigurationPolicy struct {
 }
 
@@ -445,6 +585,26 @@ func (m *validateOpDeleteConfigurationPolicy) HandleInitialize(ctx context.Conte
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpDeleteConfigurationPolicyInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpDeleteConnectorV2 struct {
+}
+
+func (*validateOpDeleteConnectorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpDeleteConnectorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*DeleteConnectorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpDeleteConnectorV2Input(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -650,6 +810,46 @@ func (m *validateOpEnableOrganizationAdminAccount) HandleInitialize(ctx context.
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetAggregatorV2 struct {
+}
+
+func (*validateOpGetAggregatorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetAggregatorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetAggregatorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetAggregatorV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetAutomationRuleV2 struct {
+}
+
+func (*validateOpGetAutomationRuleV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetAutomationRuleV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetAutomationRuleV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetAutomationRuleV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetConfigurationPolicyAssociation struct {
 }
 
@@ -685,6 +885,26 @@ func (m *validateOpGetConfigurationPolicy) HandleInitialize(ctx context.Context,
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpGetConfigurationPolicyInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetConnectorV2 struct {
+}
+
+func (*validateOpGetConnectorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetConnectorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetConnectorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetConnectorV2Input(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -730,6 +950,46 @@ func (m *validateOpGetFindingHistory) HandleInitialize(ctx context.Context, in m
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpGetFindingStatisticsV2 struct {
+}
+
+func (*validateOpGetFindingStatisticsV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetFindingStatisticsV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetFindingStatisticsV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetFindingStatisticsV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetFindingsTrendsV2 struct {
+}
+
+func (*validateOpGetFindingsTrendsV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetFindingsTrendsV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetFindingsTrendsV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetFindingsTrendsV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpGetInsightResults struct {
 }
 
@@ -765,6 +1025,46 @@ func (m *validateOpGetMembers) HandleInitialize(ctx context.Context, in middlewa
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpGetMembersInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetResourcesStatisticsV2 struct {
+}
+
+func (*validateOpGetResourcesStatisticsV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetResourcesStatisticsV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetResourcesStatisticsV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetResourcesStatisticsV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpGetResourcesTrendsV2 struct {
+}
+
+func (*validateOpGetResourcesTrendsV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpGetResourcesTrendsV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*GetResourcesTrendsV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpGetResourcesTrendsV2Input(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -845,6 +1145,26 @@ func (m *validateOpListTagsForResource) HandleInitialize(ctx context.Context, in
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpListTagsForResourceInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpRegisterConnectorV2 struct {
+}
+
+func (*validateOpRegisterConnectorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpRegisterConnectorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*RegisterConnectorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpRegisterConnectorV2Input(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -950,6 +1270,46 @@ func (m *validateOpUpdateActionTarget) HandleInitialize(ctx context.Context, in 
 	return next.HandleInitialize(ctx, in)
 }
 
+type validateOpUpdateAggregatorV2 struct {
+}
+
+func (*validateOpUpdateAggregatorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateAggregatorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateAggregatorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateAggregatorV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpUpdateAutomationRuleV2 struct {
+}
+
+func (*validateOpUpdateAutomationRuleV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateAutomationRuleV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateAutomationRuleV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateAutomationRuleV2Input(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
 type validateOpUpdateConfigurationPolicy struct {
 }
 
@@ -965,6 +1325,26 @@ func (m *validateOpUpdateConfigurationPolicy) HandleInitialize(ctx context.Conte
 		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
 	}
 	if err := validateOpUpdateConfigurationPolicyInput(input); err != nil {
+		return out, metadata, err
+	}
+	return next.HandleInitialize(ctx, in)
+}
+
+type validateOpUpdateConnectorV2 struct {
+}
+
+func (*validateOpUpdateConnectorV2) ID() string {
+	return "OperationInputValidation"
+}
+
+func (m *validateOpUpdateConnectorV2) HandleInitialize(ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler) (
+	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+) {
+	input, ok := in.Parameters.(*UpdateConnectorV2Input)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown input parameters type %T", in.Parameters)
+	}
+	if err := validateOpUpdateConnectorV2Input(input); err != nil {
 		return out, metadata, err
 	}
 	return next.HandleInitialize(ctx, in)
@@ -1138,6 +1518,10 @@ func addOpBatchUpdateFindingsValidationMiddleware(stack *middleware.Stack) error
 	return stack.Initialize.Add(&validateOpBatchUpdateFindings{}, middleware.After)
 }
 
+func addOpBatchUpdateFindingsV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpBatchUpdateFindingsV2{}, middleware.After)
+}
+
 func addOpBatchUpdateStandardsControlAssociationsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpBatchUpdateStandardsControlAssociations{}, middleware.After)
 }
@@ -1146,12 +1530,24 @@ func addOpCreateActionTargetValidationMiddleware(stack *middleware.Stack) error 
 	return stack.Initialize.Add(&validateOpCreateActionTarget{}, middleware.After)
 }
 
+func addOpCreateAggregatorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateAggregatorV2{}, middleware.After)
+}
+
 func addOpCreateAutomationRuleValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateAutomationRule{}, middleware.After)
 }
 
+func addOpCreateAutomationRuleV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateAutomationRuleV2{}, middleware.After)
+}
+
 func addOpCreateConfigurationPolicyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateConfigurationPolicy{}, middleware.After)
+}
+
+func addOpCreateConnectorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateConnectorV2{}, middleware.After)
 }
 
 func addOpCreateFindingAggregatorValidationMiddleware(stack *middleware.Stack) error {
@@ -1166,6 +1562,10 @@ func addOpCreateMembersValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpCreateMembers{}, middleware.After)
 }
 
+func addOpCreateTicketV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpCreateTicketV2{}, middleware.After)
+}
+
 func addOpDeclineInvitationsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeclineInvitations{}, middleware.After)
 }
@@ -1174,8 +1574,20 @@ func addOpDeleteActionTargetValidationMiddleware(stack *middleware.Stack) error 
 	return stack.Initialize.Add(&validateOpDeleteActionTarget{}, middleware.After)
 }
 
+func addOpDeleteAggregatorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteAggregatorV2{}, middleware.After)
+}
+
+func addOpDeleteAutomationRuleV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteAutomationRuleV2{}, middleware.After)
+}
+
 func addOpDeleteConfigurationPolicyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpDeleteConfigurationPolicy{}, middleware.After)
+}
+
+func addOpDeleteConnectorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpDeleteConnectorV2{}, middleware.After)
 }
 
 func addOpDeleteFindingAggregatorValidationMiddleware(stack *middleware.Stack) error {
@@ -1218,12 +1630,24 @@ func addOpEnableOrganizationAdminAccountValidationMiddleware(stack *middleware.S
 	return stack.Initialize.Add(&validateOpEnableOrganizationAdminAccount{}, middleware.After)
 }
 
+func addOpGetAggregatorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetAggregatorV2{}, middleware.After)
+}
+
+func addOpGetAutomationRuleV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetAutomationRuleV2{}, middleware.After)
+}
+
 func addOpGetConfigurationPolicyAssociationValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetConfigurationPolicyAssociation{}, middleware.After)
 }
 
 func addOpGetConfigurationPolicyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetConfigurationPolicy{}, middleware.After)
+}
+
+func addOpGetConnectorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetConnectorV2{}, middleware.After)
 }
 
 func addOpGetFindingAggregatorValidationMiddleware(stack *middleware.Stack) error {
@@ -1234,12 +1658,28 @@ func addOpGetFindingHistoryValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetFindingHistory{}, middleware.After)
 }
 
+func addOpGetFindingStatisticsV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetFindingStatisticsV2{}, middleware.After)
+}
+
+func addOpGetFindingsTrendsV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetFindingsTrendsV2{}, middleware.After)
+}
+
 func addOpGetInsightResultsValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetInsightResults{}, middleware.After)
 }
 
 func addOpGetMembersValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpGetMembers{}, middleware.After)
+}
+
+func addOpGetResourcesStatisticsV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetResourcesStatisticsV2{}, middleware.After)
+}
+
+func addOpGetResourcesTrendsV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpGetResourcesTrendsV2{}, middleware.After)
 }
 
 func addOpGetSecurityControlDefinitionValidationMiddleware(stack *middleware.Stack) error {
@@ -1256,6 +1696,10 @@ func addOpListStandardsControlAssociationsValidationMiddleware(stack *middleware
 
 func addOpListTagsForResourceValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpListTagsForResource{}, middleware.After)
+}
+
+func addOpRegisterConnectorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpRegisterConnectorV2{}, middleware.After)
 }
 
 func addOpStartConfigurationPolicyAssociationValidationMiddleware(stack *middleware.Stack) error {
@@ -1278,8 +1722,20 @@ func addOpUpdateActionTargetValidationMiddleware(stack *middleware.Stack) error 
 	return stack.Initialize.Add(&validateOpUpdateActionTarget{}, middleware.After)
 }
 
+func addOpUpdateAggregatorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateAggregatorV2{}, middleware.After)
+}
+
+func addOpUpdateAutomationRuleV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateAutomationRuleV2{}, middleware.After)
+}
+
 func addOpUpdateConfigurationPolicyValidationMiddleware(stack *middleware.Stack) error {
 	return stack.Initialize.Add(&validateOpUpdateConfigurationPolicy{}, middleware.After)
+}
+
+func addOpUpdateConnectorV2ValidationMiddleware(stack *middleware.Stack) error {
+	return stack.Initialize.Add(&validateOpUpdateConnectorV2{}, middleware.After)
 }
 
 func addOpUpdateFindingAggregatorValidationMiddleware(stack *middleware.Stack) error {
@@ -1364,6 +1820,38 @@ func validateAutomationRulesAction(v *types.AutomationRulesAction) error {
 		if err := validateAutomationRulesFindingFieldsUpdate(v.FindingFieldsUpdate); err != nil {
 			invalidParams.AddNested("FindingFieldsUpdate", err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateAutomationRulesActionListV2(v []types.AutomationRulesActionV2) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AutomationRulesActionListV2"}
+	for i := range v {
+		if err := validateAutomationRulesActionV2(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateAutomationRulesActionV2(v *types.AutomationRulesActionV2) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "AutomationRulesActionV2"}
+	if len(v.Type) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("Type"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1561,6 +2049,38 @@ func validateFindingProviderFields(v *types.FindingProviderFields) error {
 	}
 }
 
+func validateGroupByRule(v *types.GroupByRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GroupByRule"}
+	if len(v.GroupByField) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("GroupByField"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateGroupByRules(v []types.GroupByRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GroupByRules"}
+	for i := range v {
+		if err := validateGroupByRule(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateMalware(v *types.Malware) error {
 	if v == nil {
 		return nil
@@ -1624,6 +2144,44 @@ func validateNoteUpdate(v *types.NoteUpdate) error {
 	}
 	if v.UpdatedBy == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("UpdatedBy"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOcsfFindingIdentifier(v *types.OcsfFindingIdentifier) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "OcsfFindingIdentifier"}
+	if v.CloudAccountUid == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("CloudAccountUid"))
+	}
+	if v.FindingInfoUid == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("FindingInfoUid"))
+	}
+	if v.MetadataProductUid == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("MetadataProductUid"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOcsfFindingIdentifierList(v []types.OcsfFindingIdentifier) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "OcsfFindingIdentifierList"}
+	for i := range v {
+		if err := validateOcsfFindingIdentifier(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1699,6 +2257,25 @@ func validatePolicy(v types.Policy) error {
 	}
 }
 
+func validateProviderConfiguration(v types.ProviderConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ProviderConfiguration"}
+	switch uv := v.(type) {
+	case *types.ProviderConfigurationMemberServiceNow:
+		if err := validateServiceNowProviderConfiguration(&uv.Value); err != nil {
+			invalidParams.AddNested("[ServiceNow]", err.(smithy.InvalidParamsError))
+		}
+
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateRelatedFinding(v *types.RelatedFinding) error {
 	if v == nil {
 		return nil
@@ -1744,6 +2321,38 @@ func validateResource(v *types.Resource) error {
 	}
 	if v.Id == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Id"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateResourceGroupByRule(v *types.ResourceGroupByRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ResourceGroupByRule"}
+	if len(v.GroupByField) == 0 {
+		invalidParams.Add(smithy.NewErrParamRequired("GroupByField"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateResourceGroupByRules(v []types.ResourceGroupByRule) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ResourceGroupByRules"}
+	for i := range v {
+		if err := validateResourceGroupByRule(&v[i]); err != nil {
+			invalidParams.AddNested(fmt.Sprintf("[%d]", i), err.(smithy.InvalidParamsError))
+		}
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1829,6 +2438,24 @@ func validateSecurityHubPolicy(v *types.SecurityHubPolicy) error {
 		if err := validateSecurityControlsConfiguration(v.SecurityControlsConfiguration); err != nil {
 			invalidParams.AddNested("SecurityControlsConfiguration", err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateServiceNowProviderConfiguration(v *types.ServiceNowProviderConfiguration) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "ServiceNowProviderConfiguration"}
+	if v.InstanceName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("InstanceName"))
+	}
+	if v.SecretArn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("SecretArn"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2279,6 +2906,23 @@ func validateOpBatchUpdateFindingsInput(v *BatchUpdateFindingsInput) error {
 	}
 }
 
+func validateOpBatchUpdateFindingsV2Input(v *BatchUpdateFindingsV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "BatchUpdateFindingsV2Input"}
+	if v.FindingIdentifiers != nil {
+		if err := validateOcsfFindingIdentifierList(v.FindingIdentifiers); err != nil {
+			invalidParams.AddNested("FindingIdentifiers", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpBatchUpdateStandardsControlAssociationsInput(v *BatchUpdateStandardsControlAssociationsInput) error {
 	if v == nil {
 		return nil
@@ -2319,6 +2963,21 @@ func validateOpCreateActionTargetInput(v *CreateActionTargetInput) error {
 	}
 }
 
+func validateOpCreateAggregatorV2Input(v *CreateAggregatorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateAggregatorV2Input"}
+	if v.RegionLinkingMode == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RegionLinkingMode"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateAutomationRuleInput(v *CreateAutomationRuleInput) error {
 	if v == nil {
 		return nil
@@ -2350,6 +3009,37 @@ func validateOpCreateAutomationRuleInput(v *CreateAutomationRuleInput) error {
 	}
 }
 
+func validateOpCreateAutomationRuleV2Input(v *CreateAutomationRuleV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateAutomationRuleV2Input"}
+	if v.RuleName == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RuleName"))
+	}
+	if v.Description == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Description"))
+	}
+	if v.RuleOrder == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RuleOrder"))
+	}
+	if v.Criteria == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Criteria"))
+	}
+	if v.Actions == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Actions"))
+	} else if v.Actions != nil {
+		if err := validateAutomationRulesActionListV2(v.Actions); err != nil {
+			invalidParams.AddNested("Actions", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpCreateConfigurationPolicyInput(v *CreateConfigurationPolicyInput) error {
 	if v == nil {
 		return nil
@@ -2363,6 +3053,28 @@ func validateOpCreateConfigurationPolicyInput(v *CreateConfigurationPolicyInput)
 	} else if v.ConfigurationPolicy != nil {
 		if err := validatePolicy(v.ConfigurationPolicy); err != nil {
 			invalidParams.AddNested("ConfigurationPolicy", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpCreateConnectorV2Input(v *CreateConnectorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateConnectorV2Input"}
+	if v.Name == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Name"))
+	}
+	if v.Provider == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Provider"))
+	} else if v.Provider != nil {
+		if err := validateProviderConfiguration(v.Provider); err != nil {
+			invalidParams.AddNested("Provider", err.(smithy.InvalidParamsError))
 		}
 	}
 	if invalidParams.Len() > 0 {
@@ -2427,6 +3139,24 @@ func validateOpCreateMembersInput(v *CreateMembersInput) error {
 	}
 }
 
+func validateOpCreateTicketV2Input(v *CreateTicketV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "CreateTicketV2Input"}
+	if v.ConnectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConnectorId"))
+	}
+	if v.FindingMetadataUid == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("FindingMetadataUid"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpDeclineInvitationsInput(v *DeclineInvitationsInput) error {
 	if v == nil {
 		return nil
@@ -2457,6 +3187,36 @@ func validateOpDeleteActionTargetInput(v *DeleteActionTargetInput) error {
 	}
 }
 
+func validateOpDeleteAggregatorV2Input(v *DeleteAggregatorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteAggregatorV2Input"}
+	if v.AggregatorV2Arn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AggregatorV2Arn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteAutomationRuleV2Input(v *DeleteAutomationRuleV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteAutomationRuleV2Input"}
+	if v.Identifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Identifier"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpDeleteConfigurationPolicyInput(v *DeleteConfigurationPolicyInput) error {
 	if v == nil {
 		return nil
@@ -2464,6 +3224,21 @@ func validateOpDeleteConfigurationPolicyInput(v *DeleteConfigurationPolicyInput)
 	invalidParams := smithy.InvalidParamsError{Context: "DeleteConfigurationPolicyInput"}
 	if v.Identifier == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Identifier"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpDeleteConnectorV2Input(v *DeleteConnectorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "DeleteConnectorV2Input"}
+	if v.ConnectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConnectorId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2622,6 +3397,36 @@ func validateOpEnableOrganizationAdminAccountInput(v *EnableOrganizationAdminAcc
 	}
 }
 
+func validateOpGetAggregatorV2Input(v *GetAggregatorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetAggregatorV2Input"}
+	if v.AggregatorV2Arn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AggregatorV2Arn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetAutomationRuleV2Input(v *GetAutomationRuleV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetAutomationRuleV2Input"}
+	if v.Identifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Identifier"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetConfigurationPolicyAssociationInput(v *GetConfigurationPolicyAssociationInput) error {
 	if v == nil {
 		return nil
@@ -2644,6 +3449,21 @@ func validateOpGetConfigurationPolicyInput(v *GetConfigurationPolicyInput) error
 	invalidParams := smithy.InvalidParamsError{Context: "GetConfigurationPolicyInput"}
 	if v.Identifier == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("Identifier"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetConnectorV2Input(v *GetConnectorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetConnectorV2Input"}
+	if v.ConnectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConnectorId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2686,6 +3506,43 @@ func validateOpGetFindingHistoryInput(v *GetFindingHistoryInput) error {
 	}
 }
 
+func validateOpGetFindingStatisticsV2Input(v *GetFindingStatisticsV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetFindingStatisticsV2Input"}
+	if v.GroupByRules == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("GroupByRules"))
+	} else if v.GroupByRules != nil {
+		if err := validateGroupByRules(v.GroupByRules); err != nil {
+			invalidParams.AddNested("GroupByRules", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetFindingsTrendsV2Input(v *GetFindingsTrendsV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetFindingsTrendsV2Input"}
+	if v.StartTime == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("StartTime"))
+	}
+	if v.EndTime == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EndTime"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpGetInsightResultsInput(v *GetInsightResultsInput) error {
 	if v == nil {
 		return nil
@@ -2708,6 +3565,43 @@ func validateOpGetMembersInput(v *GetMembersInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "GetMembersInput"}
 	if v.AccountIds == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("AccountIds"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetResourcesStatisticsV2Input(v *GetResourcesStatisticsV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetResourcesStatisticsV2Input"}
+	if v.GroupByRules == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("GroupByRules"))
+	} else if v.GroupByRules != nil {
+		if err := validateResourceGroupByRules(v.GroupByRules); err != nil {
+			invalidParams.AddNested("GroupByRules", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpGetResourcesTrendsV2Input(v *GetResourcesTrendsV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "GetResourcesTrendsV2Input"}
+	if v.StartTime == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("StartTime"))
+	}
+	if v.EndTime == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("EndTime"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2768,6 +3662,24 @@ func validateOpListTagsForResourceInput(v *ListTagsForResourceInput) error {
 	invalidParams := smithy.InvalidParamsError{Context: "ListTagsForResourceInput"}
 	if v.ResourceArn == nil {
 		invalidParams.Add(smithy.NewErrParamRequired("ResourceArn"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpRegisterConnectorV2Input(v *RegisterConnectorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "RegisterConnectorV2Input"}
+	if v.AuthCode == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AuthCode"))
+	}
+	if v.AuthState == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AuthState"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -2860,6 +3772,44 @@ func validateOpUpdateActionTargetInput(v *UpdateActionTargetInput) error {
 	}
 }
 
+func validateOpUpdateAggregatorV2Input(v *UpdateAggregatorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateAggregatorV2Input"}
+	if v.AggregatorV2Arn == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("AggregatorV2Arn"))
+	}
+	if v.RegionLinkingMode == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("RegionLinkingMode"))
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateAutomationRuleV2Input(v *UpdateAutomationRuleV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateAutomationRuleV2Input"}
+	if v.Identifier == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("Identifier"))
+	}
+	if v.Actions != nil {
+		if err := validateAutomationRulesActionListV2(v.Actions); err != nil {
+			invalidParams.AddNested("Actions", err.(smithy.InvalidParamsError))
+		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
 func validateOpUpdateConfigurationPolicyInput(v *UpdateConfigurationPolicyInput) error {
 	if v == nil {
 		return nil
@@ -2872,6 +3822,21 @@ func validateOpUpdateConfigurationPolicyInput(v *UpdateConfigurationPolicyInput)
 		if err := validatePolicy(v.ConfigurationPolicy); err != nil {
 			invalidParams.AddNested("ConfigurationPolicy", err.(smithy.InvalidParamsError))
 		}
+	}
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	} else {
+		return nil
+	}
+}
+
+func validateOpUpdateConnectorV2Input(v *UpdateConnectorV2Input) error {
+	if v == nil {
+		return nil
+	}
+	invalidParams := smithy.InvalidParamsError{Context: "UpdateConnectorV2Input"}
+	if v.ConnectorId == nil {
+		invalidParams.Add(smithy.NewErrParamRequired("ConnectorId"))
 	}
 	if invalidParams.Len() > 0 {
 		return invalidParams

@@ -194,6 +194,18 @@ func TestCheckSnapshot_CreateDomain(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_CreateIndex(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateIndex(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "CreateIndex")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_CreateOutboundConnection(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateOutboundConnection(context.Background(), nil, func(o *Options) {
@@ -283,6 +295,18 @@ func TestCheckSnapshot_DeleteInboundConnection(t *testing.T) {
 	_, err := svc.DeleteInboundConnection(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "DeleteInboundConnection")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_DeleteIndex(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteIndex(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "DeleteIndex")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -566,6 +590,18 @@ func TestCheckSnapshot_GetDataSource(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_GetDefaultApplicationSetting(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDefaultApplicationSetting(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetDefaultApplicationSetting")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_GetDirectQueryDataSource(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetDirectQueryDataSource(context.Background(), nil, func(o *Options) {
@@ -583,6 +619,18 @@ func TestCheckSnapshot_GetDomainMaintenanceStatus(t *testing.T) {
 	_, err := svc.GetDomainMaintenanceStatus(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "GetDomainMaintenanceStatus")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_GetIndex(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetIndex(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "GetIndex")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -806,6 +854,18 @@ func TestCheckSnapshot_PurchaseReservedInstanceOffering(t *testing.T) {
 	}
 }
 
+func TestCheckSnapshot_PutDefaultApplicationSetting(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutDefaultApplicationSetting(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "PutDefaultApplicationSetting")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCheckSnapshot_RejectInboundConnection(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.RejectInboundConnection(context.Background(), nil, func(o *Options) {
@@ -907,6 +967,18 @@ func TestCheckSnapshot_UpdateDomainConfig(t *testing.T) {
 	_, err := svc.UpdateDomainConfig(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return testSnapshot(stack, "UpdateDomainConfig")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCheckSnapshot_UpdateIndex(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateIndex(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return testSnapshot(stack, "UpdateIndex")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1105,6 +1177,18 @@ func TestUpdateSnapshot_CreateDomain(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_CreateIndex(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.CreateIndex(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "CreateIndex")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_CreateOutboundConnection(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.CreateOutboundConnection(context.Background(), nil, func(o *Options) {
@@ -1194,6 +1278,18 @@ func TestUpdateSnapshot_DeleteInboundConnection(t *testing.T) {
 	_, err := svc.DeleteInboundConnection(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "DeleteInboundConnection")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_DeleteIndex(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.DeleteIndex(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "DeleteIndex")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1477,6 +1573,18 @@ func TestUpdateSnapshot_GetDataSource(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_GetDefaultApplicationSetting(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetDefaultApplicationSetting(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetDefaultApplicationSetting")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_GetDirectQueryDataSource(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.GetDirectQueryDataSource(context.Background(), nil, func(o *Options) {
@@ -1494,6 +1602,18 @@ func TestUpdateSnapshot_GetDomainMaintenanceStatus(t *testing.T) {
 	_, err := svc.GetDomainMaintenanceStatus(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "GetDomainMaintenanceStatus")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_GetIndex(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.GetIndex(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "GetIndex")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {
@@ -1717,6 +1837,18 @@ func TestUpdateSnapshot_PurchaseReservedInstanceOffering(t *testing.T) {
 	}
 }
 
+func TestUpdateSnapshot_PutDefaultApplicationSetting(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.PutDefaultApplicationSetting(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "PutDefaultApplicationSetting")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestUpdateSnapshot_RejectInboundConnection(t *testing.T) {
 	svc := New(Options{})
 	_, err := svc.RejectInboundConnection(context.Background(), nil, func(o *Options) {
@@ -1818,6 +1950,18 @@ func TestUpdateSnapshot_UpdateDomainConfig(t *testing.T) {
 	_, err := svc.UpdateDomainConfig(context.Background(), nil, func(o *Options) {
 		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
 			return updateSnapshot(stack, "UpdateDomainConfig")
+		})
+	})
+	if _, ok := err.(snapshotOK); !ok && err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateSnapshot_UpdateIndex(t *testing.T) {
+	svc := New(Options{})
+	_, err := svc.UpdateIndex(context.Background(), nil, func(o *Options) {
+		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
+			return updateSnapshot(stack, "UpdateIndex")
 		})
 	})
 	if _, ok := err.(snapshotOK); !ok && err != nil {

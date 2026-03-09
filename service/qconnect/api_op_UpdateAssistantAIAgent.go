@@ -48,6 +48,9 @@ type UpdateAssistantAIAgentInput struct {
 	// This member is required.
 	Configuration *types.AIAgentConfigurationData
 
+	// The orchestrator use case for the AI Agent being added.
+	OrchestratorUseCase *string
+
 	noSmithyDocumentSerde
 }
 
@@ -150,16 +153,13 @@ func (c *Client) addOperationUpdateAssistantAIAgentMiddlewares(stack *middleware
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

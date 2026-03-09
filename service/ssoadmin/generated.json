@@ -8,6 +8,7 @@
     "files": [
         "api_client.go",
         "api_client_test.go",
+        "api_op_AddRegion.go",
         "api_op_AttachCustomerManagedPolicyReferenceToPermissionSet.go",
         "api_op_AttachManagedPolicyToPermissionSet.go",
         "api_op_CreateAccountAssignment.go",
@@ -38,6 +39,7 @@
         "api_op_DescribeInstanceAccessControlAttributeConfiguration.go",
         "api_op_DescribePermissionSet.go",
         "api_op_DescribePermissionSetProvisioningStatus.go",
+        "api_op_DescribeRegion.go",
         "api_op_DescribeTrustedTokenIssuer.go",
         "api_op_DetachCustomerManagedPolicyReferenceFromPermissionSet.go",
         "api_op_DetachManagedPolicyFromPermissionSet.go",
@@ -45,6 +47,7 @@
         "api_op_GetApplicationAssignmentConfiguration.go",
         "api_op_GetApplicationAuthenticationMethod.go",
         "api_op_GetApplicationGrant.go",
+        "api_op_GetApplicationSessionConfiguration.go",
         "api_op_GetInlinePolicyForPermissionSet.go",
         "api_op_GetPermissionsBoundaryForPermissionSet.go",
         "api_op_ListAccountAssignmentCreationStatus.go",
@@ -65,6 +68,7 @@
         "api_op_ListPermissionSetProvisioningStatus.go",
         "api_op_ListPermissionSets.go",
         "api_op_ListPermissionSetsProvisionedToAccount.go",
+        "api_op_ListRegions.go",
         "api_op_ListTagsForResource.go",
         "api_op_ListTrustedTokenIssuers.go",
         "api_op_ProvisionPermissionSet.go",
@@ -72,8 +76,10 @@
         "api_op_PutApplicationAssignmentConfiguration.go",
         "api_op_PutApplicationAuthenticationMethod.go",
         "api_op_PutApplicationGrant.go",
+        "api_op_PutApplicationSessionConfiguration.go",
         "api_op_PutInlinePolicyToPermissionSet.go",
         "api_op_PutPermissionsBoundaryToPermissionSet.go",
+        "api_op_RemoveRegion.go",
         "api_op_TagResource.go",
         "api_op_UntagResource.go",
         "api_op_UpdateApplication.go",
@@ -105,7 +111,7 @@
         "types/types_exported_test.go",
         "validators.go"
     ],
-    "go": "1.22",
+    "go": "1.23",
     "module": "github.com/aws/aws-sdk-go-v2/service/ssoadmin",
     "unstable": false
 }

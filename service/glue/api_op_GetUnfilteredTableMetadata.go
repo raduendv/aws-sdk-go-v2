@@ -119,6 +119,9 @@ type GetUnfilteredTableMetadataOutput struct {
 	// A list of column row filters.
 	CellFilters []types.ColumnRowFilter
 
+	// Indicates if a table is a materialized view.
+	IsMaterializedView bool
+
 	// Specifies whether the view supports the SQL dialects of one or more different
 	// query engines and can therefore be read by those engines.
 	IsMultiDialectView bool
@@ -246,16 +249,13 @@ func (c *Client) addOperationGetUnfilteredTableMetadataMiddlewares(stack *middle
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

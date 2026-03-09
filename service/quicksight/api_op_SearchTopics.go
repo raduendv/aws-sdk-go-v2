@@ -11,7 +11,7 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Searches for any Q topic that exists in an Amazon QuickSight account.
+// Searches for any Q topic that exists in an Quick Suite account.
 func (c *Client) SearchTopics(ctx context.Context, params *SearchTopicsInput, optFns ...func(*Options)) (*SearchTopicsOutput, error) {
 	if params == nil {
 		params = &SearchTopicsInput{}
@@ -157,16 +157,13 @@ func (c *Client) addOperationSearchTopicsMiddlewares(stack *middleware.Stack, op
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

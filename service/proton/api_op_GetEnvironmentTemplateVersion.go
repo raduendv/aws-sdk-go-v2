@@ -15,6 +15,8 @@ import (
 )
 
 // Get detailed data for a major or minor version of an environment template.
+//
+// Deprecated: AWS Proton is not accepting new customers.
 func (c *Client) GetEnvironmentTemplateVersion(ctx context.Context, params *GetEnvironmentTemplateVersionInput, optFns ...func(*Options)) (*GetEnvironmentTemplateVersionOutput, error) {
 	if params == nil {
 		params = &GetEnvironmentTemplateVersionInput{}
@@ -152,16 +154,13 @@ func (c *Client) addOperationGetEnvironmentTemplateVersionMiddlewares(stack *mid
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

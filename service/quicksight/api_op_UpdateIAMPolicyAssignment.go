@@ -59,11 +59,11 @@ type UpdateIAMPolicyAssignmentInput struct {
 	//   the data source.
 	AssignmentStatus types.AssignmentStatus
 
-	// The Amazon QuickSight users, groups, or both that you want to assign the policy
-	// to.
+	// The Amazon Quick Sight users, groups, or both that you want to assign the
+	// policy to.
 	Identities map[string][]string
 
-	// The ARN for the IAM policy to apply to the Amazon QuickSight users and groups
+	// The ARN for the IAM policy to apply to the Amazon Quick Sight users and groups
 	// specified in this assignment.
 	PolicyArn *string
 
@@ -89,10 +89,11 @@ type UpdateIAMPolicyAssignmentOutput struct {
 	//   the data source.
 	AssignmentStatus types.AssignmentStatus
 
-	// The Amazon QuickSight users, groups, or both that the IAM policy is assigned to.
+	// The Amazon Quick Sight users, groups, or both that the IAM policy is assigned
+	// to.
 	Identities map[string][]string
 
-	// The ARN for the IAM policy applied to the Amazon QuickSight users and groups
+	// The ARN for the IAM policy applied to the Amazon Quick Sight users and groups
 	// specified in this assignment.
 	PolicyArn *string
 
@@ -196,16 +197,13 @@ func (c *Client) addOperationUpdateIAMPolicyAssignmentMiddlewares(stack *middlew
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

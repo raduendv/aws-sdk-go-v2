@@ -59,7 +59,11 @@ type CreateActivityInput struct {
 	//
 	//   - special characters " # % \ ^ | ~ ` $ & , ; : /
 	//
-	//   - control characters ( U+0000-001F , U+007F-009F )
+	//   - control characters ( U+0000-001F , U+007F-009F , U+FFFE-FFFF )
+	//
+	//   - surrogates ( U+D800-DFFF )
+	//
+	//   - invalid characters ( U+10FFFF )
 	//
 	// To enable logging with CloudWatch Logs, the name should only contain 0-9, A-Z,
 	// a-z, - and _.
@@ -193,16 +197,13 @@ func (c *Client) addOperationCreateActivityMiddlewares(stack *middleware.Stack, 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

@@ -7,6 +7,28 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/paymentcryptographydata/types"
 )
 
+func ExampleAs2805KekValidationType_outputUsage() {
+	var union types.As2805KekValidationType
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.As2805KekValidationTypeMemberKekValidationRequest:
+		_ = v.Value // Value is types.KekValidationRequest
+
+	case *types.As2805KekValidationTypeMemberKekValidationResponse:
+		_ = v.Value // Value is types.KekValidationResponse
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.KekValidationResponse
+var _ *types.KekValidationRequest
+
 func ExampleCardGenerationAttributes_outputUsage() {
 	var union types.CardGenerationAttributes
 	// type switches can be used to check the union value
@@ -151,6 +173,24 @@ var _ *types.AmexAttributes
 var _ *types.EmvCommonAttributes
 var _ *types.VisaAttributes
 
+func ExampleDiffieHellmanDerivationData_outputUsage() {
+	var union types.DiffieHellmanDerivationData
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.DiffieHellmanDerivationDataMemberSharedInformation:
+		_ = v.Value // Value is string
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *string
+
 func ExampleEncryptionDecryptionAttributes_outputUsage() {
 	var union types.EncryptionDecryptionAttributes
 	// type switches can be used to check the union value
@@ -180,6 +220,24 @@ var _ *types.EmvEncryptionAttributes
 var _ *types.SymmetricEncryptionAttributes
 var _ *types.AsymmetricEncryptionAttributes
 var _ *types.DukptEncryptionAttributes
+
+func ExampleIncomingKeyMaterial_outputUsage() {
+	var union types.IncomingKeyMaterial
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.IncomingKeyMaterialMemberDiffieHellmanTr31KeyBlock:
+		_ = v.Value // Value is types.IncomingDiffieHellmanTr31KeyBlock
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.IncomingDiffieHellmanTr31KeyBlock
 
 func ExampleMacAttributes_outputUsage() {
 	var union types.MacAttributes
@@ -212,6 +270,24 @@ func ExampleMacAttributes_outputUsage() {
 var _ *types.MacAlgorithmDukpt
 var _ types.MacAlgorithm
 var _ *types.MacAlgorithmEmv
+
+func ExampleOutgoingKeyMaterial_outputUsage() {
+	var union types.OutgoingKeyMaterial
+	// type switches can be used to check the union value
+	switch v := union.(type) {
+	case *types.OutgoingKeyMaterialMemberTr31KeyBlock:
+		_ = v.Value // Value is types.OutgoingTr31KeyBlock
+
+	case *types.UnknownUnionMember:
+		fmt.Println("unknown tag:", v.Tag)
+
+	default:
+		fmt.Println("union is nil or unknown type")
+
+	}
+}
+
+var _ *types.OutgoingTr31KeyBlock
 
 func ExamplePinData_outputUsage() {
 	var union types.PinData
@@ -377,6 +453,9 @@ func ExampleTranslationIsoFormats_outputUsage() {
 	var union types.TranslationIsoFormats
 	// type switches can be used to check the union value
 	switch v := union.(type) {
+	case *types.TranslationIsoFormatsMemberAs2805Format0:
+		_ = v.Value // Value is types.TranslationPinDataAs2805Format0
+
 	case *types.TranslationIsoFormatsMemberIsoFormat0:
 		_ = v.Value // Value is types.TranslationPinDataIsoFormat034
 
@@ -399,6 +478,7 @@ func ExampleTranslationIsoFormats_outputUsage() {
 }
 
 var _ *types.TranslationPinDataIsoFormat1
+var _ *types.TranslationPinDataAs2805Format0
 var _ *types.TranslationPinDataIsoFormat034
 
 func ExampleWrappedKeyMaterial_outputUsage() {

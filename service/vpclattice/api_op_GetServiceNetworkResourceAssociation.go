@@ -53,6 +53,9 @@ type GetServiceNetworkResourceAssociationOutput struct {
 	// The DNS entry for the service.
 	DnsEntry *types.DnsEntry
 
+	//  The domain verification status in the service network resource association.
+	DomainVerificationStatus types.VerificationStatus
+
 	// The failure code.
 	FailureCode *string
 
@@ -68,6 +71,10 @@ type GetServiceNetworkResourceAssociationOutput struct {
 	// The most recent date and time that the association was updated, in ISO-8601
 	// format.
 	LastUpdatedAt *time.Time
+
+	//  Indicates if private DNS is enabled in the service network resource
+	// association.
+	PrivateDnsEnabled *bool
 
 	// The private DNS entry for the service.
 	PrivateDnsEntry *types.DnsEntry
@@ -192,16 +199,13 @@ func (c *Client) addOperationGetServiceNetworkResourceAssociationMiddlewares(sta
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

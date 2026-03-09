@@ -162,8 +162,19 @@ type AnalysisTypeReportResult struct {
 	noSmithyDocumentSerde
 }
 
-// The configuration and status for a single subnet that you've specified for use
-// by the Network Firewall firewall. This is part of the FirewallStatus.
+// The definition and status of the firewall endpoint for a single subnet. In each
+// configured subnet, Network Firewall instantiates a firewall endpoint to handle
+// network traffic.
+//
+// This data type is used for any firewall endpoint type:
+//
+//   - For Firewall.SubnetMappings , this Attachment is part of the FirewallStatus
+//     sync states information. You define firewall subnets using CreateFirewall and
+//     AssociateSubnets .
+//
+//   - For VpcEndpointAssociation , this Attachment is part of the
+//     VpcEndpointAssociationStatus sync states information. You define these subnets
+//     using CreateVpcEndpointAssociation .
 type Attachment struct {
 
 	// The identifier of the firewall endpoint that Network Firewall has instantiated
@@ -171,12 +182,10 @@ type Attachment struct {
 	// tables, when you redirect the VPC traffic through the endpoint.
 	EndpointId *string
 
-	// The current status of the firewall endpoint in the subnet. This value reflects
-	// both the instantiation of the endpoint in the VPC subnet and the sync states
-	// that are reported in the Config settings. When this value is READY , the
-	// endpoint is available and configured properly to handle network traffic. When
-	// the endpoint isn't available for traffic, this value will reflect its state, for
-	// example CREATING or DELETING .
+	// The current status of the firewall endpoint instantiation in the subnet.
+	//
+	// When this value is READY , the endpoint is available to handle network traffic.
+	// Otherwise, this value reflects its state, for example CREATING or DELETING .
 	Status AttachmentStatus
 
 	// If Network Firewall fails to create or delete the firewall endpoint in the
@@ -193,6 +202,55 @@ type Attachment struct {
 	// The unique identifier of the subnet that you've specified to be used for a
 	// firewall endpoint.
 	SubnetId *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the mapping between an Availability Zone and a firewall endpoint for a
+// transit gateway-attached firewall. Each mapping represents where the firewall
+// can process traffic. You use these mappings when calling CreateFirewall, AssociateAvailabilityZones, and DisassociateAvailabilityZones.
+//
+// To retrieve the current Availability Zone mappings for a firewall, use DescribeFirewall.
+type AvailabilityZoneMapping struct {
+
+	// The ID of the Availability Zone where the firewall endpoint is located. For
+	// example, us-east-2a . The Availability Zone must be in the same Region as the
+	// transit gateway.
+	//
+	// This member is required.
+	AvailabilityZone *string
+
+	noSmithyDocumentSerde
+}
+
+// High-level information about an Availability Zone where the firewall has an
+// endpoint defined.
+type AvailabilityZoneMetadata struct {
+
+	// The IP address type of the Firewall subnet in the Availability Zone. You can't
+	// change the IP address type after you create the subnet.
+	IPAddressType IPAddressType
+
+	noSmithyDocumentSerde
+}
+
+// The status of the firewall endpoint defined by a VpcEndpointAssociation .
+type AZSyncState struct {
+
+	// The definition and status of the firewall endpoint for a single subnet. In each
+	// configured subnet, Network Firewall instantiates a firewall endpoint to handle
+	// network traffic.
+	//
+	// This data type is used for any firewall endpoint type:
+	//
+	//   - For Firewall.SubnetMappings , this Attachment is part of the FirewallStatus
+	//   sync states information. You define firewall subnets using CreateFirewall and
+	//   AssociateSubnets .
+	//
+	//   - For VpcEndpointAssociation , this Attachment is part of the
+	//   VpcEndpointAssociationStatus sync states information. You define these subnets
+	//   using CreateVpcEndpointAssociation .
+	Attachment *Attachment
 
 	noSmithyDocumentSerde
 }
@@ -264,6 +322,55 @@ type CIDRSummary struct {
 	noSmithyDocumentSerde
 }
 
+// Individual rules that define match conditions and actions for application-layer
+// traffic. Rules specify what to inspect (domains, headers, methods) and what
+// action to take (allow, deny, alert).
+type CreateProxyRule struct {
+
+	// Action to take.
+	Action ProxyRulePhaseAction
+
+	// Match criteria that specify what traffic attributes to examine. Conditions
+	// include operators (StringEquals, StringLike) and values to match against.
+	Conditions []ProxyRuleCondition
+
+	// A description of the proxy rule.
+	Description *string
+
+	// Where to insert a proxy rule in a proxy rule group.
+	InsertPosition *int32
+
+	// The descriptive name of the proxy rule. You can't change the name of a proxy
+	// rule after you create it.
+	ProxyRuleName *string
+
+	noSmithyDocumentSerde
+}
+
+// Evaluation points in the traffic flow where rules are applied. There are three
+// phases in a traffic where the rule match is applied.
+//
+// This data type is used specifically for the CreateProxyRules API.
+//
+// Pre-DNS - before domain resolution.
+//
+// Pre-Request - after DNS, before request.
+//
+// Post-Response - after receiving response.
+type CreateProxyRulesByRequestPhase struct {
+
+	// After receiving response.
+	PostRESPONSE []CreateProxyRule
+
+	// Before domain resolution.
+	PreDNS []CreateProxyRule
+
+	// After DNS, before request.
+	PreREQUEST []CreateProxyRule
+
+	noSmithyDocumentSerde
+}
+
 // An optional, non-standard action to use for stateless packet handling. You can
 // define this in addition to the standard action that you must specify.
 //
@@ -293,6 +400,65 @@ type CustomAction struct {
 	//
 	// This member is required.
 	ActionName *string
+
+	noSmithyDocumentSerde
+}
+
+// Proxy attached to a NAT gateway.
+type DescribeProxyResource struct {
+
+	// Time the Proxy was created.
+	CreateTime *time.Time
+
+	// Time the Proxy was deleted.
+	DeleteTime *time.Time
+
+	// Failure code for cases when the Proxy fails to attach or update.
+	FailureCode *string
+
+	// Failure message for cases when the Proxy fails to attach or update.
+	FailureMessage *string
+
+	// Listener properties for HTTP and HTTPS traffic.
+	ListenerProperties []ListenerProperty
+
+	// The NAT Gateway for the proxy.
+	NatGatewayId *string
+
+	// The private DNS name of the Proxy.
+	PrivateDNSName *string
+
+	// The Amazon Resource Name (ARN) of a proxy.
+	ProxyArn *string
+
+	// The Amazon Resource Name (ARN) of a proxy configuration.
+	ProxyConfigurationArn *string
+
+	// The descriptive name of the proxy configuration. You can't change the name of a
+	// proxy configuration after you create it.
+	ProxyConfigurationName *string
+
+	// Current modification status of the Proxy.
+	ProxyModifyState ProxyModifyState
+
+	// The descriptive name of the proxy. You can't change the name of a proxy after
+	// you create it.
+	ProxyName *string
+
+	// Current attachment/detachment status of the Proxy.
+	ProxyState ProxyState
+
+	// The key:value pairs to associate with the resource.
+	Tags []Tag
+
+	// TLS decryption on traffic to filter on attributes in the HTTP header.
+	TlsInterceptProperties *TlsInterceptProperties
+
+	// Time the Proxy was updated.
+	UpdateTime *time.Time
+
+	// The service endpoint created in the VPC.
+	VpcEndpointServiceName *string
 
 	noSmithyDocumentSerde
 }
@@ -347,14 +513,19 @@ type EncryptionConfiguration struct {
 	noSmithyDocumentSerde
 }
 
-// The firewall defines the configuration settings for an Network Firewall
-// firewall. These settings include the firewall policy, the subnets in your VPC to
-// use for the firewall endpoints, and any tags that are attached to the firewall
-// Amazon Web Services resource.
+// A firewall defines the behavior of a firewall, the main VPC where the firewall
+// is used, the Availability Zones where the firewall can be used, and one subnet
+// to use for a firewall endpoint within each of the Availability Zones. The
+// Availability Zones are defined implicitly in the subnet specifications.
+//
+// In addition to the firewall endpoints that you define in this Firewall
+// specification, you can create firewall endpoints in VpcEndpointAssociation
+// resources for any VPC, in any Availability Zone where the firewall is already in
+// use.
 //
 // The status of the firewall, for example whether it's ready to filter network
-// traffic, is provided in the corresponding FirewallStatus. You can retrieve both objects by
-// calling DescribeFirewall.
+// traffic, is provided in the corresponding FirewallStatus. You can retrieve both the firewall
+// and firewall status by calling DescribeFirewall.
 type Firewall struct {
 
 	// The unique identifier for the firewall.
@@ -371,8 +542,20 @@ type Firewall struct {
 	// This member is required.
 	FirewallPolicyArn *string
 
-	// The public subnets that Network Firewall is using for the firewall. Each subnet
-	// must belong to a different Availability Zone.
+	// The primary public subnets that Network Firewall is using for the firewall.
+	// Network Firewall creates a firewall endpoint in each subnet. Create a subnet
+	// mapping for each Availability Zone where you want to use the firewall.
+	//
+	// These subnets are all defined for a single, primary VPC, and each must belong
+	// to a different Availability Zone. Each of these subnets establishes the
+	// availability of the firewall in its Availability Zone.
+	//
+	// In addition to these subnets, you can define other endpoints for the firewall
+	// in VpcEndpointAssociation resources. You can define these additional endpoints
+	// for any VPC, and for any of the Availability Zones where the firewall resource
+	// already has a subnet mapping. VPC endpoint associations give you the ability to
+	// protect multiple VPCs using a single firewall, and to define multiple firewall
+	// endpoints for a VPC in a single Availability Zone.
 	//
 	// This member is required.
 	SubnetMappings []SubnetMapping
@@ -381,6 +564,16 @@ type Firewall struct {
 	//
 	// This member is required.
 	VpcId *string
+
+	// A setting indicating whether the firewall is protected against changes to its
+	// Availability Zone configuration. When set to TRUE , you must first disable this
+	// protection before adding or removing Availability Zones.
+	AvailabilityZoneChangeProtection bool
+
+	// The Availability Zones where the firewall endpoints are created for a transit
+	// gateway-attached firewall. Each mapping specifies an Availability Zone where the
+	// firewall processes traffic.
+	AvailabilityZoneMappings []AvailabilityZoneMapping
 
 	// A flag indicating whether it is possible to delete the firewall. A setting of
 	// TRUE indicates that the firewall is protected against deletion. Use this setting
@@ -412,6 +605,9 @@ type Firewall struct {
 	// firewall, the operation initializes this setting to TRUE .
 	FirewallPolicyChangeProtection bool
 
+	// The number of VpcEndpointAssociation resources that use this firewall.
+	NumberOfAssociations *int32
+
 	// A setting indicating whether the firewall is protected against changes to the
 	// subnet associations. Use this setting to protect against accidentally modifying
 	// the subnet associations for a firewall that is in use. When you create a
@@ -420,6 +616,15 @@ type Firewall struct {
 
 	//
 	Tags []Tag
+
+	// The unique identifier of the transit gateway associated with this firewall.
+	// This field is only present for transit gateway-attached firewalls.
+	TransitGatewayId *string
+
+	// The Amazon Web Services account ID that owns the transit gateway. This may be
+	// different from the firewall owner's account ID when using a shared transit
+	// gateway.
+	TransitGatewayOwnerAccountId *string
 
 	noSmithyDocumentSerde
 }
@@ -435,6 +640,10 @@ type FirewallMetadata struct {
 	// The descriptive name of the firewall. You can't change the name of a firewall
 	// after you create it.
 	FirewallName *string
+
+	// The unique identifier of the transit gateway attachment associated with this
+	// firewall. This field is only present for transit gateway-attached firewalls.
+	TransitGatewayAttachmentId *string
 
 	noSmithyDocumentSerde
 }
@@ -478,6 +687,11 @@ type FirewallPolicy struct {
 	//
 	// This member is required.
 	StatelessFragmentDefaultActions []string
+
+	// When true, prevents TCP and TLS packets from reaching destination servers until
+	// TLS Inspection has evaluated Server Name Indication (SNI) rules. Requires an
+	// associated TLS Inspection configuration.
+	EnableTLSSessionHolding *bool
 
 	// Contains variables that you can use to override default Suricata settings in
 	// your firewall policy.
@@ -596,26 +810,32 @@ type FirewallPolicyResponse struct {
 
 // Detailed information about the current status of a Firewall. You can retrieve this for
 // a firewall by calling DescribeFirewalland providing the firewall name and ARN.
+//
+// The firewall status indicates a combined status. It indicates whether all
+// subnets are up-to-date with the latest firewall configurations, which is based
+// on the sync states config values, and also whether all subnets have their
+// endpoints fully enabled, based on their sync states attachment values.
 type FirewallStatus struct {
 
-	// The configuration sync state for the firewall. This summarizes the sync states
-	// reported in the Config settings for all of the Availability Zones where you
-	// have configured the firewall.
+	// The configuration sync state for the firewall. This summarizes the Config
+	// settings in the SyncStates for this firewall status object.
 	//
 	// When you create a firewall or update its configuration, for example by adding a
 	// rule group to its firewall policy, Network Firewall distributes the
-	// configuration changes to all zones where the firewall is in use. This summary
-	// indicates whether the configuration changes have been applied everywhere.
+	// configuration changes to all Availability Zones that have subnets defined for
+	// the firewall. This summary indicates whether the configuration changes have been
+	// applied everywhere.
 	//
 	// This status must be IN_SYNC for the firewall to be ready for use, but it
 	// doesn't indicate that the firewall is ready. The Status setting indicates
-	// firewall readiness.
+	// firewall readiness. It's based on this setting and the readiness of the firewall
+	// endpoints to take traffic.
 	//
 	// This member is required.
 	ConfigurationSyncStateSummary ConfigurationSyncState
 
 	// The readiness of the configured firewall to handle network traffic across all
-	// of the Availability Zones where you've configured it. This setting is READY
+	// of the Availability Zones where you have it configured. This setting is READY
 	// only when the ConfigurationSyncStateSummary value is IN_SYNC and the Attachment
 	// Status values for all of the configured subnets are READY .
 	//
@@ -623,17 +843,24 @@ type FirewallStatus struct {
 	Status FirewallStatusValue
 
 	// Describes the capacity usage of the resources contained in a firewall's
-	// reference sets. Network Firewall calclulates the capacity usage by taking an
+	// reference sets. Network Firewall calculates the capacity usage by taking an
 	// aggregated count of all of the resources used by all of the reference sets in a
 	// firewall.
 	CapacityUsageSummary *CapacityUsageSummary
 
-	// The subnets that you've configured for use by the Network Firewall firewall.
-	// This contains one array element per Availability Zone where you've configured a
-	// subnet. These objects provide details of the information that is summarized in
-	// the ConfigurationSyncStateSummary and Status , broken down by zone and
-	// configuration object.
+	// Status for the subnets that you've configured in the firewall. This contains
+	// one array element per Availability Zone where you've configured a subnet in the
+	// firewall.
+	//
+	// These objects provide detailed information for the settings
+	// ConfigurationSyncStateSummary and Status .
 	SyncStates map[string]SyncState
+
+	// The synchronization state of the transit gateway attachment. This indicates
+	// whether the firewall's transit gateway configuration is properly synchronized
+	// and operational. Use this to verify that your transit gateway configuration
+	// changes have been applied.
+	TransitGatewayAttachmentSyncState *TransitGatewayAttachmentSyncState
 
 	noSmithyDocumentSerde
 }
@@ -929,6 +1156,36 @@ type IPSetReference struct {
 	noSmithyDocumentSerde
 }
 
+// Open port for taking HTTP or HTTPS traffic.
+type ListenerProperty struct {
+
+	// Port for processing traffic.
+	Port *int32
+
+	// Selection of HTTP or HTTPS traffic.
+	Type ListenerPropertyType
+
+	noSmithyDocumentSerde
+}
+
+// This data type is used specifically for the CreateProxy and UpdateProxy APIs.
+//
+// Open port for taking HTTP or HTTPS traffic.
+type ListenerPropertyRequest struct {
+
+	// Port for processing traffic.
+	//
+	// This member is required.
+	Port *int32
+
+	// Selection of HTTP or HTTPS traffic.
+	//
+	// This member is required.
+	Type ListenerPropertyType
+
+	noSmithyDocumentSerde
+}
+
 // Defines where Network Firewall sends logs for the firewall for one log type.
 // This is used in LoggingConfiguration. You can send each type of log to an Amazon S3 bucket, a
 // CloudWatch log group, or a Firehose delivery stream.
@@ -1105,6 +1362,319 @@ type PortSet struct {
 	noSmithyDocumentSerde
 }
 
+// Proxy attached to a NAT gateway.
+type Proxy struct {
+
+	// Time the Proxy was created.
+	CreateTime *time.Time
+
+	// Time the Proxy was deleted.
+	DeleteTime *time.Time
+
+	// Failure code for cases when the Proxy fails to attach or update.
+	FailureCode *string
+
+	// Failure message for cases when the Proxy fails to attach or update.
+	FailureMessage *string
+
+	// Listener properties for HTTP and HTTPS traffic.
+	ListenerProperties []ListenerProperty
+
+	// The NAT Gateway for the proxy.
+	NatGatewayId *string
+
+	// The Amazon Resource Name (ARN) of a proxy.
+	ProxyArn *string
+
+	// The Amazon Resource Name (ARN) of a proxy configuration.
+	ProxyConfigurationArn *string
+
+	// The descriptive name of the proxy configuration. You can't change the name of a
+	// proxy configuration after you create it.
+	ProxyConfigurationName *string
+
+	// Current modification status of the Proxy.
+	ProxyModifyState ProxyModifyState
+
+	// The descriptive name of the proxy. You can't change the name of a proxy after
+	// you create it.
+	ProxyName *string
+
+	// Current attachment/detachment status of the Proxy.
+	ProxyState ProxyState
+
+	// The key:value pairs to associate with the resource.
+	Tags []Tag
+
+	// TLS decryption on traffic to filter on attributes in the HTTP header.
+	TlsInterceptProperties *TlsInterceptProperties
+
+	// Time the Proxy was updated.
+	UpdateTime *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Evaluation points in the traffic flow where rules are applied. There are three
+// phases in a traffic where the rule match is applied.
+//
+// This data type is used specifically for the CreateProxyConfiguration and UpdateProxyConfiguration APIs.
+type ProxyConfigDefaultRulePhaseActionsRequest struct {
+
+	// After receiving response.
+	PostRESPONSE ProxyRulePhaseAction
+
+	// Before domain resolution.
+	PreDNS ProxyRulePhaseAction
+
+	// After DNS, before request.
+	PreREQUEST ProxyRulePhaseAction
+
+	noSmithyDocumentSerde
+}
+
+// Proxy rule group contained within a proxy configuration.
+type ProxyConfigRuleGroup struct {
+
+	// Priority of the proxy rule group in the proxy configuration.
+	Priority *int32
+
+	// The Amazon Resource Name (ARN) of a proxy rule group.
+	ProxyRuleGroupArn *string
+
+	// The descriptive name of the proxy rule group. You can't change the name of a
+	// proxy rule group after you create it.
+	ProxyRuleGroupName *string
+
+	// Proxy rule group type.
+	Type *string
+
+	noSmithyDocumentSerde
+}
+
+// A Proxy Configuration defines the monitoring and protection behavior for a
+// Proxy. The details of the behavior are defined in the rule groups that you add
+// to your configuration.
+type ProxyConfiguration struct {
+
+	// Time the Proxy Configuration was created.
+	CreateTime *time.Time
+
+	// Evaluation points in the traffic flow where rules are applied. There are three
+	// phases in a traffic where the rule match is applied.
+	//
+	// Pre-DNS - before domain resolution.
+	//
+	// Pre-Request - after DNS, before request.
+	//
+	// Post-Response - after receiving response.
+	DefaultRulePhaseActions *ProxyConfigDefaultRulePhaseActionsRequest
+
+	// Time the Proxy Configuration was deleted.
+	DeleteTime *time.Time
+
+	// A description of the proxy configuration.
+	Description *string
+
+	// The Amazon Resource Name (ARN) of a proxy configuration.
+	ProxyConfigurationArn *string
+
+	// The descriptive name of the proxy configuration. You can't change the name of a
+	// proxy configuration after you create it.
+	ProxyConfigurationName *string
+
+	// Proxy rule groups within the proxy configuration.
+	RuleGroups []ProxyConfigRuleGroup
+
+	// The key:value pairs to associate with the resource.
+	Tags []Tag
+
+	noSmithyDocumentSerde
+}
+
+// High-level information about a proxy configuration, returned by operations like
+// create and describe. You can use the information provided in the metadata to
+// retrieve and manage a proxy configuration. You can retrieve all objects for a
+// proxy configuration by calling DescribeProxyConfiguration.
+type ProxyConfigurationMetadata struct {
+
+	// The Amazon Resource Name (ARN) of a proxy configuration.
+	Arn *string
+
+	// The descriptive name of the proxy configuration. You can't change the name of a
+	// proxy configuration after you create it.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// High-level information about a proxy, returned by operations like create and
+// describe. You can use the information provided in the metadata to retrieve and
+// manage a proxy. You can retrieve all objects for a proxy by calling DescribeProxy.
+type ProxyMetadata struct {
+
+	// The Amazon Resource Name (ARN) of a proxy.
+	Arn *string
+
+	// The descriptive name of the proxy. You can't change the name of a proxy after
+	// you create it.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// Individual rules that define match conditions and actions for application-layer
+// traffic. Rules specify what to inspect (domains, headers, methods) and what
+// action to take (allow, deny, alert).
+type ProxyRule struct {
+
+	// Action to take.
+	Action ProxyRulePhaseAction
+
+	// Match criteria that specify what traffic attributes to examine. Conditions
+	// include operators (StringEquals, StringLike) and values to match against.
+	Conditions []ProxyRuleCondition
+
+	// A description of the proxy rule.
+	Description *string
+
+	// The descriptive name of the proxy rule. You can't change the name of a proxy
+	// rule after you create it.
+	ProxyRuleName *string
+
+	noSmithyDocumentSerde
+}
+
+// Match criteria that specify what traffic attributes to examine.
+type ProxyRuleCondition struct {
+
+	// Defines what is to be matched.
+	ConditionKey *string
+
+	// Defines how to perform a match.
+	ConditionOperator *string
+
+	// Specifes the exact value that needs to be matched against.
+	ConditionValues []string
+
+	noSmithyDocumentSerde
+}
+
+// Collections of related proxy filtering rules. Rule groups help you manage and
+// reuse sets of rules across multiple proxy configurations.
+type ProxyRuleGroup struct {
+
+	// Time the Proxy Rule Group was created.
+	CreateTime *time.Time
+
+	// Time the Proxy Rule Group was deleted.
+	DeleteTime *time.Time
+
+	// A description of the proxy rule group.
+	Description *string
+
+	// The Amazon Resource Name (ARN) of a proxy rule group.
+	ProxyRuleGroupArn *string
+
+	// The descriptive name of the proxy rule group. You can't change the name of a
+	// proxy rule group after you create it.
+	ProxyRuleGroupName *string
+
+	// Individual rules that define match conditions and actions for application-layer
+	// traffic. Rules specify what to inspect (domains, headers, methods) and what
+	// action to take (allow, deny, alert).
+	Rules *ProxyRulesByRequestPhase
+
+	// The key:value pairs to associate with the resource.
+	Tags []Tag
+
+	noSmithyDocumentSerde
+}
+
+// The proxy rule group(s) to attach to the proxy configuration
+type ProxyRuleGroupAttachment struct {
+
+	// Where to insert a proxy rule group in a proxy configuration.
+	InsertPosition *int32
+
+	// The descriptive name of the proxy rule group. You can't change the name of a
+	// proxy rule group after you create it.
+	ProxyRuleGroupName *string
+
+	noSmithyDocumentSerde
+}
+
+// High-level information about a proxy rule group, returned by operations like
+// create and describe. You can use the information provided in the metadata to
+// retrieve and manage a proxy rule group. You can retrieve all objects for a proxy
+// rule group by calling DescribeProxyRuleGroup.
+type ProxyRuleGroupMetadata struct {
+
+	// The Amazon Resource Name (ARN) of a proxy rule group.
+	Arn *string
+
+	// The descriptive name of the proxy rule group. You can't change the name of a
+	// proxy rule group after you create it.
+	Name *string
+
+	noSmithyDocumentSerde
+}
+
+// Proxy rule group name and new desired position.
+type ProxyRuleGroupPriority struct {
+
+	// Where to move a proxy rule group in a proxy configuration.
+	NewPosition *int32
+
+	// The descriptive name of the proxy rule group. You can't change the name of a
+	// proxy rule group after you create it.
+	ProxyRuleGroupName *string
+
+	noSmithyDocumentSerde
+}
+
+// Proxy rule group along with its priority.
+type ProxyRuleGroupPriorityResult struct {
+
+	// Priority of the proxy rule group in the proxy configuration.
+	Priority *int32
+
+	// The descriptive name of the proxy rule group. You can't change the name of a
+	// proxy rule group after you create it.
+	ProxyRuleGroupName *string
+
+	noSmithyDocumentSerde
+}
+
+// Proxy rule name and new desired position.
+type ProxyRulePriority struct {
+
+	// Where to move a proxy rule in a proxy rule group.
+	NewPosition *int32
+
+	// The descriptive name of the proxy rule. You can't change the name of a proxy
+	// rule after you create it.
+	ProxyRuleName *string
+
+	noSmithyDocumentSerde
+}
+
+// Evaluation points in the traffic flow where rules are applied. There are three
+// phases in a traffic where the rule match is applied.
+type ProxyRulesByRequestPhase struct {
+
+	// After receiving response.
+	PostRESPONSE []ProxyRule
+
+	// Before domain resolution.
+	PreDNS []ProxyRule
+
+	// After DNS, before request.
+	PreREQUEST []ProxyRule
+
+	noSmithyDocumentSerde
+}
+
 // Stateless inspection criteria that publishes the specified metrics to Amazon
 // CloudWatch for the matching packet. This setting defines a CloudWatch dimension
 // value to be published.
@@ -1222,6 +1792,10 @@ type RuleGroupMetadata struct {
 	// group after you create it.
 	Name *string
 
+	// The name of the Amazon Web Services Marketplace seller that provides this rule
+	// group.
+	VendorName *string
+
 	noSmithyDocumentSerde
 }
 
@@ -1284,7 +1858,7 @@ type RuleGroupResponse struct {
 	// Detailed information about the current status of a rule group.
 	RuleGroupStatus ResourceStatus
 
-	// The Amazon resource name (ARN) of the Amazon Simple Notification Service SNS
+	// The Amazon Resource Name (ARN) of the Amazon Simple Notification Service SNS
 	// topic that's used to record changes to the managed rule group. You can subscribe
 	// to the SNS topic to receive notifications when the managed rule group is
 	// modified, such as for new versions and for version expiration. For more
@@ -1297,6 +1871,14 @@ type RuleGroupResponse struct {
 	// group is copied from. You can use the metadata to track the version updates made
 	// to the originating rule group.
 	SourceMetadata *SourceMetadata
+
+	// A complex type containing the currently selected rule option fields that will
+	// be displayed for rule summarization returned by DescribeRuleGroupSummary.
+	//
+	//   - The RuleOptions specified in SummaryConfiguration
+	//
+	//   - Rule metadata organization preferences
+	SummaryConfiguration *SummaryConfiguration
 
 	// The key:value pairs to associate with the resource.
 	Tags []Tag
@@ -1381,7 +1963,12 @@ type RulesSource struct {
 // [Stateful domain list rule groups in Network Firewall]: https://docs.aws.amazon.com/network-firewall/latest/developerguide/stateful-rule-groups-domain-names.html
 type RulesSourceList struct {
 
-	// Whether you want to allow or deny access to the domains in your target list.
+	// Whether you want to apply allow, reject, alert, or drop behavior to the domains
+	// in your target list.
+	//
+	// When logging is enabled and you choose Alert, traffic that matches the domain
+	// specifications generates an alert in the firewall's logs. Then, traffic either
+	// passes, is rejected, or drops based on other rules in the firewall policy.
 	//
 	// This member is required.
 	GeneratedRulesType GeneratedRulesType
@@ -1408,7 +1995,32 @@ type RulesSourceList struct {
 	noSmithyDocumentSerde
 }
 
+// A complex type containing details about a Suricata rule. Contains:
+//
+//   - SID
+//
+//   - Msg
+//
+//   - Metadata
+//
+// Summaries are available for rule groups you manage and for active threat
+// defense Amazon Web Services managed rule groups.
+type RuleSummary struct {
+
+	// The contents of the rule's metadata.
+	Metadata *string
+
+	// The contents taken from the rule's msg field.
+	Msg *string
+
+	// The unique identifier (Signature ID) of the Suricata rule.
+	SID *string
+
+	noSmithyDocumentSerde
+}
+
 // Settings that are available for use in the rules in the RuleGroup where this is defined.
+// See CreateRuleGroupor UpdateRuleGroup for usage.
 type RuleVariables struct {
 
 	// A list of IP addresses and address ranges, in CIDR notation.
@@ -1464,13 +2076,13 @@ type ServerCertificateConfiguration struct {
 	//   - You can't use certificates issued by Private Certificate Authority.
 	//
 	// For more information about configuring certificates for outbound inspection,
-	// see [Using SSL/TLS certificates with certificates with TLS inspection configurations]in the Network Firewall Developer Guide.
+	// see [Using SSL/TLS certificates with TLS inspection configurations]in the Network Firewall Developer Guide.
 	//
 	// For information about working with certificates in ACM, see [Importing certificates] in the Certificate
 	// Manager User Guide.
 	//
+	// [Using SSL/TLS certificates with TLS inspection configurations]: https://docs.aws.amazon.com/network-firewall/latest/developerguide/tls-inspection-certificate-requirements.html
 	// [Importing certificates]: https://docs.aws.amazon.com/acm/latest/userguide/import-certificate.html
-	// [Using SSL/TLS certificates with certificates with TLS inspection configurations]: https://docs.aws.amazon.com/network-firewall/latest/developerguide/tls-inspection-certificate-requirements.html
 	CertificateAuthorityArn *string
 
 	// When enabled, Network Firewall checks if the server certificate presented by
@@ -1557,14 +2169,15 @@ type StatefulEngineOptions struct {
 	FlowTimeouts *FlowTimeouts
 
 	// Indicates how to manage the order of stateful rule evaluation for the policy.
-	// STRICT_ORDER is the default and recommended option. With STRICT_ORDER , provide
-	// your rules in the order that you want them to be evaluated. You can then choose
-	// one or more default actions for packets that don't match any rules. Choose
-	// STRICT_ORDER to have the stateful rules engine determine the evaluation order of
-	// your rules. The default action for this rule order is PASS , followed by DROP ,
-	// REJECT , and ALERT actions. Stateful rules are provided to the rule engine as
-	// Suricata compatible strings, and Suricata evaluates them based on your settings.
-	// For more information, see [Evaluation order for stateful rules]in the Network Firewall Developer Guide.
+	// STRICT_ORDER is the recommended option, but DEFAULT_ACTION_ORDER is the default
+	// option. With STRICT_ORDER , provide your rules in the order that you want them
+	// to be evaluated. You can then choose one or more default actions for packets
+	// that don't match any rules. Choose STRICT_ORDER to have the stateful rules
+	// engine determine the evaluation order of your rules. The default action for this
+	// rule order is PASS , followed by DROP , REJECT , and ALERT actions. Stateful
+	// rules are provided to the rule engine as Suricata compatible strings, and
+	// Suricata evaluates them based on your settings. For more information, see [Evaluation order for stateful rules]in
+	// the Network Firewall Developer Guide.
 	//
 	// [Evaluation order for stateful rules]: https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-rule-evaluation-order.html
 	RuleOrder RuleOrder
@@ -1662,6 +2275,20 @@ type StatefulRuleGroupReference struct {
 	//
 	// This member is required.
 	ResourceArn *string
+
+	// Network Firewall plans to augment the active threat defense managed rule group
+	// with an additional deep threat inspection capability. When this capability is
+	// released, Amazon Web Services will analyze service logs of network traffic
+	// processed by these rule groups to identify threat indicators across customers.
+	// Amazon Web Services will use these threat indicators to improve the active
+	// threat defense managed rule groups and protect the security of Amazon Web
+	// Services customers and services.
+	//
+	// Customers can opt-out of deep threat inspection at any time through the Network
+	// Firewall console or API. When customers opt out, Network Firewall will not use
+	// the network traffic processed by those customers' active threat defense rule
+	// groups for rule group improvement.
+	DeepThreatInspection *bool
 
 	// The action that allows the policy owner to override the behavior of the rule
 	// group within a policy.
@@ -1767,8 +2394,8 @@ type StatelessRulesAndCustomActions struct {
 	noSmithyDocumentSerde
 }
 
-// The ID for a subnet that you want to associate with the firewall. This is used
-// with CreateFirewalland AssociateSubnets. Network Firewall creates an instance of the associated firewall in
+// The ID for a subnet that's used in an association with a firewall. This is used
+// in CreateFirewall, AssociateSubnets, and CreateVpcEndpointAssociation. Network Firewall creates an instance of the associated firewall in
 // each subnet that you specify, to filter traffic in the subnet's Availability
 // Zone.
 type SubnetMapping struct {
@@ -1785,8 +2412,38 @@ type SubnetMapping struct {
 	noSmithyDocumentSerde
 }
 
+// A complex type containing summaries of security protections provided by a rule
+// group.
+//
+// Network Firewall extracts this information from selected fields in the rule
+// group's Suricata rules, based on your SummaryConfigurationsettings.
+type Summary struct {
+
+	// An array of RuleSummary objects containing individual rule details that had been
+	// configured by the rulegroup's SummaryConfiguration.
+	RuleSummaries []RuleSummary
+
+	noSmithyDocumentSerde
+}
+
+// A complex type that specifies which Suricata rule metadata fields to use when
+// displaying threat information. Contains:
+//
+//   - RuleOptions - The Suricata rule options fields to extract and display
+//
+// These settings affect how threat information appears in both the console and
+// API responses. Summaries are available for rule groups you manage and for active
+// threat defense Amazon Web Services managed rule groups.
+type SummaryConfiguration struct {
+
+	// Specifies the selected rule options returned by DescribeRuleGroupSummary.
+	RuleOptions []SummaryRuleOption
+
+	noSmithyDocumentSerde
+}
+
 // The status of the firewall endpoint and firewall policy configuration for a
-// single VPC subnet.
+// single VPC subnet. This is part of the FirewallStatus.
 //
 // For each VPC subnet that you associate with a firewall, Network Firewall does
 // the following:
@@ -1801,17 +2458,16 @@ type SubnetMapping struct {
 // or not ready status until the changes are complete.
 type SyncState struct {
 
-	// The attachment status of the firewall's association with a single VPC subnet.
-	// For each configured subnet, Network Firewall creates the attachment by
-	// instantiating the firewall endpoint in the subnet so that it's ready to take
-	// traffic. This is part of the FirewallStatus.
+	// The configuration and status for a single firewall subnet. For each configured
+	// subnet, Network Firewall creates the attachment by instantiating the firewall
+	// endpoint in the subnet so that it's ready to take traffic.
 	Attachment *Attachment
 
 	// The configuration status of the firewall endpoint in a single VPC subnet.
 	// Network Firewall provides each endpoint with the rules that are configured in
 	// the firewall policy. Each time you add a subnet or modify the associated
 	// firewall policy, Network Firewall synchronizes the rules in the endpoint, so it
-	// can properly filter network traffic. This is part of the FirewallStatus.
+	// can properly filter network traffic.
 	Config map[string]PerObjectStatus
 
 	noSmithyDocumentSerde
@@ -1979,11 +2635,210 @@ type TLSInspectionConfigurationResponse struct {
 	noSmithyDocumentSerde
 }
 
+// TLS decryption on traffic to filter on attributes in the HTTP header.
+type TlsInterceptProperties struct {
+
+	// Private Certificate Authority (PCA) used to issue private TLS certificates so
+	// that the proxy can present PCA-signed certificates which applications trust
+	// through the same root, establishing a secure and consistent trust model for
+	// encrypted communication.
+	PcaArn *string
+
+	// Specifies whether to enable or disable TLS Intercept Mode.
+	TlsInterceptMode TlsInterceptMode
+
+	noSmithyDocumentSerde
+}
+
+// This data type is used specifically for the CreateProxy and UpdateProxy APIs.
+//
+// TLS decryption on traffic to filter on attributes in the HTTP header.
+type TlsInterceptPropertiesRequest struct {
+
+	// Private Certificate Authority (PCA) used to issue private TLS certificates so
+	// that the proxy can present PCA-signed certificates which applications trust
+	// through the same root, establishing a secure and consistent trust model for
+	// encrypted communication.
+	PcaArn *string
+
+	// Specifies whether to enable or disable TLS Intercept Mode.
+	TlsInterceptMode TlsInterceptMode
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the synchronization state of a transit gateway
+// attachment, including its current status and any error messages. Network
+// Firewall uses this to track the state of your transit gateway configuration
+// changes.
+type TransitGatewayAttachmentSyncState struct {
+
+	// The unique identifier of the transit gateway attachment.
+	AttachmentId *string
+
+	// A message providing additional information about the current status,
+	// particularly useful when the transit gateway attachment is in a non- READY
+	// state.
+	//
+	// Valid values are:
+	//
+	//   - CREATING - The attachment is being created
+	//
+	//   - DELETING - The attachment is being deleted
+	//
+	//   - DELETED - The attachment has been deleted
+	//
+	//   - FAILED - The attachment creation has failed and cannot be recovered
+	//
+	//   - ERROR - The attachment is in an error state that might be recoverable
+	//
+	//   - READY - The attachment is active and processing traffic
+	//
+	//   - PENDING_ACCEPTANCE - The attachment is waiting to be accepted
+	//
+	//   - REJECTING - The attachment is in the process of being rejected
+	//
+	//   - REJECTED - The attachment has been rejected
+	//
+	// For information about troubleshooting endpoint failures, see [Troubleshooting firewall endpoint failures] in the Network
+	// Firewall Developer Guide.
+	//
+	// [Troubleshooting firewall endpoint failures]: https://docs.aws.amazon.com/network-firewall/latest/developerguide/firewall-troubleshooting-endpoint-failures.html
+	StatusMessage *string
+
+	// The current status of the transit gateway attachment.
+	//
+	// Valid values are:
+	//
+	//   - CREATING - The attachment is being created
+	//
+	//   - DELETING - The attachment is being deleted
+	//
+	//   - DELETED - The attachment has been deleted
+	//
+	//   - FAILED - The attachment creation has failed and cannot be recovered
+	//
+	//   - ERROR - The attachment is in an error state that might be recoverable
+	//
+	//   - READY - The attachment is active and processing traffic
+	//
+	//   - PENDING_ACCEPTANCE - The attachment is waiting to be accepted
+	//
+	//   - REJECTING - The attachment is in the process of being rejected
+	//
+	//   - REJECTED - The attachment has been rejected
+	TransitGatewayAttachmentStatus TransitGatewayAttachmentStatus
+
+	noSmithyDocumentSerde
+}
+
 // A unique source IP address that connected to a domain.
 type UniqueSources struct {
 
 	// The number of unique source IP addresses that connected to a domain.
 	Count int32
+
+	noSmithyDocumentSerde
+}
+
+// A VPC endpoint association defines a single subnet to use for a firewall
+// endpoint for a Firewall . You can define VPC endpoint associations only in the
+// Availability Zones that already have a subnet mapping defined in the Firewall
+// resource.
+//
+// You can retrieve the list of Availability Zones that are available for use by
+// calling DescribeFirewallMetadata .
+//
+// To manage firewall endpoints, first, in the Firewall specification, you specify
+// a single VPC and one subnet for each of the Availability Zones where you want to
+// use the firewall. Then you can define additional endpoints as VPC endpoint
+// associations.
+//
+// You can use VPC endpoint associations to expand the protections of the firewall
+// as follows:
+//
+//   - Protect multiple VPCs with a single firewall - You can use the firewall to
+//     protect other VPCs, either in your account or in accounts where the firewall is
+//     shared. You can only specify Availability Zones that already have a firewall
+//     endpoint defined in the Firewall subnet mappings.
+//
+//   - Define multiple firewall endpoints for a VPC in an Availability Zone - You
+//     can create additional firewall endpoints for the VPC that you have defined in
+//     the firewall, in any Availability Zone that already has an endpoint defined in
+//     the Firewall subnet mappings. You can create multiple VPC endpoint
+//     associations for any other VPC where you use the firewall.
+//
+// You can use Resource Access Manager to share a Firewall that you own with other
+// accounts, which gives them the ability to use the firewall to create VPC
+// endpoint associations. For information about sharing a firewall, see
+// PutResourcePolicy in this guide and see [Sharing Network Firewall resources] in the Network Firewall Developer
+// Guide.
+//
+// The status of the VPC endpoint association, which indicates whether it's ready
+// to filter network traffic, is provided in the corresponding VpcEndpointAssociationStatus. You can retrieve
+// both the association and its status by calling DescribeVpcEndpointAssociation.
+//
+// [Sharing Network Firewall resources]: https://docs.aws.amazon.com/network-firewall/latest/developerguide/sharing.html
+type VpcEndpointAssociation struct {
+
+	// The Amazon Resource Name (ARN) of the firewall.
+	//
+	// This member is required.
+	FirewallArn *string
+
+	// The ID for a subnet that's used in an association with a firewall. This is used
+	// in CreateFirewall, AssociateSubnets, and CreateVpcEndpointAssociation. Network Firewall creates an instance of the associated firewall in
+	// each subnet that you specify, to filter traffic in the subnet's Availability
+	// Zone.
+	//
+	// This member is required.
+	SubnetMapping *SubnetMapping
+
+	// The Amazon Resource Name (ARN) of a VPC endpoint association.
+	//
+	// This member is required.
+	VpcEndpointAssociationArn *string
+
+	// The unique identifier of the VPC for the endpoint association.
+	//
+	// This member is required.
+	VpcId *string
+
+	// A description of the VPC endpoint association.
+	Description *string
+
+	// The key:value pairs to associate with the resource.
+	Tags []Tag
+
+	// The unique identifier of the VPC endpoint association.
+	VpcEndpointAssociationId *string
+
+	noSmithyDocumentSerde
+}
+
+// High-level information about a VPC endpoint association, returned by
+// ListVpcEndpointAssociations . You can use the information provided in the
+// metadata to retrieve and manage a VPC endpoint association.
+type VpcEndpointAssociationMetadata struct {
+
+	// The Amazon Resource Name (ARN) of a VPC endpoint association.
+	VpcEndpointAssociationArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Detailed information about the current status of a VpcEndpointAssociation. You can retrieve this by
+// calling DescribeVpcEndpointAssociationand providing the VPC endpoint association ARN.
+type VpcEndpointAssociationStatus struct {
+
+	// The readiness of the configured firewall endpoint to handle network traffic.
+	//
+	// This member is required.
+	Status FirewallStatusValue
+
+	// The list of the Availability Zone sync states for all subnets that are defined
+	// by the firewall.
+	AssociationSyncState map[string]AZSyncState
 
 	noSmithyDocumentSerde
 }

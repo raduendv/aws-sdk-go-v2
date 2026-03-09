@@ -71,7 +71,7 @@ type GetTemplateOutput struct {
 	// set, the Processed template becomes available.
 	StagesAvailable []types.TemplateStage
 
-	// Structure containing the template body.
+	// Structure that contains the template body.
 	//
 	// CloudFormation returns the same template that was used when the stack was
 	// created.
@@ -168,16 +168,13 @@ func (c *Client) addOperationGetTemplateMiddlewares(stack *middleware.Stack, opt
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

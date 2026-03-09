@@ -1,3 +1,154 @@
+# v1.53.2 (2026-02-02)
+
+* No change notes available for this release.
+
+# v1.53.1 (2026-01-09)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.53.0 (2025-12-18)
+
+* **Feature**: Added support for new operating systems (1) Ubuntu 24.04 Pro LTS on Elastic fleets, and (2) Microsoft Server 2025 on Always-On and On-Demand fleets
+
+# v1.52.5 (2025-12-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.4 (2025-12-02)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.24.0. Notably this version of the library reduces the allocation footprint of the middleware system. We observe a ~10% reduction in allocations per SDK call with this change.
+
+# v1.52.3 (2025-11-25)
+
+* **Bug Fix**: Add error check for endpoint param binding during auth scheme resolution to fix panic reported in #3234
+
+# v1.52.2 (2025-11-19.2)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.52.1 (2025-11-18)
+
+* No change notes available for this release.
+
+# v1.52.0 (2025-11-17)
+
+* **Feature**: Adding support for additional instances and extended storage
+
+# v1.51.2 (2025-11-12)
+
+* **Bug Fix**: Further reduce allocation overhead when the metrics system isn't in-use.
+* **Bug Fix**: Reduce allocation overhead when the client doesn't have any HTTP interceptors configured.
+* **Bug Fix**: Remove blank trace spans towards the beginning of the request that added no additional information. This conveys a slight reduction in overall allocations.
+
+# v1.51.1 (2025-11-11)
+
+* **Bug Fix**: Return validation error if input region is not a valid host label.
+
+# v1.51.0 (2025-11-10)
+
+* **Feature**: AWS Appstream support for IPv6
+
+# v1.50.4 (2025-11-04)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+* **Dependency Update**: Upgrade to smithy-go v1.23.2 which should convey some passive reduction of overall allocations, especially when not using the metrics system.
+
+# v1.50.3 (2025-10-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.50.2 (2025-10-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.50.1 (2025-10-16)
+
+* **Dependency Update**: Bump minimum Go version to 1.23.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.50.0 (2025-10-14)
+
+* **Feature**: This release introduces support for Microsoft license included applications streaming.
+
+# v1.49.7 (2025-09-26)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.6 (2025-09-24)
+
+* **Documentation**: G6f instance support for AppStream 2.0
+
+# v1.49.5 (2025-09-23)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.4 (2025-09-10)
+
+* No change notes available for this release.
+
+# v1.49.3 (2025-09-08)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.2 (2025-08-29)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.1 (2025-08-27)
+
+* **Dependency Update**: Update to smithy-go v1.23.0.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.49.0 (2025-08-21)
+
+* **Feature**: Remove incorrect endpoint tests
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.48.1 (2025-08-20)
+
+* **Bug Fix**: Remove unused deserialization code.
+
+# v1.48.0 (2025-08-11)
+
+* **Feature**: Add support for configuring per-service Options via callback on global config.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.47.1 (2025-08-06)
+
+* **Documentation**: Added support for G6 instances
+
+# v1.47.0 (2025-08-04)
+
+* **Feature**: Support configurable auth scheme preferences in service clients via AWS_AUTH_SCHEME_PREFERENCE in the environment, auth_scheme_preference in the config file, and through in-code settings on LoadDefaultConfig and client constructor methods.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.46.1 (2025-07-30)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.46.0 (2025-07-28)
+
+* **Feature**: Add support for HTTP interceptors.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.45.6 (2025-07-19)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.45.5 (2025-06-17)
+
+* **Dependency Update**: Update to smithy-go v1.22.4.
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.45.4 (2025-06-10)
+
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.45.3 (2025-05-08)
+
+* No change notes available for this release.
+
 # v1.45.2 (2025-04-03)
 
 * No change notes available for this release.

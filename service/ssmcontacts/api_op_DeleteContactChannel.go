@@ -10,10 +10,11 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// To no longer receive engagements on a contact channel, you can delete the
-// channel from a contact. Deleting the contact channel removes it from the
-// contact's engagement plan. If you delete the only contact channel for a contact,
-// you won't be able to engage that contact during an incident.
+// To stop receiving engagements on a contact channel, you can delete the channel
+// from a contact. Deleting the contact channel does not remove it from the
+// contact's engagement plan, but the stage that includes the channel will be
+// ignored. If you delete the only contact channel for a contact, you'll no longer
+// be able to engage that contact during an incident.
 func (c *Client) DeleteContactChannel(ctx context.Context, params *DeleteContactChannelInput, optFns ...func(*Options)) (*DeleteContactChannelOutput, error) {
 	if params == nil {
 		params = &DeleteContactChannelInput{}
@@ -134,16 +135,13 @@ func (c *Client) addOperationDeleteContactChannelMiddlewares(stack *middleware.S
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

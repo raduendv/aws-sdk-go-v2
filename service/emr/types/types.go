@@ -272,6 +272,33 @@ type CloudWatchAlarmDefinition struct {
 	noSmithyDocumentSerde
 }
 
+// Holds CloudWatch log configuration settings and metadata that specify settings
+// like log files to monitor and where to send them.
+type CloudWatchLogConfiguration struct {
+
+	// Specifies if CloudWatch logging is enabled.
+	//
+	// This member is required.
+	Enabled *bool
+
+	// The ARN of the encryption key used to encrypt the logs.
+	EncryptionKeyArn *string
+
+	// The name of the CloudWatch log group where logs are published.
+	LogGroupName *string
+
+	// The prefix of the log stream name.
+	LogStreamNamePrefix *string
+
+	// A map of log types to file names for publishing logs to the standard output or
+	// standard error streams for CloudWatch. Valid log types include STEP_LOGS,
+	// SPARK_DRIVER, and SPARK_EXECUTOR. Valid file names for each type include STDOUT
+	// and STDERR.
+	LogTypes map[string][]string
+
+	noSmithyDocumentSerde
+}
+
 // The detailed description of the cluster.
 type Cluster struct {
 
@@ -316,6 +343,9 @@ type Cluster struct {
 	// category. For example, key name, subnet ID, IAM instance profile, and so on.
 	Ec2InstanceAttributes *Ec2InstanceAttributes
 
+	// Reserved.
+	ExtendedSupport *bool
+
 	// The unique identifier for the cluster.
 	Id *string
 
@@ -344,6 +374,9 @@ type Cluster struct {
 	// The DNS name of the master node. If the cluster is on a private subnet, this is
 	// the private DNS name. On a public subnet, this is the public DNS name.
 	MasterPublicDnsName *string
+
+	// Contains Cloudwatch log configuration metadata and settings.
+	MonitoringConfiguration *MonitoringConfiguration
 
 	// The name of the cluster. This parameter can't contain the characters <, >, $,
 	// |, or ` (backtick).
@@ -745,6 +778,15 @@ type Ec2InstanceAttributes struct {
 	// The identifier of the Amazon EC2 security group for the Amazon EMR service to
 	// access clusters in VPC private subnets.
 	ServiceAccessSecurityGroup *string
+
+	noSmithyDocumentSerde
+}
+
+// The EMR container configuration.
+type EMRContainersConfig struct {
+
+	// The Job run ID for the container configuration.
+	JobRunId *string
 
 	noSmithyDocumentSerde
 }
@@ -1212,10 +1254,9 @@ type InstanceGroup struct {
 	// value of a CloudWatch metric. See PutAutoScalingPolicy.
 	AutoScalingPolicy *AutoScalingPolicyDescription
 
-	// If specified, indicates that the instance group uses Spot Instances. This is
-	// the maximum price you are willing to pay for Spot Instances. Specify
-	// OnDemandPrice to set the amount equal to the On-Demand price, or specify an
-	// amount in USD.
+	// The bid price for each Amazon EC2 Spot Instance type as defined by InstanceType
+	// . Expressed in USD. If neither BidPrice nor BidPriceAsPercentageOfOnDemandPrice
+	// is provided, BidPriceAsPercentageOfOnDemandPrice defaults to 100%.
 	BidPrice *string
 
 	// Amazon EMR releases 4.x or later.
@@ -1303,10 +1344,9 @@ type InstanceGroupConfig struct {
 	// value of a CloudWatch metric. See PutAutoScalingPolicy.
 	AutoScalingPolicy *AutoScalingPolicy
 
-	// If specified, indicates that the instance group uses Spot Instances. This is
-	// the maximum price you are willing to pay for Spot Instances. Specify
-	// OnDemandPrice to set the amount equal to the On-Demand price, or specify an
-	// amount in USD.
+	// The bid price for each Amazon EC2 Spot Instance type as defined by InstanceType
+	// . Expressed in USD. If neither BidPrice nor BidPriceAsPercentageOfOnDemandPrice
+	// is provided, BidPriceAsPercentageOfOnDemandPrice defaults to 100%.
 	BidPrice *string
 
 	// Amazon EMR releases 4.x or later.
@@ -1371,10 +1411,9 @@ type InstanceGroupDetail struct {
 	// This member is required.
 	State InstanceGroupState
 
-	// If specified, indicates that the instance group uses Spot Instances. This is
-	// the maximum price you are willing to pay for Spot Instances. Specify
-	// OnDemandPrice to set the amount equal to the On-Demand price, or specify an
-	// amount in USD.
+	// The bid price for each Amazon EC2 Spot Instance type as defined by InstanceType
+	// . Expressed in USD. If neither BidPrice nor BidPriceAsPercentageOfOnDemandPrice
+	// is provided, BidPriceAsPercentageOfOnDemandPrice defaults to 100%.
 	BidPrice *string
 
 	// The custom AMI ID to use for the provisioned instance group.
@@ -1592,7 +1631,8 @@ type InstanceTypeConfig struct {
 type InstanceTypeSpecification struct {
 
 	// The bid price for each Amazon EC2 Spot Instance type as defined by InstanceType
-	// . Expressed in USD.
+	// . Expressed in USD. If neither BidPrice nor BidPriceAsPercentageOfOnDemandPrice
+	// is provided, BidPriceAsPercentageOfOnDemandPrice defaults to 100%.
 	BidPrice *string
 
 	// The bid price, as a percentage of On-Demand price, for each Amazon EC2 Spot
@@ -2005,6 +2045,16 @@ type MetricDimension struct {
 	noSmithyDocumentSerde
 }
 
+// Contains CloudWatch log configuration metadata and settings.
+type MonitoringConfiguration struct {
+
+	// CloudWatch log configuration settings and metadata that specify settings like
+	// log files to monitor and where to send them.
+	CloudWatchLogConfiguration *CloudWatchLogConfiguration
+
+	noSmithyDocumentSerde
+}
+
 // A notebook execution. An execution is a specific instance that an Amazon EMR
 // Notebook is run using the StartNotebookExecution action.
 type NotebookExecution struct {
@@ -2297,6 +2347,40 @@ type OutputNotebookS3LocationFromInput struct {
 	noSmithyDocumentSerde
 }
 
+// Holds persistent application user interface information. Applications installed
+// on the Amazon EMR cluster publish user interfaces as web sites to monitor
+// cluster activity.
+type PersistentAppUI struct {
+
+	// The author ID for the persistent application user interface object.
+	AuthorId *string
+
+	// The creation date and time for the persistent application user interface object.
+	CreationTime *time.Time
+
+	// The date and time the persistent application user interface object was last
+	// changed.
+	LastModifiedTime *time.Time
+
+	// The reason the persistent application user interface object was last changed.
+	LastStateChangeReason *string
+
+	// The identifier for the persistent application user interface object.
+	PersistentAppUIId *string
+
+	// The status for the persistent application user interface object.
+	PersistentAppUIStatus *string
+
+	// The type list for the persistent application user interface object. Valid
+	// values include SHS, YTS, or TEZ.
+	PersistentAppUITypeList []PersistentAppUIType
+
+	// A collection of tags for the persistent application user interface object.
+	Tags []Tag
+
+	noSmithyDocumentSerde
+}
+
 // Placement group configuration for an Amazon EMR cluster. The configuration
 // specifies the placement strategy that can be applied to instance roles during
 // cluster creation.
@@ -2366,6 +2450,23 @@ type ReleaseLabelFilter struct {
 
 	// Optional release label version prefix filter. For example, emr-5 .
 	Prefix *string
+
+	noSmithyDocumentSerde
+}
+
+// The Amazon S3 configuration for monitoring log publishing. You can configure
+// your step to send log information to Amazon S3. When it's specified, it takes
+// precedence over the cluster's logging configuration. If you don't specify this
+// configuration entirely, or omit individual fields, EMR falls back to
+// cluster-level logging behavior.
+type S3MonitoringConfiguration struct {
+
+	// The KMS key ARN to encrypt the logs published to the given Amazon S3
+	// destination.
+	EncryptionKeyArn *string
+
+	// The Amazon S3 destination URI for log publishing.
+	LogUri *string
 
 	noSmithyDocumentSerde
 }
@@ -2711,6 +2812,10 @@ type Step struct {
 	// The Hadoop job configuration of the cluster step.
 	Config *HadoopStepConfig
 
+	// The KMS key ARN to encrypt the logs published to the given Amazon S3
+	// destination.
+	EncryptionKeyArn *string
+
 	// The Amazon Resource Name (ARN) of the runtime role for a step on the cluster.
 	// The runtime role can be a cross-account IAM role. The runtime role ARN is a
 	// combination of account ID, role name, and role type using the following format:
@@ -2722,6 +2827,9 @@ type Step struct {
 
 	// The identifier of the cluster step.
 	Id *string
+
+	// The Amazon S3 destination URI for log publishing.
+	LogUri *string
 
 	// The name of the cluster step.
 	Name *string
@@ -2769,6 +2877,9 @@ type StepConfig struct {
 	// this parameter set to TERMINATE_CLUSTER , the cluster does not terminate.
 	ActionOnFailure ActionOnFailure
 
+	// Object that holds configuration properties for logging.
+	StepMonitoringConfiguration *StepMonitoringConfiguration
+
 	noSmithyDocumentSerde
 }
 
@@ -2809,6 +2920,19 @@ type StepExecutionStatusDetail struct {
 
 	// The start date and time of the step.
 	StartDateTime *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Object that holds configuration properties for logging.
+type StepMonitoringConfiguration struct {
+
+	// The Amazon S3 configuration for monitoring log publishing. You can configure
+	// your step to send log information to Amazon S3. When it's specified, it takes
+	// precedence over the cluster's logging configuration. If you don't specify this
+	// configuration entirely, or omit individual fields, EMR falls back to
+	// cluster-level logging behavior.
+	S3MonitoringConfiguration *S3MonitoringConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -2856,8 +2980,15 @@ type StepSummary struct {
 	// The Hadoop job configuration of the cluster step.
 	Config *HadoopStepConfig
 
+	// The KMS key ARN to encrypt the logs published to the given Amazon S3
+	// destination.
+	EncryptionKeyArn *string
+
 	// The identifier of the cluster step.
 	Id *string
+
+	// The Amazon S3 destination URI for log publishing.
+	LogUri *string
 
 	// The name of the cluster step.
 	Name *string

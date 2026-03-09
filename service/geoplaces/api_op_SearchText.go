@@ -11,9 +11,12 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
-// Use the SearchText operation to search for geocode and place information. You
-// can then complete a follow-up query suggested from the Suggest API via a query
-// id.
+// SearchText searches for geocode and place information. You can then complete a
+// follow-up query suggested from the Suggest API via a query id.
+//
+// For more information, see [Search Text] in the Amazon Location Service Developer Guide.
+//
+// [Search Text]: https://docs.aws.amazon.com/location/latest/developerguide/search-text.html
 func (c *Client) SearchText(ctx context.Context, params *SearchTextInput, optFns ...func(*Options)) (*SearchTextOutput, error) {
 	if params == nil {
 		params = &SearchTextInput{}
@@ -37,17 +40,24 @@ type SearchTextInput struct {
 
 	// The position, in longitude and latitude, that the results should be close to.
 	// Typically, place results returned are ranked higher the closer they are to this
-	// position. Stored in [lng, lat] and in the WSG84 format.
+	// position. Stored in [lng, lat] and in the WGS 84 format.
 	//
-	// The fields BiasPosition , FilterBoundingBox , and FilterCircle are mutually
-	// exclusive.
+	// Exactly one of the following fields must be set: BiasPosition ,
+	// Filter.BoundingBox , or Filter.Circle .
 	BiasPosition []float64
 
 	// A structure which contains a set of inclusion/exclusion properties that results
-	// must posses in order to be returned as a result.
+	// must possess in order to be returned as a result.
 	Filter *types.SearchTextFilter
 
 	// Indicates if the results will be stored. Defaults to SingleUse , if left empty.
+	//
+	// Storing the response of an SearchText query is required to comply with service
+	// terms, but charged at a higher cost per request. Please review the [user agreement]and [service pricing structure] to
+	// determine the correct setting for your use case.
+	//
+	// [service pricing structure]: https://aws.amazon.com/location/pricing/
+	// [user agreement]: https://aws.amazon.com/location/sla/
 	IntendedUse types.SearchTextIntendedUse
 
 	// Optional: The API key to be used for authorization. Either an API key or valid
@@ -62,6 +72,8 @@ type SearchTextInput struct {
 	Language *string
 
 	// An optional limit for the number of results returned in a single call.
+	//
+	// Default value: 20
 	MaxResults *int32
 
 	// If nextToken is returned, there are more results available. The value of
@@ -73,11 +85,17 @@ type SearchTextInput struct {
 	// territorial claims through the point of view of the specified country.
 	PoliticalView *string
 
-	// The query Id.
+	// The query Id returned by the suggest API. If passed in the request, the
+	// SearchText API will preform a SearchText query with the improved query terms for
+	// the original query made to the suggest API.
+	//
+	// Exactly one of the following fields must be set: QueryText or QueryId .
 	QueryId *string
 
 	// The free-form text query to match addresses against. This is usually a
 	// partially typed address from an end user in an address box or form.
+	//
+	// Exactly one of the following fields must be set: QueryText or QueryId .
 	QueryText *string
 
 	noSmithyDocumentSerde
@@ -87,7 +105,7 @@ type SearchTextOutput struct {
 
 	// The pricing bucket for which the query is charged at.
 	//
-	// For more inforamtion on pricing, please visit [Amazon Location Service Pricing].
+	// For more information on pricing, please visit [Amazon Location Service Pricing].
 	//
 	// [Amazon Location Service Pricing]: https://aws.amazon.com/location/pricing/
 	//
@@ -195,16 +213,13 @@ func (c *Client) addOperationSearchTextMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

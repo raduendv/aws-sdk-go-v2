@@ -41,6 +41,9 @@ type Device struct {
 	// The timestamp of the most recent check-in of the device.
 	LastPostureAt *time.Time
 
+	// The user ID of the most recent session on the device.
+	LastUserId *string
+
 	// The model number of the device.
 	Model *string
 
@@ -69,12 +72,6 @@ type Device struct {
 
 	// The status of the device.
 	Status DeviceStatus
-
-	// The tag keys and optional values for the resource.
-	//
-	// Deprecated: This field will be removed in future releases. Use
-	// ListTagsForResource API instead.
-	Tags map[string]string
 
 	// The timestamp of when the device was updated.
 	UpdatedAt *time.Time
@@ -108,6 +105,9 @@ type DeviceSummary struct {
 
 	// The timestamp of the most recent check-in of the device.
 	LastPostureAt *time.Time
+
+	// The user ID of the most recent session on the device.
+	LastUserId *string
 
 	// The model number of the device.
 	Model *string
@@ -196,12 +196,6 @@ type Environment struct {
 	// An option to define if software updates should be applied within a maintenance
 	// window.
 	SoftwareSetUpdateSchedule SoftwareSetUpdateSchedule
-
-	// The tag keys and optional values for the resource.
-	//
-	// Deprecated: This field will be removed in future releases. Use
-	// ListTagsForResource API instead.
-	Tags map[string]string
 
 	// The timestamp of when the device was updated.
 	UpdatedAt *time.Time
@@ -319,12 +313,6 @@ type SoftwareSet struct {
 
 	// The timestamp of the end of support for the software set.
 	SupportedUntil *time.Time
-
-	// The tag keys and optional values for the resource.
-	//
-	// Deprecated: This field will be removed in future releases. Use
-	// ListTagsForResource API instead.
-	Tags map[string]string
 
 	// An option to define if the software set has been validated.
 	ValidationStatus SoftwareSetValidationStatus

@@ -15,8 +15,35 @@ type AudioExtractionCategory struct {
 	// This member is required.
 	State State
 
+	// Configuration for different audio extraction category types
+	TypeConfiguration *AudioExtractionCategoryTypeConfiguration
+
 	// List of Audio Extraction Category Type
 	Types []AudioExtractionCategoryType
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for different audio extraction category types
+type AudioExtractionCategoryTypeConfiguration struct {
+
+	// Configuration for transcript related features
+	Transcript *TranscriptConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// Optional configuration for audio language settings
+type AudioLanguageConfiguration struct {
+
+	// Configuration for Audio output language
+	GenerativeOutputLanguage AudioGenerativeOutputLanguage
+
+	// Enable multiple language identification in audio
+	IdentifyMultipleLanguages *bool
+
+	// List of supported audio languages
+	InputLanguages []Language
 
 	noSmithyDocumentSerde
 }
@@ -24,8 +51,14 @@ type AudioExtractionCategory struct {
 // Override Configuration of Audio
 type AudioOverrideConfiguration struct {
 
+	// Optional configuration for audio language settings
+	LanguageConfiguration *AudioLanguageConfiguration
+
 	// Configuration to enable/disable processing of modality
 	ModalityProcessing *ModalityProcessingConfiguration
+
+	// Configuration for sensitive data detection and redaction
+	SensitiveDataConfiguration *SensitiveDataConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -112,6 +145,12 @@ type Blueprint struct {
 	// KMS Key Identifier
 	KmsKeyId *string
 
+	// List of Blueprint Optimization Samples
+	OptimizationSamples []BlueprintOptimizationSample
+
+	// Time Stamp
+	OptimizationTime *time.Time
+
 	noSmithyDocumentSerde
 }
 
@@ -149,6 +188,47 @@ type BlueprintItem struct {
 	noSmithyDocumentSerde
 }
 
+// Structure for single blueprint entity.
+type BlueprintOptimizationObject struct {
+
+	// Arn of blueprint.
+	//
+	// This member is required.
+	BlueprintArn *string
+
+	// Stage of blueprint.
+	Stage BlueprintStage
+
+	noSmithyDocumentSerde
+}
+
+// Blueprint Optimization Output configuration.
+type BlueprintOptimizationOutputConfiguration struct {
+
+	// S3 object.
+	//
+	// This member is required.
+	S3Object *S3Object
+
+	noSmithyDocumentSerde
+}
+
+// Blueprint Recommendation Sample
+type BlueprintOptimizationSample struct {
+
+	// S3 Object of the asset
+	//
+	// This member is required.
+	AssetS3Object *S3Object
+
+	// Ground truth for the Blueprint and Asset combination
+	//
+	// This member is required.
+	GroundTruthS3Object *S3Object
+
+	noSmithyDocumentSerde
+}
+
 // Summary of a Blueprint
 type BlueprintSummary struct {
 
@@ -173,6 +253,17 @@ type BlueprintSummary struct {
 
 	// Time Stamp
 	LastModifiedTime *time.Time
+
+	noSmithyDocumentSerde
+}
+
+// Channel labeling configuration
+type ChannelLabelingConfiguration struct {
+
+	// State
+	//
+	// This member is required.
+	State State
 
 	noSmithyDocumentSerde
 }
@@ -232,6 +323,9 @@ type DataAutomationProject struct {
 	// Stage of the Project
 	ProjectStage DataAutomationProjectStage
 
+	// Type of the DataAutomationProject
+	ProjectType DataAutomationProjectType
+
 	// Standard output configuration
 	StandardOutputConfiguration *StandardOutputConfiguration
 
@@ -270,6 +364,9 @@ type DataAutomationProjectSummary struct {
 
 	// Stage of the Project
 	ProjectStage DataAutomationProjectStage
+
+	// Type of the DataAutomationProject
+	ProjectType DataAutomationProjectType
 
 	noSmithyDocumentSerde
 }
@@ -335,6 +432,9 @@ type DocumentOverrideConfiguration struct {
 
 	// Configuration to enable/disable processing of modality
 	ModalityProcessing *ModalityProcessingConfiguration
+
+	// Configuration for sensitive data detection and redaction
+	SensitiveDataConfiguration *SensitiveDataConfiguration
 
 	// Configuration of Splitter
 	Splitter *SplitterConfiguration
@@ -429,6 +529,9 @@ type ImageOverrideConfiguration struct {
 	// Configuration to enable/disable processing of modality
 	ModalityProcessing *ModalityProcessingConfiguration
 
+	// Configuration for sensitive data detection and redaction
+	SensitiveDataConfiguration *SensitiveDataConfiguration
+
 	noSmithyDocumentSerde
 }
 
@@ -522,6 +625,60 @@ type OverrideConfiguration struct {
 	noSmithyDocumentSerde
 }
 
+// Configuration for PII entities detection and redaction
+type PIIEntitiesConfiguration struct {
+
+	// Types of PII entities to detect
+	PiiEntityTypes []PIIEntityType
+
+	// Mode for redacting detected PII
+	RedactionMaskMode PIIRedactionMaskMode
+
+	noSmithyDocumentSerde
+}
+
+// S3 object
+type S3Object struct {
+
+	// S3 uri.
+	//
+	// This member is required.
+	S3Uri *string
+
+	// S3 object version.
+	Version *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for sensitive data detection and redaction
+type SensitiveDataConfiguration struct {
+
+	// Mode for sensitive data detection
+	//
+	// This member is required.
+	DetectionMode SensitiveDataDetectionMode
+
+	// Scope of detection - what types of sensitive data to detect
+	DetectionScope []SensitiveDataDetectionScopeType
+
+	// Configuration for PII entities detection and redaction
+	PiiEntitiesConfiguration *PIIEntitiesConfiguration
+
+	noSmithyDocumentSerde
+}
+
+// Speaker labeling configuration
+type SpeakerLabelingConfiguration struct {
+
+	// State
+	//
+	// This member is required.
+	State State
+
+	noSmithyDocumentSerde
+}
+
 // Configuration of Splitter
 type SplitterConfiguration struct {
 
@@ -561,6 +718,18 @@ type Tag struct {
 	//
 	// This member is required.
 	Value *string
+
+	noSmithyDocumentSerde
+}
+
+// Configuration for transcript related features
+type TranscriptConfiguration struct {
+
+	// Channel labeling configuration
+	ChannelLabeling *ChannelLabelingConfiguration
+
+	// Speaker labeling configuration
+	SpeakerLabeling *SpeakerLabelingConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -612,6 +781,9 @@ type VideoOverrideConfiguration struct {
 
 	// Configuration to enable/disable processing of modality
 	ModalityProcessing *ModalityProcessingConfiguration
+
+	// Configuration for sensitive data detection and redaction
+	SensitiveDataConfiguration *SensitiveDataConfiguration
 
 	noSmithyDocumentSerde
 }

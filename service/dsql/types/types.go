@@ -22,14 +22,37 @@ type ClusterSummary struct {
 	noSmithyDocumentSerde
 }
 
-// Properties of linked clusters.
-type LinkedClusterProperties struct {
+// Configuration details about encryption for the cluster including the KMS key
+// ARN, encryption type, and encryption status.
+type EncryptionDetails struct {
 
-	// Whether deletion protection is enabled.
-	DeletionProtectionEnabled *bool
+	// The status of encryption for the cluster.
+	//
+	// This member is required.
+	EncryptionStatus EncryptionStatus
 
-	// A map of key and value pairs the linked cluster is tagged with.
-	Tags map[string]string
+	// The type of encryption that protects the data on your cluster.
+	//
+	// This member is required.
+	EncryptionType EncryptionType
+
+	// The ARN of the KMS key that encrypts data in the cluster.
+	KmsKeyArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Defines the structure for multi-Region cluster configurations, containing the
+// witness region and linked cluster settings.
+type MultiRegionProperties struct {
+
+	// The set of peered clusters that form the multi-Region cluster configuration.
+	// Each peered cluster represents a database instance in a different Region.
+	Clusters []string
+
+	// The Region that serves as the witness region for a multi-Region cluster. The
+	// witness Region helps maintain cluster consistency and quorum.
+	WitnessRegion *string
 
 	noSmithyDocumentSerde
 }

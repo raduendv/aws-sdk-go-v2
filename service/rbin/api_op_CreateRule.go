@@ -47,9 +47,14 @@ func (c *Client) CreateRule(ctx context.Context, params *CreateRuleInput, optFns
 
 type CreateRuleInput struct {
 
-	// The resource type to be retained by the retention rule. Currently, only Amazon
-	// EBS snapshots and EBS-backed AMIs are supported. To retain snapshots, specify
-	// EBS_SNAPSHOT . To retain EBS-backed AMIs, specify EC2_IMAGE .
+	// The resource type to be retained by the retention rule. Currently, only EBS
+	// volumes, EBS snapshots, and EBS-backed AMIs are supported.
+	//
+	//   - To retain EBS volumes, specify EBS_VOLUME .
+	//
+	//   - To retain EBS snapshots, specify EBS_SNAPSHOT
+	//
+	//   - To retain EBS-backed AMIs, specify EC2_IMAGE .
 	//
 	// This member is required.
 	ResourceType types.ResourceType
@@ -243,16 +248,13 @@ func (c *Client) addOperationCreateRuleMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

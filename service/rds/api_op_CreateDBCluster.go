@@ -112,7 +112,15 @@ type CreateDBClusterInput struct {
 	// A list of Availability Zones (AZs) where you specifically want to create DB
 	// instances in the DB cluster.
 	//
-	// For information on AZs, see [Availability Zones] in the Amazon Aurora User Guide.
+	// For the first three DB instances that you create, RDS distributes each DB
+	// instance to a different AZ that you specify. For additional DB instances that
+	// you create, RDS randomly distributes them to the AZs that you specified. For
+	// example, if you create a DB cluster with one writer instance and three reader
+	// instances, RDS might distribute the writer instance to AZ 1, the first reader
+	// instance to AZ 2, the second reader instance to AZ 3, and the third reader
+	// instance to either AZ 1, AZ 2, or AZ 3.
+	//
+	// For more information, see [Availability Zones] and [High availability for Aurora DB instances] in the Amazon Aurora User Guide.
 	//
 	// Valid for Cluster Type: Aurora DB clusters only
 	//
@@ -120,6 +128,7 @@ type CreateDBClusterInput struct {
 	//
 	//   - Can't specify more than three AZs.
 	//
+	// [High availability for Aurora DB instances]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraHighAvailability.html#Concepts.AuroraHighAvailability.Instances
 	// [Availability Zones]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.RegionsAndAvailabilityZones.html#Concepts.RegionsAndAvailabilityZones.AvailabilityZones
 	AvailabilityZones []string
 
@@ -361,9 +370,9 @@ type CreateDBClusterInput struct {
 	// version on your DB cluster past the end of standard support for that engine
 	// version. For more information, see the following sections:
 	//
-	//   - Amazon Aurora - [Using Amazon RDS Extended Support]in the Amazon Aurora User Guide
+	//   - Amazon Aurora - [Amazon RDS Extended Support with Amazon Aurora]in the Amazon Aurora User Guide
 	//
-	//   - Amazon RDS - [Using Amazon RDS Extended Support]in the Amazon RDS User Guide
+	//   - Amazon RDS - [Amazon RDS Extended Support with Amazon RDS]in the Amazon RDS User Guide
 	//
 	// Valid for Cluster Type: Aurora DB clusters and Multi-AZ DB clusters
 	//
@@ -372,7 +381,8 @@ type CreateDBClusterInput struct {
 	//
 	// Default: open-source-rds-extended-support
 	//
-	// [Using Amazon RDS Extended Support]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
+	// [Amazon RDS Extended Support with Amazon RDS]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/extended-support.html
+	// [Amazon RDS Extended Support with Amazon Aurora]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/extended-support.html
 	EngineLifecycleSupport *string
 
 	// The DB engine mode of the DB cluster, either provisioned or serverless .
@@ -506,6 +516,21 @@ type CreateDBClusterInput struct {
 	//
 	// [Password management with Amazon Web Services Secrets Manager]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-secrets-manager.html
 	ManageMasterUserPassword *bool
+
+	// Specifies the authentication type for the master user. With IAM master user
+	// authentication, you can configure the master DB user with IAM database
+	// authentication when you create a DB cluster.
+	//
+	// You can specify one of the following values:
+	//
+	//   - password - Use standard database authentication with a password.
+	//
+	//   - iam-db-auth - Use IAM database authentication for the master user.
+	//
+	// Valid for Cluster Type: Aurora DB clusters and Multi-AZ DB clusters
+	//
+	// This option is only valid for RDS for PostgreSQL and Aurora PostgreSQL engines.
+	MasterUserAuthenticationType types.MasterUserAuthenticationType
 
 	// The password for the master database user.
 	//
@@ -735,39 +760,28 @@ type CreateDBClusterInput struct {
 
 	// Specifies whether the DB cluster is publicly accessible.
 	//
+	// Valid for Cluster Type: Multi-AZ DB clusters only
+	//
 	// When the DB cluster is publicly accessible and you connect from outside of the
-	// DB cluster's virtual private cloud (VPC), its Domain Name System (DNS) endpoint
+	// DB cluster's virtual private cloud (VPC), its domain name system (DNS) endpoint
 	// resolves to the public IP address. When you connect from within the same VPC as
 	// the DB cluster, the endpoint resolves to the private IP address. Access to the
-	// DB cluster is ultimately controlled by the security group it uses. That public
-	// access isn't permitted if the security group assigned to the DB cluster doesn't
-	// permit it.
+	// DB cluster is controlled by its security group settings.
 	//
 	// When the DB cluster isn't publicly accessible, it is an internal DB cluster
 	// with a DNS name that resolves to a private IP address.
 	//
-	// Valid for Cluster Type: Multi-AZ DB clusters only
+	// The default behavior when PubliclyAccessible is not specified depends on
+	// whether a DBSubnetGroup is specified.
 	//
-	// Default: The default behavior varies depending on whether DBSubnetGroupName is
-	// specified.
+	// If DBSubnetGroup isn't specified, PubliclyAccessible defaults to true .
 	//
-	// If DBSubnetGroupName isn't specified, and PubliclyAccessible isn't specified,
-	// the following applies:
+	// If DBSubnetGroup is specified, PubliclyAccessible defaults to false unless the
+	// value of DBSubnetGroup is default , in which case PubliclyAccessible defaults
+	// to true .
 	//
-	//   - If the default VPC in the target Region doesn’t have an internet gateway
-	//   attached to it, the DB cluster is private.
-	//
-	//   - If the default VPC in the target Region has an internet gateway attached to
-	//   it, the DB cluster is public.
-	//
-	// If DBSubnetGroupName is specified, and PubliclyAccessible isn't specified, the
-	// following applies:
-	//
-	//   - If the subnets are part of a VPC that doesn’t have an internet gateway
-	//   attached to it, the DB cluster is private.
-	//
-	//   - If the subnets are part of a VPC that has an internet gateway attached to
-	//   it, the DB cluster is public.
+	// If PubliclyAccessible is true and the VPC that the DBSubnetGroup is in doesn't
+	// have an internet gateway attached to it, Amazon RDS returns an error.
 	PubliclyAccessible *bool
 
 	// Reserved for future use.
@@ -832,6 +846,13 @@ type CreateDBClusterInput struct {
 	// [Storage configurations for Amazon Aurora DB clusters]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html#aurora-storage-type
 	// [Settings for creating Multi-AZ DB clusters]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/create-multi-az-db-cluster.html#create-multi-az-db-cluster-settings
 	StorageType *string
+
+	// Tags to assign to resources associated with the DB cluster.
+	//
+	// Valid Values:
+	//
+	//   - cluster-auto-backup - The DB cluster's automated backup.
+	TagSpecifications []types.TagSpecification
 
 	// Tags to assign to the DB cluster.
 	//
@@ -972,16 +993,13 @@ func (c *Client) addOperationCreateDBClusterMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

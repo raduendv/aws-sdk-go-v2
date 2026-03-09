@@ -13,6 +13,15 @@ import (
 )
 
 // Updates an asset filter.
+//
+// Prerequisites:
+//
+//   - The domain, asset, and asset filter identifier must all exist.
+//
+//   - The asset must contain the columns being referenced in the update.
+//
+//   - If applying a row filter, ensure the column referenced in the expression
+//     exists in the asset schema.
 func (c *Client) UpdateAssetFilter(ctx context.Context, params *UpdateAssetFilterInput, optFns ...func(*Options)) (*UpdateAssetFilterOutput, error) {
 	if params == nil {
 		params = &UpdateAssetFilterInput{}
@@ -196,16 +205,13 @@ func (c *Client) addOperationUpdateAssetFilterMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

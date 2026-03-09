@@ -190,6 +190,10 @@ type DBCluster struct {
 	// Specifies the ID that Amazon Route 53 assigns when you create a hosted zone.
 	HostedZoneId *string
 
+	// The next time you can modify the Amazon DocumentDB cluster to use the iopt1
+	// storage type.
+	IOOptimizedNextAllowedModificationTime *time.Time
+
 	// If StorageEncrypted is true , the KMS key identifier for the encrypted cluster.
 	KmsKeyId *string
 
@@ -206,6 +210,19 @@ type DBCluster struct {
 
 	// Specifies whether the cluster has instances in multiple Availability Zones.
 	MultiAZ *bool
+
+	// The network type of the cluster.
+	//
+	// The network type is determined by the DBSubnetGroup specified for the cluster.
+	// A DBSubnetGroup can support only the IPv4 protocol or the IPv4 and the IPv6
+	// protocols ( DUAL ).
+	//
+	// For more information, see [DocumentDB clusters in a VPC] in the Amazon DocumentDB Developer Guide.
+	//
+	// Valid Values: IPV4 | DUAL
+	//
+	// [DocumentDB clusters in a VPC]: https://docs.aws.amazon.com/documentdb/latest/developerguide/vpc-clusters.html
+	NetworkType *string
 
 	// Specifies the progress of the operation as a percentage.
 	PercentProgress *string
@@ -242,14 +259,15 @@ type DBCluster struct {
 	// cluster.
 	ReplicationSourceIdentifier *string
 
+	// The scaling configuration of an Amazon DocumentDB Serverless cluster.
+	ServerlessV2ScalingConfiguration *ServerlessV2ScalingConfigurationInfo
+
 	// Specifies the current state of this cluster.
 	Status *string
 
 	// Specifies whether the cluster is encrypted.
 	StorageEncrypted *bool
 
-	// Storage type associated with your cluster
-	//
 	// Storage type associated with your cluster
 	//
 	// For information on storage types for Amazon DocumentDB clusters, see Cluster
@@ -465,6 +483,14 @@ type DBEngineVersion struct {
 	// CloudWatch Logs.
 	ExportableLogTypes []string
 
+	// Specifies any Amazon DocumentDB Serverless properties or limits that differ
+	// between Amazon DocumentDB engine versions. You can test the values of this
+	// attribute when deciding which Amazon DocumentDB version to use in a new or
+	// upgraded cluster. You can also retrieve the version of an existing cluster and
+	// check whether that version supports certain Amazon DocumentDB Serverless
+	// features before you attempt to use those features.
+	ServerlessV2FeaturesSupport *ServerlessV2FeaturesSupport
+
 	// A list of the supported CA certificate identifiers.
 	//
 	// For more information, see [Updating Your Amazon DocumentDB TLS Certificates] and [Encrypting Data in Transit] in the Amazon DocumentDB Developer Guide.
@@ -642,6 +668,14 @@ type DBSubnetGroup struct {
 	// Detailed information about one or more subnets within a subnet group.
 	Subnets []Subnet
 
+	// The network type of the DB subnet group.
+	//
+	// Valid Values: IPV4 | DUAL
+	//
+	// A DBSubnetGroup can support only the IPv4 protocol or the IPv4 and the IPv6
+	// protocols (DUAL).
+	SupportedNetworkTypes []string
+
 	// Provides the virtual private cloud (VPC) ID of the subnet group.
 	VpcId *string
 
@@ -768,6 +802,41 @@ type EventSubscription struct {
 	noSmithyDocumentSerde
 }
 
+// Contains the state of scheduled or in-process operations on an Amazon
+// DocumentDB global cluster. This data type is empty unless a switchover or
+// failover operation is scheduled or is in progress on the global cluster.
+type FailoverState struct {
+
+	// The Amazon Resource Name (ARN) of the Amazon DocumentDB cluster that is
+	// currently being demoted, and which is associated with this state.
+	FromDbClusterArn *string
+
+	// Indicates whether the operation is a global switchover or a global failover. If
+	// data loss is allowed, then the operation is a global failover. Otherwise, it's a
+	// switchover.
+	IsDataLossAllowed *bool
+
+	// The current status of the global cluster. Possible values are as follows:
+	//
+	//   - pending – The service received a request to switch over or fail over the
+	//   global cluster. The global cluster's primary cluster and the specified secondary
+	//   cluster are being verified before the operation starts.
+	//
+	//   - failing-over – The chosen secondary cluster is being promoted to become the
+	//   new primary cluster to fail over the global cluster.
+	//
+	//   - cancelling – The request to switch over or fail over the global cluster was
+	//   cancelled and the primary cluster and the selected secondary cluster are
+	//   returning to their previous states.
+	Status FailoverStatus
+
+	// The Amazon Resource Name (ARN) of the Amazon DocumentDB cluster that is
+	// currently being promoted, and which is associated with this state.
+	ToDbClusterArn *string
+
+	noSmithyDocumentSerde
+}
+
 // A named set of filter values, used to return a more specific list of results.
 // You can use a filter to match a set of resources by specific criteria, such as
 // IDs.
@@ -803,6 +872,12 @@ type GlobalCluster struct {
 	// Indicates the database engine version.
 	EngineVersion *string
 
+	// A data object containing all properties for the current state of an in-process
+	// or pending switchover or failover process for this global cluster. This object
+	// is empty unless the SwitchoverGlobalCluster or FailoverGlobalCluster operation
+	// was called on this global cluster.
+	FailoverState *FailoverState
+
 	// The Amazon Resource Name (ARN) for the global cluster.
 	GlobalClusterArn *string
 
@@ -814,9 +889,9 @@ type GlobalCluster struct {
 	// Currently limited to one item.
 	GlobalClusterMembers []GlobalClusterMember
 
-	// The Amazon Web Services Region-unique, immutable identifier for the global
-	// database cluster. This identifier is found in CloudTrail log entries whenever
-	// the KMS customer master key (CMK) for the cluster is accessed.
+	// The Amazon Web Services RegionRegion-unique, immutable identifier for the
+	// global database cluster. This identifier is found in CloudTrail log entries
+	// whenever the KMS customer master key (CMK) for the cluster is accessed.
 	GlobalClusterResourceId *string
 
 	// Specifies the current state of this global cluster.
@@ -824,6 +899,9 @@ type GlobalCluster struct {
 
 	// The storage encryption setting for the global cluster.
 	StorageEncrypted *bool
+
+	// A list of global cluster tags.
+	TagList []Tag
 
 	noSmithyDocumentSerde
 }
@@ -841,8 +919,12 @@ type GlobalClusterMember struct {
 	IsWriter *bool
 
 	// The Amazon Resource Name (ARN) for each read-only secondary cluster associated
-	// with the Aurora global cluster.
+	// with the Amazon DocumentDB global cluster.
 	Readers []string
+
+	// The status of synchronization of each Amazon DocumentDB cluster in the global
+	// cluster.
+	SynchronizationStatus GlobalClusterMemberSynchronizationStatus
 
 	noSmithyDocumentSerde
 }
@@ -903,7 +985,29 @@ type Parameter struct {
 	// Specifies the name of the parameter.
 	ParameterName *string
 
-	// Specifies the value of the parameter.
+	// Specifies the value of the parameter. Must be one or more of the cluster
+	// parameter's AllowedValues in CSV format:
+	//
+	// Valid values are:
+	//
+	//   - enabled : The cluster accepts secure connections using TLS version 1.0
+	//   through 1.3.
+	//
+	//   - disabled : The cluster does not accept secure connections using TLS.
+	//
+	//   - fips-140-3 : The cluster only accepts secure connections per the
+	//   requirements of the Federal Information Processing Standards (FIPS) publication
+	//   140-3. Only supported starting with Amazon DocumentDB 5.0 (engine version
+	//   3.0.3727) clusters in these regions: ca-central-1, us-west-2, us-east-1,
+	//   us-east-2, us-gov-east-1, us-gov-west-1.
+	//
+	//   - tls1.2+ : The cluster accepts secure connections using TLS version 1.2 and
+	//   above. Only supported starting with Amazon DocumentDB 4.0 (engine version
+	//   2.0.10980) and Amazon DocumentDB 5.0 (engine version 3.0.11051).
+	//
+	//   - tls1.3+ : The cluster accepts secure connections using TLS version 1.3 and
+	//   above. Only supported starting with Amazon DocumentDB 4.0 (engine version
+	//   2.0.10980) and Amazon DocumentDB 5.0 (engine version 3.0.11051).
 	ParameterValue *string
 
 	// Indicates the source of the parameter value.
@@ -1027,6 +1131,59 @@ type ResourcePendingMaintenanceActions struct {
 	// The Amazon Resource Name (ARN) of the resource that has pending maintenance
 	// actions.
 	ResourceIdentifier *string
+
+	noSmithyDocumentSerde
+}
+
+// Specifies any Amazon DocumentDB Serverless properties or limits that differ
+// between Amazon DocumentDB engine versions. You can test the values of this
+// attribute when deciding which Amazon DocumentDB version to use in a new or
+// upgraded cluster. You can also retrieve the version of an existing cluster and
+// check whether that version supports certain Amazon DocumentDB Serverless
+// features before you attempt to use those features.
+type ServerlessV2FeaturesSupport struct {
+
+	// The maximum number of Amazon DocumentDB capacity units (DCUs) for an instance
+	// in an Amazon DocumentDB Serverless cluster. You can specify DCU values in
+	// half-step increments, such as 32, 32.5, 33, and so on.
+	MaxCapacity *float64
+
+	// The minimum number of Amazon DocumentDB capacity units (DCUs) for an instance
+	// in an Amazon DocumentDB Serverless cluster. You can specify DCU values in
+	// half-step increments, such as 8, 8.5, 9, and so on.
+	MinCapacity *float64
+
+	noSmithyDocumentSerde
+}
+
+// Sets the scaling configuration of an Amazon DocumentDB Serverless cluster.
+type ServerlessV2ScalingConfiguration struct {
+
+	// The maximum number of Amazon DocumentDB capacity units (DCUs) for an instance
+	// in an Amazon DocumentDB Serverless cluster. You can specify DCU values in
+	// half-step increments, such as 32, 32.5, 33, and so on.
+	MaxCapacity *float64
+
+	// The minimum number of Amazon DocumentDB capacity units (DCUs) for an instance
+	// in an Amazon DocumentDB Serverless cluster. You can specify DCU values in
+	// half-step increments, such as 8, 8.5, 9, and so on.
+	MinCapacity *float64
+
+	noSmithyDocumentSerde
+}
+
+// Retrieves the scaling configuration for an Amazon DocumentDB Serverless cluster.
+type ServerlessV2ScalingConfigurationInfo struct {
+
+	// The maximum number of Amazon DocumentDB capacity units (DCUs) for an instance
+	// in an Amazon DocumentDB Serverless cluster. You can specify DCU values in
+	// half-step increments, such as 32, 32.5, 33, and so on.
+	MaxCapacity *float64
+
+	// The minimum number of Amazon DocumentDB capacity units (DCUs) for an instance
+	// in an Amazon DocumentDB Serverless cluster. You can specify DCU values in
+	// half-step increments, such as 8, 8.5, 9, and so on.
+	MinCapacity *float64
 
 	noSmithyDocumentSerde
 }

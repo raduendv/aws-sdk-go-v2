@@ -17,6 +17,8 @@ import (
 // traffic allocation, and the traffic that was allocated to the launch will
 // instead be available to the feature's experiment, if there is one. Otherwise,
 // all traffic will be served the default variation after the launch is stopped.
+//
+// Deprecated: AWS has deprecated this service. It is no longer available for use.
 func (c *Client) StopLaunch(ctx context.Context, params *StopLaunchInput, optFns ...func(*Options)) (*StopLaunchOutput, error) {
 	if params == nil {
 		params = &StopLaunchInput{}
@@ -37,17 +39,25 @@ type StopLaunchInput struct {
 	// The name of the launch to stop.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Launch *string
 
 	// The name or ARN of the project that contains the launch that you want to stop.
 	//
 	// This member is required.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Project *string
 
 	// Specify whether to consider the launch as COMPLETED or CANCELLED after it stops.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	DesiredState types.LaunchStopDesiredState
 
 	// A string that describes why you are stopping the launch.
+	//
+	// Deprecated: AWS has deprecated this service. It is no longer available for use.
 	Reason *string
 
 	noSmithyDocumentSerde
@@ -152,16 +162,13 @@ func (c *Client) addOperationStopLaunchMiddlewares(stack *middleware.Stack, opti
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

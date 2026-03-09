@@ -29,7 +29,9 @@ func (c *Client) ListDistributionsByConnectionMode(ctx context.Context, params *
 
 type ListDistributionsByConnectionModeInput struct {
 
-	// The connection mode to filter distributions by.
+	// This field specifies whether the connection mode is through a standard
+	// distribution (direct) or a multi-tenant distribution with distribution tenants
+	// (tenant-only).
 	//
 	// This member is required.
 	ConnectionMode types.ConnectionMode
@@ -142,16 +144,13 @@ func (c *Client) addOperationListDistributionsByConnectionModeMiddlewares(stack 
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

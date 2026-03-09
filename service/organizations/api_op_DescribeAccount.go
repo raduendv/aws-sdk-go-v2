@@ -13,9 +13,8 @@ import (
 
 // Retrieves Organizations-related information about the specified account.
 //
-// This operation can be called only from the organization's management account or
-// by a member account that is a delegated administrator for an Amazon Web Services
-// service.
+// You can only call this operation from the management account or a member
+// account that is a delegated administrator.
 func (c *Client) DescribeAccount(ctx context.Context, params *DescribeAccountInput, optFns ...func(*Options)) (*DescribeAccountOutput, error) {
 	if params == nil {
 		params = &DescribeAccountInput{}
@@ -49,6 +48,12 @@ type DescribeAccountInput struct {
 type DescribeAccountOutput struct {
 
 	// A structure that contains information about the requested account.
+	//
+	// The Status parameter in the API response will be retired on September 9, 2026.
+	// Although both the account State and account Status parameters are currently
+	// available in the Organizations APIs ( DescribeAccount , ListAccounts ,
+	// ListAccountsForParent ), we recommend that you update your scripts or other code
+	// to use the State parameter instead of Status before September 9, 2026.
 	Account *types.Account
 
 	// Metadata pertaining to the operation's result.
@@ -145,16 +150,13 @@ func (c *Client) addOperationDescribeAccountMiddlewares(stack *middleware.Stack,
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

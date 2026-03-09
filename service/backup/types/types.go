@@ -10,8 +10,8 @@ import (
 // The backup options for each resource type.
 type AdvancedBackupSetting struct {
 
-	// Specifies the backup option for a selected resource. This option is only
-	// available for Windows VSS backup jobs.
+	// Specifies the backup option for a selected resource. This option is available
+	// for Windows VSS backup jobs and S3 backups.
 	//
 	// Valid values:
 	//
@@ -20,6 +20,10 @@ type AdvancedBackupSetting struct {
 	//
 	// Set to "WindowsVSS":"disabled" to create a regular backup. The WindowsVSS
 	// option is not enabled by default.
+	//
+	// For S3 backups, set to "S3BackupACLs":"disabled" to exclude ACLs from the
+	// backup, or "S3BackupObjectTags":"disabled" to exclude object tags from the
+	// backup. By default, both ACLs and object tags are included in S3 backups.
 	//
 	// If you specify an invalid option, you get an InvalidParameterValueException
 	// exception.
@@ -37,6 +41,23 @@ type AdvancedBackupSetting struct {
 	//
 	// [sample CloudFormation template to enable Windows VSS]: https://docs.aws.amazon.com/aws-backup/latest/devguide/integrate-cloudformation-with-aws-backup.html
 	ResourceType *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains aggregated scan results across multiple scan operations, providing a
+// summary of scan status and findings.
+type AggregatedScanResult struct {
+
+	// A Boolean value indicating whether any of the aggregated scans failed.
+	FailedScan *bool
+
+	// An array of findings discovered across all aggregated scans.
+	Findings []ScanFinding
+
+	// The timestamp when the aggregated scan result was last computed, in Unix format
+	// and Coordinated Universal Time (UTC).
+	LastComputed *time.Time
 
 	noSmithyDocumentSerde
 }
@@ -59,7 +80,37 @@ type BackupJob struct {
 	// InvalidParameterValueException exception.
 	BackupOptions map[string]string
 
-	// The size, in bytes, of a backup.
+	// The size, in bytes, of a backup (recovery point).
+	//
+	// This value can render differently depending on the resource type as Backup
+	// pulls in data information from other Amazon Web Services services. For example,
+	// the value returned may show a value of 0 , which may differ from the anticipated
+	// value.
+	//
+	// The expected behavior for values by resource type are described as follows:
+	//
+	//   - Amazon Aurora, Amazon DocumentDB, and Amazon Neptune do not have this value
+	//   populate from the operation GetBackupJobStatus .
+	//
+	//   - For Amazon DynamoDB with advanced features, this value refers to the size
+	//   of the recovery point (backup).
+	//
+	//   - Amazon EC2 and Amazon EBS show volume size (provisioned storage) returned
+	//   as part of this value. Amazon EBS does not return backup size information;
+	//   snapshot size will have the same value as the original resource that was backed
+	//   up.
+	//
+	//   - For Amazon EFS, this value refers to the delta bytes transferred during a
+	//   backup.
+	//
+	//   - Amazon FSx does not populate this value from the operation
+	//   GetBackupJobStatus for FSx file systems.
+	//
+	//   - An Amazon RDS instance will show as 0 .
+	//
+	//   - For virtual machines running VMware, this value is passed to Backup through
+	//   an asynchronous workflow, which can mean this displayed value can
+	//   under-represent the actual backup size.
 	BackupSizeInBytes *int64
 
 	// Represents the type of backup for a backup job.
@@ -95,6 +146,11 @@ type BackupJob struct {
 	// 12:11:30.087 AM.
 	CreationDate *time.Time
 
+	// The Amazon Resource Name (ARN) of the KMS key used to encrypt the backup. This
+	// can be a customer-managed key or an Amazon Web Services managed key, depending
+	// on the vault configuration.
+	EncryptionKeyArn *string
+
 	// The date and time a job to back up resources is expected to be completed, in
 	// Unix format and Coordinated Universal Time (UTC). The value of
 	// ExpectedCompletionDate is accurate to milliseconds. For example, the value
@@ -109,6 +165,11 @@ type BackupJob struct {
 
 	// The date on which the backup job was initiated.
 	InitiationDate *time.Time
+
+	// A boolean value indicating whether the backup is encrypted. All backups in
+	// Backup are encrypted, but this field indicates the encryption status for
+	// transparency.
+	IsEncrypted bool
 
 	// This is a boolean value indicating this is a parent (composite) backup job.
 	IsParent bool
@@ -139,6 +200,25 @@ type BackupJob struct {
 	// .
 	RecoveryPointArn *string
 
+	// Specifies the time period, in days, before a recovery point transitions to cold
+	// storage or is deleted.
+	//
+	// Backups transitioned to cold storage must be stored in cold storage for a
+	// minimum of 90 days. Therefore, on the console, the retention setting must be 90
+	// days greater than the transition to cold after days setting. The transition to
+	// cold after days setting can't be changed after a backup has been transitioned to
+	// cold.
+	//
+	// Resource types that can transition to cold storage are listed in the [Feature availability by resource] table.
+	// Backup ignores this expression for other resource types.
+	//
+	// To remove the existing lifecycle and retention periods and keep your recovery
+	// points indefinitely, specify -1 for MoveToColdStorageAfterDays and
+	// DeleteAfterDays .
+	//
+	// [Feature availability by resource]: https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html#features-by-resource
+	RecoveryPointLifecycle *Lifecycle
+
 	// An ARN that uniquely identifies a resource. The format of the ARN depends on
 	// the resource type.
 	ResourceArn *string
@@ -166,6 +246,16 @@ type BackupJob struct {
 
 	// A detailed message explaining the status of the job to back up a resource.
 	StatusMessage *string
+
+	// The lock state of the backup vault. For logically air-gapped vaults, this
+	// indicates whether the vault is locked in compliance mode. Valid values include
+	// LOCKED and UNLOCKED .
+	VaultLockState *string
+
+	// The type of backup vault where the recovery point is stored. Valid values are
+	// BACKUP_VAULT for standard backup vaults and LOGICALLY_AIR_GAPPED_BACKUP_VAULT
+	// for logically air-gapped vaults.
+	VaultType *string
 
 	noSmithyDocumentSerde
 }
@@ -246,6 +336,10 @@ type BackupPlan struct {
 	// Contains a list of BackupOptions for each resource type.
 	AdvancedBackupSettings []AdvancedBackupSetting
 
+	// Contains your scanning configuration for the backup plan and includes the
+	// Malware scanner, your selected resources, and scanner role.
+	ScanSettings []ScanSetting
+
 	noSmithyDocumentSerde
 }
 
@@ -269,6 +363,10 @@ type BackupPlanInput struct {
 	// Specifies a list of BackupOptions for each resource type. These settings are
 	// only available for Windows Volume Shadow Copy Service (VSS) backup jobs.
 	AdvancedBackupSettings []AdvancedBackupSetting
+
+	// Contains your scanning configuration for the backup rule and includes the
+	// malware scanner, and scan mode of either full or incremental.
+	ScanSettings []ScanSetting
 
 	noSmithyDocumentSerde
 }
@@ -394,12 +492,22 @@ type BackupRule struct {
 	// of resources.
 	RuleId *string
 
-	// A cron expression in UTC specifying when Backup initiates a backup job. For
-	// more information about Amazon Web Services cron expressions, see [Schedule Expressions for Rules]in the Amazon
-	// CloudWatch Events User Guide.. Two examples of Amazon Web Services cron
-	// expressions are 15 * ? * * * (take a backup every hour at 15 minutes past the
-	// hour) and 0 12 * * ? * (take a backup every day at 12 noon UTC). For a table of
-	// examples, click the preceding link and scroll down the page.
+	// Contains your scanning configuration for the backup rule and includes the
+	// malware scanner, and scan mode of either full or incremental.
+	ScanActions []ScanAction
+
+	// A cron expression in UTC specifying when Backup initiates a backup job. When no
+	// CRON expression is provided, Backup will use the default expression cron(0 5 ?
+	// * * *) .
+	//
+	// For more information about Amazon Web Services cron expressions, see [Schedule Expressions for Rules] in the
+	// Amazon CloudWatch Events User Guide.
+	//
+	// Two examples of Amazon Web Services cron expressions are  15 * ? * * * (take a
+	// backup every hour at 15 minutes past the hour) and 0 12 * * ? * (take a backup
+	// every day at 12 noon UTC).
+	//
+	// For a table of examples, click the preceding link and scroll down the page.
 	//
 	// [Schedule Expressions for Rules]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html
 	ScheduleExpression *string
@@ -420,6 +528,13 @@ type BackupRule struct {
 	// ) or until the job status changes to EXPIRED (which is expected to occur when
 	// the start window time is over).
 	StartWindowMinutes *int64
+
+	// The ARN of a logically air-gapped vault. ARN must be in the same account and
+	// Region. If provided, supported fully managed resources back up directly to
+	// logically air-gapped vault, while other supported resources create a temporary
+	// (billable) snapshot in backup vault, then copy it to logically air-gapped vault.
+	// Unsupported resources only back up to the specified backup vault.
+	TargetLogicallyAirGappedBackupVaultArn *string
 
 	noSmithyDocumentSerde
 }
@@ -485,7 +600,13 @@ type BackupRuleInput struct {
 	// The tags to assign to the resources.
 	RecoveryPointTags map[string]string
 
-	// A CRON expression in UTC specifying when Backup initiates a backup job.
+	// Contains your scanning configuration for the backup rule and includes the
+	// malware scanner, and scan mode of either full or incremental.
+	ScanActions []ScanAction
+
+	// A CRON expression in UTC specifying when Backup initiates a backup job. When no
+	// CRON expression is provided, Backup will use the default expression cron(0 5 ?
+	// * * *) .
 	ScheduleExpression *string
 
 	// The timezone in which the schedule expression is set. By default,
@@ -506,6 +627,13 @@ type BackupRuleInput struct {
 	// ) or until the job status changes to EXPIRED (which is expected to occur when
 	// the start window time is over).
 	StartWindowMinutes *int64
+
+	// The ARN of a logically air-gapped vault. ARN must be in the same account and
+	// Region. If provided, supported fully managed resources back up directly to
+	// logically air-gapped vault, while other supported resources create a temporary
+	// (billable) snapshot in backup vault, then copy it to logically air-gapped vault.
+	// Unsupported resources only back up to the specified backup vault.
+	TargetLogicallyAirGappedBackupVaultArn *string
 
 	noSmithyDocumentSerde
 }
@@ -646,6 +774,11 @@ type BackupVaultListMember struct {
 	//
 	// [Encryption for backups in Backup]: https://docs.aws.amazon.com/aws-backup/latest/devguide/encryption.html
 	EncryptionKeyArn *string
+
+	// The type of encryption key used for the backup vault. Valid values are
+	// CUSTOMER_MANAGED_KMS_KEY for customer-managed keys or Amazon Web
+	// Services_OWNED_KMS_KEY for Amazon Web Services-owned keys.
+	EncryptionKeyType EncryptionKeyType
 
 	// The date and time when Backup Vault Lock configuration becomes immutable,
 	// meaning it cannot be changed or deleted.
@@ -909,6 +1042,10 @@ type CopyJob struct {
 	// initiate the recovery point backup.
 	CreatedBy *RecoveryPointCreator
 
+	// The backup job ID that initiated this copy job. Only applicable to scheduled
+	// copy jobs and automatic copy jobs to logically air-gapped vault.
+	CreatedByBackupJobId *string
+
 	// The date and time a copy job is created, in Unix format and Coordinated
 	// Universal Time (UTC). The value of CreationDate is accurate to milliseconds.
 	// For example, the value 1516925490.087 represents Friday, January 26, 2018
@@ -920,10 +1057,44 @@ type CopyJob struct {
 	// arn:aws:backup:us-east-1:123456789012:backup-vault:aBackupVault .
 	DestinationBackupVaultArn *string
 
+	// The Amazon Resource Name (ARN) of the KMS key used to encrypt the copied backup
+	// in the destination vault. This can be a customer-managed key or an Amazon Web
+	// Services managed key.
+	DestinationEncryptionKeyArn *string
+
 	// An ARN that uniquely identifies a destination recovery point; for example,
 	// arn:aws:backup:us-east-1:123456789012:recovery-point:1EB3B5E7-9EB0-435A-A80B-108B488B0D45
 	// .
 	DestinationRecoveryPointArn *string
+
+	// Specifies the time period, in days, before a recovery point transitions to cold
+	// storage or is deleted.
+	//
+	// Backups transitioned to cold storage must be stored in cold storage for a
+	// minimum of 90 days. Therefore, on the console, the retention setting must be 90
+	// days greater than the transition to cold after days setting. The transition to
+	// cold after days setting can't be changed after a backup has been transitioned to
+	// cold.
+	//
+	// Resource types that can transition to cold storage are listed in the [Feature availability by resource] table.
+	// Backup ignores this expression for other resource types.
+	//
+	// To remove the existing lifecycle and retention periods and keep your recovery
+	// points indefinitely, specify -1 for MoveToColdStorageAfterDays and
+	// DeleteAfterDays .
+	//
+	// [Feature availability by resource]: https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html#features-by-resource
+	DestinationRecoveryPointLifecycle *Lifecycle
+
+	// The lock state of the destination backup vault. For logically air-gapped
+	// vaults, this indicates whether the vault is locked in compliance mode. Valid
+	// values include LOCKED and UNLOCKED .
+	DestinationVaultLockState *string
+
+	// The type of destination backup vault where the copied recovery point is stored.
+	// Valid values are BACKUP_VAULT for standard backup vaults and
+	// LOGICALLY_AIR_GAPPED_BACKUP_VAULT for logically air-gapped vaults.
+	DestinationVaultType *string
 
 	// Specifies the IAM role ARN used to copy the target recovery point; for example,
 	// arn:aws:iam::123456789012:role/S3Access .
@@ -1224,6 +1395,50 @@ type KeyValue struct {
 	noSmithyDocumentSerde
 }
 
+// Contains information about the latest update to an MPA approval team
+// association.
+type LatestMpaApprovalTeamUpdate struct {
+
+	// The date and time when the MPA approval team update will expire.
+	ExpiryDate *time.Time
+
+	// The date and time when the MPA approval team update was initiated.
+	InitiationDate *time.Time
+
+	// The ARN of the MPA session associated with this update.
+	MpaSessionArn *string
+
+	// The current status of the MPA approval team update.
+	Status MpaSessionStatus
+
+	// A message describing the current status of the MPA approval team update.
+	StatusMessage *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the latest request to revoke access to a backup
+// vault.
+type LatestRevokeRequest struct {
+
+	// The date and time when the revoke request will expire.
+	ExpiryDate *time.Time
+
+	// The date and time when the revoke request was initiated.
+	InitiationDate *time.Time
+
+	// The ARN of the MPA session associated with this revoke request.
+	MpaSessionArn *string
+
+	// The current status of the revoke request.
+	Status MpaRevokeSessionStatus
+
+	// A message describing the current status of the revoke request.
+	StatusMessage *string
+
+	noSmithyDocumentSerde
+}
+
 // A legal hold is an administrative tool that helps prevent backups from being
 // deleted while under a hold. While the hold is in place, backups under a hold
 // cannot be deleted and lifecycle policies that would alter the backup status
@@ -1282,6 +1497,11 @@ type Lifecycle struct {
 	// must be at least 90 days after the number of days specified in
 	// MoveToColdStorageAfterDays .
 	DeleteAfterDays *int64
+
+	// The event after which a recovery point is deleted. A recovery point with both
+	// DeleteAfterDays and DeleteAfterEvent will delete after whichever condition is
+	// satisfied first. Not valid as an input.
+	DeleteAfterEvent LifecycleDeleteAfterEvent
 
 	// The number of days after creation that a recovery point is moved to cold
 	// storage.
@@ -1345,6 +1565,10 @@ type ProtectedResourceConditions struct {
 // vault.
 type RecoveryPointByBackupVault struct {
 
+	// Contains the latest scanning results against the recovery point and currently
+	// include FailedScan , Findings , LastComputed .
+	AggregatedScanResult *AggregatedScanResult
+
 	// The size, in bytes, of a backup.
 	BackupSizeInBytes *int64
 
@@ -1390,6 +1614,11 @@ type RecoveryPointByBackupVault struct {
 	// arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab .
 	EncryptionKeyArn *string
 
+	// The type of encryption key used for the recovery point. Valid values are
+	// CUSTOMER_MANAGED_KMS_KEY for customer-managed keys or Amazon Web
+	// Services_OWNED_KMS_KEY for Amazon Web Services-owned keys.
+	EncryptionKeyType EncryptionKeyType
+
 	// Specifies the IAM role ARN used to create the target recovery point; for
 	// example, arn:aws:iam::123456789012:role/S3Access .
 	IamRoleArn *string
@@ -1406,6 +1635,10 @@ type RecoveryPointByBackupVault struct {
 	// A string in the form of a detailed message explaining the status of a backup
 	// index associated with the recovery point.
 	IndexStatusMessage *string
+
+	// The date and time when the backup job that created this recovery point was
+	// initiated, in Unix format and Coordinated Universal Time (UTC).
+	InitiationDate *time.Time
 
 	// A Boolean value that is returned as TRUE if the specified recovery point is
 	// encrypted, or FALSE if the recovery point is not encrypted.
@@ -1476,6 +1709,10 @@ type RecoveryPointByBackupVault struct {
 // Contains detailed information about a saved recovery point.
 type RecoveryPointByResource struct {
 
+	// Contains the latest scanning results against the recovery point and currently
+	// include FailedScan , Findings , LastComputed .
+	AggregatedScanResult *AggregatedScanResult
+
 	// The size, in bytes, of a backup.
 	BackupSizeBytes *int64
 
@@ -1494,6 +1731,11 @@ type RecoveryPointByResource struct {
 	// example,
 	// arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab .
 	EncryptionKeyArn *string
+
+	// The type of encryption key used for the recovery point. Valid values are
+	// CUSTOMER_MANAGED_KMS_KEY for customer-managed keys or Amazon Web
+	// Services_OWNED_KMS_KEY for Amazon Web Services-owned keys.
+	EncryptionKeyType EncryptionKeyType
 
 	// This is the current status for the backup index associated with the specified
 	// recovery point.
@@ -1547,13 +1789,30 @@ type RecoveryPointCreator struct {
 	// Uniquely identifies a backup plan.
 	BackupPlanId *string
 
+	// The name of the backup plan that created this recovery point. This provides
+	// human-readable context about which backup plan was responsible for the backup
+	// job.
+	BackupPlanName *string
+
 	// Version IDs are unique, randomly generated, Unicode, UTF-8 encoded strings that
 	// are at most 1,024 bytes long. They cannot be edited.
 	BackupPlanVersion *string
 
+	// The cron expression that defines the schedule for the backup rule. This shows
+	// the frequency and timing of when backups are automatically triggered.
+	BackupRuleCron *string
+
 	// Uniquely identifies a rule used to schedule the backup of a selection of
 	// resources.
 	BackupRuleId *string
+
+	// The name of the backup rule within the backup plan that created this recovery
+	// point. This helps identify which specific rule triggered the backup job.
+	BackupRuleName *string
+
+	// The timezone used for the backup rule schedule. This provides context for when
+	// backups are scheduled to run in the specified timezone.
+	BackupRuleTimezone *string
 
 	noSmithyDocumentSerde
 }
@@ -1751,7 +2010,7 @@ type ReportSetting struct {
 	// template. The report templates are:
 	//
 	//     RESOURCE_COMPLIANCE_REPORT | CONTROL_COMPLIANCE_REPORT | BACKUP_JOB_REPORT |
-	//     COPY_JOB_REPORT | RESTORE_JOB_REPORT
+	//     COPY_JOB_REPORT | RESTORE_JOB_REPORT | SCAN_JOB_REPORT
 	//
 	// This member is required.
 	ReportTemplate *string
@@ -1778,6 +2037,57 @@ type ReportSetting struct {
 	noSmithyDocumentSerde
 }
 
+// This contains metadata about resource selection for tiering configurations.
+//
+// You can specify up to 5 different resource selections per tiering
+// configuration. Data moved to lower-cost tier remains there until deletion
+// (one-way transition).
+type ResourceSelection struct {
+
+	// The type of Amazon Web Services resource; for example, S3 for Amazon S3. For
+	// tiering configurations, this is currently limited to S3 .
+	//
+	// This member is required.
+	ResourceType *string
+
+	// An array of strings that either contains ARNs of the associated resources or
+	// contains a wildcard * to specify all resources. You can specify up to 100
+	// specific resources per tiering configuration.
+	//
+	// This member is required.
+	Resources []string
+
+	// The number of days after creation within a backup vault that an object can
+	// transition to the low cost warm storage tier. Must be a positive integer between
+	// 60 and 36500 days.
+	//
+	// This member is required.
+	TieringDownSettingsInDays *int32
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a restore access backup vault.
+type RestoreAccessBackupVaultListMember struct {
+
+	// The date and time when the restore access backup vault was approved.
+	ApprovalDate *time.Time
+
+	// The date and time when the restore access backup vault was created.
+	CreationDate *time.Time
+
+	// Information about the latest request to revoke access to this backup vault.
+	LatestRevokeRequest *LatestRevokeRequest
+
+	// The ARN of the restore access backup vault.
+	RestoreAccessBackupVaultArn *string
+
+	// The current state of the restore access backup vault.
+	VaultState VaultState
+
+	noSmithyDocumentSerde
+}
+
 // Contains information about the restore testing plan that Backup used to
 // initiate the restore job.
 type RestoreJobCreator struct {
@@ -1796,6 +2106,10 @@ type RestoreJobsListMember struct {
 
 	// The size, in bytes, of the restored resource.
 	BackupSizeInBytes *int64
+
+	// The Amazon Resource Name (ARN) of the backup vault containing the recovery
+	// point being restored. This helps identify vault access policies and permissions.
+	BackupVaultArn *string
 
 	// The date and time a job to restore a recovery point is completed, in Unix
 	// format and Coordinated Universal Time (UTC). The value of CompletionDate is
@@ -1831,6 +2145,14 @@ type RestoreJobsListMember struct {
 	// arn:aws:iam::123456789012:role/S3Access .
 	IamRoleArn *string
 
+	// This is a boolean value indicating whether the restore job is a parent
+	// (composite) restore job.
+	IsParent bool
+
+	// This is the unique identifier of the parent restore job for the selected
+	// restore job.
+	ParentJobId *string
+
 	// Contains an estimated percentage complete of a job at the time the job status
 	// was queried.
 	PercentDone *string
@@ -1851,6 +2173,10 @@ type RestoreJobsListMember struct {
 
 	// Uniquely identifies the job that restores a recovery point.
 	RestoreJobId *string
+
+	// The Amazon Resource Name (ARN) of the original resource that was backed up.
+	// This provides context about what resource is being restored.
+	SourceResourceArn *string
 
 	// A status code specifying the state of the job initiated by Backup to restore a
 	// recovery point.
@@ -1948,7 +2274,9 @@ type RestoreTestingPlanForCreate struct {
 	// This member is required.
 	RestoreTestingPlanName *string
 
-	// A CRON expression in specified timezone when a restore testing plan is executed.
+	// A CRON expression in specified timezone when a restore testing plan is
+	// executed. When no CRON expression is provided, Backup will use the default
+	// expression cron(0 5 ? * * *) .
 	//
 	// This member is required.
 	ScheduleExpression *string
@@ -1995,7 +2323,9 @@ type RestoreTestingPlanForGet struct {
 	// This member is required.
 	RestoreTestingPlanName *string
 
-	// A CRON expression in specified timezone when a restore testing plan is executed.
+	// A CRON expression in specified timezone when a restore testing plan is
+	// executed. When no CRON expression is provided, Backup will use the default
+	// expression cron(0 5 ? * * *) .
 	//
 	// This member is required.
 	ScheduleExpression *string
@@ -2056,7 +2386,9 @@ type RestoreTestingPlanForList struct {
 	// This member is required.
 	RestoreTestingPlanName *string
 
-	// A CRON expression in specified timezone when a restore testing plan is executed.
+	// A CRON expression in specified timezone when a restore testing plan is
+	// executed. When no CRON expression is provided, Backup will use the default
+	// expression cron(0 5 ? * * *) .
 	//
 	// This member is required.
 	ScheduleExpression *string
@@ -2097,7 +2429,9 @@ type RestoreTestingPlanForUpdate struct {
 	// to empty list if not listed).
 	RecoveryPointSelection *RestoreTestingRecoveryPointSelection
 
-	// A CRON expression in specified timezone when a restore testing plan is executed.
+	// A CRON expression in specified timezone when a restore testing plan is
+	// executed. When no CRON expression is provided, Backup will use the default
+	// expression cron(0 5 ? * * *) .
 	ScheduleExpression *string
 
 	// Optional. This is the timezone in which the schedule expression is set. By
@@ -2228,6 +2562,9 @@ type RestoreTestingSelectionForCreate struct {
 	// The unique name of the restore testing selection that belongs to the related
 	// restore testing plan.
 	//
+	// The name consists of only alphanumeric characters and underscores. Maximum
+	// length is 50.
+	//
 	// This member is required.
 	RestoreTestingSelectionName *string
 
@@ -2250,7 +2587,7 @@ type RestoreTestingSelectionForCreate struct {
 	// [restore testing inferred metadata]: https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing-inferred-metadata.html
 	RestoreMetadataOverrides map[string]string
 
-	// This is amount of hours (1 to 168) available to run a validation script on the
+	// This is amount of hours (0 to 168) available to run a validation script on the
 	// data. The data will be deleted upon the completion of the validation script or
 	// the end of the specified retention period, whichever comes first.
 	ValidationWindowHours int32
@@ -2289,6 +2626,9 @@ type RestoreTestingSelectionForGet struct {
 
 	// The unique name of the restore testing selection that belongs to the related
 	// restore testing plan.
+	//
+	// The name consists of only alphanumeric characters and underscores. Maximum
+	// length is 50.
 	//
 	// This member is required.
 	RestoreTestingSelectionName *string
@@ -2360,6 +2700,9 @@ type RestoreTestingSelectionForList struct {
 
 	// Unique name of a restore testing selection.
 	//
+	// The name consists of only alphanumeric characters and underscores. Maximum
+	// length is 50.
+	//
 	// This member is required.
 	RestoreTestingSelectionName *string
 
@@ -2404,6 +2747,412 @@ type RestoreTestingSelectionForUpdate struct {
 	// Accepted value is an integer between 0 and 168 (the hourly equivalent of seven
 	// days).
 	ValidationWindowHours int32
+
+	noSmithyDocumentSerde
+}
+
+// Defines a scanning action that specifies the malware scanner and scan mode to
+// use.
+type ScanAction struct {
+
+	// The malware scanner to use for the scan action. Currently only GUARDDUTY is
+	// supported.
+	MalwareScanner MalwareScanner
+
+	// The scanning mode to use for the scan action.
+	//
+	// Valid values: FULL_SCAN | INCREMENTAL_SCAN .
+	ScanMode ScanMode
+
+	noSmithyDocumentSerde
+}
+
+// Contains metadata about a scan job, including information about the scanning
+// process, results, and associated resources.
+type ScanJob struct {
+
+	// The account ID that owns the scan job.
+	//
+	// This member is required.
+	AccountId *string
+
+	// An Amazon Resource Name (ARN) that uniquely identifies a backup vault; for
+	// example, arn:aws:backup:us-east-1:123456789012:backup-vault:aBackupVault .
+	//
+	// This member is required.
+	BackupVaultArn *string
+
+	// The name of a logical container where backups are stored. Backup vaults are
+	// identified by names that are unique to the account used to create them and the
+	// Amazon Web Services Region where they are created.
+	//
+	// This member is required.
+	BackupVaultName *string
+
+	// Contains identifying information about the creation of a scan job.
+	//
+	// This member is required.
+	CreatedBy *ScanJobCreator
+
+	// The date and time that a scan job is created, in Unix format and Coordinated
+	// Universal Time (UTC). The value of CreationDate is accurate to milliseconds.
+	// For example, the value 1516925490.087 represents Friday, January 26, 2018
+	// 12:11:30.087 AM.
+	//
+	// This member is required.
+	CreationDate *time.Time
+
+	// Specifies the IAM role ARN used to create the scan job; for example,
+	// arn:aws:iam::123456789012:role/S3Access .
+	//
+	// This member is required.
+	IamRoleArn *string
+
+	// The scanning engine used for the scan job. Currently only GUARDDUTY is
+	// supported.
+	//
+	// This member is required.
+	MalwareScanner MalwareScanner
+
+	// An ARN that uniquely identifies the recovery point being scanned; for example,
+	// arn:aws:backup:us-east-1:123456789012:recovery-point:1EB3B5E7-9EB0-435A-A80B-108B488B0D45
+	// .
+	//
+	// This member is required.
+	RecoveryPointArn *string
+
+	// An ARN that uniquely identifies the source resource of the recovery point being
+	// scanned.
+	//
+	// This member is required.
+	ResourceArn *string
+
+	// The non-unique name of the resource that belongs to the specified backup.
+	//
+	// This member is required.
+	ResourceName *string
+
+	// The type of Amazon Web Services resource being scanned; for example, an Amazon
+	// Elastic Block Store (Amazon EBS) volume or an Amazon Relational Database Service
+	// (Amazon RDS) database.
+	//
+	// This member is required.
+	ResourceType ScanResourceType
+
+	// The unique identifier that identifies the scan job request to Backup.
+	//
+	// This member is required.
+	ScanJobId *string
+
+	// Specifies the scan type use for the scan job.
+	//
+	// Includes:
+	//
+	// FULL_SCAN will scan the entire data lineage within the backup.
+	//
+	// INCREMENTAL_SCAN will scan the data difference between the target recovery
+	// point and base recovery point ARN.
+	//
+	// This member is required.
+	ScanMode ScanMode
+
+	// Specifies the scanner IAM role ARN used for the scan job.
+	//
+	// This member is required.
+	ScannerRoleArn *string
+
+	// The date and time that a scan job is completed, in Unix format and Coordinated
+	// Universal Time (UTC). The value of CompletionDate is accurate to milliseconds.
+	// For example, the value 1516925490.087 represents Friday, January 26, 2018
+	// 12:11:30.087 AM.
+	CompletionDate *time.Time
+
+	// An ARN that uniquely identifies the base recovery point for scanning. This
+	// field is populated when an incremental scan job has taken place.
+	ScanBaseRecoveryPointArn *string
+
+	// The scan ID generated by the malware scanner for the corresponding scan job.
+	ScanId *string
+
+	// Contains the scan results information, including the status of threats found
+	// during scanning.
+	ScanResult *ScanResultInfo
+
+	// The current state of the scan job.
+	//
+	// Valid values: CREATED | RUNNING | COMPLETED | COMPLETED_WITH_ISSUES | FAILED |
+	// CANCELED .
+	State ScanState
+
+	// A detailed message explaining the status of the scan job.
+	StatusMessage *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains identifying information about the creation of a scan job, including
+// the backup plan and rule that initiated the scan.
+type ScanJobCreator struct {
+
+	// An Amazon Resource Name (ARN) that uniquely identifies a backup plan; for
+	// example,
+	// arn:aws:backup:us-east-1:123456789012:plan:8F81F553-3A74-4A3F-B93D-B3360DC80C50 .
+	//
+	// This member is required.
+	BackupPlanArn *string
+
+	// The ID of the backup plan.
+	//
+	// This member is required.
+	BackupPlanId *string
+
+	// Unique, randomly generated, Unicode, UTF-8 encoded strings that are at most
+	// 1,024 bytes long. Version IDs cannot be edited.
+	//
+	// This member is required.
+	BackupPlanVersion *string
+
+	// Uniquely identifies the backup rule that initiated the scan job.
+	//
+	// This member is required.
+	BackupRuleId *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains summary information about scan jobs, including counts and metadata for
+// a specific time period and criteria.
+type ScanJobSummary struct {
+
+	// The account ID that owns the scan jobs included in this summary.
+	AccountId *string
+
+	// The number of scan jobs that match the specified criteria.
+	Count int32
+
+	// The value of time in number format of a job end time.
+	//
+	// This value is the time in Unix format, Coordinated Universal Time (UTC), and
+	// accurate to milliseconds. For example, the value 1516925490.087 represents
+	// Friday, January 26, 2018 12:11:30.087 AM.
+	EndTime *time.Time
+
+	// Specifies the malware scanner used during the scan job. Currently only supports
+	// GUARDDUTY .
+	MalwareScanner MalwareScanner
+
+	// The Amazon Web Services Region where the scan jobs were executed.
+	Region *string
+
+	// The type of Amazon Web Services resource for the scan jobs included in this
+	// summary.
+	ResourceType *string
+
+	// The scan result status for the scan jobs included in this summary.
+	//
+	// Valid values: THREATS_FOUND | NO_THREATS_FOUND .
+	ScanResultStatus ScanResultStatus
+
+	// The value of time in number format of a job start time.
+	//
+	// This value is the time in Unix format, Coordinated Universal Time (UTC), and
+	// accurate to milliseconds. For example, the value 1516925490.087 represents
+	// Friday, January 26, 2018 12:11:30.087 AM.
+	StartTime *time.Time
+
+	// The state of the scan jobs included in this summary.
+	//
+	// Valid values: CREATED | RUNNING | COMPLETED | COMPLETED_WITH_ISSUES | FAILED |
+	// CANCELED .
+	State ScanJobStatus
+
+	noSmithyDocumentSerde
+}
+
+// Contains the results of a security scan, including scanner information, scan
+// state, and any findings discovered.
+type ScanResult struct {
+
+	// An array of findings discovered during the scan.
+	Findings []ScanFinding
+
+	// The timestamp of when the last scan was performed, in Unix format and
+	// Coordinated Universal Time (UTC).
+	LastScanTimestamp *time.Time
+
+	// The malware scanner used to perform the scan. Currently only GUARDDUTY is
+	// supported.
+	MalwareScanner MalwareScanner
+
+	// The final state of the scan job.
+	//
+	// Valid values: COMPLETED | FAILED | CANCELED .
+	ScanJobState ScanJobState
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about the results of a scan job.
+type ScanResultInfo struct {
+
+	// The status of the scan results.
+	//
+	// Valid values: THREATS_FOUND | NO_THREATS_FOUND .
+	//
+	// This member is required.
+	ScanResultStatus ScanResultStatus
+
+	noSmithyDocumentSerde
+}
+
+// Contains configuration settings for malware scanning, including the scanner
+// type, target resource types, and scanner role.
+type ScanSetting struct {
+
+	// The malware scanner to use for scanning. Currently only GUARDDUTY is supported.
+	MalwareScanner MalwareScanner
+
+	// An array of resource types to be scanned for malware.
+	ResourceTypes []string
+
+	// The Amazon Resource Name (ARN) of the IAM role that the scanner uses to access
+	// resources; for example, arn:aws:iam::123456789012:role/ScannerRole .
+	ScannerRoleArn *string
+
+	noSmithyDocumentSerde
+}
+
+// Contains information about a scheduled backup plan execution, including the
+// execution time, rule type, and associated rule identifier.
+type ScheduledPlanExecutionMember struct {
+
+	// The timestamp when the backup is scheduled to run, in Unix format and
+	// Coordinated Universal Time (UTC). The value is accurate to milliseconds.
+	ExecutionTime *time.Time
+
+	// The type of backup rule execution. Valid values are CONTINUOUS (point-in-time
+	// recovery), SNAPSHOTS (snapshot backups), or CONTINUOUS_AND_SNAPSHOTS (both
+	// types combined).
+	RuleExecutionType RuleExecutionType
+
+	// The unique identifier of the backup rule that will execute at the scheduled
+	// time.
+	RuleId *string
+
+	noSmithyDocumentSerde
+}
+
+// This contains metadata about a tiering configuration.
+type TieringConfiguration struct {
+
+	// The name of the backup vault where the tiering configuration applies. Use * to
+	// apply to all backup vaults.
+	//
+	// This member is required.
+	BackupVaultName *string
+
+	// An array of resource selection objects that specify which resources are
+	// included in the tiering configuration and their tiering settings.
+	//
+	// This member is required.
+	ResourceSelection []ResourceSelection
+
+	// The unique name of the tiering configuration. This cannot be changed after
+	// creation, and it must consist of only alphanumeric characters and underscores.
+	//
+	// This member is required.
+	TieringConfigurationName *string
+
+	// The date and time a tiering configuration was created, in Unix format and
+	// Coordinated Universal Time (UTC). The value of CreationTime is accurate to
+	// milliseconds. For example, the value 1516925490.087 represents Friday, January
+	// 26, 2018 12:11:30.087AM.
+	CreationTime *time.Time
+
+	// This is a unique string that identifies the request and allows failed requests
+	// to be retried without the risk of running the operation twice.
+	CreatorRequestId *string
+
+	// The date and time a tiering configuration was updated, in Unix format and
+	// Coordinated Universal Time (UTC). The value of LastUpdatedTime is accurate to
+	// milliseconds. For example, the value 1516925490.087 represents Friday, January
+	// 26, 2018 12:11:30.087AM.
+	LastUpdatedTime *time.Time
+
+	// An Amazon Resource Name (ARN) that uniquely identifies the tiering
+	// configuration.
+	TieringConfigurationArn *string
+
+	noSmithyDocumentSerde
+}
+
+// This contains metadata about a tiering configuration for create operations.
+type TieringConfigurationInputForCreate struct {
+
+	// The name of the backup vault where the tiering configuration applies. Use * to
+	// apply to all backup vaults.
+	//
+	// This member is required.
+	BackupVaultName *string
+
+	// An array of resource selection objects that specify which resources are
+	// included in the tiering configuration and their tiering settings.
+	//
+	// This member is required.
+	ResourceSelection []ResourceSelection
+
+	// The unique name of the tiering configuration. This cannot be changed after
+	// creation, and it must consist of only alphanumeric characters and underscores.
+	//
+	// This member is required.
+	TieringConfigurationName *string
+
+	noSmithyDocumentSerde
+}
+
+// This contains metadata about a tiering configuration for update operations.
+type TieringConfigurationInputForUpdate struct {
+
+	// The name of the backup vault where the tiering configuration applies. Use * to
+	// apply to all backup vaults.
+	//
+	// This member is required.
+	BackupVaultName *string
+
+	// An array of resource selection objects that specify which resources are
+	// included in the tiering configuration and their tiering settings.
+	//
+	// This member is required.
+	ResourceSelection []ResourceSelection
+
+	noSmithyDocumentSerde
+}
+
+// This contains metadata about a tiering configuration returned in a list.
+type TieringConfigurationsListMember struct {
+
+	// The name of the backup vault where the tiering configuration applies. Use * to
+	// apply to all backup vaults.
+	BackupVaultName *string
+
+	// The date and time a tiering configuration was created, in Unix format and
+	// Coordinated Universal Time (UTC). The value of CreationTime is accurate to
+	// milliseconds. For example, the value 1516925490.087 represents Friday, January
+	// 26, 2018 12:11:30.087AM.
+	CreationTime *time.Time
+
+	// The date and time a tiering configuration was updated, in Unix format and
+	// Coordinated Universal Time (UTC). The value of LastUpdatedTime is accurate to
+	// milliseconds. For example, the value 1516925490.087 represents Friday, January
+	// 26, 2018 12:11:30.087AM.
+	LastUpdatedTime *time.Time
+
+	// An Amazon Resource Name (ARN) that uniquely identifies the tiering
+	// configuration.
+	TieringConfigurationArn *string
+
+	// The unique name of the tiering configuration.
+	TieringConfigurationName *string
 
 	noSmithyDocumentSerde
 }

@@ -19,8 +19,13 @@ import (
 // This operation is not supported by directory buckets.
 //
 // Creates or modifies the PublicAccessBlock configuration for an Amazon Web
-// Services account. For this operation, users must have the
-// s3:PutAccountPublicAccessBlock permission. For more information, see [Using Amazon S3 block public access].
+// Services account. This operation may be restricted when the account is managed
+// by organization-level Block Public Access policies. You might get an Access
+// Denied (403) error when the account is managed by organization-level Block
+// Public Access policies. Organization-level policies override account-level
+// settings, preventing direct account-level modifications. For this operation,
+// users must have the s3:PutAccountPublicAccessBlock permission. For more
+// information, see [Using Amazon S3 block public access].
 //
 // Related actions include:
 //
@@ -182,16 +187,13 @@ func (c *Client) addOperationPutPublicAccessBlockMiddlewares(stack *middleware.S
 	if err = s3controlcust.AddDisableHostPrefixMiddleware(stack); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

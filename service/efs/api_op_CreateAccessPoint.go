@@ -17,12 +17,14 @@ import (
 // operating system user and group override any identity information provided by
 // the NFS client. The file system path is exposed as the access point's root
 // directory. Applications using the access point can only access data in the
-// application's own directory and any subdirectories. To learn more, see [Mounting a file system using EFS access points].
+// application's own directory and any subdirectories. A file system can have a
+// maximum of 10,000 access points unless you request an increase. To learn more,
+// see [Mounting a file system using EFS access points].
 //
 // If multiple requests to create access points on the same file system are sent
-// in quick succession, and the file system is near the limit of 1,000 access
-// points, you may experience a throttling response for these requests. This is to
-// ensure that the file system does not exceed the stated access point limit.
+// in quick succession, and the file system is near the limit of access points, you
+// may experience a throttling response for these requests. This is to ensure that
+// the file system does not exceed the stated access point limit.
 //
 // This operation requires permissions for the elasticfilesystem:CreateAccessPoint
 // action.
@@ -224,16 +226,13 @@ func (c *Client) addOperationCreateAccessPointMiddlewares(stack *middleware.Stac
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil

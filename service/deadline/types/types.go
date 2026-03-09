@@ -10,17 +10,44 @@ import (
 
 // Provides information about the GPU accelerators used for jobs processed by a
 // fleet.
+//
+// Accelerator capabilities cannot be used with wait-and-save fleets. If you
+// specify accelerator capabilities, you must use either spot or on-demand instance
+// market options.
+//
+// Each accelerator type maps to specific EC2 instance families:
+//
+//   - t4 : Uses G4dn instance family
+//
+//   - a10g : Uses G5 instance family
+//
+//   - l4 : Uses G6 and Gr6 instance families
+//
+//   - l40s : Uses G6e instance family
 type AcceleratorCapabilities struct {
 
 	// A list of accelerator capabilities requested for this fleet. Only Amazon
 	// Elastic Compute Cloud instances that provide these capabilities will be used.
-	// For example, if you specify both L4 and T4 chips, Deadline Cloud will use Amazon
-	// EC2 instances that have either the L4 or the T4 chip installed.
+	// For example, if you specify both L4 and T4 chips, Amazon Web Services Deadline
+	// Cloud will use Amazon EC2 instances that have either the L4 or the T4 chip
+	// installed.
+	//
+	//   - You must specify at least one accelerator selection.
+	//
+	//   - You cannot specify the same accelerator name multiple times in the
+	//   selections list.
+	//
+	//   - All accelerators in the selections must use the same runtime version.
 	//
 	// This member is required.
 	Selections []AcceleratorSelection
 
 	// The number of GPU accelerators specified for worker hosts in this fleet.
+	//
+	// You must specify either acceleratorCapabilities.count.max or
+	// allowedInstanceTypes when using accelerator capabilities. If you don't specify a
+	// maximum count, Amazon Web Services Deadline Cloud uses the instance types you
+	// specify in allowedInstanceTypes to determine the maximum number of accelerators.
 	Count *AcceleratorCountRange
 
 	noSmithyDocumentSerde
@@ -47,24 +74,21 @@ type AcceleratorSelection struct {
 
 	// The name of the chip used by the GPU accelerator.
 	//
-	// If you specify l4 as the name of the accelerator, you must specify latest or
-	// grid:r550 as the runtime.
-	//
 	// The available GPU accelerators are:
 	//
-	//   - t4 - NVIDIA T4 Tensor Core GPU
+	//   - t4 - NVIDIA T4 Tensor Core GPU (16 GiB memory)
 	//
-	//   - a10g - NVIDIA A10G Tensor Core GPU
+	//   - a10g - NVIDIA A10G Tensor Core GPU (24 GiB memory)
 	//
-	//   - l4 - NVIDIA L4 Tensor Core GPU
+	//   - l4 - NVIDIA L4 Tensor Core GPU (24 GiB memory)
 	//
-	//   - l40s - NVIDIA L40S Tensor Core GPU
+	//   - l40s - NVIDIA L40S Tensor Core GPU (48 GiB memory)
 	//
 	// This member is required.
 	Name AcceleratorName
 
 	// Specifies the runtime driver to use for the GPU accelerator. You must use the
-	// same runtime for all GPUs.
+	// same runtime for all GPUs in a fleet.
 	//
 	// You can choose from the following runtimes:
 	//
@@ -72,16 +96,29 @@ type AcceleratorSelection struct {
 	//   latest and a new version of the runtime is released, the new version of the
 	//   runtime is used.
 	//
-	//   - grid:r550 - [NVIDIA vGPU software 17]
+	//   - grid:r570 - [NVIDIA vGPU software 18]
 	//
 	//   - grid:r535 - [NVIDIA vGPU software 16]
 	//
-	// If you don't specify a runtime, Deadline Cloud uses latest as the default.
-	// However, if you have multiple accelerators and specify latest for some and
-	// leave others blank, Deadline Cloud raises an exception.
+	// If you don't specify a runtime, Amazon Web Services Deadline Cloud uses latest
+	// as the default. However, if you have multiple accelerators and specify latest
+	// for some and leave others blank, Amazon Web Services Deadline Cloud raises an
+	// exception.
+	//
+	// Not all runtimes are compatible with all accelerator types:
+	//
+	//   - t4 and a10g : Support all runtimes ( grid:r570 , grid:r535 )
+	//
+	//   - l4 and l40s : Only support grid:r570 and newer
+	//
+	// All accelerators in a fleet must use the same runtime version. You cannot mix
+	// different runtime versions within a single fleet.
+	//
+	// When you specify latest , it resolves to grid:r570 for all currently supported
+	// accelerators.
 	//
 	// [NVIDIA vGPU software 16]: https://docs.nvidia.com/vgpu/16.0/index.html
-	// [NVIDIA vGPU software 17]: https://docs.nvidia.com/vgpu/17.0/index.html
+	// [NVIDIA vGPU software 18]: https://docs.nvidia.com/vgpu/18.0/index.html
 	Runtime *string
 
 	noSmithyDocumentSerde
@@ -212,7 +249,7 @@ type AssignedSessionActionDefinitionMemberEnvExit struct {
 
 func (*AssignedSessionActionDefinitionMemberEnvExit) isAssignedSessionActionDefinition() {}
 
-// The job attachment to sync with an assigned session action.
+// The job attachments to sync for the assigned session action.
 type AssignedSessionActionDefinitionMemberSyncInputJobAttachments struct {
 	Value AssignedSyncInputJobAttachmentsSessionActionDefinition
 
@@ -231,10 +268,10 @@ type AssignedSessionActionDefinitionMemberTaskRun struct {
 
 func (*AssignedSessionActionDefinitionMemberTaskRun) isAssignedSessionActionDefinition() {}
 
-// The details for an assigned session action as it relates to a job attachment.
+// The assigned session action definition for syncing input job attachments.
 type AssignedSyncInputJobAttachmentsSessionActionDefinition struct {
 
-	// The step ID.
+	// The step ID for the assigned sync input job attachments session action.
 	StepId *string
 
 	noSmithyDocumentSerde
@@ -259,15 +296,15 @@ type AssignedTaskRunSessionActionDefinition struct {
 	noSmithyDocumentSerde
 }
 
-// The attachments for jobs.
+// The job attachments.
 type Attachments struct {
 
-	// A list of manifests which describe job attachment configurations.
+	// The manifest properties for the attachments.
 	//
 	// This member is required.
 	Manifests []ManifestProperties
 
-	// The file system.
+	// The file system location for the attachments.
 	FileSystem JobAttachmentsFileSystem
 
 	noSmithyDocumentSerde
@@ -438,30 +475,23 @@ type ConsumedUsages struct {
 	noSmithyDocumentSerde
 }
 
-// The details of a customer managed fleet configuration.
+// The configuration details for a customer managed fleet.
 type CustomerManagedFleetConfiguration struct {
 
-	// The Auto Scaling mode for the customer managed fleet configuration.
+	// The Auto Scaling mode for the customer managed fleet.
 	//
 	// This member is required.
 	Mode AutoScalingMode
 
-	// The worker capabilities for a customer managed fleet configuration.
+	// The worker capabilities for the customer managed fleet.
 	//
 	// This member is required.
 	WorkerCapabilities *CustomerManagedWorkerCapabilities
 
-	// The storage profile ID.
+	// The storage profile ID for the customer managed fleet.
 	StorageProfileId *string
 
-	// Specifies whether tags associated with a fleet are attached to workers when the
-	// worker is launched.
-	//
-	// When the tagPropagationMode is set to PROPAGATE_TAGS_TO_WORKERS_AT_LAUNCH any
-	// tag associated with a fleet is attached to workers when they launch. If the tags
-	// for a fleet change, the tags associated with running workers do not change.
-	//
-	// If you don't specify tagPropagationMode , the default is NO_PROPAGATION .
+	// The tag propagation mode for the customer managed fleet.
 	TagPropagationMode TagPropagationMode
 
 	noSmithyDocumentSerde
@@ -976,6 +1006,9 @@ type FleetSummary struct {
 	// The Auto Scaling status of a fleet.
 	AutoScalingStatus AutoScalingStatus
 
+	// A message that communicates a suspended status of the fleet.
+	StatusMessage *string
+
 	// The target number of workers in a fleet.
 	TargetWorkerCount *int32
 
@@ -1035,6 +1068,43 @@ type GetJobEntityErrorMemberStepDetails struct {
 }
 
 func (*GetJobEntityErrorMemberStepDetails) isGetJobEntityError() {}
+
+// Provides a script that runs as a worker is starting up that you can use to
+// provide additional configuration for workers in your fleet.
+//
+// To remove a script from a fleet, use the [UpdateFleet] operation with the hostConfiguration
+// scriptBody parameter set to an empty string ("").
+//
+// [UpdateFleet]: https://docs.aws.amazon.com/deadline-cloud/latest/APIReference/API_UpdateFleet.html
+type HostConfiguration struct {
+
+	// The text of the script that runs as a worker is starting up that you can use to
+	// provide additional configuration for workers in your fleet. The script runs
+	// after a worker enters the STARTING state and before the worker processes tasks.
+	//
+	// For more information about using the script, see [Run scripts as an administrator to configure workers] in the Deadline Cloud
+	// Developer Guide.
+	//
+	// The script runs as an administrative user ( sudo root on Linux, as an
+	// Administrator on Windows).
+	//
+	// [Run scripts as an administrator to configure workers]: https://docs.aws.amazon.com/deadline-cloud/latest/developerguide/smf-admin.html
+	//
+	// This member is required.
+	ScriptBody *string
+
+	// The maximum time that the host configuration can run. If the timeout expires,
+	// the worker enters the NOT RESPONDING state and shuts down. You are charged for
+	// the time that the worker is running the host configuration script.
+	//
+	// You should configure your fleet for a maximum of one worker while testing your
+	// host configuration script to avoid starting additional workers.
+	//
+	// The default is 300 seconds (5 minutes).
+	ScriptTimeoutSeconds *int32
+
+	noSmithyDocumentSerde
+}
 
 // The host property details.
 type HostPropertiesRequest struct {
@@ -1470,8 +1540,11 @@ type JobSearchSummary struct {
 	// The date and time the resource started running.
 	StartedAt *time.Time
 
-	// The task status to start with on the job.
+	// The task status to update the job's tasks to.
 	TargetTaskRunStatus JobTargetTaskRunStatus
+
+	// The total number of times tasks from the job failed and were retried.
+	TaskFailureRetryCount *int32
 
 	// The task run status for the job.
 	//
@@ -1498,6 +1571,12 @@ type JobSearchSummary struct {
 
 	// The number of tasks running on the job.
 	TaskRunStatusCounts map[string]int32
+
+	// The date and time the resource was updated.
+	UpdatedAt *time.Time
+
+	// The user or system that updated this resource.
+	UpdatedBy *string
 
 	noSmithyDocumentSerde
 }
@@ -1566,8 +1645,11 @@ type JobSummary struct {
 	// The date and time the resource started running.
 	StartedAt *time.Time
 
-	// The task status to start with on the job.
+	// The task status to update the job's tasks to.
 	TargetTaskRunStatus JobTargetTaskRunStatus
+
+	// The total number of times tasks from the job failed and were retried.
+	TaskFailureRetryCount *int32
 
 	// The task run status for the job.
 	//
@@ -1616,7 +1698,7 @@ type LicenseEndpointSummary struct {
 	// The status message of the license endpoint.
 	StatusMessage *string
 
-	// The VCP(virtual private cloud) ID associated with the license endpoint.
+	// The VPC (virtual private cloud) ID associated with the license endpoint.
 	VpcId *string
 
 	noSmithyDocumentSerde
@@ -1795,14 +1877,14 @@ type MonitorSummary struct {
 	// This member is required.
 	DisplayName *string
 
-	// The Amazon Resource Name (ARN) that the IAM Identity Center assigned to the
-	// monitor when it was created.
+	// The Amazon Resource Name that the IAM Identity Center assigned to the monitor
+	// when it was created.
 	//
 	// This member is required.
 	IdentityCenterApplicationArn *string
 
-	// The Amazon Resource Name (ARN) of the IAM Identity Center instance responsible
-	// for authenticating monitor users.
+	// The Amazon Resource Name of the IAM Identity Center instance responsible for
+	// authenticating monitor users.
 	//
 	// This member is required.
 	IdentityCenterInstanceArn *string
@@ -1812,8 +1894,8 @@ type MonitorSummary struct {
 	// This member is required.
 	MonitorId *string
 
-	// The Amazon Resource Name (ARN) of the IAM role for the monitor. Users of the
-	// monitor use this role to access Deadline Cloud resources.
+	// The Amazon Resource Name of the IAM role for the monitor. Users of the monitor
+	// use this role to access Deadline Cloud resources.
 	//
 	// This member is required.
 	RoleArn *string
@@ -2180,6 +2262,7 @@ type S3Location struct {
 //	SearchFilterExpressionMemberParameterFilter
 //	SearchFilterExpressionMemberSearchTermFilter
 //	SearchFilterExpressionMemberStringFilter
+//	SearchFilterExpressionMemberStringListFilter
 type SearchFilterExpression interface {
 	isSearchFilterExpression()
 }
@@ -2229,10 +2312,16 @@ type SearchFilterExpressionMemberStringFilter struct {
 
 func (*SearchFilterExpressionMemberStringFilter) isSearchFilterExpression() {}
 
-// The filter expression, AND or OR , to use when searching among a group of search
-// strings in a resource.
-//
-// You can use two groupings per search each within parenthesis () .
+// Filters by a list of strings.
+type SearchFilterExpressionMemberStringListFilter struct {
+	Value StringListFilterExpression
+
+	noSmithyDocumentSerde
+}
+
+func (*SearchFilterExpressionMemberStringListFilter) isSearchFilterExpression() {}
+
+// The search terms for a resource.
 type SearchGroupedFilterExpressions struct {
 
 	// The filters to use for the search.
@@ -2305,18 +2394,24 @@ type SearchTermFilterExpression struct {
 	noSmithyDocumentSerde
 }
 
-// The configuration details for a service managed Amazon EC2 fleet.
+// The configuration details for a service managed EC2 fleet.
 type ServiceManagedEc2FleetConfiguration struct {
 
-	// The Amazon EC2 instance capabilities.
+	// The instance capabilities for the service managed EC2 fleet.
 	//
 	// This member is required.
 	InstanceCapabilities *ServiceManagedEc2InstanceCapabilities
 
-	// The Amazon EC2 market type.
+	// The instance market options for the service managed EC2 fleet.
 	//
 	// This member is required.
 	InstanceMarketOptions *ServiceManagedEc2InstanceMarketOptions
+
+	// The storage profile ID for the service managed EC2 fleet.
+	StorageProfileId *string
+
+	// The VPC configuration for the service managed EC2 fleet.
+	VpcConfiguration *VpcConfiguration
 
 	noSmithyDocumentSerde
 }
@@ -2408,7 +2503,7 @@ type SessionActionDefinitionMemberEnvExit struct {
 
 func (*SessionActionDefinitionMemberEnvExit) isSessionActionDefinition() {}
 
-// The job attachments to sync with a session action.
+// The session action definition for syncing input job attachments.
 type SessionActionDefinitionMemberSyncInputJobAttachments struct {
 	Value SyncInputJobAttachmentsSessionActionDefinition
 
@@ -2456,7 +2551,7 @@ type SessionActionDefinitionSummaryMemberEnvExit struct {
 
 func (*SessionActionDefinitionSummaryMemberEnvExit) isSessionActionDefinitionSummary() {}
 
-// The job attachments to sync with the session action definition.
+// The session action definition summary for syncing input job attachments.
 type SessionActionDefinitionSummaryMemberSyncInputJobAttachments struct {
 	Value SyncInputJobAttachmentsSessionActionDefinitionSummary
 
@@ -2495,6 +2590,9 @@ type SessionActionSummary struct {
 
 	// The date and time the resource ended running.
 	EndedAt *time.Time
+
+	// The list of manifest properties that describe file attachments for the task run.
+	Manifests []TaskRunManifestPropertiesResponse
 
 	// The completion percentage for the session action.
 	ProgressPercent *float32
@@ -2808,6 +2906,29 @@ type StepParameter struct {
 	// This member is required.
 	Type StepParameterType
 
+	// The configuration for task chunking.
+	Chunks *StepParameterChunks
+
+	noSmithyDocumentSerde
+}
+
+// Defines how a step parameter range should be divided into chunks.
+type StepParameterChunks struct {
+
+	// The number of tasks to combine into a single chunk by default.
+	//
+	// This member is required.
+	DefaultTaskCount *int32
+
+	// Specifies whether the chunked ranges must be contiguous or can have gaps
+	// between them.
+	//
+	// This member is required.
+	RangeConstraint RangeConstraint
+
+	// The number of seconds to aim for when forming chunks.
+	TargetRuntimeSeconds *int32
+
 	noSmithyDocumentSerde
 }
 
@@ -2832,6 +2953,9 @@ type StepSearchSummary struct {
 
 	// The date and time the resource was created.
 	CreatedAt *time.Time
+
+	// The user or system that created this resource.
+	CreatedBy *string
 
 	// The date and time the resource ended running.
 	EndedAt *time.Time
@@ -2860,8 +2984,11 @@ type StepSearchSummary struct {
 	// The step ID.
 	StepId *string
 
-	// The task status to start with on the job.
+	// The task status to update the job's tasks to.
 	TargetTaskRunStatus StepTargetTaskRunStatus
+
+	// The total number of times tasks from the step failed and were retried.
+	TaskFailureRetryCount *int32
 
 	// The task run status for the job.
 	//
@@ -2888,6 +3015,12 @@ type StepSearchSummary struct {
 
 	// The number of tasks running on the job.
 	TaskRunStatusCounts map[string]int32
+
+	// The date and time the resource was updated.
+	UpdatedAt *time.Time
+
+	// The user or system that updated this resource.
+	UpdatedBy *string
 
 	noSmithyDocumentSerde
 }
@@ -2962,8 +3095,11 @@ type StepSummary struct {
 	// The date and time the resource started running.
 	StartedAt *time.Time
 
-	// The task status to start with on the job.
+	// The task status to update the job's tasks to.
 	TargetTaskRunStatus StepTargetTaskRunStatus
+
+	// The total number of times tasks from the step failed and were retried.
+	TaskFailureRetryCount *int32
 
 	// The date and time the resource was updated.
 	UpdatedAt *time.Time
@@ -3020,19 +3156,40 @@ type StringFilterExpression struct {
 	noSmithyDocumentSerde
 }
 
-// The job attachment in a session action to sync.
+// Searches for a particular list of strings.
+type StringListFilterExpression struct {
+
+	// The field name to search.
+	//
+	// This member is required.
+	Name *string
+
+	// The type of comparison to use for this search.
+	//
+	// This member is required.
+	Operator ComparisonOperator
+
+	// The list of string values to search for.
+	//
+	// This member is required.
+	Values []string
+
+	noSmithyDocumentSerde
+}
+
+// The session action definition for syncing input job attachments.
 type SyncInputJobAttachmentsSessionActionDefinition struct {
 
-	// The step ID for the step in the job attachment.
+	// The step ID for the sync input job attachments session action.
 	StepId *string
 
 	noSmithyDocumentSerde
 }
 
-// The details of a synced job attachment.
+// The summary of the session action definition for syncing input job attachments.
 type SyncInputJobAttachmentsSessionActionDefinitionSummary struct {
 
-	// The step ID of the step in the job attachment.
+	// The step ID for the sync input job attachments session action summary.
 	StepId *string
 
 	noSmithyDocumentSerde
@@ -3042,6 +3199,7 @@ type SyncInputJobAttachmentsSessionActionDefinitionSummary struct {
 //
 // The following types satisfy this interface:
 //
+//	TaskParameterValueMemberChunkInt
 //	TaskParameterValueMemberFloat
 //	TaskParameterValueMemberInt
 //	TaskParameterValueMemberPath
@@ -3049,6 +3207,16 @@ type SyncInputJobAttachmentsSessionActionDefinitionSummary struct {
 type TaskParameterValue interface {
 	isTaskParameterValue()
 }
+
+// A range (for example 1-10) or selection of specific (for example 1,3,7,8,10)
+// integers represented as a string.
+type TaskParameterValueMemberChunkInt struct {
+	Value string
+
+	noSmithyDocumentSerde
+}
+
+func (*TaskParameterValueMemberChunkInt) isTaskParameterValue() {}
 
 // A double precision IEEE-754 floating point number represented as a string.
 type TaskParameterValueMemberFloat struct {
@@ -3086,6 +3254,32 @@ type TaskParameterValueMemberString struct {
 
 func (*TaskParameterValueMemberString) isTaskParameterValue() {}
 
+// The output manifest properties reported by the worker agent for a completed
+// task run.
+type TaskRunManifestPropertiesRequest struct {
+
+	// The hash value of the file.
+	OutputManifestHash *string
+
+	// The manifest file path.
+	OutputManifestPath *string
+
+	noSmithyDocumentSerde
+}
+
+// The manifest properties for a task run, corresponding to the manifest
+// properties in the job.
+type TaskRunManifestPropertiesResponse struct {
+
+	// The hash value of the file.
+	OutputManifestHash *string
+
+	// The manifest file path.
+	OutputManifestPath *string
+
+	noSmithyDocumentSerde
+}
+
 // The task, step, and parameters for the task run in the session action.
 type TaskRunSessionActionDefinition struct {
 
@@ -3113,6 +3307,9 @@ type TaskRunSessionActionDefinitionSummary struct {
 	// This member is required.
 	StepId *string
 
+	// The parameters of a task run in a session action.
+	Parameters map[string]TaskParameterValue
+
 	// The task ID.
 	TaskId *string
 
@@ -3130,6 +3327,9 @@ type TaskSearchSummary struct {
 
 	// The job ID.
 	JobId *string
+
+	// The latest session action ID for the task.
+	LatestSessionActionId *string
 
 	// The parameters to search for.
 	Parameters map[string]TaskParameterValue
@@ -3151,6 +3351,12 @@ type TaskSearchSummary struct {
 
 	// The task ID.
 	TaskId *string
+
+	// The date and time the resource was updated.
+	UpdatedAt *time.Time
+
+	// The user or system that updated this resource.
+	UpdatedBy *string
 
 	noSmithyDocumentSerde
 }
@@ -3184,7 +3390,7 @@ type TaskSummary struct {
 	// The number of times that the task failed and was retried.
 	FailureRetryCount *int32
 
-	// The latest session action for the task.
+	// The latest session action ID for the task.
 	LatestSessionActionId *string
 
 	// The task parameters.
@@ -3214,6 +3420,10 @@ type UpdatedSessionActionInfo struct {
 
 	// The date and time the resource ended running.
 	EndedAt *time.Time
+
+	// A list of output manifest properties reported by the worker agent, with each
+	// entry corresponding to a manifest property in the job.
+	Manifests []TaskRunManifestPropertiesRequest
 
 	// The process exit code. The default Deadline Cloud worker agent converts
 	// unsigned 32-bit exit codes to signed 32-bit exit codes.
@@ -3289,6 +3499,15 @@ type VCpuCountRange struct {
 
 	// The maximum amount of vCPU.
 	Max *int32
+
+	noSmithyDocumentSerde
+}
+
+// The configuration options for a service managed fleet's VPC.
+type VpcConfiguration struct {
+
+	// The ARNs of the VPC Lattice resource configurations attached to the fleet.
+	ResourceConfigurationArns []string
 
 	noSmithyDocumentSerde
 }

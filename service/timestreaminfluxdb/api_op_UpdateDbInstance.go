@@ -126,6 +126,9 @@ type UpdateDbInstanceOutput struct {
 	// Specifies the DbInstance's role in the cluster.
 	InstanceMode types.InstanceMode
 
+	// Specifies the DbInstance's roles in the cluster.
+	InstanceModes []types.InstanceMode
+
 	// Configuration for sending InfluxDB engine logs to send to specified S3 bucket.
 	LogDeliveryConfiguration *types.LogDeliveryConfiguration
 
@@ -244,16 +247,13 @@ func (c *Client) addOperationUpdateDbInstanceMiddlewares(stack *middleware.Stack
 	if err = addDisableHTTPSMiddleware(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeStart(stack); err != nil {
+	if err = addInterceptBeforeRetryLoop(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanInitializeEnd(stack); err != nil {
+	if err = addInterceptAttempt(stack, options); err != nil {
 		return err
 	}
-	if err = addSpanBuildRequestStart(stack); err != nil {
-		return err
-	}
-	if err = addSpanBuildRequestEnd(stack); err != nil {
+	if err = addInterceptors(stack, options); err != nil {
 		return err
 	}
 	return nil
